@@ -1,7 +1,7 @@
 {
-  "name": "Avião",
-  "short_name": "Avião",
-  "description": "O Avião ajuda você a planejar seus chamados, ciclos e módulos de produto.",
+  "name": "Plane",
+  "short_name": "Plane",
+  "description": "Plane helps you plan your work items, cycles and product modules.",
   "start_url": ".",
   "display": "standalone",
   "background_color": "#f9fafb",
