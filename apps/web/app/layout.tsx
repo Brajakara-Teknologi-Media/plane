@@ -17,7 +17,7 @@ import { cn } from "@plane/utils";
 // assets
 import favicon16 from "@/app/assets/favicon/favicon-16x16.png?url";
 import favicon32 from "@/app/assets/favicon/favicon-32x32.png?url";
-import faviconIco from "@/app/assets/favicon/favicon.ico?url";
+import faviconPng from "@/app/assets/favicon/favicon.png?url";
 import icon180 from "@/app/assets/icons/icon-180x180.png?url";
 import icon512 from "@/app/assets/icons/icon-512x512.png?url";
 
@@ -25,7 +25,7 @@ import icon512 from "@/app/assets/icons/icon-512x512.png?url";
 import { AppProvider } from "./provider";
 
 export const meta = () => [
-  { title: "Avião | Ferramenta de gestão de projetos simples, extensível e de código aberto." },
+  { title: "Avião | Simple, extensible, and open-source project management tool." },
   { name: "description", content: SITE_DESCRIPTION },
   {
     name: "keywords",
@@ -37,15 +37,15 @@ export const meta = () => [
     content:
       "width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover",
   },
-  { property: "og:title", content: "Avião | Ferramenta de gestão de projetos simples, extensível e de código aberto." },
+  { property: "og:title", content: "Avião | Simple, extensible, and open-source project management tool." },
   {
     property: "og:description",
-    content: "Ferramenta de gestão de projetos de código aberto para gerenciar chamados, ciclos e roadmaps de produto com facilidade",
+    content: "Open-source project management tool to manage work items, cycles and product roadmaps with ease",
   },
   { property: "og:image", content: "/og-image.png" },
   { property: "og:image:width", content: "1200" },
   { property: "og:image:height", content: "630" },
-  { property: "og:image:alt", content: "Avião - Gestão de projetos moderna" },
+  { property: "og:image:alt", content: "Avião - Modern project management" },
   { name: "twitter:card", content: "summary_large_image" },
   { name: "twitter:image", content: "/og-image.png" },
   { name: "twitter:image:width", content: "1200" },
@@ -57,13 +57,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   const isSessionRecorderEnabled = parseInt(process.env.VITE_ENABLE_SESSION_RECORDER || "0");
 
   return (
-    <html lang="pt-BR">
+    <html lang="en">
       <head>
         <meta name="theme-color" content="#fff" />
         <link rel="icon" type="image/png" sizes="32x32" href={favicon32} />
         <link rel="icon" type="image/png" sizes="16x16" href={favicon16} />
         <link rel="manifest" href="/site.webmanifest.json" />
-        <link rel="shortcut icon" href={faviconIco} />
+        <link rel="shortcut icon" type="image/png" href={faviconPng} />
         {/* Meta info for PWA */}
         <meta name="application-name" content="Avião" />
         <meta name="apple-mobile-web-app-capable" content="yes" />

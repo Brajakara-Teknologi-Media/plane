@@ -16,7 +16,7 @@ import { cn } from "@plane/utils";
 // assets
 import favicon16 from "@/app/assets/favicon/favicon-16x16.png?url";
 import favicon32 from "@/app/assets/favicon/favicon-32x32.png?url";
-import faviconIco from "@/app/assets/favicon/favicon.ico?url";
+import faviconPng from "@/app/assets/favicon/favicon.png?url";
 import icon180 from "@/app/assets/icons/icon-180x180.png?url";
 import icon512 from "@/app/assets/icons/icon-512x512.png?url";
 import ogImage from "@/app/assets/og-image.png?url";
@@ -33,12 +33,12 @@ import interVariableWoff2 from "@fontsource-variable/inter/files/inter-latin-wgh
 import "@fontsource/material-symbols-rounded";
 import "@fontsource/ibm-plex-mono";
 
-const APP_TITLE = "Avião | Ferramenta de gestão de projetos simples, extensível e de código aberto.";
+const APP_TITLE = "Avião | Simple, extensible, and open-source project management tool.";
 
 export const links: LinksFunction = () => [
   { rel: "icon", type: "image/png", sizes: "32x32", href: favicon32 },
   { rel: "icon", type: "image/png", sizes: "16x16", href: favicon16 },
-  { rel: "shortcut icon", href: faviconIco },
+  { rel: "shortcut icon", type: "image/png", href: faviconPng },
   { rel: "manifest", href: "/site.webmanifest.json" },
   { rel: "apple-touch-icon", href: icon512 },
   { rel: "apple-touch-icon", sizes: "180x180", href: icon180 },
@@ -58,7 +58,7 @@ export function Layout({ children }: { children: ReactNode }) {
   const isSessionRecorderEnabled = parseInt(process.env.VITE_ENABLE_SESSION_RECORDER || "0");
 
   return (
-    <html lang="pt-BR" suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning>
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -100,7 +100,7 @@ export const meta: Route.MetaFunction = () => [
   { property: "og:title", content: APP_TITLE },
   {
     property: "og:description",
-    content: "Ferramenta de gestão de projetos de código aberto para gerenciar chamados, ciclos e roadmaps de produto com facilidade",
+    content: "Open-source project management tool to manage work items, cycles and product roadmaps with ease",
   },
   { property: "og:image", content: ogImage },
   { property: "og:image:width", content: "1200" },
@@ -109,7 +109,7 @@ export const meta: Route.MetaFunction = () => [
   {
     name: "keywords",
     content:
-      "chamados, service desk, atendimento, suporte, gestão de projetos, triagem, kanban, ciclos, módulos, SLA, quality sistemas",
+      "work items, service desk, support, project management, triage, kanban, cycles, modules, SLA, quality systems",
   },
   { name: "twitter:card", content: "summary_large_image" },
   { name: "twitter:image", content: ogImage },
