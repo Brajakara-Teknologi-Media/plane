@@ -27,7 +27,6 @@ export class FileUploadService extends APIService {
         "Content-Type": "multipart/form-data",
       },
       cancelToken: this.cancelSource.token,
-      withCredentials: false,
       onUploadProgress: uploadProgressHandler,
     })
       .then((response) => response?.data)

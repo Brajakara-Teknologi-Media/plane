@@ -45,7 +45,7 @@ export const OnboardingRoot = observer(function OnboardingRoot({ invitations = [
       setToast({
         type: TOAST_TYPE.ERROR,
         title: "Falhou",
-        message: "Falha ao concluir a integração. Tente novamente mais tarde.",
+        message: "Failed to complete onboarding. Please try again later.",
       });
     }
   }, [user, finishUserOnboarding]);

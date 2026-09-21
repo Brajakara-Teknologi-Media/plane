@@ -261,7 +261,7 @@ export const IssueDetailsSidebar = observer(function IssueDetailsSidebar(props: 
             </SidebarPropertyListItem>
 
             {/* Entity field — SAC: which entity (municipality/client) opened this work item */}
-            <SidebarPropertyListItem icon={UserCirclePropertyIcon} label="Entidade">
+            <SidebarPropertyListItem icon={UserCirclePropertyIcon} label="Entity">
               <IssueEntitySelect
                 workspaceSlug={workspaceSlug}
                 projectId={projectId}

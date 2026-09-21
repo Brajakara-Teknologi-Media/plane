@@ -1,0 +1,229 @@
+{
+  "chat": {
+    "app": {
+      "status": {
+        "active": "Active",
+        "queued": "Queued",
+        "bot": "Bot",
+        "closed": "Closed"
+      },
+      "connection": {
+        "connected_text": "Real-time",
+        "connected_help": "Connected: messages arrive instantly.",
+        "connecting_text": "Connecting",
+        "connecting_help": "Establishing real-time connection.",
+        "reconnecting_text": "Reconnecting",
+        "reconnecting_help": "Connection lost. New messages may delay until connection returns."
+      },
+      "end_modal": {
+        "system_label": "Service system",
+        "select_system_placeholder": "Select system",
+        "already_classified": "Already classified as <strong>{project}</strong>.",
+        "contact_registration": "Contact registration",
+        "cancel": "Cancel",
+        "end": "End",
+        "choose_system_title": "Choose the service system"
+      },
+      "new_chat_modal": {
+        "search_hint": "Search contact or enter number",
+        "search_contact_label": "Search contact",
+        "whatsapp_number_label": "WhatsApp number",
+        "or": "or",
+        "unnamed_contact": "Unnamed",
+        "initial_message_label": "Initial message (optional)",
+        "start_whatsapp_btn": "Start WhatsApp chat"
+      },
+      "transfer_modal": {
+        "title": "Transfer service",
+        "choose_attendant": "— choose attendant"
+      },
+      "message_preview": {
+        "image": "📷 Image",
+        "audio": "🎤 Audio",
+        "file": "📎 File",
+        "file_fallback": "File"
+      },
+      "sidebar": {
+        "information_heading": "Information",
+        "channel": "Channel",
+        "system": "System",
+        "protocol": "Protocol",
+        "status": "Status",
+        "rating_heading": "Rating",
+        "quick_actions_heading": "Quick actions",
+        "contact_channels": "Contact channels"
+      },
+      "messages": {
+        "versions": "{count} version(s)",
+        "edited": "edited",
+        "empty_text": "(empty)",
+        "cancel": "Cancel",
+        "open_full_size": "Open full size"
+      },
+      "actions": {
+        "transfer": "Transfer",
+        "end": "End",
+        "copy_chat_link": "Copy chat link",
+        "end_service": "End service",
+        "transfer_service_title": "Transfer service",
+        "end_service_title": "End service",
+        "claim": "Claim",
+        "claim_now": "Claim now",
+        "claim_service": "Claim service",
+        "edit_message": "Edit message",
+        "delete_message": "Delete message"
+      },
+      "tabs": {
+        "active": "Active",
+        "queued": "Queued",
+        "bot": "Bot",
+        "closed": "Closed"
+      },
+      "contact": {
+        "email_optional": "E-mail (optional)"
+      },
+      "workitem_description": {
+        "title": "Chat service",
+        "protocol_word": "protocol"
+      }
+    },
+    "config": {
+      "loading": "Loading…",
+      "tabs": {
+        "messages": "Messages",
+        "menu": "Menu",
+        "queues": "Queues",
+        "flows": "Flows",
+        "schedules": "Schedules",
+        "attendants": "Attendants",
+        "provider": "WhatsApp (Z-API)"
+      },
+      "fields": {
+        "welcome_message": "Welcome message",
+        "menu_header": "Menu header",
+        "ask_name": "Ask for name",
+        "confirm_contact": "Confirm contact (use {name})",
+        "no_attendants": "No attendants",
+        "idle_prompt": "Inactivity 10min",
+        "idle_close": "Close on inactivity (use {protocol})",
+        "closed": "Closing (use {protocol})",
+        "routing_alpha": "Weight α (active chats)",
+        "routing_beta": "Weight β (attendances today)",
+        "outside_hours_message": "Out-of-hours message",
+        "key": "Key",
+        "queue": "Queue",
+        "flow": "Flow",
+        "message": "Message"
+      },
+      "actions": {
+        "delete": "Delete",
+        "add_option": "+ Add option",
+        "add_step": "+ Step",
+        "add_row": "+ Row",
+        "add_attendant": "add",
+        "save_flow": "Save flow",
+        "remove_named": "Remove {name}",
+        "remove_step": "Remove step"
+      },
+      "placeholders": {
+        "new_queue": "New queue",
+        "select_queue": "Select queue…",
+        "close_message": "Closing message (optional)",
+        "step_text": "Text",
+        "save_as": "Save as (e.g. text)"
+      },
+      "options": {
+        "queue": "Queue",
+        "flow": "Flow",
+        "message": "Message"
+      },
+      "steps": {
+        "message": "Send message",
+        "ask": "Ask and save answer",
+        "queue": "Forward to queue",
+        "close": "Thank and close"
+      },
+      "flows_hint": "Build the flow in steps — e.g. \"Complaint\" → \"Ask and save answer\" (Describe your complaint) → \"Thank and close\".",
+      "attendant_invisible_hint": "Invisible attendant receives no new chats, even when connected.",
+      "invisible_count": "{count} invisible",
+      "provider": {
+        "active": "Active"
+      },
+      "messages": {
+        "messages_updated": "Messages updated.",
+        "queue_members_updated": "Attendants updated.",
+        "attendant_invisible": "Attendant invisible.",
+        "attendant_visible": "Attendant visible."
+      },
+      "selected_count": "{selected} of {total}"
+    },
+    "dashboard": {
+      "loading": "Loading dashboard…",
+      "stats": {
+        "active": "Active",
+        "queued": "Queued",
+        "bot": "On bot (no attendant)",
+        "closed_today": "Closed today"
+      },
+      "attendants": {
+        "title": "Attendants",
+        "online_count": "online",
+        "table": {
+          "attendant": "Attendant",
+          "status": "Status",
+          "active_chats": "Active chats",
+          "chats_today": "Chats today"
+        },
+        "status": {
+          "invisible": "Invisible",
+          "online": "Online",
+          "offline": "Offline"
+        },
+        "empty": "No active attendant at the moment.",
+        "spy_tip": "To \"spy\" on a conversation, return to the list and open any chat — you receive messages live without taking over."
+      },
+      "ratings": {
+        "title": "Attendant ratings",
+        "overall_avg": "overall average",
+        "table": {
+          "rank": "#",
+          "attendant": "Attendant",
+          "average": "Average",
+          "ratings": "Ratings",
+          "distribution": "Distribution (1→5)"
+        },
+        "empty": "No ratings recorded yet.",
+        "recent_comments": "Recent comments"
+      },
+      "sla": {
+        "title": "Service SLA",
+        "last_days": "last",
+        "days": "days",
+        "stats": {
+          "attendances": "Attendances",
+          "first_response_avg": "1st response (avg)",
+          "resolution_avg": "Resolution (avg)",
+          "breached": "Outside SLA"
+        },
+        "table": {
+          "attendant": "Attendant",
+          "attendances": "Attend.",
+          "first_response": "1st response",
+          "resolution": "Resolution",
+          "breached": "Outside SLA"
+        },
+        "empty": "No SLA data in period."
+      }
+    },
+    "readonly": {
+      "loading": "Loading…",
+      "not_found": "Chat not found.",
+      "service_title": "Service",
+      "protocol": "Protocol",
+      "document_title": "Service #{protocol}",
+      "file": "File",
+      "deleted": "(deleted)",
+      "edited": "(edited)"
+    }
+  }
+}

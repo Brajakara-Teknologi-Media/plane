@@ -9,7 +9,13 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { SquareUser } from "lucide-react";
 // Plane imports
-import { MODULE_STATUS, EUserPermissions, EUserPermissionsLevel, IS_FAVORITE_MENU_OPEN, PROJECT_WORK_ROLES} from "@plane/constants";
+import {
+  MODULE_STATUS,
+  EUserPermissions,
+  EUserPermissionsLevel,
+  IS_FAVORITE_MENU_OPEN,
+  PROJECT_WORK_ROLES,
+} from "@plane/constants";
 import { useLocalStorage } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
 import { TOAST_TYPE, setPromiseToast, setToast } from "@plane/propel/toast";
@@ -49,10 +55,7 @@ export const ModuleListItemAction = observer(function ModuleListItemAction(props
   // derived values
 
   const moduleStatus = MODULE_STATUS.find((status) => status.value === moduleDetails.status);
-  const isEditingAllowed = allowPermissions(
-    PROJECT_WORK_ROLES,
-    EUserPermissionsLevel.PROJECT
-  );
+  const isEditingAllowed = allowPermissions(PROJECT_WORK_ROLES, EUserPermissionsLevel.PROJECT);
   const isDisabled = !isEditingAllowed || !!moduleDetails?.archived_at;
   const renderIcon = Boolean(moduleDetails.start_date) || Boolean(moduleDetails.target_date);
 
@@ -72,12 +75,12 @@ export const ModuleListItemAction = observer(function ModuleListItemAction(props
     setPromiseToast(addToFavoritePromise, {
       loading: "Adding module to favorites...",
       success: {
-        title: "Sucesso!",
+        title: t("common.toast.success"),
         message: () => "Module added to favorites.",
       },
       error: {
-        title: "Erro!",
-        message: () => "Não foi possível adicionar o módulo aos favoritos. Tente novamente.",
+        title: t("common.toast.error"),
+        message: () => "Could not add module to favorites. Please try again.",
       },
     });
   };
@@ -96,12 +99,12 @@ export const ModuleListItemAction = observer(function ModuleListItemAction(props
     setPromiseToast(removeFromFavoritePromise, {
       loading: "Removing module from favorites...",
       success: {
-        title: "Sucesso!",
+        title: t("common.toast.success"),
         message: () => "Module removed from favorites.",
       },
       error: {
-        title: "Erro!",
-        message: () => "Não foi possível remover o módulo dos favoritos. Tente novamente.",
+        title: t("common.toast.error"),
+        message: () => "Could not remove module from favorites. Please try again.",
       },
     });
   };
@@ -113,15 +116,15 @@ export const ModuleListItemAction = observer(function ModuleListItemAction(props
       .then(() => {
         setToast({
           type: TOAST_TYPE.SUCCESS,
-          title: "Sucesso!",
-          message: "Módulo atualizado com sucesso.",
+          title: t("common.toast.success"),
+          message: "Module updated successfully.",
         });
       })
       .catch((err) => {
         setToast({
           type: TOAST_TYPE.ERROR,
-          title: "Erro!",
-          message: err?.detail ?? "Não foi possível atualizar o módulo. Tente novamente.",
+          title: t("common.toast.error"),
+          message: err?.detail ?? "Could not update module. Please try again.",
         });
       });
   };

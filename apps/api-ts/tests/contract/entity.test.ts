@@ -44,8 +44,8 @@ describe("TestEntityAPIEndpoints", () => {
   });
 
   it("duplicate entity name returns 409", async () => {
-    await client.post(url(), { name: "Câmara Dupla" });
-    const res = await client.post(url(), { name: "Câmara Dupla" });
+    await client.post(url(), { name: "Council Dupla" });
+    const res = await client.post(url(), { name: "Council Dupla" });
     expect(res.status).toBe(409);
   });
 

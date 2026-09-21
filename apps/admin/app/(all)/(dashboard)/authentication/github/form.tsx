@@ -59,7 +59,7 @@ export function InstanceGithubConfigForm(props: Props) {
     {
       key: "GITHUB_CLIENT_ID",
       type: "text",
-      label: "ID do cliente",
+      label: "Customer ID",
       description: (
         <>
           You will get this from your{" "}
@@ -70,7 +70,7 @@ export function InstanceGithubConfigForm(props: Props) {
             className="text-accent-primary hover:underline"
             rel="noreferrer"
           >
-            Configurações da aplicação OAuth do GitHub.
+            Settings da aplicação OAuth do GitHub.
           </a>
         </>
       ),
@@ -81,7 +81,7 @@ export function InstanceGithubConfigForm(props: Props) {
     {
       key: "GITHUB_CLIENT_SECRET",
       type: "password",
-      label: "Segredo do cliente",
+      label: "Customer secret",
       description: (
         <>
           Your client secret is also found in your{" "}
@@ -92,7 +92,7 @@ export function InstanceGithubConfigForm(props: Props) {
             className="text-accent-primary hover:underline"
             rel="noreferrer"
           >
-            Configurações da aplicação OAuth do GitHub.
+            Settings da aplicação OAuth do GitHub.
           </a>
         </>
       ),
@@ -103,8 +103,8 @@ export function InstanceGithubConfigForm(props: Props) {
     {
       key: "GITHUB_ORGANIZATION_ID",
       type: "text",
-      label: "ID da organização",
-      description: <>O ID da organização no GitHub.</>,
+      label: "Organization ID",
+      description: <>O Organization ID no GitHub.</>,
       placeholder: "123456789",
       error: Boolean(errors.GITHUB_ORGANIZATION_ID),
       required: false,
@@ -145,7 +145,7 @@ export function InstanceGithubConfigForm(props: Props) {
       url: `${originURL}/auth/github/callback/`,
       description: (
         <>
-          Geraremos isto automaticamente. Cole isto no seu <CodeBlock darkerShade>URI de callback autorizada</CodeBlock>{" "}
+          We will generate this automatically. Paste this in your <CodeBlock darkerShade>Authorized callback URI</CodeBlock>{" "}
           field{" "}
           <a
             tabIndex={-1}
@@ -168,8 +168,8 @@ export function InstanceGithubConfigForm(props: Props) {
       const response = await updateInstanceConfigurations(payload);
       setToast({
         type: TOAST_TYPE.SUCCESS,
-        title: "Pronto!",
-        message: "Sua autenticação do GitHub está configurada. Teste-a agora.",
+        title: "Done!",
+        message: "Your GitHub authentication is configured. Test it now.",
       });
       reset({
         GITHUB_CLIENT_ID: response.find((item) => item.key === "GITHUB_CLIENT_ID")?.value,
@@ -223,10 +223,10 @@ export function InstanceGithubConfigForm(props: Props) {
                   loading={isSubmitting}
                   disabled={!isDirty}
                 >
-                  {isSubmitting ? "Salvando…" : "Salvar alterações"}
+                  {isSubmitting ? "Saving…" : "Save changes"}
                 </Button>
                 <Link href="/authentication" className={getButtonStyling("secondary", "lg")} onClick={handleGoBack}>
-                  Voltar
+                  Back
                 </Link>
               </div>
             </div>

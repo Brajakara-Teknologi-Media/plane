@@ -14,10 +14,10 @@ import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 import { SettingsPageHeader } from "@/components/settings/page-header";
 import { WORKSPACE_SETTINGS_ICONS } from "@/components/settings/workspace/sidebar/item-icon";
 
-export const AuditoriaWorkspaceSettingsHeader = observer(function AuditoriaWorkspaceSettingsHeader() {
+export const AuditLogWorkspaceSettingsHeader = observer(function AuditLogWorkspaceSettingsHeader() {
   const { t } = useTranslation();
-  const settingsDetails = WORKSPACE_SETTINGS.auditoria;
-  const Icon = WORKSPACE_SETTINGS_ICONS.auditoria;
+  const settingsDetails = WORKSPACE_SETTINGS["audit-logs"];
+  const Icon = WORKSPACE_SETTINGS_ICONS["audit-logs"];
 
   return (
     <SettingsPageHeader

@@ -11,6 +11,7 @@ import { SettingsIcon } from "lucide-react";
 import { ContextMenu } from "@plane/propel/context-menu";
 import { CheckIcon } from "@plane/propel/icons";
 import { cn } from "@plane/utils";
+import { useTranslation } from "@plane/i18n";
 // components
 import { AppSidebarItem } from "@/components/sidebar/sidebar-item";
 // hooks
@@ -21,10 +22,30 @@ import { DesktopSidebarWorkspaceMenu } from "@/plane-web/components/desktop";
 // local imports
 import { AppSidebarItemsRoot } from "./items-root";
 
+const AppRailSettingsItem = ({ showLabel }: { showLabel: boolean }) => {
+  const { workspaceSlug, projectId } = useParams();
+  const pathname = usePathname();
+  const { t } = useTranslation();
+  const isWorkspaceSettingsPath = pathname.includes(`/${workspaceSlug}/settings`) && !projectId;
+  return (
+    <AppSidebarItem
+      item={{
+        label: t("common.settings"),
+        icon: <SettingsIcon className="size-5" />,
+        href: `/${workspaceSlug}/settings`,
+        isActive: isWorkspaceSettingsPath,
+        showLabel,
+      }}
+    />
+  );
+};
+
 export const AppRailRoot = observer(() => {
   // router
   const { workspaceSlug, projectId } = useParams();
   const pathname = usePathname();
+  // translation
+  const { t } = useTranslation();
   // preferences
   const { preferences, updateDisplayMode } = useAppRailPreferences();
   const { isCollapsed, toggleAppRail } = useAppRailVisibility();
@@ -53,15 +74,7 @@ export const AppRailRoot = observer(() => {
               <DesktopSidebarWorkspaceMenu />
               <AppSidebarItemsRoot showLabel={showLabel} />
               <div className="mx-2 border-t border-strong" />
-              <AppSidebarItem
-                item={{
-                  label: "Configurações",
-                  icon: <SettingsIcon className="size-5" />,
-                  href: `/${workspaceSlug}/settings`,
-                  isActive: isWorkspaceSettingsPath,
-                  showLabel,
-                }}
-              />
+              <AppRailSettingsItem showLabel={showLabel} />
             </div>
           </div>
         </ContextMenu.Trigger>
@@ -69,13 +82,13 @@ export const AppRailRoot = observer(() => {
           <ContextMenu.Content positionerClassName="z-30" className="outline-none">
             <ContextMenu.Item onClick={() => updateDisplayMode("icon_only")}>
               <div className="flex w-full items-center justify-between gap-2">
-                <span className="text-11">Somente ícones</span>
+                <span className="text-11">{t("common.icon_only")}</span>
                 {preferences.displayMode === "icon_only" && <CheckIcon className="size-3.5" />}
               </div>
             </ContextMenu.Item>
             <ContextMenu.Item onClick={() => updateDisplayMode("icon_with_label")}>
               <div className="flex w-full items-center justify-between gap-2">
-                <span className="text-11">Ícone com nome</span>
+                <span className="text-11">{t("common.icon_with_label")}</span>
                 {preferences.displayMode === "icon_with_label" && <CheckIcon className="size-3.5" />}
               </div>
             </ContextMenu.Item>

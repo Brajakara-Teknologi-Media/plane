@@ -9,6 +9,7 @@ import { isEqual, cloneDeep } from "lodash-es";
 import { observer } from "mobx-react";
 // plane imports
 import { DEFAULT_GLOBAL_VIEWS_LIST, EUserPermissionsLevel, PROJECT_WORK_ROLES } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import type { IWorkspaceView, TWorkItemFilterExpression } from "@plane/types";
 import { EViewAccess } from "@plane/types";
@@ -53,6 +54,7 @@ export const WorkspaceLevelWorkItemFiltersHOC = observer(function WorkspaceLevel
   // states
   const [isCreateViewModalOpen, setIsCreateViewModalOpen] = useState(false);
   const [createViewPayload, setCreateViewPayload] = useState<Partial<IWorkspaceView> | undefined>(undefined);
+  const { t } = useTranslation();
   // hooks
   const { getViewDetailsById, updateGlobalView } = useGlobalView();
   const { entities } = useEntities(workspaceSlug);
@@ -69,7 +71,7 @@ export const WorkspaceLevelWorkItemFiltersHOC = observer(function WorkspaceLevel
   // component re-renders once states/labels finish loading.
   const workspaceLabels = getWorkspaceLabels(workspaceSlug);
   // Cross-project view: states and labels are project-scoped, so the same name
-  // (e.g. "Triagem", "Pendências") repeats once per project. Deduplicate by name so
+  // (e.g. "Triage", "Backlog") repeats once per project. Deduplicate by name so
   // each appears a single time; the backend expands the selected id to every
   // same-named state/label across the workspace when filtering.
   const workspaceStateIds = useMemo(() => dedupeIdsByName(workspaceStates), [workspaceStates]);
@@ -150,8 +152,8 @@ export const WorkspaceLevelWorkItemFiltersHOC = observer(function WorkspaceLevel
       if (!viewDetails) {
         setToast({
           type: TOAST_TYPE.ERROR,
-          title: "Não encontramos a visualização",
-          message: "A visualização que você está tentando atualizar não existe.",
+          title: "View not found",
+          message: "The view you are trying to update does not exist.",
         });
 
         return;
@@ -169,15 +171,15 @@ export const WorkspaceLevelWorkItemFiltersHOC = observer(function WorkspaceLevel
         .then(() => {
           setToast({
             type: TOAST_TYPE.SUCCESS,
-            title: "Sucesso!",
-            message: "Sua visualização foi atualizada com sucesso.",
+            title: t("common.toast.success"),
+            message: "Your view was updated successfully.",
           });
         })
         .catch(() => {
           setToast({
             type: TOAST_TYPE.ERROR,
-            title: "Erro!",
-            message: "Não foi possível atualizar sua visualização. Tente novamente.",
+            title: t("common.toast.error"),
+            message: "Could not update your view. Please try again.",
           });
         });
     },

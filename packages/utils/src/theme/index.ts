@@ -38,6 +38,7 @@ export {
   parseOKLCH,
   getRelativeLuminance,
   getPerceptualBrightness,
+  getHexContrastRatio,
   // rgbToHex,
   type OKLCH,
   type RGB,

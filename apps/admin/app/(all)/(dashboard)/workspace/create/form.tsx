@@ -56,8 +56,8 @@ export function WorkspaceCreateForm() {
             .then(async () => {
               setToast({
                 type: TOAST_TYPE.SUCCESS,
-                title: "Sucesso!",
-                message: "Espaço de trabalho criado com sucesso.",
+                title: "Success!",
+                message: "Workspace created successfully.",
               });
               router.push(`/workspace`);
             })
@@ -65,7 +65,7 @@ export function WorkspaceCreateForm() {
               setToast({
                 type: TOAST_TYPE.ERROR,
                 title: "Erro!",
-                message: "Não foi possível criar o espaço de trabalho. Tente novamente.",
+                message: "Could not create workspace. Try again.",
               });
             });
         } else setSlugError(true);
@@ -74,7 +74,7 @@ export function WorkspaceCreateForm() {
         setToast({
           type: TOAST_TYPE.ERROR,
           title: "Erro!",
-          message: "Ocorreu um erro ao criar o espaço de trabalho. Tente novamente.",
+          message: "An error occurred while creating the workspace. Try again.",
         });
       });
   };
@@ -91,7 +91,7 @@ export function WorkspaceCreateForm() {
     <div className="space-y-8">
       <div className="grid-col grid w-full max-w-4xl grid-cols-1 items-start justify-between gap-x-10 gap-y-6 lg:grid-cols-2">
         <div className="flex flex-col gap-1">
-          <h4 className="text-13 text-tertiary">Dê um nome ao seu espaço de trabalho</h4>
+          <h4 className="text-13 text-tertiary">Give your workspace a name</h4>
           <div className="flex flex-col gap-1">
             <Controller
               control={control}
@@ -113,7 +113,7 @@ export function WorkspaceCreateForm() {
                   }}
                   ref={ref}
                   hasError={Boolean(errors.name)}
-                  placeholder="Algo familiar e reconhecível é sempre melhor."
+                  placeholder="Something familiar and recognizable is always better."
                   className="w-full"
                 />
               )}
@@ -122,7 +122,7 @@ export function WorkspaceCreateForm() {
           </div>
         </div>
         <div className="flex flex-col gap-1">
-          <h4 className="text-13 text-tertiary">Defina a URL do seu workspace</h4>
+          <h4 className="text-13 text-tertiary">Define the URL of your workspace</h4>
           <div className="flex w-full items-center gap-0.5 rounded-md border-[0.5px] border-subtle px-3">
             <span className="text-13 whitespace-nowrap text-secondary">{workspaceBaseURL}</span>
             <Controller
@@ -149,26 +149,26 @@ export function WorkspaceCreateForm() {
               )}
             />
           </div>
-          {slugError && <p className="text-13 text-danger-primary">Esta URL já está em uso. Tente outra.</p>}
+          {slugError && <p className="text-13 text-danger-primary">This URL is already in use. Try another.</p>}
           {invalidSlug && (
             <p className="text-13 text-danger-primary">{`A URL pode conter apenas ( - ), ( _ ) e caracteres alfanuméricos.`}</p>
           )}
           {errors.slug && <span className="text-11 text-danger-primary">{errors.slug.message}</span>}
         </div>
         <div className="flex flex-col gap-1">
-          <h4 className="text-13 text-tertiary">Quantas pessoas usarão este espaço de trabalho?</h4>
+          <h4 className="text-13 text-tertiary">How many people will use this workspace?</h4>
           <div className="w-full">
             <Controller
               name="organization_size"
               control={control}
-              rules={{ required: "Este campo é obrigatório." }}
+              rules={{ required: "This field is required." }}
               render={({ field: { value, onChange } }) => (
                 <CustomSelect
                   value={value}
                   onChange={onChange}
                   label={
                     ORGANIZATION_SIZE.find((c) => c === value) ?? (
-                      <span className="text-placeholder">Selecione um intervalo</span>
+                      <span className="text-placeholder">Select a range</span>
                     )
                   }
                   buttonClassName="!border-[0.5px] !border-subtle !shadow-none"
@@ -196,10 +196,10 @@ export function WorkspaceCreateForm() {
           disabled={!isValid}
           loading={isSubmitting}
         >
-          {isSubmitting ? "Criando…" : "Criar espaço de trabalho"}
+          {isSubmitting ? "Creating…" : "Create workspace"}
         </Button>
         <Link className={getButtonStyling("secondary", "lg")} href="/workspace">
-          Voltar
+          Back
         </Link>
       </div>
     </div>

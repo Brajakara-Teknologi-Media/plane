@@ -18,8 +18,8 @@ import { ContextMenu, CustomMenu } from "@plane/ui";
 // components
 import { cn } from "@plane/utils";
 import { DeletePageModal } from "@/components/pages/modals/delete-page-modal";
-// hooks
 import { usePageOperations } from "@/hooks/use-page-operations";
+import { useTranslation } from "@plane/i18n";
 // plane web components
 import { MovePageModal } from "@/plane-web/components/pages";
 // plane web hooks
@@ -56,6 +56,8 @@ export const PageActions = observer(function PageActions(props: Props) {
   // states
   const [deletePageModal, setDeletePageModal] = useState(false);
   const [movePageModal, setMovePageModal] = useState(false);
+  // i18n
+  const { t } = useTranslation();
   // params
   const { workspaceSlug } = useParams();
   // page flag
@@ -103,14 +105,14 @@ export const PageActions = observer(function PageActions(props: Props) {
         {
           key: "open-in-new-tab",
           action: pageOperations.openInNewTab,
-          title: "Abrir em nova aba",
+          title: t("common.open_in_new_tab"),
           icon: NewTabIcon,
           shouldRender: true,
         },
         {
           key: "copy-link",
           action: pageOperations.copyLink,
-          title: "Copiar link",
+          title: t("common.copy_link"),
           icon: LinkIcon,
           shouldRender: true,
         },
@@ -119,7 +121,7 @@ export const PageActions = observer(function PageActions(props: Props) {
           action: () => {
             pageOperations.duplicate();
           },
-          title: "Fazer uma cópia",
+          title: "Make a copy",
           icon: CopyIcon,
           shouldRender: canCurrentUserDuplicatePage,
         },
@@ -137,7 +139,7 @@ export const PageActions = observer(function PageActions(props: Props) {
           action: () => {
             setDeletePageModal(true);
           },
-          title: "Excluir",
+          title: t("common.delete"),
           icon: TrashIcon,
           shouldRender: canCurrentUserDeletePage && !!archived_at,
         },
@@ -165,6 +167,7 @@ export const PageActions = observer(function PageActions(props: Props) {
       canCurrentUserArchivePage,
       canCurrentUserDeletePage,
       canCurrentUserMovePage,
+      t,
       isMovePageEnabled,
       pageOperations,
     ]

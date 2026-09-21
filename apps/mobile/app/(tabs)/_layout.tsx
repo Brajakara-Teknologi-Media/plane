@@ -22,15 +22,15 @@ export default function TabsLayout() {
     >
       <Tabs.Screen
         name="index"
-        options={{ title: "Início", tabBarIcon: ({ color }) => <Home size={22} color={color} /> }}
+        options={{ title: "Home", tabBarIcon: ({ color }) => <Home size={22} color={color} /> }}
       />
       <Tabs.Screen
         name="work-items"
-        options={{ title: "Chamados", tabBarIcon: ({ color }) => <LayoutGrid size={22} color={color} /> }}
+        options={{ title: "Work Items", tabBarIcon: ({ color }) => <LayoutGrid size={22} color={color} /> }}
       />
       <Tabs.Screen
         name="intake"
-        options={{ title: "Solicitações", tabBarIcon: ({ color }) => <Inbox size={22} color={color} /> }}
+        options={{ title: "Requests", tabBarIcon: ({ color }) => <Inbox size={22} color={color} /> }}
       />
       <Tabs.Screen
         name="visits"

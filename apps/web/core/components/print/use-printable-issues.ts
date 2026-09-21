@@ -28,8 +28,8 @@ const flattenGroupedIssueIds = (grouped: TGroupedIssueIds): string[] => {
 };
 
 /**
- * Chamados atualmente carregados em um layout, já na ordem e com os filtros que
- * a tela aplicou — é exatamente isso que vai para o documento de impressão.
+ * Work Items currently loaded in a layout, already in the order and with the
+ * filters the screen applied — that is exactly what goes into the print document.
  */
 export const usePrintableIssues = (storeType: EIssuesStoreType): TIssue[] => {
   const { issues } = useIssues(storeType);

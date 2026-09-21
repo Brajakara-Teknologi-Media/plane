@@ -18,27 +18,27 @@ import { usePlatformOS } from "@/hooks/use-platform-os";
 import { usePrint, type TPrintMode } from "./use-print";
 
 type Props = {
-  /** Estratégia de impressão — ver styles/print.css. */
+  /** Print strategy — see styles/print.css. */
   mode?: TPrintMode;
-  /** Nome sugerido para o arquivo PDF. */
+  /** Suggested name for the PDF file. */
   documentTitle?: string;
-  /** `icon` para barras de ferramentas, `label` quando há espaço para o texto. */
+  /** `icon` for toolbars, `label` when there is room for text. */
   appearance?: "icon" | "label";
   size?: "sm" | "base" | "lg" | "xl";
   className?: string;
   disabled?: boolean;
   onBeforePrint?: () => void;
   /**
-   * Tipo e id do que está sendo impresso. Imprimir é acesso a dado pessoal e
-   * precisa constar na trilha da LGPD — registrar aqui, no botão, garante que
-   * nenhuma tela esqueça de fazê-lo.
+   * Type and id of what is being printed. Printing is access to personal data and
+   * must appear in the LGPD audit trail — registering it here, on the button,
+   * guarantees no screen forgets to do it.
    */
   auditEntity?: string;
   auditEntityId?: string;
   auditMetadata?: Record<string, unknown>;
 };
 
-/** Botão "Imprimir" reutilizável — dispara o diálogo de impressão do navegador. */
+/** Reusable "Print" button — opens the browser's print dialog. */
 export const PrintButton = function PrintButton(props: Props) {
   const {
     mode = "document",

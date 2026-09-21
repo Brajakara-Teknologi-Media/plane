@@ -96,26 +96,26 @@ const errorCodeMessages: {
 } = {
   // global
   [EAuthenticationErrorCodes.INSTANCE_NOT_CONFIGURED]: {
-    title: `Instância não configurada`,
-    message: () => `Instância não configurada. Entre em contato com o administrador.`,
+    title: `Instance not configured`,
+    message: () => `Instance not configured. Entre em contato com o administrador.`,
   },
   [EAuthenticationErrorCodes.SIGNUP_DISABLED]: {
     title: `Cadastro desativado`,
     message: () => `Cadastro desativado. Entre em contato com o administrador.`,
   },
   [EAuthenticationErrorCodes.INVALID_PASSWORD]: {
-    title: `Senha inválida`,
-    message: () => `Senha inválida. Tente novamente.`,
+    title: `Invalid password`,
+    message: () => `Invalid password. Tente novamente.`,
   },
   [EAuthenticationErrorCodes.SMTP_NOT_CONFIGURED]: {
-    title: `SMTP não configurado`,
-    message: () => `SMTP não configurado. Entre em contato com o administrador.`,
+    title: `SMTP not configured`,
+    message: () => `SMTP not configured. Entre em contato com o administrador.`,
   },
 
   // email check in both sign up and sign in
   [EAuthenticationErrorCodes.INVALID_EMAIL]: {
-    title: `E-mail inválido`,
-    message: () => `E-mail inválido. Tente novamente.`,
+    title: `Invalid email`,
+    message: () => `Invalid email. Tente novamente.`,
   },
   [EAuthenticationErrorCodes.EMAIL_REQUIRED]: {
     title: `E-mail obrigatório`,
@@ -124,7 +124,7 @@ const errorCodeMessages: {
 
   // sign up
   [EAuthenticationErrorCodes.USER_ALREADY_EXIST]: {
-    title: `Usuário já cadastrado`,
+    title: `Username já cadastrado`,
     message: (email = undefined) => (
       <div>
         Sua conta já está cadastrada.&nbsp;
@@ -139,24 +139,24 @@ const errorCodeMessages: {
     ),
   },
   [EAuthenticationErrorCodes.REQUIRED_EMAIL_PASSWORD_SIGN_UP]: {
-    title: `E-mail e senha são obrigatórios`,
-    message: () => `E-mail e senha são obrigatórios. Tente novamente.`,
+    title: `Email and password are required`,
+    message: () => `Email and password are required. Tente novamente.`,
   },
   [EAuthenticationErrorCodes.AUTHENTICATION_FAILED_SIGN_UP]: {
-    title: `Falha na autenticação`,
-    message: () => `Falha na autenticação. Tente novamente.`,
+    title: `Authentication failed`,
+    message: () => `Authentication failed. Please try again.`,
   },
   [EAuthenticationErrorCodes.INVALID_EMAIL_SIGN_UP]: {
-    title: `E-mail inválido`,
-    message: () => `E-mail inválido. Tente novamente.`,
+    title: `Invalid email`,
+    message: () => `Invalid email. Tente novamente.`,
   },
   [EAuthenticationErrorCodes.MAGIC_SIGN_UP_EMAIL_CODE_REQUIRED]: {
     title: `E-mail e código são obrigatórios`,
     message: () => `E-mail e código são obrigatórios. Tente novamente.`,
   },
   [EAuthenticationErrorCodes.INVALID_EMAIL_MAGIC_SIGN_UP]: {
-    title: `E-mail inválido`,
-    message: () => `E-mail inválido. Tente novamente.`,
+    title: `Invalid email`,
+    message: () => `Invalid email. Tente novamente.`,
   },
 
   // sign in
@@ -166,7 +166,7 @@ const errorCodeMessages: {
   },
 
   [EAuthenticationErrorCodes.USER_DOES_NOT_EXIST]: {
-    title: `Usuário não encontrado`,
+    title: `Username não encontrado`,
     message: (email = undefined) => (
       <div>
         Nenhuma conta encontrada.&nbsp;
@@ -181,33 +181,33 @@ const errorCodeMessages: {
     ),
   },
   [EAuthenticationErrorCodes.REQUIRED_EMAIL_PASSWORD_SIGN_IN]: {
-    title: `E-mail e senha são obrigatórios`,
-    message: () => `E-mail e senha são obrigatórios. Tente novamente.`,
+    title: `Email and password are required`,
+    message: () => `Email and password are required. Tente novamente.`,
   },
   [EAuthenticationErrorCodes.AUTHENTICATION_FAILED_SIGN_IN]: {
-    title: `Falha na autenticação`,
-    message: () => `Falha na autenticação. Tente novamente.`,
+    title: `Authentication failed`,
+    message: () => `Authentication failed. Please try again.`,
   },
   [EAuthenticationErrorCodes.INVALID_EMAIL_SIGN_IN]: {
-    title: `E-mail inválido`,
-    message: () => `E-mail inválido. Tente novamente.`,
+    title: `Invalid email`,
+    message: () => `Invalid email. Tente novamente.`,
   },
   [EAuthenticationErrorCodes.MAGIC_SIGN_IN_EMAIL_CODE_REQUIRED]: {
     title: `E-mail e código são obrigatórios`,
     message: () => `E-mail e código são obrigatórios. Tente novamente.`,
   },
   [EAuthenticationErrorCodes.INVALID_EMAIL_MAGIC_SIGN_IN]: {
-    title: `E-mail inválido`,
-    message: () => `E-mail inválido. Tente novamente.`,
+    title: `Invalid email`,
+    message: () => `Invalid email. Tente novamente.`,
   },
 
   // Both Sign in and Sign up
   [EAuthenticationErrorCodes.INVALID_MAGIC_CODE_SIGN_IN]: {
-    title: `Falha na autenticação`,
+    title: `Authentication failed`,
     message: () => `Código mágico inválido. Tente novamente.`,
   },
   [EAuthenticationErrorCodes.INVALID_MAGIC_CODE_SIGN_UP]: {
-    title: `Falha na autenticação`,
+    title: `Authentication failed`,
     message: () => `Código mágico inválido. Tente novamente.`,
   },
   [EAuthenticationErrorCodes.EXPIRED_MAGIC_CODE_SIGN_IN]: {
@@ -305,15 +305,15 @@ const errorCodeMessages: {
     message: () => `Senha de administrador inválida. Tente novamente.`,
   },
   [EAuthenticationErrorCodes.REQUIRED_ADMIN_EMAIL_PASSWORD]: {
-    title: `E-mail e senha são obrigatórios`,
-    message: () => `E-mail e senha são obrigatórios. Tente novamente.`,
+    title: `Email and password are required`,
+    message: () => `Email and password are required. Tente novamente.`,
   },
   [EAuthenticationErrorCodes.ADMIN_AUTHENTICATION_FAILED]: {
-    title: `Falha na autenticação`,
-    message: () => `Falha na autenticação. Tente novamente.`,
+    title: `Authentication failed`,
+    message: () => `Authentication failed. Please try again.`,
   },
   [EAuthenticationErrorCodes.ADMIN_USER_ALREADY_EXIST]: {
-    title: `Usuário administrador já existe`,
+    title: `Username administrador já existe`,
     message: () => (
       <div>
         O usuário administrador já existe.&nbsp;
@@ -325,7 +325,7 @@ const errorCodeMessages: {
     ),
   },
   [EAuthenticationErrorCodes.ADMIN_USER_DOES_NOT_EXIST]: {
-    title: `Usuário administrador não encontrado`,
+    title: `Username administrador não encontrado`,
     message: () => (
       <div>
         O usuário administrador não existe.&nbsp;

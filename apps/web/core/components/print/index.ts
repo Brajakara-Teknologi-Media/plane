@@ -14,7 +14,7 @@ export * from "./print-section";
 export * from "./use-print";
 export * from "./use-print-settings";
 export * from "./use-printable-issues";
-// documentos prontos por domínio
+// ready-made print documents by domain
 export * from "./documents/chat-transcript-print-document";
 export * from "./documents/cycle-print-document";
 export * from "./documents/intake-print-document";

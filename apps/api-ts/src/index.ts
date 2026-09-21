@@ -56,22 +56,22 @@ function errorHandler({ code, error, set }: any) {
     set.status = (error as any).status;
     return { detail: (error as any).message };
   }
-  if (code === "NOT_FOUND") { set.status = 404; return { detail: "Não encontrado." }; }
-  if (code === "VALIDATION") { set.status = 400; return { detail: "Dados da requisição inválidos.", errors: (error as any)?.message }; }
-  // Erros do Prisma que têm equivalente HTTP direto. Sem isso, buscar um
-  // registro inexistente (findFirstOrThrow/update) vira 500 em vez de 404.
+  if (code === "NOT_FOUND") { set.status = 404; return { detail: "Not found." }; }
+  if (code === "VALIDATION") { set.status = 400; return { detail: "Invalid request data.", errors: (error as any)?.message }; }
+  // Prisma errors that have direct HTTP equivalents. Without this, looking up
+  // a non-existent record (findFirstOrThrow/update) becomes 500 instead of 404.
   const prismaCode = (error as any)?.code;
-  if (prismaCode === "P2025") { set.status = 404; return { detail: "Não encontrado." }; }
-  if (prismaCode === "P2002") { set.status = 409; return { detail: "Registro já existe." }; }
-  if (prismaCode === "P2003") { set.status = 400; return { detail: "Referência inválida." }; }
+  if (prismaCode === "P2025") { set.status = 404; return { detail: "Not found." }; }
+  if (prismaCode === "P2002") { set.status = 409; return { detail: "Record already exists." }; }
+  if (prismaCode === "P2003") { set.status = 400; return { detail: "Invalid reference." }; }
   const msg = error?.message ?? "";
-  if (msg.includes("Credenciais de autenticação") || msg.includes("Não autenticado")) {
+  if (msg.includes("Authentication credentials") || msg.includes("Not authenticated")) {
     set.status = 401;
     return { detail: msg };
   }
   set.status = 500;
   console.error("[error]", error);
-  return { detail: "Erro interno do servidor." };
+  return { detail: "Internal server error." };
 }
 
 // ── Auth routes live at /auth/* (no /api/v1 prefix) ──────────────────────────

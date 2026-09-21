@@ -1,0 +1,229 @@
+{
+  "chat": {
+    "app": {
+      "status": {
+        "active": "Aktif",
+        "queued": "Dalam Antrian",
+        "bot": "Bot",
+        "closed": "Ditutup"
+      },
+      "connection": {
+        "connected_text": "Waktu nyata",
+        "connected_help": "Terhubung: pesan tiba langsung.",
+        "connecting_text": "Menghubungkan",
+        "connecting_help": "Membangun koneksi waktu nyata.",
+        "reconnecting_text": "Menghubungkan ulang",
+        "reconnecting_help": "Koneksi terputus. Pesan baru mungkin tertunda hingga koneksi kembali."
+      },
+      "end_modal": {
+        "system_label": "Sistem layanan",
+        "select_system_placeholder": "Pilih sistem",
+        "already_classified": "Sudah diklasifikasikan sebagai <strong>{project}</strong>.",
+        "contact_registration": "Pendaftaran kontak",
+        "cancel": "Batal",
+        "end": "Akhiri",
+        "choose_system_title": "Pilih sistem layanan"
+      },
+      "new_chat_modal": {
+        "search_hint": "Cari kontak atau masukkan nomor",
+        "search_contact_label": "Cari kontak",
+        "whatsapp_number_label": "Nomor WhatsApp",
+        "or": "atau",
+        "unnamed_contact": "Tanpa nama",
+        "initial_message_label": "Pesan awal (opsional)",
+        "start_whatsapp_btn": "Mulai chat WhatsApp"
+      },
+      "transfer_modal": {
+        "title": "Transfer layanan",
+        "choose_attendant": "— pilih petugas"
+      },
+      "message_preview": {
+        "image": "📷 Gambar",
+        "audio": "🎤 Audio",
+        "file": "📎 File",
+        "file_fallback": "File"
+      },
+      "sidebar": {
+        "information_heading": "Informasi",
+        "channel": "Saluran",
+        "system": "Sistem",
+        "protocol": "Protokol",
+        "status": "Status",
+        "rating_heading": "Penilaian",
+        "quick_actions_heading": "Aksi cepat",
+        "contact_channels": "Saluran kontak"
+      },
+      "messages": {
+        "versions": "{count} versi",
+        "edited": "diedit",
+        "empty_text": "(kosong)",
+        "cancel": "Batal",
+        "open_full_size": "Buka ukuran penuh"
+      },
+      "actions": {
+        "transfer": "Transfer",
+        "end": "Akhiri",
+        "copy_chat_link": "Salin tautan chat",
+        "end_service": "Akhiri layanan",
+        "transfer_service_title": "Transfer layanan",
+        "end_service_title": "Akhiri layanan",
+        "claim": "Ambil alih",
+        "claim_now": "Ambil alih sekarang",
+        "claim_service": "Ambil alih layanan",
+        "edit_message": "Edit pesan",
+        "delete_message": "Hapus pesan"
+      },
+      "tabs": {
+        "active": "Aktif",
+        "queued": "Dalam Antrian",
+        "bot": "Bot",
+        "closed": "Ditutup"
+      },
+      "contact": {
+        "email_optional": "Surel (opsional)"
+      },
+      "workitem_description": {
+        "title": "Layanan chat",
+        "protocol_word": "protokol"
+      }
+    },
+    "config": {
+      "loading": "Memuat…",
+      "tabs": {
+        "messages": "Pesan",
+        "menu": "Menu",
+        "queues": "Antrean",
+        "flows": "Alur",
+        "schedules": "Jadwal",
+        "attendants": "Petugas",
+        "provider": "WhatsApp (Z-API)"
+      },
+      "fields": {
+        "welcome_message": "Pesan sambutan",
+        "menu_header": "Header menu",
+        "ask_name": "Minta nama",
+        "confirm_contact": "Konfirmasi kontak (gunakan {name})",
+        "no_attendants": "Tidak ada petugas",
+        "idle_prompt": "Tidak aktif 10 mnt",
+        "idle_close": "Tutup karena tidak aktif (gunakan {protocol})",
+        "closed": "Penutupan (gunakan {protocol})",
+        "routing_alpha": "Bobot α (chat aktif)",
+        "routing_beta": "Bobot β (layanan hari ini)",
+        "outside_hours_message": "Pesan di luar jam kerja",
+        "key": "Tombol",
+        "queue": "Antrean",
+        "flow": "Alur",
+        "message": "Pesan"
+      },
+      "actions": {
+        "delete": "Hapus",
+        "add_option": "+ Tambah opsi",
+        "add_step": "+ Langkah",
+        "add_row": "+ Baris",
+        "add_attendant": "tambah",
+        "save_flow": "Simpan alur",
+        "remove_named": "Hapus {name}",
+        "remove_step": "Hapus langkah"
+      },
+      "placeholders": {
+        "new_queue": "Antrean baru",
+        "select_queue": "Pilih antrean…",
+        "close_message": "Pesan penutup (opsional)",
+        "step_text": "Teks",
+        "save_as": "Simpan sebagai (mis. teks)"
+      },
+      "options": {
+        "queue": "Antrean",
+        "flow": "Alur",
+        "message": "Pesan"
+      },
+      "steps": {
+        "message": "Kirim pesan",
+        "ask": "Tanya dan simpan jawaban",
+        "queue": "Teruskan ke antrean",
+        "close": "Ucapkan terima kasih dan tutup"
+      },
+      "flows_hint": "Susun alur dalam langkah — mis. \"Keluhan\" → \"Tanya dan simpan jawaban\" (Jelaskan keluhan Anda) → \"Ucapkan terima kasih dan tutup\".",
+      "attendant_invisible_hint": "Petugas yang tak terlihat tidak menerima chat baru, meski terhubung.",
+      "invisible_count": "{count} tak terlihat",
+      "provider": {
+        "active": "Aktif"
+      },
+      "messages": {
+        "messages_updated": "Pesan diperbarui.",
+        "queue_members_updated": "Petugas diperbarui.",
+        "attendant_invisible": "Petugas tak terlihat.",
+        "attendant_visible": "Petugas terlihat."
+      },
+      "selected_count": "{selected} dari {total}"
+    },
+    "dashboard": {
+      "loading": "Memuat dashboard…",
+      "stats": {
+        "active": "Aktif",
+        "queued": "Antri",
+        "bot": "Di bot (tanpa agen)",
+        "closed_today": "Ditutup hari ini"
+      },
+      "attendants": {
+        "title": "Agen",
+        "online_count": "online",
+        "table": {
+          "attendant": "Agen",
+          "status": "Status",
+          "active_chats": "Chat aktif",
+          "chats_today": "Chat hari ini"
+        },
+        "status": {
+          "invisible": "Tidak terlihat",
+          "online": "Online",
+          "offline": "Offline"
+        },
+        "empty": "Tidak ada agen aktif saat ini.",
+        "spy_tip": "Untuk \"memata-matai\" percakapan, kembali ke daftar dan buka chat apa pun — Anda menerima pesan langsung tanpa mengambil alih."
+      },
+      "ratings": {
+        "title": "Penilaian agen",
+        "overall_avg": "rata-rata keseluruhan",
+        "table": {
+          "rank": "#",
+          "attendant": "Agen",
+          "average": "Rata-rata",
+          "ratings": "Penilaian",
+          "distribution": "Distribusi (1→5)"
+        },
+        "empty": "Belum ada penilaian yang tercatat.",
+        "recent_comments": "Komentar terbaru"
+      },
+      "sla": {
+        "title": "SLA layanan",
+        "last_days": "terakhir",
+        "days": "hari",
+        "stats": {
+          "attendances": "Layanan",
+          "first_response_avg": "Respons ke-1 (rata-rata)",
+          "resolution_avg": "Resolusi (rata-rata)",
+          "breached": "Di luar SLA"
+        },
+        "table": {
+          "attendant": "Agen",
+          "attendances": "Layanan",
+          "first_response": "Respons ke-1",
+          "resolution": "Resolusi",
+          "breached": "Di luar SLA"
+        },
+        "empty": "Tidak ada data SLA dalam periode."
+      }
+    },
+    "readonly": {
+      "loading": "Memuat…",
+      "not_found": "Obrolan tidak ditemukan.",
+      "service_title": "Layanan",
+      "protocol": "Protokol",
+      "document_title": "Layanan #{protocol}",
+      "file": "Berkas",
+      "deleted": "(dihapus)",
+      "edited": "(diedit)"
+    }
+  }
+}

@@ -10,13 +10,13 @@ import { useTheme } from "@/theme";
 
 const ENTITY_TYPES: Record<number, string> = {
   0: "Prefeitura",
-  1: "Câmara",
+  1: "Council",
   2: "Outros",
   3: "Escola",
   4: "Autarquia",
   5: "RPPS",
   6: "SAAE",
-  7: "Consórcio",
+  7: "Consortium",
 };
 
 export default function EntitiesScreen() {

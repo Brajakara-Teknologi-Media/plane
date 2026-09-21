@@ -6,13 +6,13 @@ export type { TEntity };
 
 const ENTITY_TYPE_LABELS: Record<number, string> = {
   0: "Prefeitura",
-  1: "Câmara",
+  1: "Council",
   2: "Outros",
   3: "Escola",
   4: "Autarquia",
   5: "RPPS",
   6: "SAAE",
-  7: "Consórcio",
+  7: "Consortium",
 };
 
 export function entityTypeLabel(type?: number | null): string {
@@ -34,7 +34,9 @@ export class EntityService extends APIService {
   async update(workspaceSlug: string, entityId: string, data: Partial<TEntity>): Promise<TEntity> {
     return this.patch(`/api/workspaces/${workspaceSlug}/entities/${entityId}/`, data)
       .then((res) => res?.data)
-      .catch((err) => { throw err?.response?.data; });
+      .catch((err) => {
+        throw err?.response?.data;
+      });
   }
 }
 

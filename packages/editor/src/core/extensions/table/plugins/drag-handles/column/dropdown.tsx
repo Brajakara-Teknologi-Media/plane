@@ -24,13 +24,13 @@ const DROPDOWN_ITEMS: {
 }[] = [
   {
     key: "insert-left",
-    label: "Inserir à esquerda",
+    label: "Insert left",
     icon: ArrowLeft,
     action: (editor) => editor.chain().focus().addColumnBefore().run(),
   },
   {
     key: "insert-right",
-    label: "Inserir à direita",
+    label: "Insert right",
     icon: ArrowRight,
     action: (editor) => editor.chain().focus().addColumnAfter().run(),
   },
@@ -51,7 +51,7 @@ const DROPDOWN_ITEMS: {
   },
   {
     key: "clear-contents",
-    label: "Limpar conteúdo",
+    label: "Clear content",
     icon: CloseIcon,
     action: (editor) => editor.chain().focus().clearSelectedCells().run(),
   },

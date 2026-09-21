@@ -48,15 +48,18 @@ export function GeneratedTokenDetails(props: Props) {
         className="mt-4 flex w-full items-center justify-between truncate rounded-md border-[0.5px] border-subtle px-3 py-2 text-13 font-medium outline-none"
       >
         <span className="truncate pr-2">{tokenDetails.token}</span>
-        <Tooltip tooltipContent="Copiar chave secreta" isMobile={isMobile}>
+        <Tooltip tooltipContent={t("common.copy_secret_key_tooltip")} isMobile={isMobile}>
           <CopyIcon className="h-4 w-4 flex-shrink-0 text-placeholder" />
         </Tooltip>
       </button>
       <div className="mt-6 flex items-center justify-between">
         <p className="text-11 text-placeholder">
           {tokenDetails.expired_at
-            ? `Expira em ${renderFormattedDate(tokenDetails.expired_at)} às ${renderFormattedTime(tokenDetails.expired_at)}`
-            : "Nunca expira"}
+            ? t("common.token_expires_at", {
+                date: renderFormattedDate(tokenDetails.expired_at),
+                time: renderFormattedTime(tokenDetails.expired_at),
+              })
+            : t("workspace_settings.settings.api_tokens.never_expires")}
         </p>
         <Button variant="secondary" onClick={handleClose}>
           {t("close")}

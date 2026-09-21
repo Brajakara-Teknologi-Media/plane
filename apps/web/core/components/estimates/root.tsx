@@ -74,7 +74,7 @@ export const EstimateRoot = observer(function EstimateRoot(props: TEstimateRoot)
               />
               {/* active estimates section */}
               <div className="mt-12 flex flex-col gap-y-4">
-                <SettingsHeading title="Lista de estimativas" variant="h6" />
+                <SettingsHeading title={t("misc.estimates.active_title")} variant="h6" />
                 <EstimateList
                   estimateIds={[currentActiveEstimateId]}
                   isAdmin={isAdmin}
@@ -105,13 +105,8 @@ export const EstimateRoot = observer(function EstimateRoot(props: TEstimateRoot)
           {archivedEstimateIds && archivedEstimateIds.length > 0 && (
             <div className="mt-12 flex flex-col gap-y-4">
               <SettingsHeading
-                title="Estimativas arquivadas"
-                description={
-                  <>
-                    As estimativas passaram por mudanças. Estas são as estimativas que você tinha em versões
-                    anteriores e que não estavam em uso.
-                  </>
-                }
+                title={t("misc.estimates.archived.title")}
+                description={t("misc.estimates.archived.description")}
                 variant="h6"
               />
               <EstimateList estimateIds={archivedEstimateIds} isAdmin={isAdmin} />

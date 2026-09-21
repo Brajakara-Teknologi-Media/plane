@@ -87,9 +87,9 @@ export const SendProjectInvitationModal = observer(function SendProjectInvitatio
         if (onSuccess) onSuccess();
         onClose();
         setToast({
-          title: "Sucesso!",
+          title: t("common.toast.success"),
           type: TOAST_TYPE.SUCCESS,
-          message: "Membros adicionados com sucesso.",
+          message: "Members added successfully.",
         });
       })
       .catch((error) => {
@@ -189,7 +189,7 @@ export const SendProjectInvitationModal = observer(function SendProjectInvitatio
                   <Controller
                     control={control}
                     name={`members.${index}.member_id`}
-                    rules={{ required: "Selecione um membro" }}
+                    rules={{ required: t("common.select_a_member") }}
                     render={({ field: { value, onChange } }) => {
                       const selectedMember = getWorkspaceMemberDetails(value);
                       return (
@@ -206,7 +206,7 @@ export const SendProjectInvitationModal = observer(function SendProjectInvitatio
                                   {selectedMember?.member.display_name}
                                 </div>
                               ) : (
-                                <div className="flex items-center gap-2 py-0.5">Selecionar colega</div>
+                                <div className="flex items-center gap-2 py-0.5">{t("common.select_teammate")}</div>
                               )}
                               <ChevronDownIcon className="h-3 w-3" aria-hidden="true" />
                             </button>
@@ -240,7 +240,7 @@ export const SendProjectInvitationModal = observer(function SendProjectInvitatio
                     <Controller
                       name={`members.${index}.role`}
                       control={control}
-                      rules={{ required: "Selecionar cargo" }}
+                      rules={{ required: t("common.select_role") }}
                       render={({ field }) => (
                         <CustomSelect
                           {...field}

@@ -9,6 +9,7 @@ import type { TDocumentEventsServer } from "@plane/editor";
 import type { TDocumentEventsClient } from "@plane/editor/lib";
 import { DocumentCollaborativeEvents, getServerEventName } from "@plane/editor/lib";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { useTranslation } from "@plane/i18n";
 // store
 import type { TPageInstance } from "@/store/pages/base-page";
 
@@ -28,6 +29,7 @@ type Props = {
 export const useCollaborativePageActions = (props: Props) => {
   const { page } = props;
   const editorRef = page.editor.editorRef;
+  const { t } = useTranslation();
   // currentUserAction local state to track if the current action is being processed, a
   // local action is basically the action performed by the current user to avoid double operations
   const [currentActionBeingProcessed, setCurrentActionBeingProcessed] = useState<TDocumentEventsClient | null>(null);
@@ -37,27 +39,27 @@ export const useCollaborativePageActions = (props: Props) => {
     () => ({
       [DocumentCollaborativeEvents.lock.client]: {
         execute: (shouldSync?: boolean, recursive?: boolean) => page.lock({ shouldSync, recursive }),
-        errorMessage: "Não foi possível bloquear a página. Tente novamente mais tarde.",
+        errorMessage: "Could not lock page. Please try again later.",
       },
       [DocumentCollaborativeEvents.unlock.client]: {
         execute: (shouldSync?: boolean, recursive?: boolean) => page.unlock({ shouldSync, recursive }),
-        errorMessage: "Não foi possível desbloquear a página. Tente novamente mais tarde.",
+        errorMessage: "Could not unlock page. Please try again later.",
       },
       [DocumentCollaborativeEvents.archive.client]: {
         execute: (shouldSync?: boolean) => page.archive({ shouldSync }),
-        errorMessage: "Não foi possível arquivar a página. Tente novamente mais tarde.",
+        errorMessage: "Could not archive page. Please try again later.",
       },
       [DocumentCollaborativeEvents.unarchive.client]: {
         execute: (shouldSync?: boolean) => page.restore({ shouldSync }),
-        errorMessage: "Não foi possível restaurar a página. Tente novamente mais tarde.",
+        errorMessage: "Could not restore page. Please try again later.",
       },
       [DocumentCollaborativeEvents["make-public"].client]: {
         execute: (shouldSync?: boolean) => page.makePublic({ shouldSync }),
-        errorMessage: "Não foi possível tornar a página pública. Tente novamente mais tarde.",
+        errorMessage: "Could not make page public. Please try again later.",
       },
       [DocumentCollaborativeEvents["make-private"].client]: {
         execute: (shouldSync?: boolean) => page.makePrivate({ shouldSync }),
-        errorMessage: "Não foi possível tornar a página privada. Tente novamente mais tarde.",
+        errorMessage: "Could not make page private. Please try again later.",
       },
     }),
     [page]
@@ -80,13 +82,12 @@ export const useCollaborativePageActions = (props: Props) => {
         if (actionDetails?.errorMessage) {
           setToast({
             type: TOAST_TYPE.ERROR,
-            title: "Erro!",
-            message: actionDetails.errorMessage,
+            title: t("common.toast.error"),
           });
         }
       }
     },
-    [actionHandlerMap, editorRef]
+    [actionHandlerMap, editorRef, t]
   );
 
   useEffect(() => {

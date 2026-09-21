@@ -215,6 +215,7 @@ class ProjectViewSet(BaseViewSet):
                 )
                 | Q(network=2)
             )
+
         return Response(projects, status=status.HTTP_200_OK)
 
     @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")

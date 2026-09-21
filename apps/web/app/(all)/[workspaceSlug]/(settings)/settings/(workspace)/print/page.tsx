@@ -43,6 +43,8 @@ function PrintSettingsPage() {
   const { t } = useTranslation();
   const { printSettings, isLoading, mutate } = usePrintSettings(workspaceSlug?.toString());
 
+  const E = "workspace_settings.settings.print";
+
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [form, setForm] = useState<TWorkspacePrintSettings>(PRINT_SETTINGS_DEFAULTS);
   const [isSaving, setIsSaving] = useState(false);
@@ -52,9 +54,7 @@ function PrintSettingsPage() {
 
   useEffect(() => setForm(printSettings), [printSettings]);
 
-  const pageTitle = currentWorkspace?.name
-    ? `${currentWorkspace.name} - ${t("workspace_settings.settings.print.title")}`
-    : undefined;
+  const pageTitle = currentWorkspace?.name ? `${currentWorkspace.name} - ${t(`${E}.title`)}` : undefined;
 
   if (workspaceUserInfo && !isAdmin) {
     return <NotAuthorizedView section="settings" className="h-auto" />;
@@ -75,7 +75,7 @@ function PrintSettingsPage() {
     event.target.value = "";
     if (!file || !workspaceSlug || !currentWorkspace) return;
     if (file.size > MAX_FILE_SIZE) {
-      setToast({ type: TOAST_TYPE.ERROR, title: "Erro", message: "A imagem excede o tamanho máximo permitido." });
+      setToast({ type: TOAST_TYPE.ERROR, title: t("error"), message: t(`${E}.toasts.too_big`) });
       return;
     }
 
@@ -87,9 +87,9 @@ function PrintSettingsPage() {
         file
       );
       await persist({ logo_asset: asset_id });
-      setToast({ type: TOAST_TYPE.SUCCESS, title: "Salvo", message: "Logo de impressão atualizado." });
+      setToast({ type: TOAST_TYPE.SUCCESS, title: t("saved"), message: t(`${E}.toasts.upload_success`) });
     } catch {
-      setToast({ type: TOAST_TYPE.ERROR, title: "Erro", message: "Não foi possível enviar o logo." });
+      setToast({ type: TOAST_TYPE.ERROR, title: t("error"), message: t(`${E}.toasts.upload_error`) });
     } finally {
       setIsUploading(false);
     }
@@ -98,9 +98,9 @@ function PrintSettingsPage() {
   const handleRemoveLogo = async () => {
     try {
       await persist({ logo_asset: null, logo_url: null });
-      setToast({ type: TOAST_TYPE.SUCCESS, title: "Salvo", message: "Logo de impressão removido." });
+      setToast({ type: TOAST_TYPE.SUCCESS, title: t("saved"), message: t(`${E}.toasts.remove_success`) });
     } catch {
-      setToast({ type: TOAST_TYPE.ERROR, title: "Erro", message: "Não foi possível remover o logo." });
+      setToast({ type: TOAST_TYPE.ERROR, title: t("error"), message: t(`${E}.toasts.remove_error`) });
     }
   };
 
@@ -112,10 +112,10 @@ function PrintSettingsPage() {
         footer_text: form.footer_text,
         show_generated_at: form.show_generated_at,
       });
-      setToast({ type: TOAST_TYPE.SUCCESS, title: "Salvo", message: "Configurações de impressão atualizadas." });
+      setToast({ type: TOAST_TYPE.SUCCESS, title: t("saved"), message: t(`${E}.toasts.success`) });
     } catch (err: unknown) {
       const error = err as { detail?: string };
-      setToast({ type: TOAST_TYPE.ERROR, title: "Erro", message: error?.detail || "Não foi possível salvar." });
+      setToast({ type: TOAST_TYPE.ERROR, title: t("error"), message: error?.detail || t("error") });
     } finally {
       setIsSaving(false);
     }
@@ -127,23 +127,20 @@ function PrintSettingsPage() {
   return (
     <SettingsContentWrapper header={<PrintWorkspaceSettingsHeader />} hugging>
       <PageHead title={pageTitle} />
-      <SettingsHeading
-        title={t("workspace_settings.settings.print.title")}
-        description="Defina o logo e os textos que aparecem no cabeçalho e no rodapé de tudo que for impresso a partir do sistema (chamados, listagens, solicitações, ciclos, módulos, visitas técnicas e relatórios)."
-      />
+      <SettingsHeading title={t(`${E}.title`)} description={t(`${E}.description`)} />
 
       {isLoading ? (
-        <div className="py-6 text-sm text-secondary">Carregando…</div>
+        <div className="text-sm py-6 text-secondary">{t("loading")}</div>
       ) : (
         <div className="flex max-w-2xl flex-col gap-6 py-2">
           <div className="flex flex-col gap-2">
-            <label className="text-sm font-medium text-secondary">Logo de impressão</label>
+            <label className="text-sm font-medium text-secondary">{t(`${E}.logo_label`)}</label>
             <div className="flex items-center gap-4">
               <div className="flex h-20 w-40 items-center justify-center rounded-md border border-subtle bg-surface-2 p-2">
                 {logoUrl ? (
-                  <img src={logoUrl} alt="Logo de impressão" className="max-h-full max-w-full object-contain" />
+                  <img src={logoUrl} alt={t(`${E}.logo_label`)} className="max-h-full max-w-full object-contain" />
                 ) : (
-                  <span className="text-13 text-tertiary">Sem logo</span>
+                  <span className="text-13 text-tertiary">{t(`${E}.logo_empty`)}</span>
                 )}
               </div>
               <div className="flex flex-col gap-2">
@@ -161,49 +158,45 @@ function PrintSettingsPage() {
                   prependIcon={<Upload />}
                   onClick={() => fileInputRef.current?.click()}
                 >
-                  {logoUrl ? "Trocar logo" : "Enviar logo"}
+                  {logoUrl ? t(`${E}.logo_change`) : t(`${E}.logo_upload`)}
                 </Button>
                 {logoUrl && (
                   <Button variant="error-outline" size="lg" prependIcon={<Trash2 />} onClick={handleRemoveLogo}>
-                    Remover
+                    {t(`${E}.logo_remove`)}
                   </Button>
                 )}
               </div>
             </div>
-            <p className="text-13 text-secondary">
-              Recomendado: PNG ou SVG com fundo transparente, altura mínima de 96px.
-            </p>
+            <p className="text-13 text-secondary">{t(`${E}.logo_hint`)}</p>
           </div>
 
           <div>
-            <label className="mb-1 block text-sm font-medium text-secondary">Texto do cabeçalho</label>
+            <label className="text-sm mb-1 block font-medium text-secondary">{t(`${E}.header_label`)}</label>
             <Input
               type="text"
               value={form.header_text ?? ""}
               onChange={(e) => set("header_text", e.target.value)}
-              placeholder={currentWorkspace?.name ?? "Nome da empresa"}
+              placeholder={currentWorkspace?.name ?? t(`${E}.header_placeholder`)}
               className="w-full"
             />
-            <p className="mt-1 text-13 text-secondary">
-              Aparece ao lado do logo. Deixe vazio para usar o nome do espaço de trabalho.
-            </p>
+            <p className="mt-1 text-13 text-secondary">{t(`${E}.header_hint`)}</p>
           </div>
 
           <div>
-            <label className="mb-1 block text-sm font-medium text-secondary">Texto do rodapé</label>
+            <label className="text-sm mb-1 block font-medium text-secondary">{t(`${E}.footer_label`)}</label>
             <Input
               type="text"
               value={form.footer_text ?? ""}
               onChange={(e) => set("footer_text", e.target.value)}
-              placeholder="Ex.: Documento gerado automaticamente — uso interno"
+              placeholder={t(`${E}.footer_placeholder`)}
               className="w-full"
             />
           </div>
 
           <div className="flex items-center justify-between rounded-md border border-subtle p-3">
             <div>
-              <p className="text-sm font-medium text-primary">Mostrar data e hora de geração</p>
-              <p className="text-13 text-secondary">Imprime no cabeçalho o momento em que o documento foi gerado.</p>
+              <p className="text-sm font-medium text-primary">{t(`${E}.show_date_label`)}</p>
+              <p className="text-13 text-secondary">{t(`${E}.show_date_desc`)}</p>
             </div>
             <ToggleSwitch
               value={form.show_generated_at}
@@ -212,30 +205,30 @@ function PrintSettingsPage() {
           </div>
 
           <div className="rounded-md border border-subtle bg-surface-2 p-4">
-            <p className="mb-3 text-13 font-medium text-secondary">Prévia do cabeçalho</p>
-            <div className="rounded-sm bg-white p-4 text-neutral-900">
-              <div className="flex items-start justify-between gap-4 border-b border-neutral-300 pb-3">
+            <p className="mb-3 text-13 font-medium text-secondary">{t(`${E}.preview_label`)}</p>
+            <div className="text-neutral-900 rounded-sm bg-white p-4">
+              <div className="border-neutral-300 flex items-start justify-between gap-4 border-b pb-3">
                 <div className="flex items-start gap-3">
                   {logoUrl && <img src={logoUrl} alt="" className="h-12 max-w-[180px] object-contain" />}
                   <div className="flex flex-col gap-0.5">
                     {headerPreview && <p className="text-sm font-semibold">{headerPreview}</p>}
-                    <p className="text-lg font-bold leading-tight">Chamado ABC-123</p>
+                    <p className="text-lg leading-tight font-bold">Chamado ABC-123</p>
                     <p className="text-xs">Exemplo de documento impresso</p>
                   </div>
                 </div>
                 {form.show_generated_at && (
-                  <p className="shrink-0 text-right text-[10px]">Gerado em {new Date().toLocaleString("pt-BR")}</p>
+                  <p className="shrink-0 text-right text-[10px]">Generated at {new Date().toLocaleString("pt-BR")}</p>
                 )}
               </div>
               {form.footer_text && (
-                <p className="mt-6 border-t border-neutral-300 pt-2 text-[10px]">{form.footer_text}</p>
+                <p className="border-neutral-300 mt-6 border-t pt-2 text-[10px]">{form.footer_text}</p>
               )}
             </div>
           </div>
 
           <div>
             <Button variant="primary" size="lg" onClick={handleSave} loading={isSaving}>
-              {isSaving ? "Salvando…" : "Salvar"}
+              {isSaving ? t(`${E}.saving`) : t(`${E}.save`)}
             </Button>
           </div>
         </div>

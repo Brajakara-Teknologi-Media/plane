@@ -29,13 +29,13 @@ export default function WikiScreen() {
         contentContainerStyle={{ padding: spacing.lg }}
         ItemSeparatorComponent={() => <View style={{ height: spacing.sm }} />}
         refreshControl={<RefreshControl refreshing={pages.loading} onRefresh={pages.refetch} tintColor={colors.primary} />}
-        ListEmptyComponent={<EmptyState title="Wiki vazia" description="Nenhuma página encontrada." />}
+        ListEmptyComponent={<EmptyState title="Empty wiki" description="No pages found." />}
         renderItem={({ item }) => (
           <Pressable onPress={() => router.push(`/wiki/${item.id}`)}>
             <Card>
               <Row align="space-between">
                 <Text weight="medium" numberOfLines={1} style={{ flex: 1 }}>
-                  {item.name || "Sem título"}
+                  {item.name || "Untitled"}
                 </Text>
                 {item.is_locked ? <Lock size={14} color={colors.textTertiary} /> : null}
               </Row>

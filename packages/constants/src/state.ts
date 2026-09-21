@@ -22,31 +22,31 @@ export const STATE_GROUPS: {
   backlog: {
     key: "backlog",
     label: "Backlog",
-    defaultStateName: "Pendências",
+    defaultStateName: "Backlog",
     color: "#d9d9d9",
   },
   unstarted: {
     key: "unstarted",
-    label: "Não iniciado",
-    defaultStateName: "A Fazer",
+    label: "Unstarted",
+    defaultStateName: "To Do",
     color: "#3f76ff",
   },
   started: {
     key: "started",
-    label: "Em andamento",
-    defaultStateName: "Em Desenvolvimento",
+    label: "In Progress",
+    defaultStateName: "In Development",
     color: "#f59e0b",
   },
   completed: {
     key: "completed",
-    label: "Concluído",
-    defaultStateName: "Concluído",
+    label: "Completed",
+    defaultStateName: "Completed",
     color: "#16a34a",
   },
   cancelled: {
     key: "cancelled",
-    label: "Cancelado",
-    defaultStateName: "Cancelado",
+    label: "Cancelled",
+    defaultStateName: "Cancelled",
     color: "#dc2626",
   },
 };
@@ -91,17 +91,17 @@ export const STATE_DISTRIBUTION = {
 export const PROGRESS_STATE_GROUPS_DETAILS = [
   {
     key: "completed_issues",
-    title: "Concluídos",
+    title: "Completed",
     color: "#16A34A",
   },
   {
     key: "started_issues",
-    title: "Em andamento",
+    title: "In Progress",
     color: "#F59E0B",
   },
   {
     key: "unstarted_issues",
-    title: "Não iniciados",
+    title: "Unstarted",
     color: "#3A3A3A",
   },
   {

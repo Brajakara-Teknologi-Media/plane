@@ -4,22 +4,22 @@
  * See the LICENSE file for details.
  */
 
-import {EUserPermissions, EUserPermissionsLevel} from "@plane/constants";
-import {useTranslation} from "@plane/i18n";
-import {CycleIcon, IntakeIcon, ModuleIcon, PageIcon, ViewsIcon, WorkItemsIcon} from "@plane/propel/icons";
-import type {EUserProjectRoles} from "@plane/types";
-import {observer} from "mobx-react";
+import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
+import { CycleIcon, IntakeIcon, ModuleIcon, PageIcon, ViewsIcon, WorkItemsIcon } from "@plane/propel/icons";
+import type { EUserProjectRoles } from "@plane/types";
+import { observer } from "mobx-react";
 import Link from "next/link";
-import {useParams, usePathname} from "next/navigation";
-import React, {useCallback, useMemo} from "react";
+import { useParams, usePathname } from "next/navigation";
+import React, { useCallback, useMemo } from "react";
 // plane ui
 // components
-import {SidebarNavItem} from "@/components/sidebar/sidebar-navigation";
+import { SidebarNavItem } from "@/components/sidebar/sidebar-navigation";
 // hooks
-import {useAppTheme} from "@/hooks/store/use-app-theme";
-import {useIssueDetail} from "@/hooks/store/use-issue-detail";
-import {useProject} from "@/hooks/store/use-project";
-import {useUserPermissions} from "@/hooks/store/user";
+import { useAppTheme } from "@/hooks/store/use-app-theme";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
+import { useProject } from "@/hooks/store/use-project";
+import { useUserPermissions } from "@/hooks/store/user";
 
 export type TNavigationItem = {
   name: string;
@@ -39,20 +39,22 @@ type TProjectItemsProps = {
 };
 
 export const ProjectNavigation = observer(function ProjectNavigation(props: TProjectItemsProps) {
-  const {workspaceSlug, projectId, additionalNavigationItems} = props;
-  const {workItem: workItemIdentifierFromRoute} = useParams();
+  const { workspaceSlug, projectId, additionalNavigationItems } = props;
+  const { workItem: workItemIdentifierFromRoute } = useParams();
   // store hooks
-  const {t} = useTranslation();
-  const {isExtendedProjectSidebarOpened, toggleExtendedProjectSidebar, toggleSidebar} = useAppTheme();
-  const {getPartialProjectById} = useProject();
-  const {allowPermissions} = useUserPermissions();
+  const { t } = useTranslation();
+  const { isExtendedProjectSidebarOpened, toggleExtendedProjectSidebar, toggleSidebar } = useAppTheme();
+  const { getPartialProjectById } = useProject();
+  const { allowPermissions } = useUserPermissions();
   const {
-    issue: {getIssueIdByIdentifier, getIssueById},
+    issue: { getIssueIdByIdentifier, getIssueById },
   } = useIssueDetail();
   // pathname
   const pathname = usePathname();
   // derived values
-  const workItemId = workItemIdentifierFromRoute ? getIssueIdByIdentifier(workItemIdentifierFromRoute?.toString()) : undefined;
+  const workItemId = workItemIdentifierFromRoute
+    ? getIssueIdByIdentifier(workItemIdentifierFromRoute?.toString())
+    : undefined;
   const workItem = workItemId ? getIssueById(workItemId) : undefined;
   const project = getPartialProjectById(projectId);
   // handlers
@@ -71,7 +73,7 @@ export const ProjectNavigation = observer(function ProjectNavigation(props: TPro
       {
         i18n_key: "sidebar.work_items",
         key: "work_items",
-        name: "Chamados",
+        name: "Work Items",
         href: `/${workspaceSlug}/projects/${projectId}/issues`,
         icon: WorkItemsIcon,
         access: [
@@ -159,7 +161,7 @@ export const ProjectNavigation = observer(function ProjectNavigation(props: TPro
       {
         i18n_key: "sidebar.intake",
         key: "intake",
-        name: "Solicitações",
+        name: "Requests",
         href: `/${workspaceSlug}/projects/${projectId}/intake`,
         icon: IntakeIcon,
         access: [
@@ -175,7 +177,7 @@ export const ProjectNavigation = observer(function ProjectNavigation(props: TPro
         sortOrder: 6,
       },
     ],
-    [project],
+    [project]
   );
 
   // memoized navigation items and adding additional navigation items
@@ -191,7 +193,9 @@ export const ProjectNavigation = observer(function ProjectNavigation(props: TPro
     };
 
     // sort navigation items by sortOrder
-    const sortedNavigationItems = navigationItems(workspaceSlug, projectId).sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0));
+    const sortedNavigationItems = navigationItems(workspaceSlug, projectId).sort(
+      (a, b) => (a.sortOrder || 0) - (b.sortOrder || 0)
+    );
 
     return sortedNavigationItems;
   }, [workspaceSlug, projectId, baseNavigation, additionalNavigationItems]);
@@ -210,7 +214,7 @@ export const ProjectNavigation = observer(function ProjectNavigation(props: TPro
       // return
       return isWorkItemActive || isEpicActive || isPathnameActive;
     },
-    [pathname, workItem, workItemId, projectId],
+    [pathname, workItem, workItemId, projectId]
   );
 
   if (!project) return null;
@@ -220,21 +224,23 @@ export const ProjectNavigation = observer(function ProjectNavigation(props: TPro
       {navigationItemsMemo.map((item) => {
         if (!item.shouldRender) return;
 
-        const hasAccess = allowPermissions(item.access, EUserPermissionsLevel.PROJECT, workspaceSlug, project.id);
+        // External intake: any workspace member who can see the project may file
+        // an intake, even without project membership.
+        const hasAccess =
+          item.key === "intake" ||
+          allowPermissions(item.access, EUserPermissionsLevel.PROJECT, workspaceSlug, project.id);
         if (!hasAccess) return null;
 
         const shouldShowCount = item.key === "intake" && (project.intake_count ?? 0) > 0;
 
         return (
-          <Link
-            key={item.key}
-            href={item.href}
-            onClick={handleProjectClick}
-          >
+          <Link key={item.key} href={item.href} onClick={handleProjectClick}>
             <SidebarNavItem isActive={!!isActive(item)}>
               <div className="flex w-full items-center justify-between gap-1.5 py-[1px]">
                 <div className="flex items-center gap-1.5">
-                  <item.icon className={`size-4 flex-shrink-0 ${item.key === "intake" ? "stroke-1" : "stroke-[1.5]"}`} />
+                  <item.icon
+                    className={`size-4 flex-shrink-0 ${item.key === "intake" ? "stroke-1" : "stroke-[1.5]"}`}
+                  />
                   <span className="text-11 font-medium">{t(item.i18n_key)}</span>
                 </div>
                 {shouldShowCount && <span className="text-11 font-medium text-tertiary">{project.intake_count}</span>}

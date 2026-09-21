@@ -16,7 +16,7 @@ export function InstanceNotReady() {
         <div className="relative flex flex-col items-center justify-center space-y-4">
           <h1 className="pb-3 text-24 font-bold">Welcome aboard Avião!</h1>
           <img src={PlaneTakeOffImage} alt="Avião Logo" />
-          <p className="text-14 font-medium text-placeholder">Comece configurando sua instância e seu espaço de trabalho</p>
+          <p className="text-14 font-medium text-placeholder">Start by setting up your instance and your workspace</p>
         </div>
 
         <div>

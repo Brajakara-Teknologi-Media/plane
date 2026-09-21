@@ -9,6 +9,7 @@ import { observer } from "mobx-react";
 import { AlertTriangle } from "lucide-react";
 import { Dialog, Transition } from "@headlessui/react";
 import { Button } from "@plane/propel/button";
+import { useTranslation } from "@plane/i18n";
 import { useUser } from "@/hooks/store/user";
 import type { Props } from "./confirm-workspace-member-remove";
 
@@ -18,6 +19,7 @@ export const ConfirmWorkspaceMemberRemove = observer(function ConfirmWorkspaceMe
   const [isRemoving, setIsRemoving] = useState(false);
   // store hooks
   const { data: currentUser } = useUser();
+  const { t } = useTranslation();
 
   const handleClose = () => {
     onClose();
@@ -89,7 +91,7 @@ export const ConfirmWorkspaceMemberRemove = observer(function ConfirmWorkspaceMe
                 </div>
                 <div className="flex justify-end gap-2 p-4 sm:px-6">
                   <Button variant="secondary" onClick={handleClose}>
-                    Cancelar
+                    {t("common.cancel")}
                   </Button>
                   <Button variant="error-fill" tabIndex={1} onClick={handleDeletion} loading={isRemoving}>
                     {currentUser?.id === userDetails.id

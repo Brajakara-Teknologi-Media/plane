@@ -37,6 +37,8 @@ function ChatSettingsPage() {
   const { currentWorkspace } = useWorkspace();
   const { t } = useTranslation();
 
+  const E = "workspace_settings.settings.chat";
+
   const [enabled, setEnabled] = useState(false);
   const [apiUrl, setApiUrl] = useState("");
   const [wsUrl, setWsUrl] = useState("");
@@ -56,24 +58,28 @@ function ChatSettingsPage() {
     setWsUrl(data.ws_url);
   }, [data]);
 
-  const pageTitle = currentWorkspace?.name ? `${currentWorkspace.name} - ${t("workspace_settings.settings.chat.title")}` : undefined;
+  const pageTitle = currentWorkspace?.name ? `${currentWorkspace.name} - ${t(`${E}.title`)}` : undefined;
 
   if (workspaceUserInfo && !isAdmin) return <NotAuthorizedView section="settings" className="h-auto" />;
 
   const handleSave = async () => {
     if (!workspaceSlug) return;
     if (enabled && (!apiUrl.trim() || !wsUrl.trim())) {
-      setToast({ type: TOAST_TYPE.ERROR, title: "Erro", message: "Informe a URL da API e do WebSocket do plugin." });
+      setToast({ type: TOAST_TYPE.ERROR, title: t("error"), message: t(`${E}.toasts.error_urls`) });
       return;
     }
     setSaving(true);
     try {
-      await chatService.updateConfig(workspaceSlug.toString(), { enabled, api_url: apiUrl.trim(), ws_url: wsUrl.trim() });
-      setToast({ type: TOAST_TYPE.SUCCESS, title: "Salvo", message: "Configuração do chat atualizada." });
+      await chatService.updateConfig(workspaceSlug.toString(), {
+        enabled,
+        api_url: apiUrl.trim(),
+        ws_url: wsUrl.trim(),
+      });
+      setToast({ type: TOAST_TYPE.SUCCESS, title: t("saved"), message: t(`${E}.toasts.success`) });
       await mutate();
     } catch (err: unknown) {
       const error = err as { detail?: string };
-      setToast({ type: TOAST_TYPE.ERROR, title: "Erro", message: error?.detail || "Não foi possível salvar." });
+      setToast({ type: TOAST_TYPE.ERROR, title: t("error"), message: error?.detail || t("error") });
     } finally {
       setSaving(false);
     }
@@ -82,32 +88,41 @@ function ChatSettingsPage() {
   return (
     <SettingsContentWrapper header={<ChatWorkspaceSettingsHeader />} hugging>
       <PageHead title={pageTitle} />
-      <SettingsHeading
-        title={t("workspace_settings.settings.chat.title")}
-        description="Plugin de atendimento (chat). Habilite e informe a URL da API e do WebSocket do backend do chat. O plugin vem instalado, porém desabilitado por padrão."
-      />
+      <SettingsHeading title={t(`${E}.title`)} description={t(`${E}.description`)} />
       {isLoading ? (
-        <div className="py-6 text-sm text-secondary">Carregando…</div>
+        <div className="text-sm py-6 text-secondary">{t("loading")}</div>
       ) : (
         <div className="flex max-w-2xl flex-col gap-5 py-2">
           <div className="flex items-center justify-between rounded-md border border-subtle p-3">
             <div>
-              <p className="text-sm font-medium text-primary">Chat habilitado</p>
-              <p className="text-13 text-secondary">Quando ligado, a página de Atendimento conecta ao backend do chat.</p>
+              <p className="text-sm font-medium text-primary">{t(`${E}.enabled`)}</p>
+              <p className="text-13 text-secondary">{t(`${E}.enabled_desc`)}</p>
             </div>
             <ToggleSwitch value={enabled} onChange={setEnabled} />
           </div>
           <div>
-            <label className="mb-1 block text-sm font-medium text-secondary">URL da API do plugin</label>
-            <Input type="text" value={apiUrl} onChange={(e) => setApiUrl(e.target.value)} placeholder="http://localhost/chat-api" className="w-full" />
+            <label className="text-sm mb-1 block font-medium text-secondary">{t(`${E}.api_url`)}</label>
+            <Input
+              type="text"
+              value={apiUrl}
+              onChange={(e) => setApiUrl(e.target.value)}
+              placeholder="http://localhost/chat-api"
+              className="w-full"
+            />
           </div>
           <div>
-            <label className="mb-1 block text-sm font-medium text-secondary">URL do WebSocket do plugin</label>
-            <Input type="text" value={wsUrl} onChange={(e) => setWsUrl(e.target.value)} placeholder="ws://localhost/chat-ws" className="w-full" />
+            <label className="text-sm mb-1 block font-medium text-secondary">{t(`${E}.ws_url`)}</label>
+            <Input
+              type="text"
+              value={wsUrl}
+              onChange={(e) => setWsUrl(e.target.value)}
+              placeholder="ws://localhost/chat-ws"
+              className="w-full"
+            />
           </div>
           <div>
             <Button variant="primary" size="sm" onClick={handleSave} loading={saving}>
-              {saving ? "Salvando…" : "Salvar"}
+              {saving ? t(`${E}.saving`) : t(`${E}.save`)}
             </Button>
           </div>
         </div>

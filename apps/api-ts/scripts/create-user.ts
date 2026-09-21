@@ -40,13 +40,13 @@ function usernameFrom(email: string): string {
 
 async function main() {
   if (!EMAIL) {
-    log("❌  Informe USER_EMAIL.");
+    log("❌  USER_EMAIL is required.");
     process.exit(1);
   }
 
   const workspace = await prisma.workspace.findFirst({where: {slug: WORKSPACE_SLUG, deletedAt: null}});
   if (!workspace) {
-    log(`❌  Workspace '${WORKSPACE_SLUG}' não encontrado.`);
+    log(`❌  Workspace '${WORKSPACE_SLUG}' not found.`);
     process.exit(1);
   }
 
@@ -66,7 +66,7 @@ async function main() {
   const user = existing
     ? await prisma.user.update({where: {email: EMAIL}, data: base})
     : await prisma.user.create({data: {...base, email: EMAIL, username: usernameFrom(EMAIL), lastName: ""}});
-  log(`✅  Usuário ${existing ? "atualizado" : "criado"}: ${EMAIL} (${user.id})`);
+  log(`✅  Username ${existing ? "updated" : "created"}: ${EMAIL} (${user.id})`);
 
   // O papel de workspace é limitado a 15; papéis customizados abaixo disso permanecem.
   const workspaceRole = ROLE >= 20 ? 20 : Math.min(ROLE, 15);
@@ -83,7 +83,7 @@ async function main() {
       data: {workspaceId: workspace.id, memberId: user.id, role: workspaceRole, isActive: true},
     });
   }
-  log(`✅  Vinculado ao workspace ${WORKSPACE_SLUG} com papel ${workspaceRole}`);
+  log(`✅  Linked to workspace ${WORKSPACE_SLUG} with role ${workspaceRole}`);
 
   if (ALL_PROJECTS) {
     const projects = await prisma.project.findMany({
@@ -107,15 +107,15 @@ async function main() {
       }
       linked++;
     }
-    log(`✅  Vinculado a ${linked} projeto(s) com papel ${ROLE}`);
+    log(`✅  Linked to ${linked} project(s) with role ${ROLE}`);
   }
 
   await prisma.$disconnect();
   await pool.end();
-  log(`Pronto. Login: ${EMAIL} / ${PASSWORD}`);
+  log(`Done. Login: ${EMAIL} / ${PASSWORD}`);
 }
 
 main().catch((e) => {
-  console.error("[create-user] falhou:", e);
+  console.error("[create-user] failed:", e);
   process.exit(1);
 });

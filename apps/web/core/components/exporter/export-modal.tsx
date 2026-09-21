@@ -136,7 +136,7 @@ export const Exporter = observer(function Exporter(props: Props) {
                       return projectDetails?.identifier;
                     })
                     .join(", ")
-                : "Todos os sistemas"
+                : "All systems"
             }
             onOpen={() => setIsSelectOpen(true)}
             onClose={() => setIsSelectOpen(false)}

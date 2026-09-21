@@ -20,12 +20,12 @@ import { useInstance, useTheme } from "@/hooks/store";
 
 const helpOptions = [
   {
-    name: "Documentação",
+    name: "Documentation",
     href: DOCS_URL,
     Icon: PageIcon,
   },
   {
-    name: "Falar com o suporte",
+    name: "Contact support",
     href: `mailto:${SUPPORT_EMAIL}`,
     Icon: MessageSquare,
   },
@@ -52,13 +52,13 @@ export const AdminSidebarHelpSection = observer(function AdminSidebarHelpSection
       )}
     >
       <div className={`flex items-center gap-1 ${isSidebarCollapsed ? "flex-col justify-center" : "w-full"}`}>
-        <Tooltip tooltipContent="Ir para o Avião" position="right" className="ml-4" disabled={!isSidebarCollapsed}>
+        <Tooltip tooltipContent="Go to Main App" position="right" className="ml-4" disabled={!isSidebarCollapsed}>
           <a
             href={redirectionLink}
             className={`relative flex items-center gap-1 rounded-sm bg-layer-1 px-2 py-1 text-body-xs-medium whitespace-nowrap text-secondary`}
           >
             <NewTabIcon width={14} height={14} />
-            {!isSidebarCollapsed && "Ir para o Avião"}
+            {!isSidebarCollapsed && "Go to Main App"}
           </a>
         </Tooltip>
         <Tooltip tooltipContent="Ajuda" position={isSidebarCollapsed ? "right" : "top"} className="ml-4">

@@ -51,7 +51,7 @@ const DROPDOWN_ITEMS: {
   },
   {
     key: "clear-contents",
-    label: "Limpar conteúdo",
+    label: "Clear content",
     icon: CloseIcon,
     action: (editor) => editor.chain().focus().clearSelectedCells().run(),
   },

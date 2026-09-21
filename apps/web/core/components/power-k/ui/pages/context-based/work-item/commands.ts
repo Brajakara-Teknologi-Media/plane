@@ -91,8 +91,8 @@ export const usePowerKWorkItemContextBasedCommands = (): TPowerKCommandConfig[] 
       await updateEntity(workspaceSlug.toString(), entityDetails.project_id, entityDetails.id, formData).catch(() => {
         setToast({
           type: TOAST_TYPE.ERROR,
-          title: "Erro!",
-          message: `Não foi possível atualizar ${isEpic ? "o épico" : "o chamado"}. Tente novamente.`,
+          title: t("common.toast.error"),
+          message: `Could not update ${isEpic ? "epic" : "work item"}. Please try again.`,
         });
       });
     },
@@ -321,8 +321,8 @@ export const usePowerKWorkItemContextBasedCommands = (): TPowerKCommandConfig[] 
         } catch {
           setToast({
             type: TOAST_TYPE.ERROR,
-            title: "Erro!",
-            message: `Não foi possível atualizar ${entityDetails.is_epic ? "o épico" : "o chamado"}. Tente novamente.`,
+            title: t("common.toast.error"),
+            message: `Could not update ${entityDetails.is_epic ? "epic" : "work item"}. Please try again.`,
           });
         }
       },
@@ -353,8 +353,8 @@ export const usePowerKWorkItemContextBasedCommands = (): TPowerKCommandConfig[] 
         } catch {
           setToast({
             type: TOAST_TYPE.ERROR,
-            title: "Erro!",
-            message: `Não foi possível atualizar ${entityDetails.is_epic ? "o épico" : "o chamado"}. Tente novamente.`,
+            title: t("common.toast.error"),
+            message: `Could not update ${entityDetails.is_epic ? "epic" : "work item"}. Please try again.`,
           });
         }
       },

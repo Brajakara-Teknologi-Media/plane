@@ -105,7 +105,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setBaseUrl(url);
       const res = await endpoints.auth.signIn(email, password);
       if (!res?.token) {
-        throw new ApiError(0, "O servidor não retornou um token de acesso. Verifique a URL do servidor.", res);
+        throw new ApiError(0, "The server did not return an access token. Check the server URL.", res);
       }
       await serverUrlStore.set(url);
       setServerUrl(url);

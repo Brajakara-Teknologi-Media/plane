@@ -3,6 +3,7 @@
  * e títulos de seção. Estilo alinhado ao restante do app (tokens surface e subtle).
  */
 import type { ReactNode } from "react";
+import { useTranslation } from "@plane/i18n";
 import { cn } from "@plane/utils";
 
 // ── KPI Card ──────────────────────────────────────────────────────────────────
@@ -30,7 +31,7 @@ export function KpiCard({
   return (
     <div className="rounded-lg border border-subtle bg-surface-1 px-4 py-3">
       <p className="text-12 text-secondary">{label}</p>
-      <p className={cn("mt-1 text-2xl font-semibold leading-tight", accentClass)}>{value}</p>
+      <p className={cn("text-2xl mt-1 leading-tight font-semibold", accentClass)}>{value}</p>
       {hint && <p className="mt-0.5 text-11 text-tertiary">{hint}</p>}
     </div>
   );
@@ -43,7 +44,7 @@ export function KpiGrid({ children }: { children: ReactNode }) {
 // ── Section title ──────────────────────────────────────────────────────────────
 export function SectionTitle({ children, hint }: { children: ReactNode; hint?: string }) {
   return (
-    <div className="mb-3 mt-6 flex items-baseline justify-between">
+    <div className="mt-6 mb-3 flex items-baseline justify-between">
       <h3 className="text-14 font-semibold text-primary">{children}</h3>
       {hint && <span className="text-11 text-tertiary">{hint}</span>}
     </div>
@@ -143,7 +144,12 @@ export function ReportTable<T extends Record<string, any>>({
 }
 
 export function EmptyHint({ label }: { label?: string }) {
-  return <p className="rounded-lg border border-dashed border-subtle px-4 py-6 text-center text-12 text-tertiary">{label ?? "Sem dados para o período/filtros selecionados."}</p>;
+  const { t } = useTranslation();
+  return (
+    <p className="rounded-lg border border-dashed border-subtle px-4 py-6 text-center text-12 text-tertiary">
+      {label ?? t("reports.common.no_data")}
+    </p>
+  );
 }
 
 // ── Palette helper para barras de distribuição ───────────────────────────────

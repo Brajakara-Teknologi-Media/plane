@@ -10,6 +10,7 @@ import { useParams } from "next/navigation";
 import useSWR from "swr";
 import { StickyNote as StickyIcon } from "lucide-react";
 // plane hooks
+import { useTranslation } from "@plane/i18n";
 import { useOutsideClickDetector } from "@plane/hooks";
 // plane ui
 import { RecentStickyIcon, StickyNoteIcon, PlusIcon, CloseIcon } from "@plane/propel/icons";
@@ -25,7 +26,7 @@ import { AllStickiesModal } from "./modal";
 import { StickyNote } from "./sticky";
 
 export const StickyActionBar = observer(function StickyActionBar() {
-  // states
+  const { t } = useTranslation();
   const [isExpanded, setIsExpanded] = useState(false);
   const [newSticky, setNewSticky] = useState(false);
   const [showRecentSticky, setShowRecentSticky] = useState(false);
@@ -100,7 +101,7 @@ export const StickyActionBar = observer(function StickyActionBar() {
             </button>
           </Tooltip>
         )}
-        <Tooltip tooltipContent="Adicionar nota" isMobile={false} position="left">
+        <Tooltip tooltipContent={t("stickies.add")} isMobile={false} position="left">
           <button
             className="btn btn--icon shadow-sm flex h-10 w-10 items-center justify-center rounded-full bg-surface-1"
             onClick={() => {

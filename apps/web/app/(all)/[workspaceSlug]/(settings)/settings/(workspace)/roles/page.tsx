@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { ArrowRight, Plus, Trash2, X, Shield } from "lucide-react";
 import { EProjectAction, PROJECT_ACTION_GROUPS, PROJECT_ACTION_LABELS } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { Dialog, EDialogWidth } from "@plane/propel/dialog";
 import { CustomSelect, ToggleSwitch } from "@plane/ui";
@@ -17,20 +18,23 @@ import rolesService, { type TWorkflowRole, type TRoleTransition } from "@/servic
 
 const ACTION_KEYS = Object.values(EProjectAction) as string[];
 
-/**
- * Seletor de etapa das transições.
- *
- * `CustomSelect` em vez do `<select>` nativo: o nativo ignora o tema e, no modo
- * escuro, abre com fundo branco e texto branco.
- */
-function EtapaSelect(props: { valor: string; opcoes: { value: string; label: string }[]; onChange: (v: string) => void }) {
+function EtapaSelect(props: {
+  valor: string;
+  opcoes: { value: string; label: string }[];
+  onChange: (v: string) => void;
+}) {
+  const { t } = useTranslation();
   const { valor, opcoes, onChange } = props;
   const atual = opcoes.find((o) => o.value === valor);
   return (
     <CustomSelect
       value={valor}
       onChange={onChange}
-      label={<span className="truncate">{atual?.label ?? "Escolher etapa"}</span>}
+      label={
+        <span className="truncate">
+          {atual?.label ?? t("workspace_settings.settings.roles.step_select_placeholder")}
+        </span>
+      }
       buttonClassName="h-7 w-56 rounded-md border border-subtle bg-surface-2 px-2 text-12 text-primary"
       maxHeight="lg"
       input
@@ -55,6 +59,7 @@ function CreateRoleModal({
   onClose: () => void;
   onSaved: () => void;
 }) {
+  const { t } = useTranslation();
   const [name, setName] = useState("");
   const [level, setLevel] = useState(10);
   const [saving, setSaving] = useState(false);
@@ -68,17 +73,29 @@ function CreateRoleModal({
 
   const submit = async () => {
     if (!name.trim()) {
-      setToast({ type: TOAST_TYPE.ERROR, title: "Erro", message: "Nome é obrigatório." });
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: t("error"),
+        message: t("workspace_settings.settings.roles.name_required"),
+      });
       return;
     }
     setSaving(true);
     try {
       await rolesService.create(slug, { name: name.trim(), level });
-      setToast({ type: TOAST_TYPE.SUCCESS, title: "Criada", message: "Função criada." });
+      setToast({
+        type: TOAST_TYPE.SUCCESS,
+        title: t("created"),
+        message: t("workspace_settings.settings.roles.create_success"),
+      });
       onSaved();
       onClose();
     } catch {
-      setToast({ type: TOAST_TYPE.ERROR, title: "Erro", message: "Falha ao criar função." });
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: t("error"),
+        message: t("workspace_settings.settings.roles.create_error"),
+      });
     } finally {
       setSaving(false);
     }
@@ -89,38 +106,40 @@ function CreateRoleModal({
       <Dialog.Panel width={EDialogWidth.MD}>
         <div className="p-6">
           <div className="mb-5 flex items-center justify-between">
-            <Dialog.Title>Nova função</Dialog.Title>
-            <button onClick={onClose} className="rounded p-1 text-secondary-text hover:bg-surface-2">
+            <Dialog.Title>{t("workspace_settings.settings.roles.create_modal_title")}</Dialog.Title>
+            <button onClick={onClose} className="text-secondary-text rounded p-1 hover:bg-surface-2">
               <X className="h-4 w-4" />
             </button>
           </div>
           <div className="space-y-3">
             <div>
-              <label className="mb-1 block text-xs font-medium text-secondary-text">Nome *</label>
+              <label className="text-xs text-secondary-text mb-1 block font-medium">
+                {t("workspace_settings.settings.roles.create_modal_name_label")}
+              </label>
               <input
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                className="w-full rounded border border-subtle bg-surface-2 px-3 py-2 text-sm text-primary outline-none focus:border-accent-strong"
+                className="text-sm w-full rounded border border-subtle bg-surface-2 px-3 py-2 text-primary outline-none focus:border-accent-strong"
               />
             </div>
             <div>
-              <label className="mb-1 block text-xs font-medium text-secondary-text">
-                Nível (hierarquia: 5 visualizador … 20 admin)
+              <label className="text-xs text-secondary-text mb-1 block font-medium">
+                {t("workspace_settings.settings.roles.create_modal_level_label")}
               </label>
               <input
                 type="number"
                 value={level}
                 onChange={(e) => setLevel(Number(e.target.value))}
-                className="w-full rounded border border-subtle bg-surface-2 px-3 py-2 text-sm text-primary outline-none focus:border-accent-strong"
+                className="text-sm w-full rounded border border-subtle bg-surface-2 px-3 py-2 text-primary outline-none focus:border-accent-strong"
               />
             </div>
           </div>
           <div className="mt-6 flex justify-end gap-2">
             <Button variant="secondary" onClick={onClose}>
-              Cancelar
+              {t("workspace_settings.settings.roles.create_modal_cancel")}
             </Button>
             <Button variant="primary" loading={saving} onClick={submit}>
-              Criar
+              {t("workspace_settings.settings.roles.create_modal_submit")}
             </Button>
           </div>
         </div>
@@ -130,6 +149,7 @@ function CreateRoleModal({
 }
 
 const WorkspaceRolesPage = observer(() => {
+  const { t } = useTranslation();
   const { currentWorkspace } = useWorkspace();
   const { allowPermissions } = useUserPermissions();
   const slug = currentWorkspace?.slug ?? "";
@@ -139,7 +159,6 @@ const WorkspaceRolesPage = observer(() => {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [createOpen, setCreateOpen] = useState(false);
 
-  // editable local copies for the selected role
   const [perms, setPerms] = useState<Set<string>>(new Set());
   const [transitions, setTransitions] = useState<TRoleTransition[]>([]);
   const [savingPerms, setSavingPerms] = useState(false);
@@ -162,7 +181,6 @@ const WorkspaceRolesPage = observer(() => {
 
   const selected = useMemo(() => roles.find((r) => r.id === selectedId) ?? null, [roles, selectedId]);
 
-  // sync editable copies when selection changes
   useEffect(() => {
     if (!selected) return;
     setPerms(new Set(selected.permissions));
@@ -178,11 +196,10 @@ const WorkspaceRolesPage = observer(() => {
       return next;
     });
 
-  /** Marca ou desmarca um grupo inteiro de uma vez. */
   const alternarGrupo = (acoes: string[], marcar: boolean) =>
     setPerms((prev) => {
       const next = new Set(prev);
-      for (const acao of acoes) (marcar ? next.add(acao) : next.delete(acao));
+      for (const acao of acoes) marcar ? next.add(acao) : next.delete(acao);
       return next;
     });
 
@@ -191,10 +208,10 @@ const WorkspaceRolesPage = observer(() => {
     setSavingPerms(true);
     try {
       await rolesService.update(slug, selected.id, { permissions: [...perms] });
-      setToast({ type: TOAST_TYPE.SUCCESS, title: "Salvo", message: "Permissões atualizadas." });
+      setToast({ type: TOAST_TYPE.SUCCESS, title: t("saved"), message: t("saved") });
       await load();
     } catch {
-      setToast({ type: TOAST_TYPE.ERROR, title: "Erro", message: "Falha ao salvar permissões." });
+      setToast({ type: TOAST_TYPE.ERROR, title: t("error"), message: t("error") });
     } finally {
       setSavingPerms(false);
     }
@@ -205,10 +222,10 @@ const WorkspaceRolesPage = observer(() => {
     setSavingTrans(true);
     try {
       await rolesService.setTransitions(slug, selected.id, transitions);
-      setToast({ type: TOAST_TYPE.SUCCESS, title: "Salvo", message: "Transições atualizadas." });
+      setToast({ type: TOAST_TYPE.SUCCESS, title: t("saved"), message: t("saved") });
       await load();
     } catch {
-      setToast({ type: TOAST_TYPE.ERROR, title: "Erro", message: "Falha ao salvar transições." });
+      setToast({ type: TOAST_TYPE.ERROR, title: t("error"), message: t("error") });
     } finally {
       setSavingTrans(false);
     }
@@ -217,7 +234,13 @@ const WorkspaceRolesPage = observer(() => {
   const addTransition = () =>
     setTransitions((prev) => [
       ...prev,
-      { from_group: "unstarted", from_state_name: "A Fazer", to_group: "started", to_state_name: "Em Desenvolvimento", allowed: true },
+      {
+        from_group: "unstarted",
+        from_state_name: "A Fazer",
+        to_group: "started",
+        to_state_name: "Em Desenvolvimento",
+        allowed: true,
+      },
     ]);
 
   const updateTransition = (idx: number, patch: Partial<TRoleTransition>) =>
@@ -227,14 +250,22 @@ const WorkspaceRolesPage = observer(() => {
 
   const deleteRole = async (role: TWorkflowRole) => {
     if (role.is_system) return;
-    if (!confirm(`Excluir a função "${role.name}"?`)) return;
+    if (!confirm(t("workspace_settings.settings.roles.delete_confirm", { name: role.name }))) return;
     try {
       await rolesService.remove(slug, role.id);
       setSelectedId(null);
       await load();
-      setToast({ type: TOAST_TYPE.SUCCESS, title: "Excluída", message: "Função excluída." });
+      setToast({
+        type: TOAST_TYPE.SUCCESS,
+        title: t("deleted"),
+        message: t("workspace_settings.settings.roles.delete_success"),
+      });
     } catch {
-      setToast({ type: TOAST_TYPE.ERROR, title: "Erro", message: "Falha ao excluir função." });
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: t("error"),
+        message: t("workspace_settings.settings.roles.delete_error"),
+      });
     }
   };
 
@@ -249,30 +280,28 @@ const WorkspaceRolesPage = observer(() => {
 
   return (
     <SettingsContentWrapper>
-      <PageHead title="Funções e permissões" />
+      <PageHead title={t("workspace_settings.settings.roles.title")} />
       <CreateRoleModal slug={slug} open={createOpen} onClose={() => setCreateOpen(false)} onSaved={load} />
 
       <div className="flex flex-col gap-4">
         <div className="flex items-center justify-between border-b border-subtle pb-3">
           <div>
-            <h3 className="flex items-center gap-2 text-lg font-medium text-primary">
-              <Shield className="h-5 w-5" /> Funções e permissões
+            <h3 className="text-lg flex items-center gap-2 font-medium text-primary">
+              <Shield className="h-5 w-5" /> {t("workspace_settings.settings.roles.title")}
             </h3>
-            <p className="text-xs text-secondary-text">
-              Crie funções, defina o que cada uma pode fazer e quais transições de etapa pode realizar. Quem participa do
-              projeto enxerga todos os chamados, em qualquer etapa.
-            </p>
+            <p className="text-xs text-secondary-text">{t("workspace_settings.settings.roles.manage_desc")}</p>
           </div>
           <Button variant="primary" prependIcon={<Plus className="h-4 w-4" />} onClick={() => setCreateOpen(true)}>
-            Nova função
+            {t("workspace_settings.settings.roles.new_role_btn")}
           </Button>
         </div>
 
         {loading ? (
-          <div className="py-8 text-center text-sm text-secondary-text">Carregando...</div>
+          <div className="text-sm text-secondary-text py-8 text-center">
+            {t("workspace_settings.settings.roles.loading")}
+          </div>
         ) : (
           <div className="flex gap-4">
-            {/* Lista de funções — ordenada pelo nível, que é a hierarquia real. */}
             <div className="w-64 shrink-0 space-y-1">
               {[...roles]
                 .sort((a, b) => a.level - b.level)
@@ -293,17 +322,19 @@ const WorkspaceRolesPage = observer(() => {
                         className={`grid size-7 shrink-0 place-items-center rounded-md text-11 font-semibold ${
                           ativa ? "bg-accent-primary text-white" : "bg-surface-3 text-secondary-text"
                         }`}
-                        title={`Nível ${r.level}`}
+                        title={t("workspace_settings.settings.roles.role_level_label") + ` ${r.level}`}
                       >
                         {r.level}
                       </span>
                       <span className="min-w-0 flex-1">
-                        <span className={`block truncate text-13 ${ativa ? "font-medium text-primary" : "text-primary"}`}>
+                        <span
+                          className={`block truncate text-13 ${ativa ? "font-medium text-primary" : "text-primary"}`}
+                        >
                           {r.name}
                         </span>
                         <span className="block truncate text-11 text-tertiary">
-                          {r.permissions.length} permissã{r.permissions.length === 1 ? "o" : "es"}
-                          {r.is_system ? " · do sistema" : ""}
+                          {r.permissions.length} {t("workspace_settings.settings.roles.role_permissions_label")}
+                          {r.is_system ? ` · ${t("workspace_settings.settings.roles.role_system_label")}` : ""}
                         </span>
                       </span>
                     </button>
@@ -311,48 +342,47 @@ const WorkspaceRolesPage = observer(() => {
                 })}
             </div>
 
-            {/* role editor */}
             {selected ? (
               <div className="flex-1 space-y-6">
                 <div className="flex items-start justify-between gap-4 rounded-lg border border-subtle bg-surface-2 px-4 py-3">
                   <div className="min-w-0">
-                    <p className="truncate text-15 font-medium text-primary">{selected.name}</p>
+                    <p className="text-15 truncate font-medium text-primary">{selected.name}</p>
                     <div className="mt-1.5 flex flex-wrap items-center gap-1.5">
-                      <span className="rounded bg-surface-3 px-1.5 py-0.5 text-11 text-secondary-text">
-                        nível {selected.level}
+                      <span className="bg-surface-3 text-secondary-text rounded px-1.5 py-0.5 text-11">
+                        {t("workspace_settings.settings.roles.role_level_label")} {selected.level}
                       </span>
-                      <span className="rounded bg-surface-3 px-1.5 py-0.5 font-mono text-11 text-secondary-text">
+                      <span className="bg-surface-3 font-mono text-secondary-text rounded px-1.5 py-0.5 text-11">
                         {selected.key}
                       </span>
                       {selected.is_system && (
-                        <span className="rounded bg-surface-3 px-1.5 py-0.5 text-11 text-secondary-text">
-                          função do sistema
+                        <span className="bg-surface-3 text-secondary-text rounded px-1.5 py-0.5 text-11">
+                          {t("workspace_settings.settings.roles.role_system_label")}
                         </span>
                       )}
                       <span className="text-11 text-tertiary">
-                        {perms.size} de {ACTION_KEYS.length} permissões
+                        {perms.size} de {ACTION_KEYS.length}{" "}
+                        {t("workspace_settings.settings.roles.role_permissions_label")}
                       </span>
                     </div>
                   </div>
                   {!selected.is_system && (
                     <button
                       onClick={() => deleteRole(selected)}
-                      className="shrink-0 rounded p-1.5 text-secondary-text hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-900/20"
-                      title="Excluir função"
+                      className="text-secondary-text hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-900/20 shrink-0 rounded p-1.5"
+                      title={t("delete")}
                     >
                       <Trash2 className="h-4 w-4" />
                     </button>
                   )}
                 </div>
 
-                {/* Permissões, agrupadas por assunto: a grade corrida de 28
-                    caixas não dizia o que era de chamado, de comentário ou de
-                    administração. */}
                 <section className="space-y-3">
                   <div className="flex items-center justify-between">
-                    <h4 className="text-13 font-semibold text-primary">Permissões</h4>
+                    <h4 className="text-13 font-semibold text-primary">
+                      {t("workspace_settings.settings.roles.role_permissions_label")}
+                    </h4>
                     <Button variant="primary" size="sm" loading={savingPerms} onClick={savePerms}>
-                      Salvar permissões
+                      {t("workspace_settings.settings.roles.save_perms")}
                     </Button>
                   </div>
 
@@ -372,7 +402,7 @@ const WorkspaceRolesPage = observer(() => {
                               onClick={() => alternarGrupo(grupo.actions, !todasMarcadas)}
                               className="rounded px-1.5 py-0.5 text-11 text-accent-primary hover:bg-accent-subtle"
                             >
-                              {todasMarcadas ? "Desmarcar todas" : "Marcar todas"}
+                              {todasMarcadas ? t("deselect_all") : t("select_all")}
                             </button>
                           </div>
                         </div>
@@ -392,34 +422,39 @@ const WorkspaceRolesPage = observer(() => {
                   })}
                 </section>
 
-                {/* Transitions */}
                 <section>
                   <div className="mb-2 flex items-center justify-between">
-                    <h4 className="text-13 font-semibold text-primary">Transições de etapa permitidas</h4>
+                    <h4 className="text-13 font-semibold text-primary">{t("transitions")}</h4>
                     <div className="flex gap-2">
-                      <Button variant="secondary" size="sm" prependIcon={<Plus className="h-3.5 w-3.5" />} onClick={addTransition}>
-                        Adicionar
+                      <Button
+                        variant="secondary"
+                        size="sm"
+                        prependIcon={<Plus className="h-3.5 w-3.5" />}
+                        onClick={addTransition}
+                      >
+                        {t("workspace_settings.settings.roles.add_trans")}
                       </Button>
                       <Button variant="primary" size="sm" loading={savingTrans} onClick={saveTransitions}>
-                        Salvar transições
+                        {t("workspace_settings.settings.roles.save_trans")}
                       </Button>
                     </div>
                   </div>
                   <div className="overflow-hidden rounded-lg border border-subtle">
-                    <p className="border-b border-subtle bg-surface-2 px-3 py-2 text-11 text-secondary-text">
-                      Sem nenhuma linha, esta função não move chamado por tabela — quem precisa de acesso total usa a
-                      permissão <strong className="text-primary">Mover para qualquer etapa</strong>.
+                    <p className="text-secondary-text border-b border-subtle bg-surface-2 px-3 py-2 text-11">
+                      {t("workspace_settings.settings.roles.trans_description")}
                     </p>
                     {transitions.length === 0 ? (
-                      <p className="px-3 py-6 text-center text-12 text-tertiary">Nenhuma transição definida.</p>
+                      <p className="px-3 py-6 text-center text-12 text-tertiary">
+                        {t("workspace_settings.settings.roles.no_trans")}
+                      </p>
                     ) : (
-                      transitions.map((t, idx) => (
+                      transitions.map((tr, idx) => (
                         <div
                           key={idx}
                           className="flex flex-wrap items-center gap-2 border-b border-subtle px-3 py-2 last:border-b-0"
                         >
                           <EtapaSelect
-                            valor={`${t.from_group}::${t.from_state_name ?? ""}`}
+                            valor={`${tr.from_group}::${tr.from_state_name ?? ""}`}
                             opcoes={stateForSelect}
                             onChange={(v) => {
                               const { group, name } = parseStateKey(v);
@@ -428,7 +463,7 @@ const WorkspaceRolesPage = observer(() => {
                           />
                           <ArrowRight className="size-3.5 shrink-0 text-tertiary" />
                           <EtapaSelect
-                            valor={`${t.to_group}::${t.to_state_name ?? ""}`}
+                            valor={`${tr.to_group}::${tr.to_state_name ?? ""}`}
                             opcoes={stateForSelect}
                             onChange={(v) => {
                               const { group, name } = parseStateKey(v);
@@ -437,8 +472,8 @@ const WorkspaceRolesPage = observer(() => {
                           />
                           <button
                             onClick={() => removeTransition(idx)}
-                            className="ml-auto rounded p-1 text-secondary-text hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-900/20"
-                            title="Remover transição"
+                            className="text-secondary-text hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-900/20 ml-auto rounded p-1"
+                            title={t("remove")}
                           >
                             <Trash2 className="h-3.5 w-3.5" />
                           </button>
@@ -449,7 +484,7 @@ const WorkspaceRolesPage = observer(() => {
                 </section>
               </div>
             ) : (
-              <div className="flex-1 py-8 text-center text-sm text-secondary-text">Selecione uma função.</div>
+              <div className="text-sm text-secondary-text flex-1 py-8 text-center">Select a role.</div>
             )}
           </div>
         )}

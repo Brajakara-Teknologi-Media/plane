@@ -56,7 +56,7 @@ const NoLabel = observer(function NoLabel({ isMobile, noLabelBorder, fullWidth, 
     <Tooltip
       position="top"
       tooltipHeading={t("common.labels")}
-      tooltipContent="Nenhuma"
+      tooltipContent={t("common.none_fem")}
       isMobile={isMobile}
       renderByDefault={false}
     >

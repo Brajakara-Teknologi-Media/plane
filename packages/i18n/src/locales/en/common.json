@@ -949,5 +949,12 @@
   },
   "greeting_morning": "Good morning",
   "greeting_afternoon": "Good afternoon",
-  "greeting_evening": "Good evening"
+  "greeting_evening": "Good evening",
+  "misc": {
+    "critical_banner": "{count, plural, one {# URGENT open work item} other {# URGENT open work items}}",
+    "critical_banner_expand": "Expand",
+    "critical_banner_collapse": "Collapse",
+    "critical_banner_dismiss_hint": "Dismiss (reappears after next update)",
+    "critical_banner_and_more": "+{count} more"
+  }
 }

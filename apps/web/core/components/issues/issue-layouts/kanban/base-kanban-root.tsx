@@ -11,7 +11,8 @@ import { dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element
 import { autoScrollForElements } from "@atlaskit/pragmatic-drag-and-drop-auto-scroll/element";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { EIssueFilterType, EUserPermissions, EUserPermissionsLevel, PROJECT_WORK_ROLES} from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
+import { EIssueFilterType, EUserPermissions, EUserPermissionsLevel, PROJECT_WORK_ROLES } from "@plane/constants";
 import type { EIssuesStoreType } from "@plane/types";
 import { EIssueServiceType, EIssueLayoutTypes } from "@plane/types";
 //hooks
@@ -33,22 +34,22 @@ import type { IQuickActionProps, TRenderQuickActions } from "../list/list-view-t
 import { getSourceFromDropPayload } from "../utils";
 import { KanBan } from "./default";
 import { KanBanSwimLanes } from "./swimlanes";
-import {useWorkItemFilterInstance} from "@/hooks/store/work-item-filters/use-work-item-filter-instance";
-import type {IWorkItemFilterInstance} from "@plane/shared-state";
+import { useWorkItemFilterInstance } from "@/hooks/store/work-item-filters/use-work-item-filter-instance";
+import type { IWorkItemFilterInstance } from "@plane/shared-state";
 
 /**
- * Quais colunas o quadro mostra quando se agrupa por etapa.
+ * Which columns the board shows when grouping by state.
  *
- * São duas necessidades que parecem opostas e não são:
+ * Two needs that seem opposed and are not:
  *
- *   - **etapa vazia continua na tela**, porque não se arrasta um cartão para
- *     uma coluna que não foi renderizada — com "Em Teste" escondido por estar
- *     vazio, a Qualidade não tinha para onde levar o chamado;
- *   - **etapa excluída pelo filtro some**, senão aplicar o modelo do setor
- *     deixava "Triagem 0, Pendências 0, Em Análise 0" ocupando a tela.
+ *   - **an empty state stays on screen**, because you cannot drag a card to a
+ *     column that was not rendered — with "In Testing" hidden for being
+ *     empty, QA had nowhere to move the ticket to;
+ *   - **a state excluded by the filter disappears**, otherwise applying the
+ *     team's template left "Intake 0, Backlog 0, In Analysis 0" occupying the screen.
  *
- * A regra que atende as duas: mostra o que o filtro PERMITE, mesmo sem itens.
- * Sem filtro de etapa, permite tudo.
+ * The rule that serves both: show what the filter ALLOWS, even with no items.
+ * Without a state filter, everything is allowed.
  */
 const AGRUPAMENTOS_DE_ETAPA = ["state", "state_detail.group"];
 
@@ -60,7 +61,6 @@ const etapasPermitidasPeloFiltro = (filtro: IWorkItemFilterInstance | undefined)
     .filter((v): v is string => typeof v === "string" && v.length > 0);
   return valores.length ? valores : undefined;
 };
-
 
 export type KanbanStoreType =
   | EIssuesStoreType.PROJECT
@@ -90,6 +90,8 @@ export const BaseKanBanRoot = observer(function BaseKanBanRoot(props: IBaseKanBa
     viewId,
     isEpic = false,
   } = props;
+  // i18n
+  const { t } = useTranslation();
   // router
   const { workspaceSlug, projectId } = useParams();
   // store hooks
@@ -160,10 +162,7 @@ export const BaseKanBanRoot = observer(function BaseKanBanRoot(props: IBaseKanBa
   const [draggedIssueId, setDraggedIssueId] = useState<string | undefined>(undefined);
   const [deleteIssueModal, setDeleteIssueModal] = useState(false);
 
-  const isEditingAllowed = allowPermissions(
-    PROJECT_WORK_ROLES,
-    EUserPermissionsLevel.PROJECT
-  );
+  const isEditingAllowed = allowPermissions(PROJECT_WORK_ROLES, EUserPermissionsLevel.PROJECT);
 
   const handleOnDrop = useGroupIssuesDragNDrop(storeType, orderBy, group_by, sub_group_by);
 
@@ -294,7 +293,7 @@ export const BaseKanBanRoot = observer(function BaseKanBanRoot(props: IBaseKanBa
             isDragOverDelete ? "bg-danger-primary blur-2xl" : ""
           } transition duration-300`}
         >
-          Solte aqui para excluir o chamado.
+          {t("common.drop_here_to_delete")}
         </div>
       </div>
       <IssueLayoutHOC layout={EIssueLayoutTypes.KANBAN}>

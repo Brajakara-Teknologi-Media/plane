@@ -20,7 +20,7 @@ type TPageTabNavigation = {
 const pageTabs: { key: TPageNavigationTabs; label: string }[] = [
   {
     key: "public",
-    label: "Público",
+    label: "Public",
   },
   {
     key: "private",

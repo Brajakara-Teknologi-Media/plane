@@ -161,7 +161,7 @@ function PageDetailsPage({ params }: Route.ComponentProps) {
   if (pageDetailsError || !canCurrentUserAccessPage)
     return (
       <div className="flex h-full w-full flex-col items-center justify-center">
-        <h3 className="text-center text-16 font-semibold">Página não encontrada</h3>
+        <h3 className="text-center text-16 font-semibold">Page não encontrada</h3>
         <p className="mt-3 text-center text-13 text-secondary">
           A página que você está tentando acessar não existe ou você não tem permissão para visualizá-la.
         </p>

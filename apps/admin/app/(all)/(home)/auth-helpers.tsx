@@ -22,34 +22,34 @@ const errorCodeMessages: {
 } = {
   // admin
   [EAdminAuthErrorCodes.ADMIN_ALREADY_EXIST]: {
-    title: `Administrador já existe`,
-    message: () => `Administrador já existe. Tente novamente.`,
+    title: `Administrator already exists`,
+    message: () => `Administrator already exists. Try again.`,
   },
   [EAdminAuthErrorCodes.REQUIRED_ADMIN_EMAIL_PASSWORD_FIRST_NAME]: {
-    title: `E-mail, senha e nome são obrigatórios`,
-    message: () => `E-mail, senha e nome são obrigatórios. Tente novamente.`,
+    title: `Email, password and name are required`,
+    message: () => `Email, password and name are required. Try again.`,
   },
   [EAdminAuthErrorCodes.INVALID_ADMIN_EMAIL]: {
-    title: `E-mail de administrador inválido`,
-    message: () => `E-mail de administrador inválido. Tente novamente.`,
+    title: `Invalid administrator email`,
+    message: () => `Invalid administrator email. Try again.`,
   },
   [EAdminAuthErrorCodes.INVALID_ADMIN_PASSWORD]: {
-    title: `Senha de administrador inválida`,
-    message: () => `Senha de administrador inválida. Tente novamente.`,
+    title: `Invalid administrator password`,
+    message: () => `Invalid administrator password. Try again.`,
   },
   [EAdminAuthErrorCodes.REQUIRED_ADMIN_EMAIL_PASSWORD]: {
-    title: `E-mail e senha são obrigatórios`,
-    message: () => `E-mail e senha são obrigatórios. Tente novamente.`,
+    title: `Email and password are required`,
+    message: () => `Email and password are required. Try again.`,
   },
   [EAdminAuthErrorCodes.ADMIN_AUTHENTICATION_FAILED]: {
-    title: `Falha na autenticação`,
-    message: () => `Falha na autenticação. Tente novamente.`,
+    title: `Authentication failed`,
+    message: () => `Authentication failed. Try again.`,
   },
   [EAdminAuthErrorCodes.ADMIN_USER_ALREADY_EXIST]: {
-    title: `Usuário administrador já existe`,
+    title: `The administrator already exists`,
     message: () => (
       <div>
-        O usuário administrador já existe.&nbsp;
+        O usuárithe administrator já existe.&nbsp;
         <Link className="font-medium underline underline-offset-4 transition-all hover:font-bold" href={`/admin`}>
           Entrar
         </Link>
@@ -58,10 +58,10 @@ const errorCodeMessages: {
     ),
   },
   [EAdminAuthErrorCodes.ADMIN_USER_DOES_NOT_EXIST]: {
-    title: `Usuário administrador não encontrado`,
+    title: `Administrator user not found`,
     message: () => (
       <div>
-        O usuário administrador não existe.&nbsp;
+        The admin user does not exist.&nbsp;
         <Link className="font-medium underline underline-offset-4 transition-all hover:font-bold" href={`/admin`}>
           Entrar
         </Link>
@@ -70,8 +70,8 @@ const errorCodeMessages: {
     ),
   },
   [EAdminAuthErrorCodes.ADMIN_USER_DEACTIVATED]: {
-    title: `Conta de usuário desativada`,
-    message: () => `Conta de usuário desativada. Entre em contato com ${SUPPORT_EMAIL ? SUPPORT_EMAIL : "o administrador"}.`,
+    title: `User account disabled`,
+    message: () => `User account disabled. Please contact ${SUPPORT_EMAIL ? SUPPORT_EMAIL : "the administrator"}.`,
   },
 };
 
@@ -92,8 +92,8 @@ export const authErrorHandler = (errorCode: EAdminAuthErrorCodes, email?: string
     return {
       type: EErrorAlertType.BANNER_ALERT,
       code: errorCode,
-      title: errorCodeMessages[errorCode]?.title || "Erro",
-      message: errorCodeMessages[errorCode]?.message(email) || "Algo deu errado. Tente novamente.",
+      title: errorCodeMessages[errorCode]?.title || "Error",
+      message: errorCodeMessages[errorCode]?.message(email) || "Something went wrong. Try again.",
     };
 
   return undefined;

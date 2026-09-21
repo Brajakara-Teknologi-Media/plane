@@ -6,7 +6,7 @@ import { getWorkspaceOrFail, requireWorkspaceMember } from "@utils/workspace";
 
 
 /**
- * Página no formato que o frontend consome (`TPage`, snake_case). O objeto cru do
+ * Page no formato que o frontend consome (`TPage`, snake_case). O objeto cru do
  * Prisma chega com `isLocked`/`descriptionHtml`/`ownedById`, que a UI lê como
  * `undefined` — bloqueio, conteúdo e dono somem da tela.
  */
@@ -63,7 +63,7 @@ export const pageModule = new Elysia({ prefix: "/workspaces/:slug" })
     const ws = await getWorkspaceOrFail(slug);
     await requireWorkspaceMember(ws.id, user.id);
     const b = body as any;
-    if (!b.name) { set.status = 400; return { detail: "O nome é obrigatório." }; }
+    if (!b.name) { set.status = 400; return { detail: "Name is required." }; }
     const page = await prisma.page.create({
       data: {
         workspaceId: ws.id,
@@ -105,7 +105,7 @@ export const pageModule = new Elysia({ prefix: "/workspaces/:slug" })
     const ws = await getWorkspaceOrFail(slug);
     await requireWorkspaceMember(ws.id, user.id);
     const page = await prisma.page.findFirstOrThrow({ where: { id: page_id, workspaceId: ws.id } });
-    if (page.isLocked && page.ownedById !== user.id) { set.status = 403; return { detail: "A página está bloqueada." }; }
+    if (page.isLocked && page.ownedById !== user.id) { set.status = 403; return { detail: "The page is locked." }; }
 
     const b = body as any;
     const data: any = { updatedById: user.id };
@@ -152,7 +152,7 @@ export const pageModule = new Elysia({ prefix: "/workspaces/:slug" })
     const ws = await getWorkspaceOrFail(slug);
     await requireWorkspaceMember(ws.id, user.id);
     const page = await prisma.page.findFirstOrThrow({ where: { id: page_id, workspaceId: ws.id } });
-    if (page.ownedById !== user.id) { set.status = 403; return { detail: "Apenas o dono da página pode bloqueá-la." }; }
+    if (page.ownedById !== user.id) { set.status = 403; return { detail: "Only the page owner can lock it." }; }
     return serializePage(await prisma.page.update({ where: { id: page_id }, data: { isLocked: true } }));
   })
 
@@ -160,7 +160,7 @@ export const pageModule = new Elysia({ prefix: "/workspaces/:slug" })
     const ws = await getWorkspaceOrFail(slug);
     await requireWorkspaceMember(ws.id, user.id);
     const page = await prisma.page.findFirstOrThrow({ where: { id: page_id, workspaceId: ws.id } });
-    if (page.ownedById !== user.id) { set.status = 403; return { detail: "Apenas o dono da página pode desbloqueá-la." }; }
+    if (page.ownedById !== user.id) { set.status = 403; return { detail: "Only the page owner can unlock it." }; }
     return serializePage(await prisma.page.update({ where: { id: page_id }, data: { isLocked: false } }));
   })
 

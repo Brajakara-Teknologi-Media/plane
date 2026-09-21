@@ -1,13 +1,13 @@
 /**
- * Hooks para as funções configuráveis (workflow roles) do workspace.
+ * Hooks for configurable workflow roles of the workspace.
  *
- * `GET /api/v1/workspaces/:slug/roles/` é a fonte única da verdade das
- * permissões e das transições de etapa: os mesmos registros que o backend lê em
- * `resolveRole` / `canTransition`. Não existe matriz estática espelhada no
- * frontend — enquanto a configuração não chega, os hooks informam `isLoading`
+ * `GET /api/v1/workspaces/:slug/roles/` is the single source of truth for
+ * permissions and stage transitions: the same records that the backend reads in
+ * `resolveRole` / `canTransition`. There is no static mirrored matrix in the
+ * frontend — while the configuration doesn't arrive, the hooks report `isLoading`
  * para que a UI desabilite o controle em vez de adivinhar uma resposta.
  *
- * Visibilidade por papel não existe mais: quem participa do projeto vê todos os
+ * Visibility by role no longer exists: whoever participates in the project sees all
  * chamados, em qualquer etapa.
  */
 import useSWR from "swr";
@@ -32,7 +32,7 @@ export function useWorkspaceWorkflowRoles(workspaceSlug?: string): TWorkspaceWor
   return { roles: data, isLoading };
 }
 
-/** Role configurável efetiva do usuário no workspace (match por level, como o backend). */
+/** Effective configurable role of the user in the workspace (match by level, like the backend). */
 export function useWorkflowRole(workspaceSlug?: string, roleLevel?: number): TResolvedWorkflowRole {
   const { roles, isLoading } = useWorkspaceWorkflowRoles(workspaceSlug);
   if (!roles || roleLevel === undefined) return { workflowRole: undefined, isLoading };

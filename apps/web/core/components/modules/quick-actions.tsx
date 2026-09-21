@@ -8,7 +8,8 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import { MoreHorizontal } from "lucide-react";
 // plane imports
-import { EUserPermissions, EUserPermissionsLevel, PROJECT_WORK_ROLES} from "@plane/constants";
+import { EUserPermissions, EUserPermissionsLevel, PROJECT_WORK_ROLES } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { IconButton } from "@plane/propel/icon-button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TContextMenuItem } from "@plane/ui";
@@ -32,6 +33,8 @@ type Props = {
 
 export const ModuleQuickActions = observer(function ModuleQuickActions(props: Props) {
   const { parentRef, moduleId, projectId, workspaceSlug, customClassName } = props;
+  // plane hooks
+  const { t } = useTranslation();
   // router
   const router = useAppRouter();
   // states
@@ -58,8 +61,8 @@ export const ModuleQuickActions = observer(function ModuleQuickActions(props: Pr
     copyUrlToClipboard(moduleLink).then(() => {
       setToast({
         type: TOAST_TYPE.SUCCESS,
-        title: "Link copiado!",
-        message: "Link do módulo copiado para a área de transferência.",
+        title: "Link copied!",
+        message: "Module link copied to clipboard.",
       });
     });
   const handleOpenInNewTab = () => window.open(`/${moduleLink}`, "_blank");
@@ -69,15 +72,15 @@ export const ModuleQuickActions = observer(function ModuleQuickActions(props: Pr
       await restoreModule(workspaceSlug, projectId, moduleId);
       setToast({
         type: TOAST_TYPE.SUCCESS,
-        title: "Restaurado com sucesso",
-        message: "Seu módulo pode ser encontrado nos módulos do projeto.",
+        title: "Restored successfully",
+        message: "Your module can be found in the project modules.",
       });
       router.push(`/${workspaceSlug}/projects/${projectId}/archives/modules`);
     } catch (_error) {
       setToast({
         type: TOAST_TYPE.ERROR,
-        title: "Erro!",
-        message: "Não foi possível restaurar o módulo. Tente novamente.",
+        title: t("common.toast.error"),
+        message: "Could not restore module. Please try again.",
       });
     }
   };

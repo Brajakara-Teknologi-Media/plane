@@ -57,6 +57,7 @@ import {
   isLoaderReady,
 } from "@plane/utils";
 // store hooks
+import { useEntity } from "@/hooks/store/use-entity";
 import { useCycle } from "@/hooks/store/use-cycle";
 import { useLabel } from "@/hooks/store/use-label";
 import { useMember } from "@/hooks/store/use-member";
@@ -97,7 +98,7 @@ export const useWorkItemFiltersConfig = (props: TUseWorkItemFiltersConfigProps):
   const {
     allowedFilters,
     cycleIds,
-    entities,
+    entities: propEntities,
     labelIds,
     memberIds,
     moduleIds,
@@ -114,7 +115,9 @@ export const useWorkItemFiltersConfig = (props: TUseWorkItemFiltersConfigProps):
   const { getStateById } = useProjectState();
   const { getUserDetails } = useMember();
   const { t } = useTranslation();
-  // derived values
+  const { entities: fetchedEntities } = useEntity(workspaceSlug);
+
+  const entities = useMemo(() => propEntities || fetchedEntities || [], [propEntities, fetchedEntities]);
   const operatorConfigs = useFiltersOperatorConfigs({ workspaceSlug });
   const filtersToShow = useMemo(() => new Set(allowedFilters), [allowedFilters]);
   const project = useMemo(() => getProjectById(projectId), [projectId, getProjectById]);

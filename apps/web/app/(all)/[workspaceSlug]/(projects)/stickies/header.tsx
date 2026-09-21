@@ -9,6 +9,7 @@ import { useParams } from "next/navigation";
 // plane imports
 import { Button } from "@plane/propel/button";
 import { RecentStickyIcon } from "@plane/propel/icons";
+import { useTranslation } from "@plane/i18n";
 import { Breadcrumbs, Header } from "@plane/ui";
 // components
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
@@ -22,6 +23,7 @@ export const WorkspaceStickyHeader = observer(function WorkspaceStickyHeader() {
   // hooks
   const { creatingSticky, toggleShowNewSticky } = useSticky();
   const { stickyOperations } = useStickyOperations({ workspaceSlug: workspaceSlug?.toString() });
+  const { t } = useTranslation();
 
   return (
     <>
@@ -32,7 +34,7 @@ export const WorkspaceStickyHeader = observer(function WorkspaceStickyHeader() {
               <Breadcrumbs.Item
                 component={
                   <BreadcrumbLink
-                    label={`Notas`}
+                    label="Notes"
                     icon={<RecentStickyIcon className="size-5 rotate-90 text-secondary" />}
                   />
                 }
@@ -52,7 +54,7 @@ export const WorkspaceStickyHeader = observer(function WorkspaceStickyHeader() {
             }}
             loading={creatingSticky}
           >
-            Adicionar nota
+            {t("stickies.add")}
           </Button>
         </Header.RightItem>
       </Header>

@@ -20,7 +20,7 @@ export class APITokenService extends APIService {
    */
   async list(): Promise<IApiToken[]> {
     return this.get(`/api/users/api-tokens/`)
-      .then((response) => response?.data)
+      .then((response) => response?.data?.results ?? response?.data ?? [])
       .catch((error) => {
         throw error?.response?.data;
       });

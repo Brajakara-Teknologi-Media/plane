@@ -57,18 +57,18 @@ describe("extractPluginZip", () => {
   });
 
   it("400 quando o manifest.json não está no ZIP", () => {
-    expect(() => extractPluginZip(makeZip({"plugin.js": BUNDLE}))).toThrow("manifest.json ausente");
+    expect(() => extractPluginZip(makeZip({"plugin.js": BUNDLE}))).toThrow("manifest.json missing");
   });
 
   it("400 quando o manifest.json não é JSON válido", () => {
     expect(() => extractPluginZip(makeZip({"manifest.json": "{{{", "plugin.js": BUNDLE}))).toThrow(
-      "não é um JSON válido",
+      "is not valid JSON",
     );
   });
 
   it("400 quando o arquivo de entrada declarado não existe", () => {
     const manifest = JSON.stringify({name: "X", version: "1.0.0", author: "A", entry: "faltando.js"});
-    expect(() => extractPluginZip(makeZip({"manifest.json": manifest}))).toThrow('"faltando.js" não encontrado');
+    expect(() => extractPluginZip(makeZip({"manifest.json": manifest}))).toThrow('"faltando.js" not found');
   });
 
   it("encontra um `entry` dentro de subpasta quando o manifest está na raiz", () => {
@@ -79,13 +79,13 @@ describe("extractPluginZip", () => {
   });
 
   it("400 para arquivo corrompido", () => {
-    expect(() => extractPluginZip(Buffer.from("isto não é um zip"))).toThrow("inválido ou corrompido");
+    expect(() => extractPluginZip(Buffer.from("isto não é um zip"))).toThrow("invalid or corrupted");
   });
 
   it("400 quando o ZIP excede o tamanho máximo", () => {
     const limit = Number(process.env.PLUGIN_MAX_ZIP_SIZE ?? 20 * 1024 * 1024);
     const big = Buffer.alloc(limit + 1);
-    expect(() => extractPluginZip(big)).toThrow("excede o tamanho máximo");
+    expect(() => extractPluginZip(big)).toThrow("exceeds the maximum size");
   });
 
   it("propaga status 400 nos erros para o handler HTTP", () => {

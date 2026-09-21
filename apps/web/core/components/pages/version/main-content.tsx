@@ -13,6 +13,7 @@ import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TPageVersion } from "@plane/types";
 import { renderFormattedDate, renderFormattedTime } from "@plane/utils";
+import { useTranslation } from "@plane/i18n";
 // helpers
 import type { EPageStoreType } from "@/plane-web/hooks/store";
 // local imports
@@ -44,6 +45,8 @@ export const PageVersionsMainContent = observer(function PageVersionsMainContent
   const [isRestoring, setIsRestoring] = useState(false);
   const [isRetrying, setIsRetrying] = useState(false);
 
+  const { t } = useTranslation();
+
   const {
     data: versionDetails,
     error: versionDetailsError,
@@ -60,14 +63,14 @@ export const PageVersionsMainContent = observer(function PageVersionsMainContent
       .then(() => {
         setToast({
           type: TOAST_TYPE.SUCCESS,
-          title: "Versão da página restaurada.",
+          title: "Page version restored.",
         });
         handleClose();
       })
       .catch(() =>
         setToast({
           type: TOAST_TYPE.ERROR,
-          title: "Falha ao restaurar a versão da página.",
+          title: "Failed to restore page version.",
         })
       )
       .finally(() => setIsRestoring(false));
@@ -90,11 +93,11 @@ export const PageVersionsMainContent = observer(function PageVersionsMainContent
               <TriangleAlert className="size-10" />
             </span>
             <div>
-              <h6 className="text-16 font-semibold">Algo deu errado!</h6>
-              <p className="text-13 text-tertiary">Não foi possível carregar a versão. Tente novamente.</p>
+              <h6 className="text-16 font-semibold">{t("something_went_wrong")}!</h6>
+              <p className="text-13 text-tertiary">{t("misc.pages.version.load_failed")}</p>
             </div>
             <Button variant="link" onClick={handleRetry} loading={isRetrying}>
-              Tentar novamente
+              {t("misc.try_again")}
             </Button>
           </div>
         </div>
@@ -109,7 +112,7 @@ export const PageVersionsMainContent = observer(function PageVersionsMainContent
               </h6>
               <span className="flex flex-shrink-0 items-center gap-1 rounded-sm bg-accent-primary/20 px-1.5 py-1 text-11 font-medium text-accent-primary">
                 <EyeIcon className="size-3 flex-shrink-0" />
-                Somente visualização
+                {t("misc.pages.version.view_only")}
               </span>
             </div>
             {restoreEnabled && (

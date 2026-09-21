@@ -477,7 +477,7 @@ html,body{height:100%;font-family:'Inter',system-ui,-apple-system,'Segoe UI',san
     <button type="button" class="ic-btn" id="attach" title="Anexar arquivo">
       <svg viewBox="0 0 24 24"><path d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48"/></svg>
     </button>
-    <button type="button" class="ic-btn" id="mic" title="Gravar áudio">
+    <button type="button" class="ic-btn" id="mic" title="Record audio">
       <svg viewBox="0 0 24 24"><path d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z"/><path d="M19 10v2a7 7 0 01-14 0v-2M12 19v4M8 23h8"/></svg>
     </button>
     <div id="txt-wrap">
@@ -666,7 +666,7 @@ function startEdit(m) {
   const save = document.createElement("button");
   save.type = "button";
   save.className = "primary";
-  save.textContent = "Salvar";
+  save.textContent = "Save";
 
   const restore = () => renderMessage(m);
   const commit = () => {
@@ -871,7 +871,7 @@ async function showPrechat() {
       };
       return b;
     };
-    list.appendChild(mkBtn("", "Qualquer atendente disponível", false, true));
+    list.appendChild(mkBtn("", "Any available attendant", false, true));
     atts.forEach((a) => list.appendChild(mkBtn(a.user_id, a.name, a.online, false)));
     if (!pcAttendant && !list.querySelector(".pc-att.sel")) list.firstChild.classList.add("sel");
   } catch { $("pc-att-field").style.display = "none"; }
@@ -1050,7 +1050,7 @@ $("mic").onclick = async () => {
   if (rec && rec.state === "recording") {
     rec.stop();
     $("mic").classList.remove("rec");
-    $("mic").title = "Gravar áudio";
+    $("mic").title = "Record audio";
     return;
   }
   try {
@@ -1063,7 +1063,7 @@ $("mic").onclick = async () => {
     };
     rec.start();
     $("mic").classList.add("rec");
-    $("mic").title = "Parar gravação";
+    $("mic").title = "Stop recording";
   } catch { alert("Não foi possível acessar o microfone."); }
 };
 

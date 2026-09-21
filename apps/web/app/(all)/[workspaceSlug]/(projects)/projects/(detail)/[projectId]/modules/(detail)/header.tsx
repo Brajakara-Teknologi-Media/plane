@@ -79,10 +79,7 @@ export const ModuleIssuesHeader = observer(function ModuleIssuesHeader() {
   const isSidebarCollapsed = storedValue ? (storedValue === "true" ? true : false) : false;
   const activeLayout = issueFilters?.displayFilters?.layout;
   const moduleDetails = moduleId ? getModuleById(moduleId) : undefined;
-  const canUserCreateIssue = allowPermissions(
-    PROJECT_WORK_ROLES,
-    EUserPermissionsLevel.PROJECT
-  );
+  const canUserCreateIssue = allowPermissions(PROJECT_WORK_ROLES, EUserPermissionsLevel.PROJECT);
   const workItemsCount = getGroupIssueCount(undefined, undefined, false);
 
   const toggleSidebar = () => {
@@ -141,7 +138,7 @@ export const ModuleIssuesHeader = observer(function ModuleIssuesHeader() {
               <Breadcrumbs.Item
                 component={
                   <BreadcrumbLink
-                    label="Módulos"
+                    label="Modules"
                     href={`/${workspaceSlug}/projects/${projectId}/modules/`}
                     icon={<ModuleIcon className="h-4 w-4 text-tertiary" />}
                     isLast
@@ -168,7 +165,7 @@ export const ModuleIssuesHeader = observer(function ModuleIssuesHeader() {
               <Tooltip
                 isMobile={isMobile}
                 tooltipContent={`There are ${workItemsCount} ${
-                  workItemsCount > 1 ? "chamados" : "chamado"
+                  workItemsCount > 1 ? "work items" : "work item"
                 } in this module`}
                 position="bottom"
               >
@@ -180,10 +177,10 @@ export const ModuleIssuesHeader = observer(function ModuleIssuesHeader() {
           </div>
         </Header.LeftItem>
         <Header.RightItem className="items-center">
-          {/* Antes escondida no celular (`hidden md:flex`): sem ela não havia como
+          {/* Previously hidden on mobile (`hidden md:flex`): without it there was no way
               filtrar nem trocar de layout fora do desktop. Os controles se
-              compactam para ícone e o excedente rola na horizontal. */}
-          <div className="flex min-w-0 gap-2 overflow-x-auto scrollbar-hide">
+              compact to icons and excess scrolls horizontally. */}
+          <div className="scrollbar-hide flex min-w-0 gap-2 overflow-x-auto">
             <div className="hidden @4xl:flex">
               <LayoutSelection
                 layouts={[
@@ -234,7 +231,7 @@ export const ModuleIssuesHeader = observer(function ModuleIssuesHeader() {
           {canUserCreateIssue ? (
             <>
               <Button className="hidden md:block" onClick={() => setAnalyticsModal(true)} variant="secondary" size="lg">
-                <span className="hidden @4xl:flex">Análises</span>
+                <span className="hidden @4xl:flex">Analytics</span>
                 <span className="@4xl:hidden">
                   <ChartNoAxesColumn className="size-3.5" />
                 </span>
@@ -248,7 +245,7 @@ export const ModuleIssuesHeader = observer(function ModuleIssuesHeader() {
                 }}
                 data-ph-element={WORK_ITEM_TRACKER_ELEMENTS.HEADER_ADD_BUTTON.MODULE}
               >
-                Adicionar chamado
+                Add Issue
               </Button>
             </>
           ) : (

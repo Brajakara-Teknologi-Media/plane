@@ -103,7 +103,7 @@ export const InboxIssueDescription = observer(function InboxIssueDescription(pro
           return asset_id;
         } catch (error) {
           console.log("Error in uploading work item asset:", error);
-          throw new Error("Falha ao enviar o arquivo. Tente novamente mais tarde.");
+          throw new Error(t("common.failed_to_upload_file"));
         }
       }}
       duplicateFile={async (assetId: string) => {
@@ -117,7 +117,7 @@ export const InboxIssueDescription = observer(function InboxIssueDescription(pro
           onAssetUpload?.(asset_id);
           return asset_id;
         } catch {
-          throw new Error("Falha ao duplicar o arquivo. Tente novamente mais tarde.");
+          throw new Error(t("common.failed_to_duplicate_file"));
         }
       }}
     />

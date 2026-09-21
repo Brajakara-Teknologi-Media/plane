@@ -20,6 +20,7 @@ import { Button, getButtonStyling } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { EFileAssetType } from "@plane/types";
 import { Input, Loader } from "@plane/ui";
+import { useTranslation } from "@plane/i18n";
 // helpers
 import { STATIC_COVER_IMAGES, getCoverImageDisplayURL } from "@/helpers/cover-image.helper";
 // hooks
@@ -60,6 +61,7 @@ export const ImagePickerPopover = observer(function ImagePickerPopover(props: Pr
   });
   // refs
   const ref = useRef<HTMLDivElement>(null);
+  const { t } = useTranslation();
   // router params
   const { workspaceSlug } = useParams();
   // store hooks
@@ -75,16 +77,16 @@ export const ImagePickerPopover = observer(function ImagePickerPopover(props: Pr
       },
       {
         key: "images",
-        title: "Imagens",
+        title: t("common.images"),
         isEnabled: true,
       },
       {
         key: "upload",
-        title: "Enviar",
+        title: t("common.upload"),
         isEnabled: true,
       },
     ],
-    [hasUnsplashConfigured]
+    [hasUnsplashConfigured, t]
   );
 
   const enabledTabs = useMemo(() => tabOptions.filter((tab) => tab.isEnabled), [tabOptions]);
@@ -140,9 +142,9 @@ export const ImagePickerPopover = observer(function ImagePickerPopover(props: Pr
           console.error("Error uploading user cover image:", error);
           setIsImageUploading(false);
           setToast({
-            message: error?.error ?? "Não foi possível enviar a imagem",
+            message: error?.error ?? "Could not upload image",
             type: TOAST_TYPE.ERROR,
-            title: "Imagem não enviada",
+            title: "Image not uploaded",
           });
         });
     } else {
@@ -161,9 +163,9 @@ export const ImagePickerPopover = observer(function ImagePickerPopover(props: Pr
           console.error("Error uploading project cover image:", error);
           setIsImageUploading(false);
           setToast({
-            message: error?.error ?? "Não foi possível enviar a imagem",
+            message: error?.error ?? "Could not upload image",
             type: TOAST_TYPE.ERROR,
-            title: "Imagem não enviada",
+            title: "Image not uploaded",
           });
         });
     }
@@ -233,7 +235,7 @@ export const ImagePickerPopover = observer(function ImagePickerPopover(props: Pr
                               value={value}
                               onChange={(e) => setFormData({ ...formData, search: e.target.value })}
                               ref={ref}
-                              placeholder="Buscar imagens"
+                              placeholder="Search images"
                               className="w-full text-13"
                             />
                           )}
@@ -337,7 +339,7 @@ export const ImagePickerPopover = observer(function ImagePickerPopover(props: Pr
                       <p className="text-13 text-danger-primary">
                         {fileRejections[0].errors[0].code === "file-too-large"
                           ? "The image size cannot exceed 5 MB."
-                          : "Envie um arquivo em formato válido."}
+                          : "Upload a file in a valid format."}
                       </p>
                     )}
 
@@ -351,7 +353,7 @@ export const ImagePickerPopover = observer(function ImagePickerPopover(props: Pr
                           setImage(null);
                         }}
                       >
-                        Cancelar
+                        {t("common.cancel")}
                       </Button>
                       <Button
                         variant="primary"

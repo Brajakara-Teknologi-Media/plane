@@ -5,6 +5,7 @@
  */
 
 import { observer } from "mobx-react";
+import { useTranslation } from "@plane/i18n";
 import { useParams } from "next/navigation";
 // constants
 import { SPREADSHEET_SELECT_GROUP } from "@plane/constants";
@@ -39,6 +40,8 @@ export const SpreadsheetHeader = observer(function SpreadsheetHeader(props: Prop
     selectionHelpers,
     isEpic = false,
   } = props;
+  // i18n
+  const { t } = useTranslation();
   // router
   const { projectId } = useParams();
   // derived values
@@ -71,7 +74,7 @@ export const SpreadsheetHeader = observer(function SpreadsheetHeader(props: Prop
                   />
                 </div>
               )}
-              <span className="text-13 font-medium">{`${isEpic ? "Épicas" : "Chamados"}`}</span>
+              <span className="text-13 font-medium">{isEpic ? t("common.epics") : t("common.work_items")}</span>
             </div>
           </div>
         </th>

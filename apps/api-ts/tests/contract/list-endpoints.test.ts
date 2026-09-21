@@ -66,18 +66,18 @@ describe("Rotas de listagem", () => {
     projectId = (await createProject(ws.id, admin.id, {identifier: "MAIN"})).id;
     otherProjectId = (await createProject(ws.id, admin.id, {identifier: "SEC"})).id;
 
-    await createLabel(projectId, workspaceId, {name: "Correção", slaHours: 16});
-    await createLabel(projectId, workspaceId, {name: "Melhoria"});
-    await createState(projectId, workspaceId, {name: "Aguardando cliente", group: "backlog"});
-    await createCycle(projectId, workspaceId, admin.id, {name: "Ciclo 1"});
-    await createModule(projectId, workspaceId, {name: "Módulo 1"});
+    await createLabel(projectId, workspaceId, {name: "Fix", slaHours: 16});
+    await createLabel(projectId, workspaceId, {name: "Improvement"});
+    await createState(projectId, workspaceId, {name: "Waiting for client", group: "backlog"});
+    await createCycle(projectId, workspaceId, admin.id, {name: "Cycle 1"});
+    await createModule(projectId, workspaceId, {name: "Module 1"});
     await createSticky(workspaceId, admin.id, {title: "Lembrete"});
     await createIssue(projectId, workspaceId, {name: "Chamado listável", sequenceId: 1});
     await createIntakeIssue(projectId, workspaceId, {name: "Intake pendente", status: -2, createdById: admin.id});
-    await createIntakeIssue(projectId, workspaceId, {name: "Intake aceito", status: 1, createdById: admin.id});
+    await createIntakeIssue(projectId, workspaceId, {name: "Intake accepted", status: 1, createdById: admin.id});
 
-    entityAtiva = (await createEntity(ws.id, {name: "Cliente Ativo", isActive: true})).id;
-    entityInativa = (await createEntity(ws.id, {name: "Cliente Inativo", isActive: false})).id;
+    entityAtiva = (await createEntity(ws.id, {name: "Active Client", isActive: true})).id;
+    entityInativa = (await createEntity(ws.id, {name: "Inactive Client", isActive: false})).id;
 
     const tech = await createMemberWithToken(ws.id, 15, projectId, 15);
     technicianId = tech.user.id;
@@ -195,8 +195,8 @@ describe("Rotas de listagem", () => {
 
     it("labels do projeto trazem sla_hours e ordenação estável", async () => {
       const labels = await getJson(proj("/labels/"));
-      expect(labels.map((l: any) => l.name).sort()).toEqual(["Correção", "Melhoria"]);
-      expect(labels.find((l: any) => l.name === "Correção").sla_hours).toBe(16);
+      expect(labels.map((l: any) => l.name).sort()).toEqual(["Fix", "Melhoria"]);
+      expect(labels.find((l: any) => l.name === "Fix").sla_hours).toBe(16);
     });
 
     it("estados do projeto vêm ordenados por sequence e sem triagem", async () => {
@@ -310,9 +310,9 @@ describe("Rotas de listagem", () => {
       expect(page.results.map((e: any) => e.id)).toEqual([entityInativa]);
     });
 
-    it("sem filtro traz todas, ordenadas por nome", async () => {
+    it("Without filtering, it returns all items, sorted by name", async () => {
       const page = expectEnvelope(await getJson(ws("/entities/")));
-      expect(page.results.map((e: any) => e.name)).toEqual(["Cliente Ativo", "Cliente Inativo"]);
+      expect(page.results.map((e: any) => e.name)).toEqual(["Active Client", "Inactive Client"]);
     });
   });
 

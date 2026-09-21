@@ -19,20 +19,17 @@ export const ProjectViewEmptyState = observer(function ProjectViewEmptyState() {
   const { allowPermissions } = useUserPermissions();
 
   // auth
-  const isCreatingIssueAllowed = allowPermissions(
-    PROJECT_WORK_ROLES,
-    EUserPermissionsLevel.PROJECT
-  );
+  const isCreatingIssueAllowed = allowPermissions(PROJECT_WORK_ROLES, EUserPermissionsLevel.PROJECT);
 
   return (
     // TODO: Add translation
     <EmptyStateDetailed
       assetKey="work-item"
-      title="Os chamados da visualização aparecerão aqui"
-      description="Os chamados ajudam você a acompanhar partes individuais do trabalho. Com eles, acompanhe o que está acontecendo, quem está trabalhando e o que já foi concluído."
+      title="The visualization calls will appear here"
+      description="The calls help you track individual parts of the work. With them, you can monitor what's happening, who's working on it, and what has already been completed."
       actions={[
         {
-          label: "Novo chamado",
+          label: "New Work Item",
           onClick: () => {
             toggleCreateIssueModal(true, EIssuesStoreType.PROJECT_VIEW);
           },

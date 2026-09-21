@@ -5,11 +5,11 @@
  */
 
 /**
- * Tela de carregamento: o avião decola à esquerda, cruza a tela e volta para
- * pousar no mesmo ponto — o ciclo é contínuo, sem "teletransporte".
+ * Loading screen: the plane takes off on the left, crosses the screen and returns to
+ * land at the same point — the cycle is continuous, without "teleportation".
  *
- * O SVG é inline (e não um <img>) porque a animação precisa começar no primeiro
- * paint: esta tela existe justamente enquanto a aplicação ainda não hidratou, e
+ * The SVG is inline (not an <img>) because the animation needs to start on the first
+ * paint: this screen exists precisely while the application hasn't hydrated yet, and
  * um asset externo poderia chegar depois. As keyframes ficam em
  * `styles/plane-loader.css`.
  */
@@ -22,7 +22,7 @@ type Props = {
 export function PlaneFlightLoader({ label }: Props) {
   return (
     <div className="relative flex h-screen w-full flex-col items-center justify-center overflow-hidden bg-canvas">
-      {/* Pista: a linha por onde o avião decola e pousa. */}
+      {/* Runway: the line where the plane takes off and lands. */}
       <div className="pointer-events-none absolute inset-x-0 top-1/2 flex items-center">
         <svg className="w-full" height="2" aria-hidden="true" preserveAspectRatio="none" viewBox="0 0 100 2">
           <line
@@ -39,9 +39,9 @@ export function PlaneFlightLoader({ label }: Props) {
         </svg>
       </div>
 
-      {/* O avião fica ancorado na pista; a animação move o conjunto. */}
+      {/* The plane is anchored on the runway; the animation moves the set. */}
       <div className="absolute inset-x-0 top-1/2" aria-hidden="true">
-        <div className="aviao-loader__track flex -translate-y-1/2 items-center" role="status" aria-label="Carregando">
+        <div className="aviao-loader__track flex -translate-y-1/2 items-center" role="status" aria-label="Loading">
           <span
             className="aviao-loader__trail mr-1 h-[3px] w-24 rounded-full bg-gradient-to-r from-transparent to-[#2BA6E0]/70 sm:w-40"
             aria-hidden="true"
@@ -72,7 +72,7 @@ export function PlaneFlightLoader({ label }: Props) {
         </div>
       </div>
 
-      {label && <p className="absolute bottom-1/3 text-sm text-secondary">{label}</p>}
+      {label && <p className="text-sm absolute bottom-1/3 text-secondary">{label}</p>}
     </div>
   );
 }

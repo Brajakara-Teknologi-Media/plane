@@ -199,10 +199,10 @@ export const IssueBlock = observer(function IssueBlock(props: IssueBlockProps) {
           if (!isDraggingAllowed) {
             setToast({
               type: TOAST_TYPE.WARNING,
-              title: "Não é possível mover o chamado",
+              title: "Cannot move work item",
               message: !canEditIssueProperties
-                ? "Você não tem permissão para mover este chamado"
-                : "Arrastar e soltar está desativado para o agrupamento atual",
+                ? "You do not have permission to move this work item"
+                : "Drag and drop is disabled for the current grouping",
             });
           }
         }}
@@ -285,7 +285,7 @@ export const IssueBlock = observer(function IssueBlock(props: IssueBlockProps) {
               <p className="cursor-pointer truncate text-body-xs-medium text-primary">{issue.name}</p>
             </Tooltip>
             {issue.legacy_ticket_number && (
-              <span className="ml-1.5 shrink-0 rounded bg-amber-100 px-1 py-0.5 text-10 font-mono font-semibold text-amber-800 ring-1 ring-amber-300">
+              <span className="bg-amber-100 font-mono text-amber-800 ring-amber-300 ml-1.5 shrink-0 rounded px-1 py-0.5 text-10 font-semibold ring-1">
                 #{issue.legacy_ticket_number}
               </span>
             )}

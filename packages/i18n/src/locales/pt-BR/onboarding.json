@@ -1,0 +1,51 @@
+{
+  "onboarding": {
+    "usecase": {
+      "header_title": "What brings you to Avião?",
+      "header_description": "Conte-nos seus objetivos e o tamanho da equipe.",
+      "select_one_or_more": "Selecione um ou mais"
+    },
+    "password": {
+      "mismatch": "As senhas não coincidem",
+      "confirm_placeholder": "Confirme a senha"
+    },
+    "role": {
+      "select_one": "Selecione um",
+      "product_manager": "Gerente de Produto",
+      "engineering_manager": "Gerente de Engenharia",
+      "designer": "Designer",
+      "developer": "Desenvolvedor",
+      "founder_executive": "Fundador/Executivo",
+      "operations_manager": "Gerente de Operações",
+      "others": "Outros"
+    },
+    "profile": {
+      "header_title": "Crie seu perfil.",
+      "role_question": "Em qual função você trabalha? Escolha uma."
+    },
+    "invites": {
+      "sent_successfully": "Convites enviados com sucesso.",
+      "empty": "Nenhum convite encontrado",
+      "accept_hint": "Aceite os convites para colaborar com sua equipe.",
+      "header_title": "Convide seus colegas de equipe",
+      "you_were_invited": "Você foi convidado!",
+      "email_column": "E-mail",
+      "role_column": "Função"
+    },
+    "auth": {
+      "unauthorized_title": "Não autorizado!",
+      "check_pending_invites": "Verificar convites pendentes",
+      "switch_account_hint_prefix": "Se você se cadastrou por meio de",
+      "switch_account_hint_suffix": "sem querer, você pode trocar sua conta por uma diferente a partir daqui.",
+      "unauthorized_description": "Ops! Você não tem autorização para ver esta página"
+    },
+    "tour": {
+      "work_items_title": "Planeje com chamados",
+      "welcome_title": "Bem-vindo ao Avião, {first_name} {last_name}",
+      "welcome_description": "Estamos felizes que você decidiu experimentar o Avião. Agora você pode gerenciar seus projetos com facilidade. Comece criando um projeto.",
+      "skip_tour": "Não, obrigado. Vou explorar sozinho",
+      "create_first_project": "Crie seu primeiro projeto",
+      "sidebar_subtitle": "Aproveite mais o Avião."
+    }
+  }
+}

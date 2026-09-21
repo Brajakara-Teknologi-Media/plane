@@ -208,7 +208,7 @@ export const ActiveCycleStats = observer(function ActiveCycleStats(props: Active
                         >
                           <div className="flex w-full min-w-24 flex-grow items-center gap-1.5 truncate">
                             <IssueIdentifier issueId={issue.id} projectId={projectId} size="xs" variant="secondary" />
-                            <Tooltip position="top-start" tooltipHeading="Título" tooltipContent={issue.name}>
+                            <Tooltip position="top-start" tooltipHeading="Title" tooltipContent={issue.name}>
                               <span className="truncate text-13 text-primary">{issue.name}</span>
                             </Tooltip>
                           </div>
@@ -302,7 +302,7 @@ export const ActiveCycleStats = observer(function ActiveCycleStats(props: Active
                         title={
                           <div className="flex items-center gap-2">
                             <div className="h-5 w-5 rounded-full border-2 border-subtle bg-layer-1">
-                              <img src={userImage} height="100%" width="100%" className="rounded-full" alt="Usuário" />
+                              <img src={userImage} height="100%" width="100%" className="rounded-full" alt="Username" />
                             </div>
                             <span>{t("no_assignee")}</span>
                           </div>

@@ -7,6 +7,7 @@
 import { observer } from "mobx-react";
 // plane imports
 import { Header, EHeaderVariant } from "@plane/ui";
+import { useTranslation } from "@plane/i18n";
 // hooks
 import { useProjectInbox } from "@/hooks/store/use-project-inbox";
 // local imports
@@ -19,6 +20,7 @@ import { InboxIssueAppliedFiltersStatus } from "./status";
 
 export const InboxIssueAppliedFilters = observer(function InboxIssueAppliedFilters() {
   const { getAppliedFiltersCount } = useProjectInbox();
+  const { t } = useTranslation();
 
   if (getAppliedFiltersCount === 0) return <></>;
   return (
@@ -30,15 +32,15 @@ export const InboxIssueAppliedFilters = observer(function InboxIssueAppliedFilte
       {/* priority */}
       <InboxIssueAppliedFiltersPriority />
       {/* assignees */}
-      <InboxIssueAppliedFiltersMember filterKey="assignees" label="Responsáveis" />
+      <InboxIssueAppliedFiltersMember filterKey="assignees" label="Responsible" />
       {/* created_by */}
-      <InboxIssueAppliedFiltersMember filterKey="created_by" label="Criado por" />
+      <InboxIssueAppliedFiltersMember filterKey="created_by" label={t("common.created_by")} />
       {/* label */}
       <InboxIssueAppliedFiltersLabel />
       {/* created_at */}
-      <InboxIssueAppliedFiltersDate filterKey="created_at" label="Data de criação" />
+      <InboxIssueAppliedFiltersDate filterKey="created_at" label="Created at" />
       {/* updated_at */}
-      <InboxIssueAppliedFiltersDate filterKey="updated_at" label="Data de atualização" />
+      <InboxIssueAppliedFiltersDate filterKey="updated_at" label="Updated at" />
     </Header>
   );
 });

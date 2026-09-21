@@ -107,7 +107,7 @@ export const AuthRoot = observer(function AuthRoot(props: TAuthRoot) {
       <AuthContainer>
         <AuthHeaderBase
           header="No authentication methods available"
-          subHeader="Entre em contato com o administrador para ativar a autenticação na sua instância."
+          subHeader="Contact your administrator to enable authentication on your instance."
         />
       </AuthContainer>
     );

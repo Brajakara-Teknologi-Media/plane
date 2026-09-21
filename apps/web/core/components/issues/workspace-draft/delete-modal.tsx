@@ -6,6 +6,7 @@
 
 import { useEffect, useState } from "react";
 // types
+import { isAxiosError } from "axios";
 import { PROJECT_ERROR_MESSAGES, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
@@ -78,7 +79,11 @@ export function WorkspaceDraftIssueDeleteIssueModal(props: Props) {
           onClose();
         })
         .catch((errors) => {
-          const isPermissionError = errors?.error === "Apenas o administrador ou o criador pode excluir o chamado";
+          // Backend 403s from permission-checks.ts throw {status, message}; plain 4xx returns use {detail}.
+          const isPermissionError =
+            isAxiosError(errors) &&
+            (errors.response?.data?.message === "Your role does not allow this action." ||
+              errors.response?.data?.detail === "Your role does not allow this action.");
           const currentError = isPermissionError
             ? PROJECT_ERROR_MESSAGES.permissionError
             : PROJECT_ERROR_MESSAGES.issueDeleteError;

@@ -7,6 +7,7 @@
 import { observer } from "mobx-react";
 // icons
 import { MembersPropertyIcon } from "@plane/propel/icons";
+import { useTranslation } from "@plane/i18n";
 // hooks;
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // components
@@ -20,6 +21,7 @@ export const IssueAssigneeActivity = observer(function IssueAssigneeActivity(pro
   const {
     activity: { getActivityById },
   } = useIssueDetail();
+  const { t } = useTranslation();
 
   const activity = getActivityById(activityId);
 
@@ -31,7 +33,9 @@ export const IssueAssigneeActivity = observer(function IssueAssigneeActivity(pro
       ends={ends}
     >
       <>
-        {activity.old_value === "" ? `adicionou um novo responsável ` : `removeu o responsável `}
+        {activity.old_value === ""
+          ? t("work-item.activity.added_new_assignee")
+          : t("work-item.activity.removed_assignee")}
         <a
           href={`/${activity.workspace_detail?.slug}/profile/${activity.new_identifier ?? activity.old_identifier}`}
           target="_blank"
@@ -40,7 +44,7 @@ export const IssueAssigneeActivity = observer(function IssueAssigneeActivity(pro
         >
           {activity.new_value && activity.new_value !== "" ? activity.new_value : activity.old_value}
         </a>
-        {showIssue && (activity.old_value === "" ? ` em ` : ` de `)}
+        {showIssue && (activity.old_value === "" ? ` ${t("activity.for")} ` : ` ${t("activity.from")} `)}
         {showIssue && <IssueLink activityId={activityId} />}.
       </>
     </IssueActivityBlockComponent>

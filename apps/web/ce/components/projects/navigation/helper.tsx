@@ -5,10 +5,10 @@
  */
 
 // plane imports
-import {EProjectFeatureKey, EUserPermissions} from "@plane/constants";
-import {CycleIcon, IntakeIcon, ModuleIcon, PageIcon, ViewsIcon, WorkItemsIcon} from "@plane/propel/icons";
+import { EProjectFeatureKey, EUserPermissions } from "@plane/constants";
+import { CycleIcon, IntakeIcon, ModuleIcon, PageIcon, ViewsIcon, WorkItemsIcon } from "@plane/propel/icons";
 // components
-import type {TNavigationItem} from "@/components/workspace/sidebar/project-navigation";
+import type { TNavigationItem } from "@/components/workspace/sidebar/project-navigation";
 
 export const getProjectFeatureNavigation = (
   workspaceSlug: string,
@@ -19,12 +19,12 @@ export const getProjectFeatureNavigation = (
     issue_views_view: boolean;
     page_view: boolean;
     inbox_view: boolean;
-  },
+  }
 ): TNavigationItem[] => [
   {
     i18n_key: "sidebar.work_items",
     key: EProjectFeatureKey.WORK_ITEMS,
-    name: "Chamados",
+    name: "Work Items",
     href: `/${workspaceSlug}/projects/${projectId}/issues`,
     icon: WorkItemsIcon,
     access: [
@@ -112,7 +112,7 @@ export const getProjectFeatureNavigation = (
   {
     i18n_key: "sidebar.intake",
     key: EProjectFeatureKey.INTAKE,
-    name: "Solicitações",
+    name: "Requests",
     href: `/${workspaceSlug}/projects/${projectId}/intake`,
     icon: IntakeIcon,
     access: [

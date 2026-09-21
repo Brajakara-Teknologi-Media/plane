@@ -34,7 +34,7 @@ function roleDto(r: any) {
 // Admins (role >= 18) manage roles.
 async function requireRoleAdmin(workspaceId: string, userId: string) {
   const m = await requireWorkspaceMember(workspaceId, userId);
-  if (m.role < 18) throw {status: 403, message: "Apenas administradores podem gerenciar funções."};
+  if (m.role < 18) throw {status: 403, message: "Only administrators can manage roles."};
   return m;
 }
 
@@ -65,13 +65,13 @@ export const rolesModule = new Elysia({prefix: "/workspaces/:slug/roles"})
     const b = body as any;
     if (!b.name) {
       set.status = 400;
-      return {detail: "O nome é obrigatório."};
+      return {detail: "Name is required."};
     }
     const key = b.key ? slugify(b.key) : slugify(b.name);
     const exists = await prisma.workflowRole.findFirst({where: {workspaceId: ws.id, key, deletedAt: null}});
     if (exists) {
       set.status = 409;
-      return {detail: "Já existe uma função com essa chave.", id: exists.id};
+      return {detail: "A role with this key already exists.", id: exists.id};
     }
     const role = await prisma.workflowRole.create({
       data: {
@@ -97,7 +97,7 @@ export const rolesModule = new Elysia({prefix: "/workspaces/:slug/roles"})
     });
     if (!role) {
       set.status = 404;
-      return {detail: "Função não encontrada."};
+      return {detail: "Role not found."};
     }
     return roleDto(role);
   })
@@ -110,7 +110,7 @@ export const rolesModule = new Elysia({prefix: "/workspaces/:slug/roles"})
     const target = await prisma.workflowRole.findFirst({where: {id: role_id, workspaceId: ws.id, deletedAt: null}});
     if (!target) {
       set.status = 404;
-      return {detail: "Função não encontrada."};
+      return {detail: "Role not found."};
     }
     const data: any = {};
     if (b.name !== undefined) data.name = b.name;
@@ -130,11 +130,11 @@ export const rolesModule = new Elysia({prefix: "/workspaces/:slug/roles"})
     const role = await prisma.workflowRole.findFirst({where: {id: role_id, workspaceId: ws.id, deletedAt: null}});
     if (!role) {
       set.status = 404;
-      return {detail: "Função não encontrada."};
+      return {detail: "Role not found."};
     }
     if (role.isSystem) {
       set.status = 400;
-      return {detail: "Funções do sistema não podem ser excluídas."};
+      return {detail: "System roles cannot be deleted."};
     }
     await prisma.workflowRole.update({where: {id: role_id}, data: {deletedAt: new Date()}});
     set.status = 204;
@@ -148,7 +148,7 @@ export const rolesModule = new Elysia({prefix: "/workspaces/:slug/roles"})
     const target = await prisma.workflowRole.findFirst({where: {id: role_id, workspaceId: ws.id, deletedAt: null}});
     if (!target) {
       set.status = 404;
-      return {detail: "Função não encontrada."};
+      return {detail: "Role not found."};
     }
     const rows: any[] = (body as any)?.transitions ?? [];
     await prisma.$transaction([

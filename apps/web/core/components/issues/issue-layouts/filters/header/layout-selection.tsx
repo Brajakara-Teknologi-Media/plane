@@ -37,8 +37,9 @@ export function LayoutSelection(props: Props) {
         <Tooltip key={layout.key} tooltipContent={t(layout.i18n_title)} isMobile={isMobile}>
           <button
             type="button"
-            // Os botões só têm ícone: sem rótulo acessível o leitor de tela lê
-            // "botão" e nada mais, e nenhum teste consegue alcançá-los.
+            // The buttons have an icon only: without an accessible label the
+            // screen reader announces "button" and nothing else, and no test
+            // can reach them.
             aria-label={t(layout.i18n_title)}
             aria-pressed={selectedLayout === layout.key}
             data-layout={layout.key}

@@ -13,8 +13,8 @@
 
 import React, { useCallback, useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
+import { useTranslation } from "@plane/i18n";
 import { pluginStore } from "@/store/plugin.store";
-
 type ModalState = { kind: "modal"; title: string; content: React.ReactNode; size?: "sm" | "md" | "lg" } | null;
 type DrawerState = { kind: "drawer"; title: string; content: React.ReactNode; position?: "left" | "right" } | null;
 type ConfirmState = {
@@ -38,6 +38,7 @@ export const PluginUiBridge: React.FC<{ pluginId: string; pluginSlug?: string }>
   const [modal, setModal] = useState<ModalState>(null);
   const [drawer, setDrawer] = useState<DrawerState>(null);
   const [confirm, setConfirm] = useState<ConfirmState>(null);
+  const { t } = useTranslation();
 
   const closeModal = useCallback((cb?: () => void) => {
     setModal(null);
@@ -55,13 +56,23 @@ export const PluginUiBridge: React.FC<{ pluginId: string; pluginSlug?: string }>
       if (!d || d.source !== "plugin-sdk") return;
       switch (d.event) {
         case "modal:open":
-          setModal({ kind: "modal", title: d.config?.title ?? "", content: d.config?.content ?? null, size: d.config?.size });
+          setModal({
+            kind: "modal",
+            title: d.config?.title ?? "",
+            content: d.config?.content ?? null,
+            size: d.config?.size,
+          });
           break;
         case "modal:close":
           setModal(null);
           break;
         case "drawer:open":
-          setDrawer({ kind: "drawer", title: d.config?.title ?? "", content: d.config?.content ?? null, position: d.config?.position });
+          setDrawer({
+            kind: "drawer",
+            title: d.config?.title ?? "",
+            content: d.config?.content ?? null,
+            position: d.config?.position,
+          });
           break;
         case "drawer:close":
           setDrawer(null);
@@ -126,18 +137,21 @@ export const PluginUiBridge: React.FC<{ pluginId: string; pluginSlug?: string }>
     <>
       {/* Modal */}
       {modal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 backdrop-blur-sm" onClick={() => closeModal()}>
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 backdrop-blur-sm"
+          onClick={() => closeModal()}
+        >
           <div
-            className={`w-full ${SIZE_CLASS[modal.size ?? "md"]} rounded-xl border border-custom-border-200 bg-custom-background-100 shadow-xl`}
+            className={`w-full ${SIZE_CLASS[modal.size ?? "md"]} border-custom-border-200 bg-custom-background-100 shadow-xl rounded-xl border`}
             onClick={(ev) => ev.stopPropagation()}
           >
-            <div className="flex items-center justify-between border-b border-custom-border-200 px-5 py-3">
-              <h3 className="text-base font-semibold text-custom-text-100">{modal.title}</h3>
+            <div className="border-custom-border-200 flex items-center justify-between border-b px-5 py-3">
+              <h3 className="text-base text-custom-text-100 font-semibold">{modal.title}</h3>
               <button onClick={() => closeModal()} className="text-custom-text-400 hover:text-custom-text-100">
                 ✕
               </button>
             </div>
-            <div className="max-h-[70vh] overflow-y-auto p-5 text-sm text-custom-text-200">{modal.content}</div>
+            <div className="text-sm text-custom-text-200 max-h-[70vh] overflow-y-auto p-5">{modal.content}</div>
           </div>
         </div>
       )}
@@ -146,16 +160,16 @@ export const PluginUiBridge: React.FC<{ pluginId: string; pluginSlug?: string }>
       {drawer && (
         <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm" onClick={() => closeDrawer()}>
           <div
-            className={`fixed inset-y-0 ${drawer.position === "left" ? "left-0" : "right-0"} flex w-full max-w-md flex-col border-custom-border-200 bg-custom-background-100 shadow-xl`}
+            className={`fixed inset-y-0 ${drawer.position === "left" ? "left-0" : "right-0"} border-custom-border-200 bg-custom-background-100 shadow-xl flex w-full max-w-md flex-col`}
             onClick={(ev) => ev.stopPropagation()}
           >
-            <div className="flex items-center justify-between border-b border-custom-border-200 px-5 py-3">
-              <h3 className="text-base font-semibold text-custom-text-100">{drawer.title}</h3>
+            <div className="border-custom-border-200 flex items-center justify-between border-b px-5 py-3">
+              <h3 className="text-base text-custom-text-100 font-semibold">{drawer.title}</h3>
               <button onClick={() => closeDrawer()} className="text-custom-text-400 hover:text-custom-text-100">
                 ✕
               </button>
             </div>
-            <div className="flex-1 overflow-y-auto p-5 text-sm text-custom-text-200">{drawer.content}</div>
+            <div className="text-sm text-custom-text-200 flex-1 overflow-y-auto p-5">{drawer.content}</div>
           </div>
         </div>
       )}
@@ -163,9 +177,9 @@ export const PluginUiBridge: React.FC<{ pluginId: string; pluginSlug?: string }>
       {/* Confirm */}
       {confirm && (
         <div className="fixed inset-0 z-60 flex items-center justify-center bg-black/40 p-4 backdrop-blur-sm">
-          <div className="w-full max-w-sm rounded-xl border border-custom-border-200 bg-custom-background-100 p-5 shadow-xl">
-            <h3 className="text-base font-semibold text-custom-text-100">{confirm.title}</h3>
-            <p className="mt-2 text-sm text-custom-text-200">{confirm.message}</p>
+          <div className="border-custom-border-200 bg-custom-background-100 shadow-xl w-full max-w-sm rounded-xl border p-5">
+            <h3 className="text-base text-custom-text-100 font-semibold">{confirm.title}</h3>
+            <p className="text-sm text-custom-text-200 mt-2">{confirm.message}</p>
             <div className="mt-5 flex justify-end gap-2">
               <button
                 onClick={() => {
@@ -173,9 +187,9 @@ export const PluginUiBridge: React.FC<{ pluginId: string; pluginSlug?: string }>
                   setConfirm(null);
                   cb?.();
                 }}
-                className="rounded-md border border-custom-border-200 px-3 py-1.5 text-sm text-custom-text-200 hover:bg-custom-background-80"
+                className="border-custom-border-200 text-sm text-custom-text-200 hover:bg-custom-background-80 rounded-md border px-3 py-1.5"
               >
-                {confirm.cancelLabel ?? "Cancelar"}
+                {confirm.cancelLabel ?? t("common.cancel")}
               </button>
               <button
                 onClick={() => {
@@ -183,9 +197,9 @@ export const PluginUiBridge: React.FC<{ pluginId: string; pluginSlug?: string }>
                   setConfirm(null);
                   cb?.();
                 }}
-                className="rounded-md bg-custom-primary-100 px-3 py-1.5 text-sm font-medium text-white hover:bg-custom-primary-200"
+                className="bg-custom-primary-100 text-sm hover:bg-custom-primary-200 rounded-md px-3 py-1.5 font-medium text-white"
               >
-                {confirm.confirmLabel ?? "Confirmar"}
+                {confirm.confirmLabel ?? t("common.confirm")}
               </button>
             </div>
           </div>

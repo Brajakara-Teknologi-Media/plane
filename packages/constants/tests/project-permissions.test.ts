@@ -13,22 +13,22 @@ const TODAS = Object.values(EProjectAction);
 const AGRUPADAS = PROJECT_ACTION_GROUPS.flatMap((grupo) => grupo.actions);
 
 describe("PROJECT_ACTION_GROUPS", () => {
-  it("cobre todas as ações do catálogo", () => {
+  it("covers all catalog actions", () => {
     expect([...AGRUPADAS].sort()).toEqual([...TODAS].sort());
   });
 
-  it("não repete ação em mais de um grupo", () => {
+  it("does not repeat action in more than one group", () => {
     expect(AGRUPADAS).toHaveLength(new Set(AGRUPADAS).size);
   });
 
-  it("todo grupo tem rótulo e pelo menos uma ação", () => {
+  it("every group has a label and at least one action", () => {
     for (const grupo of PROJECT_ACTION_GROUPS) {
       expect(grupo.label.trim().length).toBeGreaterThan(0);
       expect(grupo.actions.length).toBeGreaterThan(0);
     }
   });
 
-  it("toda ação tem rótulo em português", () => {
+  it("every action has a label in english", () => {
     for (const acao of TODAS) {
       const rotulo = PROJECT_ACTION_LABELS[acao];
       expect(rotulo).toBeTruthy();

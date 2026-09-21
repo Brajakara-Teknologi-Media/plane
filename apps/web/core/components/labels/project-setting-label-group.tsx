@@ -10,6 +10,7 @@ import { observer } from "mobx-react";
 import { Disclosure, Transition } from "@headlessui/react";
 // plane imports
 import { EditIcon, TrashIcon, ChevronDownIcon } from "@plane/propel/icons";
+import { useTranslation } from "@plane/i18n";
 import type { IIssueLabel } from "@plane/types";
 // components
 import type { TLabelOperationsCallbacks } from "./create-update-label-inline";
@@ -49,6 +50,8 @@ export const ProjectSettingLabelGroup = observer(function ProjectSettingLabelGro
     labelOperationsCallbacks,
   } = props;
 
+  // i18n
+  const { t } = useTranslation();
   // states
   const [isEditLabelForm, setEditLabelForm] = useState(false);
 
@@ -60,7 +63,7 @@ export const ProjectSettingLabelGroup = observer(function ProjectSettingLabelGro
         setIsUpdating(true);
       },
       isVisible: true,
-      text: "Editar etiqueta",
+      text: t("common.edit_label"),
       key: "edit_label",
     },
     {
@@ -69,7 +72,7 @@ export const ProjectSettingLabelGroup = observer(function ProjectSettingLabelGro
         handleLabelDelete(label);
       },
       isVisible: true,
-      text: "Excluir etiqueta",
+      text: t("common.delete_label"),
       key: "delete_label",
     },
   ];

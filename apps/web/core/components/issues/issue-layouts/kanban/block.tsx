@@ -132,8 +132,8 @@ const KanbanIssueDetailsBlock = observer(function KanbanIssueDetailsBlock(props:
 
       {/* Entity badge — always show when set */}
       {(issue as any).entity && (issue as any).entity.name && (
-        <div className="flex items-center gap-1 mt-1">
-          <div className="inline-flex items-center gap-1 rounded-full border border-subtle bg-surface-2 px-1.5 py-0.5 text-caption-2xs-medium text-secondary-text max-w-[140px]">
+        <div className="mt-1 flex items-center gap-1">
+          <div className="text-caption-2xs-medium text-secondary-text inline-flex max-w-[140px] items-center gap-1 rounded-full border border-subtle bg-surface-2 px-1.5 py-0.5">
             <Building2 className="h-2.5 w-2.5 shrink-0" />
             <span className="truncate">{(issue as any).entity.name}</span>
           </div>
@@ -142,7 +142,7 @@ const KanbanIssueDetailsBlock = observer(function KanbanIssueDetailsBlock(props:
       {/* Legacy chamado number */}
       {issue.legacy_ticket_number && (
         <div className="mt-1 flex items-center">
-          <span className="rounded bg-amber-100 px-1.5 py-0.5 text-10 font-mono font-semibold text-amber-800 ring-1 ring-amber-300">
+          <span className="bg-amber-100 font-mono text-amber-800 ring-amber-300 rounded px-1.5 py-0.5 text-10 font-semibold ring-1">
             #{issue.legacy_ticket_number}
           </span>
         </div>
@@ -280,10 +280,10 @@ export const KanbanIssueBlock = observer(function KanbanIssueBlock(props: IssueB
           else {
             setToast({
               type: TOAST_TYPE.WARNING,
-              title: "Não é possível mover o chamado",
+              title: "Cannot move work item",
               message: !canEditIssueProperties
-                ? "Você não tem permissão para mover este chamado"
-                : "Arrastar e soltar está desativado para o agrupamento atual",
+                ? "You do not have permission to move this work item"
+                : "Drag and drop is disabled for the current grouping",
             });
           }
         }}

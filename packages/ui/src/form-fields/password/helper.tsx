@@ -25,19 +25,19 @@ export const getStrengthInfo = (strength: E_PASSWORD_STRENGTH): StrengthInfo => 
       };
     case E_PASSWORD_STRENGTH.LENGTH_NOT_VALID:
       return {
-        message: "A senha é muito curta",
+        message: "Password is too short",
         textColor: "text-danger-primary",
         activeFragments: 1,
       };
     case E_PASSWORD_STRENGTH.STRENGTH_NOT_VALID:
       return {
-        message: "A senha é fraca",
+        message: "Password is weak",
         textColor: "text-orange-500",
         activeFragments: 2,
       };
     case E_PASSWORD_STRENGTH.STRENGTH_VALID:
       return {
-        message: "A senha é forte",
+        message: "Password is strong",
         textColor: "text-success-primary",
         activeFragments: 3,
       };

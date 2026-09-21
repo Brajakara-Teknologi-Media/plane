@@ -9,6 +9,7 @@ import { observer } from "mobx-react";
 import { Loader } from "lucide-react";
 import { CloseIcon } from "@plane/propel/icons";
 // plane imports
+import { useTranslation } from "@plane/i18n";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { IState, TStateOperationsCallbacks } from "@plane/types";
@@ -27,6 +28,7 @@ type TStateDelete = {
 export const StateDelete = observer(function StateDelete(props: TStateDelete) {
   const { totalStates, state, deleteStateCallback } = props;
   // hooks
+  const { t } = useTranslation();
   const { isMobile } = usePlatformOS();
   // states
   const [isDeleteModal, setIsDeleteModal] = useState(false);
@@ -47,15 +49,14 @@ export const StateDelete = observer(function StateDelete(props: TStateDelete) {
       if (errorStatus.status === 400) {
         setToast({
           type: TOAST_TYPE.ERROR,
-          title: "Erro!",
-          message:
-            "Este estado contém alguns chamados; mova-os para outro estado para poder excluí-lo.",
+          title: t("common.toast.error"),
+          message: "This state contains some work items; move them to another state before deleting.",
         });
       } else {
         setToast({
           type: TOAST_TYPE.ERROR,
-          title: "Erro!",
-          message: "Não foi possível excluir o estado. Tente novamente.",
+          title: t("common.toast.error"),
+          message: "Could not delete the state. Please try again.",
         });
       }
       setIsDelete(false);
@@ -69,11 +70,11 @@ export const StateDelete = observer(function StateDelete(props: TStateDelete) {
         handleSubmit={handleDeleteState}
         isSubmitting={isDelete}
         isOpen={isDeleteModal}
-        title="Excluir estado"
+        title={t("common.delete_state")}
         content={
           <>
-            Tem certeza de que deseja excluir o estado- <span className="font-medium text-primary">{state?.name}</span>? All
-            of the data related to the state will be permanently removed. This action cannot be undone.
+            Tem certeza de que deseja excluir o estado- <span className="font-medium text-primary">{state?.name}</span>?
+            All of the data related to the state will be permanently removed. This action cannot be undone.
           </>
         }
       />
@@ -89,7 +90,7 @@ export const StateDelete = observer(function StateDelete(props: TStateDelete) {
       >
         <Tooltip
           tooltipContent={
-            state.default ? "Não é possível excluir o estado padrão." : totalStates === 1 ? `Cannot have an empty group.` : ``
+            state.default ? "Cannot delete the default state." : totalStates === 1 ? `Cannot have an empty group.` : ``
           }
           isMobile={isMobile}
           disabled={!isDeleteDisabled}

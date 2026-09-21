@@ -137,8 +137,8 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
       ]);
       setToast({
         type: TOAST_TYPE.SUCCESS,
-        title: "Sucesso",
-        message: "Configuração do perfil concluída!",
+        title: t("common.success"),
+        message: "Profile setup complete!",
       });
       // For Invited Users, they will skip all other steps and finish onboarding.
       if (totalSteps <= 2) {
@@ -147,8 +147,8 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
     } catch {
       setToast({
         type: TOAST_TYPE.ERROR,
-        title: "Erro",
-        message: "Falha na configuração do perfil. Tente novamente!",
+        title: t("common.error_bang"),
+        message: "Failed to set up profile. Please try again!",
       });
     }
   };
@@ -172,8 +172,8 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
     } catch {
       setToast({
         type: TOAST_TYPE.ERROR,
-        title: "Erro",
-        message: "Falha ao atualizar os dados do usuário. Tente novamente!",
+        title: t("common.error_bang"),
+        message: "Failed to update user data. Please try again!",
       });
     }
   };
@@ -190,8 +190,8 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
       ]);
       setToast({
         type: TOAST_TYPE.SUCCESS,
-        title: "Sucesso",
-        message: "Configuração do perfil concluída!",
+        title: t("common.success"),
+        message: "Profile setup complete!",
       });
       // For Invited Users, they will skip all other steps and finish onboarding.
       if (totalSteps <= 2) {
@@ -200,8 +200,8 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
     } catch {
       setToast({
         type: TOAST_TYPE.ERROR,
-        title: "Erro",
-        message: "Falha na configuração do perfil. Tente novamente!",
+        title: t("common.error_bang"),
+        message: "Failed to set up profile. Please try again!",
       });
     }
   };
@@ -275,7 +275,7 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
                         </div>
                       </div>
                       <div className="pt-1 text-13 font-medium text-accent-secondary hover:text-tertiary">
-                        Escolher imagem
+                        {t("common.choose_image")}
                       </div>
                     </div>
                   ) : (
@@ -296,17 +296,17 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
                     className="text-13 font-medium text-tertiary after:ml-0.5 after:text-danger-primary after:content-['*']"
                     htmlFor="first_name"
                   >
-                    Nome
+                    Name
                   </label>
                   <Controller
                     control={control}
                     name="first_name"
                     rules={{
-                      required: "O nome é obrigatório",
+                      required: "Name is required",
                       validate: validatePersonName,
                       maxLength: {
                         value: 50,
-                        message: "O nome deve ter no máximo 50 caracteres.",
+                        message: "Name must be at most 50 characters.",
                       },
                     }}
                     render={({ field: { value, onChange, ref } }) => (
@@ -340,11 +340,11 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
                     control={control}
                     name="last_name"
                     rules={{
-                      required: "O sobrenome é obrigatório",
+                      required: "Last name is required",
                       validate: validatePersonName,
                       maxLength: {
                         value: 50,
-                        message: "O sobrenome deve ter no máximo 50 caracteres.",
+                        message: "Last name must be at most 50 characters.",
                       },
                     }}
                     render={({ field: { value, onChange, ref } }) => (
@@ -388,7 +388,7 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
                             onChange={onChange}
                             ref={ref}
                             hasError={Boolean(errors.password)}
-                            placeholder="Nova senha..."
+                            placeholder={t("auth.common.password.new_password.label")}
                             className="w-full border-[0.5px] border-subtle pr-12 placeholder:text-placeholder"
                             onFocus={() => setIsPasswordInputFocused(true)}
                             onBlur={() => setIsPasswordInputFocused(false)}
@@ -466,13 +466,13 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
                   className="text-13 font-medium text-tertiary after:ml-0.5 after:text-danger-primary after:content-['*']"
                   htmlFor="role"
                 >
-                  Em qual função você trabalha? Escolha uma.
+                  {t("onboarding.profile.role_question")}
                 </label>
                 <Controller
                   control={control}
                   name="role"
                   rules={{
-                    required: "Este campo é obrigatório",
+                    required: "This field is required",
                   }}
                   render={({ field: { value, onChange } }) => (
                     <div className="flex flex-wrap gap-2 overflow-auto py-2 break-all">
@@ -501,14 +501,14 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
                   className="text-13 font-medium text-tertiary after:ml-0.5 after:text-danger-primary after:content-['*']"
                   htmlFor="use_case"
                 >
-                  Qual é a sua área de especialização? Escolha uma ou mais.
+                  What is your area of expertise? Choose one or more.
                 </label>
                 <Controller
                   control={control}
                   name="use_case"
                   rules={{
-                    required: "Selecione pelo menos uma opção",
-                    validate: (value) => (value && value.length > 0) || "Selecione pelo menos uma opção",
+                    required: "Select at least one option",
+                    validate: (value) => (value && value.length > 0) || "Select at least one option",
                   }}
                   render={({ field: { value, onChange } }) => (
                     <div className="flex flex-wrap gap-2 overflow-auto py-2 break-all">

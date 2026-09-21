@@ -24,12 +24,12 @@ type Props = {
   className?: string;
 };
 
-const formatGeneratedAt = () => new Date().toLocaleString("pt-BR");
+const formatGeneratedAt = () => new Date().toLocaleString("en-US");
 
 /**
- * Cabeçalho padrão de qualquer documento impresso: logo configurável do
- * workspace, título, subtítulo, metadados (filtros aplicados, período…) e a
- * data/hora de geração.
+ * Standard header of any printed document: configurable workspace logo,
+ * title, subtitle, metadata (applied filters, period...) and the generation
+ * date/time.
  */
 export const PrintHeader = observer(function PrintHeader(props: Props) {
   const { title, subtitle, meta, className } = props;
@@ -41,18 +41,18 @@ export const PrintHeader = observer(function PrintHeader(props: Props) {
   const metaItems = (meta ?? []).filter((item) => !!item.value);
 
   return (
-    <header className={cn("print-avoid-break mb-5 border-b border-neutral-300 pb-3", className)}>
+    <header className={cn("print-avoid-break border-neutral-300 mb-5 border-b pb-3", className)}>
       <div className="flex items-start justify-between gap-4">
         <div className="flex items-start gap-3">
           {logoUrl && <img src={logoUrl} alt={organizationName} className="h-12 max-w-[180px] object-contain" />}
           <div className="flex flex-col gap-0.5">
             {organizationName && <p className="text-sm font-semibold">{organizationName}</p>}
-            <h1 className="text-lg font-bold leading-tight">{title}</h1>
+            <h1 className="text-lg leading-tight font-bold">{title}</h1>
             {subtitle && <p className="text-xs">{subtitle}</p>}
           </div>
         </div>
         {printSettings.show_generated_at && (
-          <p className="shrink-0 text-right text-[10px]">Gerado em {formatGeneratedAt()}</p>
+          <p className="shrink-0 text-right text-[10px]">Generated at {formatGeneratedAt()}</p>
         )}
       </div>
       {metaItems.length > 0 && (

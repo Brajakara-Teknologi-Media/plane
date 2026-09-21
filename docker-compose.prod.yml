@@ -1,0 +1,62 @@
+services:
+  api-ts:
+    image: docker-registry.blitztechnology.tech/brajakara-aviao/plane-api-ts:prod
+    pull_policy: always
+    restart: always
+    env_file: .env.production
+
+  chat-backend:
+    image: docker-registry.blitztechnology.tech/brajakara-aviao/plane-chat-backend:prod
+    pull_policy: always
+    restart: always
+    env_file: .env.production
+
+  web:
+    image: docker-registry.blitztechnology.tech/brajakara-aviao/plane-web:prod
+    pull_policy: always
+    restart: always
+
+  admin:
+    image: docker-registry.blitztechnology.tech/brajakara-aviao/plane-admin:prod
+    pull_policy: always
+    restart: always
+
+  proxy:
+    image: docker-registry.blitztechnology.tech/brajakara-aviao/plane-proxy:prod
+    pull_policy: always
+    restart: always
+    ports:
+      - "8888:80"
+      - "8443:443"
+    depends_on:
+      - api-ts
+      - web
+      - admin
+      - chat-backend
+
+  sac-migrator:
+    image: docker-registry.blitztechnology.tech/brajakara-aviao/plane-api-ts:prod
+    restart: "no"
+    env_file: .env.production
+    command: ["bun", "run", "scripts/migrate-sac-files.ts"]
+    environment:
+      - PGHOST=10.20.0.13
+      - PGPORT=2800
+      - PGUSER=plane
+      - PGPASSWORD=plane
+      - PGDATABASE=plane
+      - DRY_RUN=false
+      - BATCH_SIZE=100
+      - LIMIT_RECORDS=0
+      - SKIP_COMMENTS=false
+      - SKIP_VISITS=false
+    depends_on:
+      - api-ts
+
+  state-migrator:
+    image: docker-registry.blitztechnology.tech/brajakara-aviao/plane-api-ts:prod
+    restart: "no"
+    env_file: .env.production
+    command: ["bun", "run", "scripts/rename-states-to-english.ts"]
+    depends_on:
+      - api-ts

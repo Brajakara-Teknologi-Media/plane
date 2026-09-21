@@ -7,6 +7,7 @@
 import { Download } from "lucide-react";
 import type { IExportData } from "@plane/types";
 import { getDate, getFileURL, renderFormattedDate } from "@plane/utils";
+import { useTranslation } from "@plane/i18n";
 
 type RowData = IExportData;
 const checkExpiry = (inputDateString: string) => {
@@ -17,10 +18,11 @@ const checkExpiry = (inputDateString: string) => {
   return expiryDate > currentDate;
 };
 export const useExportColumns = () => {
+  const { t } = useTranslation();
   const columns = [
     {
       key: "Exported By",
-      content: "Exportado por",
+      content: "Exported by",
       tdRender: (rowData: RowData) => {
         const { avatar_url, display_name, email } = rowData.initiated_by_detail;
         return (
@@ -94,7 +96,7 @@ export const useExportColumns = () => {
     },
     {
       key: "Download",
-      content: "Baixar",
+      content: t("common.download"),
       tdRender: (rowData: RowData) =>
         checkExpiry(rowData.created_at) ? (
           <>
@@ -102,7 +104,7 @@ export const useExportColumns = () => {
               <a target="_blank" href={rowData?.url} rel="noopener noreferrer">
                 <button className="flex w-full items-center gap-1 font-medium text-accent-primary">
                   <Download className="h-4 w-4" />
-                  <div>Baixar</div>
+                  <div>{t("common.download")}</div>
                 </button>
               </a>
             ) : (

@@ -81,35 +81,35 @@ function WorkspaceInvitationPage() {
         {invitationDetail && !invitationDetail.responded_at ? (
           error ? (
             <div className="shadow-2xl flex w-full flex-col space-y-4 rounded-sm border border-subtle bg-surface-1 px-4 py-8 text-center md:w-1/3">
-              <h2 className="text-18 uppercase">CONVITE NÃO ENCONTRADO</h2>
+              <h2 className="text-18 uppercase">INVITATION NOT FOUND</h2>
             </div>
           ) : (
             <EmptySpace
               title={`You have been invited to ${invitationDetail.workspace.name}`}
-              description="Seu espaço de trabalho é onde você criará projetos, colaborará em seus chamados e organizará diferentes fluxos de trabalho na sua conta Avião."
+              description="Your workspace is where you'll create projects, collaborate on your work items and organize different workflows in your Avião account."
             >
-              <EmptySpaceItem Icon={CheckIcon} title="Aceitar" action={handleAccept} />
-              <EmptySpaceItem Icon={CloseIcon} title="Ignorar" action={handleReject} />
+              <EmptySpaceItem Icon={CheckIcon} title="Accept" action={handleAccept} />
+              <EmptySpaceItem Icon={CloseIcon} title="Ignore" action={handleReject} />
             </EmptySpace>
           )
         ) : error || invitationDetail?.responded_at ? (
           invitationDetail?.accepted ? (
             <EmptySpace
               title={`You are already a member of ${invitationDetail.workspace.name}`}
-              description="Seu espaço de trabalho é onde você criará projetos, colaborará em seus chamados e organizará diferentes fluxos de trabalho na sua conta Avião."
+              description="Your workspace is where you'll create projects, collaborate on your work items and organize different workflows in your Avião account."
             >
-              <EmptySpaceItem Icon={Boxes} title="Continuar para o início" href="/" />
+              <EmptySpaceItem Icon={Boxes} title="Continue to home" href="/" />
             </EmptySpace>
           ) : (
             <EmptySpace
-              title="Este link de convite não está mais ativo."
-              description="Seu espaço de trabalho é onde você criará projetos, colaborará em seus chamados e organizará diferentes fluxos de trabalho na sua conta Avião."
+              title="This invitation link is no longer active."
+              description="Your workspace is where you'll create projects, collaborate on your work items and organize different workflows in your Avião account."
               link={{ text: "Ou comece a partir de um projeto vazio", href: "/" }}
             >
               {!currentUser ? (
                 <EmptySpaceItem Icon={User2} title="Entre para continuar" href="/" />
               ) : (
-                <EmptySpaceItem Icon={Boxes} title="Continuar para o início" href="/" />
+                <EmptySpaceItem Icon={Boxes} title="Continue to home" href="/" />
               )}
             </EmptySpace>
           )

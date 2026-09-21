@@ -1,0 +1,37 @@
+{
+  "plugins": {
+    "author": "Penulis",
+    "sections": {
+      "metadata": "Metadata",
+      "entry_file": "Berkas masuk",
+      "sidebar_items": "Item bilah samping",
+      "manifest_raw": "Manifest (mentah)",
+      "dates": "Tanggal"
+    },
+    "plugin": {
+      "loading_config": "Memuat konfigurasi…",
+      "no_config_declared": "Plugin ini tidak mendeklarasikan pengaturan.",
+      "loading": "Memuat plugin…",
+      "empty": "Tidak ada plugin. Kirim plugin pertamamu untuk mulai."
+    },
+    "widget": {
+      "loading": "Memuat widget…",
+      "empty": "Tidak ada widget. Kirim widget pertamamu untuk mulai."
+    },
+    "status": {
+      "active": "Aktif",
+      "inactive": "Nonaktif",
+      "pending": "Menunggu persetujuan",
+      "archived": "Diarsipkan"
+    },
+    "table": {
+      "version": "Versi",
+      "surfaces": "Permukaan",
+      "permissions": "Izin",
+      "actions": "Aksi"
+    },
+    "actions": {
+      "remove": "Hapus"
+    }
+  }
+}

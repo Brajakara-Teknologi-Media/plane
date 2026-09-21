@@ -150,7 +150,7 @@ async function main() {
         ...(nomeHerdado && {instanceName: process.env.INSTANCE_NAME ?? "Avião"}),
       },
     });
-    log(`✅  Instance updated (setup done + configurações padrão garantidas)`);
+    log(`✅  Instance updated (setup done + default configurations ensured)`);
   }
 
   // 3. Create default workspace if doesn't exist
@@ -219,7 +219,7 @@ async function main() {
         data: {workspaceId: workspace.id, memberId: extra.id, role: 20, isActive: true},
       });
     }
-    log(`✅  Administrador da instância: ${email}`);
+    log(`✅  Instance administrator: ${email}`);
   }
 
   // 3a2. Conta de Atendimento (nível 6) para o smoke e para demonstração.
@@ -236,8 +236,8 @@ async function main() {
             email: ATENDIMENTO_EMAIL,
             username: ATENDIMENTO_EMAIL.split("@")[0],
             password: hashAtendimento,
-            firstName: "Atendimento",
-            displayName: "Atendimento",
+            firstName: "Service Desk",
+            displayName: "Service Desk",
             isActive: true,
             isEmailVerified: true,
             // `false` de propósito: a senha é conhecida e não pode ser
@@ -259,7 +259,7 @@ async function main() {
         data: {workspaceId: workspace.id, memberId: atendente.id, role: 6, isActive: true},
       });
     }
-    log(`✅  Conta de Atendimento: ${ATENDIMENTO_EMAIL}`);
+    log(`✅  Service Desk account: ${ATENDIMENTO_EMAIL}`);
   }
 
   // 3b. Seed configurable roles (system roles + default visibility/transitions)
@@ -308,7 +308,7 @@ async function main() {
       });
     }
   }
-  log(`✅  Funções de projeto alinhadas à do espaço de trabalho: ${desalinhados.length} usuário(s)`);
+  log(`✅  Design functions aligned with the workspace: ${desalinhados.length} user(s)`);
 
   // 3d. Give imported users that NEVER set their own password the default one, so
   // first logins are predictable. The seeder runs on every `docker compose up`, so
@@ -331,16 +331,16 @@ async function main() {
 
   // Projects are created by the SAC migration script (one per sistema).
   // Seed does not create projects — run scripts/migrate-sac.ts after seeding.
-  log(`ℹ️   Projects are created by migrate-sac.ts (one per sistema).`);
+  log(`ℹ️   Projects are created by migrate-sac.ts (one per system).`);
 
   await prisma.$disconnect();
   await pool.end();
 
   log("");
   log("═══════════════════════════════════════════════════════");
-  log("  Seed completo!");
+  log("  Seed complete!");
   log(`  Admin email:    ${ADMIN_EMAIL}`);
-  log(`  Admin senha:    ${ADMIN_PASSWORD}`);
+  log(`  Admin password: ${ADMIN_PASSWORD}`);
   log(`  Workspace:      ${WORKSPACE_NAME} (/${WORKSPACE_SLUG})`);
   log("═══════════════════════════════════════════════════════");
 }

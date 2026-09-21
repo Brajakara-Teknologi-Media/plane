@@ -37,6 +37,7 @@ export enum EIssueGroupByToServerOptions {
   "created_by" = "created_by",
   // eslint-disable-next-line @typescript-eslint/no-duplicate-enum-values
   "team_project" = "project_id",
+  "entity" = "entity_id",
 }
 
 export enum EIssueGroupBYServerToProperty {
@@ -50,6 +51,7 @@ export enum EIssueGroupBYServerToProperty {
   "target_date" = "target_date",
   "project_id" = "project_id",
   "created_by" = "created_by",
+  "entity_id" = "entity_id",
 }
 
 export enum EIssueCommentAccessSpecifier {
@@ -103,6 +105,7 @@ export const DRAG_ALLOWED_GROUPS: TIssueGroupByOptions[] = [
   "labels",
   "module",
   "cycle",
+  "entity",
 ];
 
 export type TCreateModalStoreTypes =
@@ -130,6 +133,7 @@ export const ISSUE_GROUP_BY_OPTIONS: {
   { key: "labels", titleTranslationKey: "common.labels" },
   { key: "assignees", titleTranslationKey: "common.assignees" },
   { key: "created_by", titleTranslationKey: "common.created_by" },
+  { key: "entity", titleTranslationKey: "common.entity" },
   { key: null, titleTranslationKey: "common.none" },
 ];
 

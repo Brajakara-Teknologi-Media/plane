@@ -103,10 +103,7 @@ export const ProjectViewIssuesHeader = observer(function ProjectViewIssuesHeader
 
   const viewDetails = viewId ? getViewById(viewId.toString()) : null;
 
-  const canUserCreateIssue = allowPermissions(
-    PROJECT_WORK_ROLES,
-    EUserPermissionsLevel.PROJECT
-  );
+  const canUserCreateIssue = allowPermissions(PROJECT_WORK_ROLES, EUserPermissionsLevel.PROJECT);
 
   if (!viewDetails) return;
 
@@ -130,7 +127,7 @@ export const ProjectViewIssuesHeader = observer(function ProjectViewIssuesHeader
           <Breadcrumbs.Item
             component={
               <BreadcrumbLink
-                label="Visualizações"
+                label="Views"
                 href={`/${workspaceSlug}/projects/${projectId}/views/`}
                 icon={<ViewsIcon className="h-4 w-4 text-tertiary" />}
               />
@@ -200,7 +197,7 @@ export const ProjectViewIssuesHeader = observer(function ProjectViewIssuesHeader
         </>
         <WorkItemsPrintAction
           storeType={EIssuesStoreType.PROJECT_VIEW}
-          title={`Chamados — ${viewDetails?.name ?? ""}`}
+          title={`Work Items — ${viewDetails?.name ?? ""}`}
           subtitle={currentProjectDetails?.name}
           showProject={false}
         />
@@ -213,7 +210,7 @@ export const ProjectViewIssuesHeader = observer(function ProjectViewIssuesHeader
             }}
             data-ph-element={WORK_ITEM_TRACKER_ELEMENTS.HEADER_ADD_BUTTON.PROJECT_VIEW}
           >
-            Adicionar chamado
+            Add Issue
           </Button>
         )}
         <div className="hidden md:block">

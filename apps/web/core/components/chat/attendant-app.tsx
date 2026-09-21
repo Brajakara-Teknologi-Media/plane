@@ -33,6 +33,7 @@ import {
 // plane imports
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { useTranslation } from "@plane/i18n";
 // hooks
 import { useAppTheme } from "@/hooks/store/use-app-theme";
 import { useProject } from "@/hooks/store/use-project";
@@ -43,22 +44,22 @@ import { AppSidebarToggleButton } from "@/components/sidebar/sidebar-toggle-butt
 import { ChatConfigPanel } from "@/components/chat/chat-config-panel";
 import { ChatDashboard } from "@/components/chat/chat-dashboard";
 import { ChatService, chatApi, type ChatAttendant, type ChatMessage, type ChatSession } from "@/services/chat.service";
-import {SelectPesquisavel} from "@/components/common/select-pesquisavel";
-import entityService, {entityTypeLabel} from "@/services/entity.service";
+import { SelectPesquisavel } from "@/components/common/select-pesquisavel";
+import entityService, { entityTypeLabel } from "@/services/entity.service";
 
-
-type DadosDoEncerramento = {project_id?: string; contact?: Record<string, string>};
+type DadosDoEncerramento = { project_id?: string; contact?: Record<string, string> };
 
 /**
- * Encerramento do atendimento: classifica e, se preciso, cadastra o contato.
+ * Closing out the attendance: classifies and, if needed, registers the contact.
  *
- * Reproduz o que o SAC antigo fazia — escolher o sistema do suporte e cadastrar
- * quem ligou, na hora, sem sair da tela. Sem isso o atendimento fecha sem dizer
- * sobre o que era e o contato fica anônimo para sempre, porque depois ninguém
- * volta para completar.
+ * Reproduces what the old SAC did — picking the support system and registering
+ * who called, on the spot, without leaving the screen. Without it the attendance
+ * closes without saying what it was about and the contact stays anonymous
+ * forever, because nobody comes back later to complete it.
  *
- * O sistema só é pedido quando a conversa ainda não virou solicitação: nesse
- * caso ela já carrega o projeto e perguntar de novo seria retrabalho.
+ * The system is only asked for when the conversation has not become a request
+ * yet: in that case it already carries the project, and asking again would be
+ * rework.
  */
 function ModalDeEncerramento({
   sessao,
@@ -68,16 +69,18 @@ function ModalDeEncerramento({
   onCancelar,
 }: {
   sessao: any;
-  projetos: {value: string; label: string}[];
-  entidades: {value: string; label: string; descricao?: string}[];
+  projetos: { value: string; label: string }[];
+  entidades: { value: string; label: string; descricao?: string }[];
   onConfirmar: (dados: DadosDoEncerramento) => void;
   onCancelar: () => void;
 }) {
+  const { t } = useTranslation();
+
   const precisaDeProjeto = !sessao.project_id;
   const [projeto, setProjeto] = useState("");
   const [nome, setNome] = useState(sessao.client_name ?? "");
   const [email, setEmail] = useState(sessao.contact_email ?? "");
-  const [entidade, setEntidade] = useState(sessao.contact_entity_id ?? "");
+  const [entidade, setEntity] = useState(sessao.contact_entity_id ?? "");
 
   const confirmar = () => {
     const contact: Record<string, string> = {};
@@ -85,75 +88,88 @@ function ModalDeEncerramento({
     if (email.trim() && email.trim() !== (sessao.contact_email ?? "")) contact.email = email.trim();
     if (entidade && entidade !== (sessao.contact_entity_id ?? "")) contact.entity_id = entidade;
     onConfirmar({
-      ...(precisaDeProjeto && projeto ? {project_id: projeto} : {}),
-      ...(Object.keys(contact).length ? {contact} : {}),
+      ...(precisaDeProjeto && projeto ? { project_id: projeto } : {}),
+      ...(Object.keys(contact).length ? { contact } : {}),
     });
   };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4" onClick={onCancelar}>
       <div
-        className="w-full max-w-md rounded-xl border border-subtle bg-surface-1 p-5 shadow-xl"
+        className="shadow-xl w-full max-w-md rounded-xl border border-subtle bg-surface-1 p-5"
         onClick={(e) => e.stopPropagation()}
       >
-        <h2 className="text-15 font-semibold text-primary">Encerrar atendimento</h2>
+        <h2 className="text-15 font-semibold text-primary">End service</h2>
         <p className="mt-1 text-12 text-secondary">
-          Protocolo {sessao.protocol}. O cliente recebe a mensagem de encerramento e a pesquisa de satisfação.
+          Protocol {sessao.protocol}. The customer receives the closing message and the satisfaction survey.
         </p>
 
         <div className="mt-4 space-y-4">
           {precisaDeProjeto ? (
             <div>
-              <label className="mb-1 block text-12 font-medium text-secondary">Sistema atendido</label>
+              <label className="mb-1 block text-12 font-medium text-secondary">
+                {t("chat.app.end_modal.system_label")}
+              </label>
               <SelectPesquisavel
                 value={projeto}
                 onChange={setProjeto}
                 opcoes={projetos}
-                placeholder="Selecione o sistema"
-                searchPlaceholder="Buscar sistema"
+                placeholder={t("chat.app.end_modal.select_system_placeholder")}
+                searchPlaceholder="Search system"
               />
             </div>
           ) : (
             <p className="rounded-md border border-subtle bg-layer-1 px-3 py-2 text-12 text-secondary">
-              Já classificado como <strong className="text-primary">{sessao.project_name ?? sessao.project_identifier}</strong>.
+              <span
+                dangerouslySetInnerHTML={{
+                  __html: t("chat.app.end_modal.already_classified", {
+                    project: `<strong class="text-primary">${sessao.project_name ?? sessao.project_identifier}</strong>`,
+                  }),
+                }}
+              />
             </p>
           )}
 
           <div className="space-y-3 rounded-md border border-subtle p-3">
-            <p className="text-12 font-medium text-secondary">Cadastro do contato</p>
+            <p className="text-12 font-medium text-secondary">{t("chat.app.end_modal.contact_registration")}</p>
             <input
               value={nome}
               onChange={(e) => setNome(e.target.value)}
-              placeholder="Nome de quem falou"
-              className="w-full rounded-md border border-subtle bg-surface-2 px-3 py-2 text-13 text-primary outline-none focus:border-accent-primary"
+              placeholder="Speaker name"
+              className="focus:border-accent-primary w-full rounded-md border border-subtle bg-surface-2 px-3 py-2 text-13 text-primary outline-none"
             />
             <input
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="E-mail (opcional)"
-              className="w-full rounded-md border border-subtle bg-surface-2 px-3 py-2 text-13 text-primary outline-none focus:border-accent-primary"
+              placeholder={t("chat.app.contact.email_optional")}
+              className="focus:border-accent-primary w-full rounded-md border border-subtle bg-surface-2 px-3 py-2 text-13 text-primary outline-none"
             />
             <SelectPesquisavel
               value={entidade}
-              onChange={setEntidade}
+              onChange={setEntity}
               opcoes={entidades}
-              placeholder="Entidade (cliente)"
-              searchPlaceholder="Buscar entidade"
+              placeholder="Entity (client)"
+              searchPlaceholder="Search entity"
             />
           </div>
         </div>
 
         <div className="mt-5 flex justify-end gap-2">
-          <button onClick={onCancelar} className="rounded-md border border-subtle px-3 py-1.5 text-13 text-secondary hover:bg-layer-1">
-            Cancelar
+          <button
+            onClick={onCancelar}
+            className="rounded-md border border-subtle px-3 py-1.5 text-13 text-secondary hover:bg-layer-1"
+          >
+            {t("chat.app.end_modal.cancel")}
           </button>
           <button
             onClick={confirmar}
             disabled={precisaDeProjeto && !projeto}
             className="rounded-md bg-danger-primary px-3 py-1.5 text-13 text-on-color disabled:cursor-not-allowed disabled:opacity-50"
-            title={precisaDeProjeto && !projeto ? "Escolha o sistema atendido" : "Encerrar"}
+            title={
+              precisaDeProjeto && !projeto ? t("chat.app.end_modal.choose_system_title") : t("chat.app.end_modal.end")
+            }
           >
-            Encerrar
+            {t("chat.app.end_modal.end")}
           </button>
         </div>
       </div>
@@ -164,18 +180,17 @@ function ModalDeEncerramento({
 const chatService = new ChatService();
 
 const CONEXAO = {
-  conectado: {cor: "bg-success-primary", texto: "Em tempo real", ajuda: "Conectado: mensagens chegam na hora."},
-  conectando: {cor: "bg-warning-primary animate-pulse", texto: "Conectando", ajuda: "Estabelecendo a conexão em tempo real."},
-  reconectando: {
-    cor: "bg-danger-primary animate-pulse",
-    texto: "Reconectando",
-    ajuda: "A conexão caiu. Novas mensagens podem demorar até a conexão voltar.",
-  },
+  connected: { cor: "bg-success-primary" },
+  connecting: { cor: "bg-warning-primary animate-pulse" },
+  reconnecting: { cor: "bg-danger-primary animate-pulse" },
 } as const;
 
-/** Bolinha de estado do canal em tempo real, ao lado do título da lista. */
-function IndicadorDeConexao({estado}: {estado: keyof typeof CONEXAO}) {
-  const {cor, texto, ajuda} = CONEXAO[estado];
+/** Status dot of the real-time channel, next to the list title. */
+function IndicadorDeConexao({ estado }: { estado: keyof typeof CONEXAO }) {
+  const { t } = useTranslation();
+  const { cor } = CONEXAO[estado];
+  const texto = t(`chat.app.connection.${estado}_text`);
+  const ajuda = t(`chat.app.connection.${estado}_help`);
   return (
     <div
       className="flex shrink-0 items-center gap-2 border-t border-subtle bg-surface-1 px-4 py-2 text-11 text-secondary"
@@ -223,7 +238,7 @@ function playAlert() {
 
 function formatTime(ts: string) {
   try {
-    return new Date(ts).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
+    return new Date(ts).toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" });
   } catch {
     return "";
   }
@@ -235,20 +250,10 @@ function formatDate(ts: string | undefined) {
     const d = new Date(ts);
     const today = new Date();
     if (d.toDateString() === today.toDateString()) return formatTime(ts);
-    return d.toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit" });
+    return d.toLocaleDateString("en-US", { day: "2-digit", month: "2-digit" });
   } catch {
     return "";
   }
-}
-
-function statusLabel(status: string) {
-  const map: Record<string, string> = {
-    active: "Ativo",
-    queued: "Na fila",
-    bot: "Bot",
-    closed: "Encerrado",
-  };
-  return map[status] ?? status;
 }
 
 function statusBadgeCls(status: string) {
@@ -261,7 +266,15 @@ function statusBadgeCls(status: string) {
   return map[status] ?? "bg-layer-2 text-secondary";
 }
 
-function SessionAvatar({ name, phone, size = "md" }: { name?: string | null; phone?: string | null; size?: "sm" | "md" | "lg" }) {
+function SessionAvatar({
+  name,
+  phone,
+  size = "md",
+}: {
+  name?: string | null;
+  phone?: string | null;
+  size?: "sm" | "md" | "lg";
+}) {
   const label = ((name || phone || "?")[0] ?? "?").toUpperCase();
   const sizeCls = size === "sm" ? "h-9 w-9 text-sm" : size === "lg" ? "h-12 w-12 text-lg" : "h-10 w-10";
   const hash = [...(name || phone || "A")].reduce((acc, c) => acc + c.charCodeAt(0), 0);
@@ -277,7 +290,7 @@ function SessionAvatar({ name, phone, size = "md" }: { name?: string | null; pho
   ];
   const bg = colors[hash % colors.length];
   return (
-    <div className={`${sizeCls} ${bg} shrink-0 rounded-full flex items-center justify-center text-white font-semibold`}>
+    <div className={`${sizeCls} ${bg} flex shrink-0 items-center justify-center rounded-full font-semibold text-white`}>
       {label}
     </div>
   );
@@ -295,6 +308,7 @@ function NewChatModal({
   onCreated: (sessionId: string) => void;
   onClose: () => void;
 }) {
+  const { t } = useTranslation();
   const [search, setSearch] = useState("");
   const [contacts, setContacts] = useState<any[]>([]);
   const [phone, setPhone] = useState("");
@@ -303,16 +317,19 @@ function NewChatModal({
   const [searching, setSearching] = useState(false);
 
   useEffect(() => {
-    if (!search.trim()) { setContacts([]); return; }
+    if (!search.trim()) {
+      setContacts([]);
+      return;
+    }
     setSearching(true);
-    const t = setTimeout(() => {
+    const timer = setTimeout(() => {
       api
         .contacts(slug, search)
         .then(setContacts)
         .catch(() => setContacts([]))
         .finally(() => setSearching(false));
     }, 300);
-    return () => clearTimeout(t);
+    return () => clearTimeout(timer);
   }, [search, slug]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const startWithContact = async (contactId: string) => {
@@ -321,7 +338,7 @@ function NewChatModal({
       const session = await api.startWhatsapp(slug, contactId, firstMessage || undefined);
       onCreated(session.id);
     } catch (e: any) {
-      setToast({ type: TOAST_TYPE.ERROR, title: "Erro", message: e?.detail || "Não foi possível iniciar o chat." });
+      setToast({ type: TOAST_TYPE.ERROR, title: "Error", message: e?.detail || "Could not start chat." });
     } finally {
       setLoading(false);
     }
@@ -336,7 +353,7 @@ function NewChatModal({
       const session = await api.startWhatsapp(slug, contact.id, firstMessage || undefined);
       onCreated(session.id);
     } catch (e: any) {
-      setToast({ type: TOAST_TYPE.ERROR, title: "Erro", message: e?.detail || "Não foi possível iniciar o chat." });
+      setToast({ type: TOAST_TYPE.ERROR, title: "Error", message: e?.detail || "Could not start chat." });
     } finally {
       setLoading(false);
     }
@@ -345,49 +362,53 @@ function NewChatModal({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm" onClick={onClose}>
       <div
-        className="relative mx-4 w-full max-w-md rounded-2xl border border-subtle bg-surface-1 shadow-2xl"
+        className="shadow-2xl relative mx-4 w-full max-w-md rounded-2xl border border-subtle bg-surface-1"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Modal header */}
         <div className="flex items-center justify-between border-b border-subtle px-5 py-4">
           <div>
-            <h2 className="text-sm font-semibold text-primary">Novo atendimento</h2>
-            <p className="mt-0.5 text-12 text-secondary">Busque um contato ou informe o número</p>
+            <h2 className="text-sm font-semibold text-primary">New service request</h2>
+            <p className="mt-0.5 text-12 text-secondary">{t("chat.app.new_chat_modal.search_hint")}</p>
           </div>
-          <button onClick={onClose} className="rounded-lg p-1.5 text-secondary hover:bg-layer-2 transition-colors">
+          <button onClick={onClose} className="rounded-lg p-1.5 text-secondary transition-colors hover:bg-layer-2">
             <X className="h-4 w-4" />
           </button>
         </div>
 
-        <div className="p-5 flex flex-col gap-4">
+        <div className="flex flex-col gap-4 p-5">
           {/* Search contacts */}
           <div>
-            <label className="mb-1.5 block text-12 font-medium text-secondary">Buscar contato</label>
+            <label className="mb-1.5 block text-12 font-medium text-secondary">
+              {t("chat.app.new_chat_modal.search_contact_label")}
+            </label>
             <div className="flex items-center gap-2 rounded-lg border border-subtle bg-layer-2 px-3 py-2">
               <Search className="h-3.5 w-3.5 shrink-0 text-tertiary" />
               <input
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                placeholder="Nome ou telefone..."
-                className="flex-1 bg-transparent text-sm text-primary outline-none placeholder:text-tertiary"
+                placeholder="Name or phone..."
+                className="text-sm flex-1 bg-transparent text-primary outline-none placeholder:text-tertiary"
                 autoFocus
               />
               {searching && <Loader2 className="h-3.5 w-3.5 animate-spin text-tertiary" />}
             </div>
             {contacts.length > 0 && (
-              <div className="mt-1.5 max-h-48 overflow-y-auto rounded-lg border border-subtle bg-surface-1 shadow-lg">
+              <div className="shadow-lg mt-1.5 max-h-48 overflow-y-auto rounded-lg border border-subtle bg-surface-1">
                 {contacts.map((c) => (
                   <button
                     key={c.id}
                     onClick={() => !loading && startWithContact(c.id)}
                     disabled={loading}
-                    className="flex w-full items-center gap-3 px-3 py-2.5 text-left hover:bg-layer-1 transition-colors border-b border-subtle last:border-b-0"
+                    className="flex w-full items-center gap-3 border-b border-subtle px-3 py-2.5 text-left transition-colors last:border-b-0 hover:bg-layer-1"
                   >
-                    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-indigo-500 text-sm font-semibold text-white">
+                    <div className="bg-indigo-500 text-sm flex h-8 w-8 shrink-0 items-center justify-center rounded-full font-semibold text-white">
                       {((c.name || c.phone || "?")[0] ?? "?").toUpperCase()}
                     </div>
                     <div className="min-w-0">
-                      <div className="truncate text-13 font-medium text-primary">{c.name || "Sem nome"}</div>
+                      <div className="truncate text-13 font-medium text-primary">
+                        {c.name || t("chat.app.new_chat_modal.unnamed_contact")}
+                      </div>
                       {c.phone && <div className="text-11 text-secondary">{c.phone}</div>}
                     </div>
                     <Phone className="ml-auto h-3.5 w-3.5 shrink-0 text-tertiary" />
@@ -396,7 +417,7 @@ function NewChatModal({
               </div>
             )}
             {search.trim() && contacts.length === 0 && !searching && (
-              <p className="mt-1.5 text-12 text-tertiary">Nenhum contato encontrado.</p>
+              <p className="mt-1.5 text-12 text-tertiary">No contacts found.</p>
             )}
           </div>
 
@@ -408,28 +429,32 @@ function NewChatModal({
 
           {/* Manual phone number */}
           <div>
-            <label className="mb-1.5 block text-12 font-medium text-secondary">Número de WhatsApp</label>
+            <label className="mb-1.5 block text-12 font-medium text-secondary">
+              {t("chat.app.new_chat_modal.whatsapp_number_label")}
+            </label>
             <div className="flex items-center gap-2 rounded-lg border border-subtle bg-layer-2 px-3 py-2">
               <Phone className="h-3.5 w-3.5 shrink-0 text-tertiary" />
               <input
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
                 placeholder="Ex: 5511999999999"
-                className="flex-1 bg-transparent text-sm text-primary outline-none placeholder:text-tertiary"
+                className="text-sm flex-1 bg-transparent text-primary outline-none placeholder:text-tertiary"
               />
             </div>
-            <p className="mt-1 text-11 text-tertiary">Código do país + DDD + número (sem espaços ou traços)</p>
+            <p className="mt-1 text-11 text-tertiary">Country code + area code + number (without spaces or dashes)</p>
           </div>
 
           {/* Optional first message */}
           <div>
-            <label className="mb-1.5 block text-12 font-medium text-secondary">Mensagem inicial (opcional)</label>
+            <label className="mb-1.5 block text-12 font-medium text-secondary">
+              {t("chat.app.new_chat_modal.initial_message_label")}
+            </label>
             <textarea
               value={firstMessage}
               onChange={(e) => setFirstMessage(e.target.value)}
-              placeholder="Olá! Como posso ajudá-lo?"
+              placeholder="Hello! How can I help you?"
               rows={2}
-              className="w-full resize-none rounded-lg border border-subtle bg-layer-2 px-3 py-2 text-sm text-primary outline-none placeholder:text-tertiary focus:border-primary/50"
+              className="text-sm focus:border-primary/50 w-full resize-none rounded-lg border border-subtle bg-layer-2 px-3 py-2 text-primary outline-none placeholder:text-tertiary"
             />
           </div>
 
@@ -438,7 +463,7 @@ function NewChatModal({
             <button
               onClick={startWithPhone}
               disabled={loading}
-              className="flex items-center justify-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-medium text-on-color hover:bg-primary/90 disabled:opacity-50 transition-colors"
+              className="bg-primary text-sm hover:bg-primary/90 flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 font-medium text-on-color transition-colors disabled:opacity-50"
             >
               {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Phone className="h-4 w-4" />}
               Iniciar chat no WhatsApp
@@ -464,6 +489,7 @@ function TransferModal({
   onTransferred: () => void;
   onClose: () => void;
 }) {
+  const { t } = useTranslation();
   const [attendants, setAttendants] = useState<ChatAttendant[]>([]);
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState(false);
@@ -480,10 +506,10 @@ function TransferModal({
     setBusy(true);
     try {
       await api.transfer(slug, session.id, toUserId);
-      setToast({ type: TOAST_TYPE.SUCCESS, title: "Atendimento transferido", message: "O cliente foi notificado." });
+      setToast({ type: TOAST_TYPE.SUCCESS, title: "Transferred service", message: "The customer was notified." });
       onTransferred();
     } catch (e: any) {
-      setToast({ type: TOAST_TYPE.ERROR, title: "Erro", message: e?.detail || "Não foi possível transferir." });
+      setToast({ type: TOAST_TYPE.ERROR, title: "Error", message: e?.detail || "Could not transfer." });
     } finally {
       setBusy(false);
     }
@@ -492,15 +518,17 @@ function TransferModal({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm" onClick={onClose}>
       <div
-        className="relative mx-4 w-full max-w-md rounded-2xl border border-subtle bg-surface-1 shadow-2xl"
+        className="shadow-2xl relative mx-4 w-full max-w-md rounded-2xl border border-subtle bg-surface-1"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center justify-between border-b border-subtle px-5 py-4">
           <div>
-            <h2 className="text-sm font-semibold text-primary">Transferir atendimento</h2>
-            <p className="mt-0.5 text-12 text-secondary">#{session.protocol} — escolha o atendente</p>
+            <h2 className="text-sm font-semibold text-primary">{t("chat.app.transfer_modal.title")}</h2>
+            <p className="mt-0.5 text-12 text-secondary">
+              #{session.protocol} {t("chat.app.transfer_modal.choose_attendant")}
+            </p>
           </div>
-          <button onClick={onClose} className="rounded-lg p-1.5 text-secondary hover:bg-layer-2 transition-colors">
+          <button onClick={onClose} className="rounded-lg p-1.5 text-secondary transition-colors hover:bg-layer-2">
             <X className="h-4 w-4" />
           </button>
         </div>
@@ -508,11 +536,11 @@ function TransferModal({
         <div className="max-h-80 overflow-y-auto p-3">
           {loading && (
             <div className="flex items-center justify-center gap-2 py-8 text-13 text-secondary">
-              <Loader2 className="h-4 w-4 animate-spin" /> Carregando atendentes…
+              <Loader2 className="h-4 w-4 animate-spin" /> Loading agents…
             </div>
           )}
           {!loading && attendants.length === 0 && (
-            <p className="py-8 text-center text-13 text-tertiary">Nenhum outro atendente disponível.</p>
+            <p className="py-8 text-center text-13 text-tertiary">No other attendants available.</p>
           )}
           {!loading &&
             attendants.map((a) => (
@@ -520,14 +548,14 @@ function TransferModal({
                 key={a.user_id}
                 disabled={busy}
                 onClick={() => transfer(a.user_id)}
-                className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left hover:bg-layer-1 transition-colors disabled:opacity-50"
+                className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left transition-colors hover:bg-layer-1 disabled:opacity-50"
               >
                 <div className="relative">
-                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-indigo-500 text-sm font-semibold text-white">
+                  <div className="bg-indigo-500 text-sm flex h-9 w-9 shrink-0 items-center justify-center rounded-full font-semibold text-white">
                     {(a.name?.[0] ?? "?").toUpperCase()}
                   </div>
                   {a.online && (
-                    <span className="absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full border-2 border-surface-1 bg-green-500" />
+                    <span className="border-surface-1 bg-green-500 absolute -right-0.5 -bottom-0.5 h-3 w-3 rounded-full border-2" />
                   )}
                 </div>
                 <div className="min-w-0 flex-1">
@@ -545,6 +573,7 @@ function TransferModal({
 export const AttendantChatApp = observer(function AttendantChatApp() {
   const { workspaceSlug } = useParams();
   const router = useRouter();
+  const { t } = useTranslation();
   const slug = workspaceSlug?.toString() ?? "";
   const { data: currentUser } = useUser();
   const { allowPermissions } = useUserPermissions();
@@ -564,7 +593,7 @@ export const AttendantChatApp = observer(function AttendantChatApp() {
   const [intakeProjectId, setIntakeProjectId] = useState("");
   // Encerramento: classificar o atendimento e, se faltar, cadastrar o contato.
   const [encerrando, setEncerrando] = useState(false);
-  const [entidades, setEntidades] = useState<{value: string; label: string; descricao?: string}[]>([]);
+  const [entidades, setEntitys] = useState<{ value: string; label: string; descricao?: string }[]>([]);
   const [search, setSearch] = useState("");
   // Which status tab is selected (always one — clear visual indication of where you are).
   const [listFilter, setListFilter] = useState<string>("active");
@@ -606,8 +635,8 @@ export const AttendantChatApp = observer(function AttendantChatApp() {
 
   const refreshSessions = useCallback(async () => {
     if (!api || !slug) return;
-    // Na aba de encerrados a consulta é por status: o servidor devolve só o dia
-    // corrente, e o termo digitado é o que libera o histórico inteiro.
+    // On the closed tab the query is by status: the server returns only the current
+    // day, and the typed term is what unlocks the full history.
     const soEncerrados = listFilterRef.current === "closed";
     const { results } = await api.listSessions(
       slug,
@@ -653,9 +682,9 @@ export const AttendantChatApp = observer(function AttendantChatApp() {
   useEffect(() => {
     sessionsRef.current = sessions;
   }, [sessions]);
-  // Trocar de aba ou digitar na busca refaz a consulta: na aba de encerrados os
-  // dois mudam o que o SERVIDOR devolve, não só o que a tela filtra. O atraso
-  // evita uma consulta por tecla.
+  // Switching tabs or typing in the search re-runs the query: on the closed tab
+  // both change what the SERVER returns, not just what the screen filters. The
+  // delay avoids one query per keystroke.
   useEffect(() => {
     listFilterRef.current = listFilter;
     searchRef.current = search;
@@ -676,36 +705,34 @@ export const AttendantChatApp = observer(function AttendantChatApp() {
   }, []);
 
   /**
-   * A aviso do navegador NÃO funciona fora de HTTPS.
+   * The browser notification does NOT work outside HTTPS.
    *
-   * Servido em http://, o navegador marca a permissão como "denied" de saída e
-   * `Notification.requestPermission()` nem chega a perguntar — por isso o
-   * atendente não via aviso nenhum de mensagem nova. Não é algo que dê para
-   * resolver no código: depende de a instância passar a ser servida por HTTPS
-   * (ou ser aberta por localhost).
+   * Served over http://, the browser marks the permission as "denied" right away
+   * and `Notification.requestPermission()` never even asks — that is why the
+   * attendant never saw any notification of a new message. Not something that
+   * can be fixed in code: it depends on the instance being served over HTTPS
+   * (or being opened via localhost).
    */
   /**
-   * Estado do canal em tempo real.
+   * State of the real-time channel.
    *
-   * Sem isso a tela fica igual conectada ou não: o atendente só descobre que o
-   * WebSocket caiu quando percebe que parou de receber mensagem, o que no
-   * atendimento significa deixar cliente esperando sem saber.
+   * Without it the screen looks the same connected or not: the attendant only
+   * finds out the WebSocket dropped when they notice messages stopped arriving,
+   * which in attendance means leaving a client waiting without knowing it.
    */
-  const [conexao, setConexao] = useState<"conectando" | "conectado" | "reconectando">("conectando");
+  const [conexao, setConexao] = useState<"connected" | "connecting" | "reconnecting">("connecting");
 
   const avisoDoSistemaIndisponivel =
     typeof window !== "undefined" && typeof Notification !== "undefined" && !window.isSecureContext;
 
   /**
-   * Não-lidas no título — apenas de conversas ATIVAS.
+   * Unread count in the title — from ACTIVE conversations only.
    *
-   * Somar tudo que a listagem devolve punha as ~200 encerradas na conta, e elas
-   * nunca tiveram marca de leitura: o título virava "(2261) Atendimento". O que
-   * interessa é o que está em atendimento agora.
+   * Summing everything the listing returned put the ~200 closed ones into the
+   * count, and they never had a read mark: the title became "(2261)
+   * Atendimento". What matters is what is being attended right now.
    */
-  const naoLidasAtivas = sessions
-    .filter((s) => s.status === "active")
-    .reduce((total, s) => total + (s.unread ?? 0), 0);
+  const naoLidasAtivas = sessions.filter((s) => s.status === "active").reduce((total, s) => total + (s.unread ?? 0), 0);
   useEffect(() => {
     const original = document.title.replace(/^\(\d+\)\s*/, "");
     document.title = naoLidasAtivas > 0 ? `(${naoLidasAtivas}) ${original}` : original;
@@ -725,7 +752,7 @@ export const AttendantChatApp = observer(function AttendantChatApp() {
       try {
         const cfg = await chatService.getConfig(slug);
         if (!cfg.enabled) {
-          setError("O chat não está habilitado nas configurações da instância.");
+          setError("Chat is not enabled in the instance settings.");
           return;
         }
         setConfig(cfg);
@@ -762,7 +789,7 @@ export const AttendantChatApp = observer(function AttendantChatApp() {
           wsRef.current = ws;
 
           ws.onopen = () => {
-            setConexao("conectado");
+            setConexao("connected");
             // Re-subscribe to active session on (re)connect
             const cur = activeRef.current;
             if (cur) ws?.send(JSON.stringify({ type: "agent.open", session_id: cur }));
@@ -790,9 +817,9 @@ export const AttendantChatApp = observer(function AttendantChatApp() {
             }
 
             if (msg.type === "message.new") {
-              // Conversa que ainda não está na lista: é gente nova chegando pelo
-              // WhatsApp. Sem este refresh a linha só aparecia no próximo
-              // recarregamento da página — o atendente não via o cliente entrar.
+              // Conversation not yet in the list: new people arriving via
+              // WhatsApp. Without this refresh the row only showed up on the
+              // next page reload — the attendant never saw the client join.
               if (!sessionsRef.current.some((s) => s.id === msg.message.session_id)) {
                 void refreshSessionsRef.current?.();
               }
@@ -813,9 +840,7 @@ export const AttendantChatApp = observer(function AttendantChatApp() {
                 });
               } else if (msg.message.sender === "client") {
                 setSessions((prev) =>
-                  prev.map((s) =>
-                    s.id === msg.message.session_id ? { ...s, unread: (s.unread ?? 0) + 1 } : s
-                  )
+                  prev.map((s) => (s.id === msg.message.session_id ? { ...s, unread: (s.unread ?? 0) + 1 } : s))
                 );
               }
               // Desktop notification for inbound client messages when the tab is
@@ -827,13 +852,13 @@ export const AttendantChatApp = observer(function AttendantChatApp() {
                 const preview =
                   msg.message.text ||
                   (msg.message.type === "image"
-                    ? "📷 Imagem"
+                    ? t("chat.app.message_preview.image")
                     : msg.message.type === "audio"
-                      ? "🎤 Áudio"
+                      ? t("chat.app.message_preview.audio")
                       : msg.message.type === "file"
-                        ? "📎 Arquivo"
-                        : "Nova mensagem");
-                notifyDesktop(`Nova mensagem — ${who}`, preview);
+                        ? t("chat.app.message_preview.file")
+                        : "New message");
+                notifyDesktop(`New message — ${who}`, preview);
               }
               return;
             }
@@ -845,7 +870,7 @@ export const AttendantChatApp = observer(function AttendantChatApp() {
               return setMessages((prev) =>
                 prev.map((m) =>
                   m.id === (msg.message?.id ?? msg.message_id)
-                    ? msg.message ?? { ...m, deleted_at: new Date().toISOString(), text: null }
+                    ? (msg.message ?? { ...m, deleted_at: new Date().toISOString(), text: null })
                     : m
                 )
               );
@@ -863,8 +888,8 @@ export const AttendantChatApp = observer(function AttendantChatApp() {
                 setNewAssigned((prev) => new Set(prev).add(sid));
                 playAlert();
                 const sess = sessionsRef.current.find((s) => s.id === sid);
-                const who = sess?.client_name || sess?.client_phone || "Visitante";
-                notifyDesktop("Novo atendimento", `${who} iniciou um atendimento.`);
+                const who = sess?.client_name || sess?.client_phone || "Visitor";
+                notifyDesktop("New service request", `${who} initiated a service session.`);
               }
               return;
             }
@@ -877,13 +902,11 @@ export const AttendantChatApp = observer(function AttendantChatApp() {
             ) {
               void refreshSessionsRef.current?.();
               if (msg.type === "session.closed" && msg.session_id === activeRef.current) {
-                setSessions((prev) =>
-                  prev.map((s) => (s.id === msg.session_id ? { ...s, status: "closed" } : s))
-                );
+                setSessions((prev) => prev.map((s) => (s.id === msg.session_id ? { ...s, status: "closed" } : s)));
               }
               if (msg.type === "session.transferred") {
                 playAlert();
-                notifyDesktop("Atendimento transferido", "Um atendimento foi transferido para você.");
+                notifyDesktop("Support transferred", "A support session was transferred to you.");
               }
               return;
             }
@@ -897,7 +920,7 @@ export const AttendantChatApp = observer(function AttendantChatApp() {
           ws.onclose = (ev) => {
             // 1000 = normal closure (intentional), don't reconnect
             if (!stop && ev.code !== 1000) {
-              setConexao("reconectando");
+              setConexao("reconnecting");
               reconnectTimer = setTimeout(() => void connect(), 3000);
             }
           };
@@ -905,7 +928,7 @@ export const AttendantChatApp = observer(function AttendantChatApp() {
 
         void connect();
       } catch (e: any) {
-        setError(e?.detail || "Falha ao carregar o chat.");
+        setError(e?.detail || "Failed to load chat.");
       }
     })();
 
@@ -965,20 +988,20 @@ export const AttendantChatApp = observer(function AttendantChatApp() {
     setEditingText("");
   };
   const deleteMessage = (m: ChatMessage) => {
-    if (!window.confirm("Apagar esta mensagem? O cliente verá 'mensagem apagada'.")) return;
+    if (!window.confirm("Delete this message? The customer will see 'message deleted'.")) return;
     send({ type: "agent.delete", message_id: m.id });
   };
 
   const assign = () => activeId && send({ type: "agent.assign", session_id: activeId });
 
   /**
-   * Encerra de fato, com o que o atendente informou no modal.
+   * Actually closes, with what the attendant filled in on the modal.
    *
-   * O sistema (projeto) diz sobre o que era o atendimento — sem ele o relatório
-   * por sistema fica cego — e o cadastro do contato aproveita o único momento em
-   * que o atendente tem a informação fresca na cabeça.
+   * The system (project) tells what the attendance was about — without it the
+   * per-system report is blind — and the contact registration takes advantage
+   * of the only moment the attendant still has the information fresh in mind.
    */
-  const encerrarAtendimento = (dados: {project_id?: string; contact?: Record<string, string>}) => {
+  const encerrarAtendimento = (dados: { project_id?: string; contact?: Record<string, string> }) => {
     if (!activeId) return;
     send({ type: "agent.close", session_id: activeId, ...dados });
     setSessions((prev) => prev.map((s) => (s.id === activeId ? { ...s, status: "closed" } : s)));
@@ -990,11 +1013,11 @@ export const AttendantChatApp = observer(function AttendantChatApp() {
     setEncerrando(true);
   };
 
-  // Carregadas uma vez: a lista de entidades é grande e só muda no cadastro.
+  // Loaded once: the entity list is large and only changes on registration.
   useEffect(() => {
     if (!encerrando || entidades.length) return;
     void entityService.list(slug).then((lista) =>
-      setEntidades(
+      setEntitys(
         lista.map((e) => ({
           value: e.id,
           label: e.name,
@@ -1011,15 +1034,15 @@ export const AttendantChatApp = observer(function AttendantChatApp() {
   const copyLink = async () => {
     if (!chatUrl) return;
     await navigator.clipboard.writeText(chatUrl).catch(() => {});
-    setToast({ type: TOAST_TYPE.SUCCESS, title: "Link copiado", message: chatUrl });
+    setToast({ type: TOAST_TYPE.SUCCESS, title: "Link copied", message: chatUrl });
   };
 
   const createIntake = async () => {
     if (!activeSession || !intakeProjectId) {
-      setToast({ type: TOAST_TYPE.ERROR, title: "Selecione um projeto", message: "Escolha o projeto para o intake." });
+      setToast({ type: TOAST_TYPE.ERROR, title: "Select a project", message: "Select the project for the intake." });
       return;
     }
-    const who = activeSession.client_name || activeSession.client_phone || "Visitante";
+    const who = activeSession.client_name || activeSession.client_phone || "Visitor";
     try {
       const res = await fetch(`/api/workspaces/${slug}/projects/${intakeProjectId}/inbox-issues/`, {
         method: "POST",
@@ -1027,18 +1050,22 @@ export const AttendantChatApp = observer(function AttendantChatApp() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           name: `Chat #${activeSession.protocol} — ${who}`,
-          description_html: `<p><strong>Atendimento via chat</strong> — ${who} (protocolo ${activeSession.protocol}).</p><p><a href="${chatUrl}">Ver conversa completa</a></p>`,
+          description_html: `<p><strong>${t("chat.app.workitem_description.title")}</strong> — ${who} (${t("chat.app.workitem_description.protocol_word")} ${activeSession.protocol}).</p><p><a href="${chatUrl}">View full conversation</a></p>`,
         }),
       });
       if (!res.ok) throw await res.json().catch(() => ({}));
       const data = await res.json().catch(() => ({}));
       const inboxIssueId = data?.id ?? data?.issue?.id;
-      setToast({ type: TOAST_TYPE.SUCCESS, title: "Intake criado", message: "Abrindo o chamado para você complementar…" });
+      setToast({
+        type: TOAST_TYPE.SUCCESS,
+        title: "Intake created",
+        message: "Opening the work item for you to complete...",
+      });
       // Redirect to the created intake so the attendant can complete + dispatch it.
       if (inboxIssueId)
         router.push(`/${slug}/projects/${intakeProjectId}/intake?currentTab=open&inboxIssueId=${inboxIssueId}`);
     } catch (e: any) {
-      setToast({ type: TOAST_TYPE.ERROR, title: "Erro", message: e?.detail || "Não foi possível criar o intake." });
+      setToast({ type: TOAST_TYPE.ERROR, title: "Error", message: e?.detail || "Could not create intake." });
     }
   };
 
@@ -1052,7 +1079,14 @@ export const AttendantChatApp = observer(function AttendantChatApp() {
         : file.type.startsWith("audio/")
           ? "audio"
           : "file";
-    send({ type: "agent.message", session_id: activeId, media_key: r.media_key, media_mime: r.media_mime, media_name: r.media_name, media_type: t });
+    send({
+      type: "agent.message",
+      session_id: activeId,
+      media_key: r.media_key,
+      media_mime: r.media_mime,
+      media_name: r.media_name,
+      media_type: t,
+    });
   };
 
   const toggleRecord = async () => {
@@ -1074,7 +1108,7 @@ export const AttendantChatApp = observer(function AttendantChatApp() {
       rec.start();
       setRecording(true);
     } catch {
-      setToast({ type: TOAST_TYPE.ERROR, title: "Erro", message: "Não foi possível acessar o microfone." });
+      setToast({ type: TOAST_TYPE.ERROR, title: "Error", message: "Could not access microphone." });
     }
   };
 
@@ -1104,8 +1138,8 @@ export const AttendantChatApp = observer(function AttendantChatApp() {
 
   if (!config)
     return (
-      <div className="flex h-full items-center justify-center gap-2 text-sm text-secondary">
-        <span className="animate-spin">⟳</span> Carregando chat…
+      <div className="text-sm flex h-full items-center justify-center gap-2 text-secondary">
+        <span className="animate-spin">⟳</span> Loading chat…
       </div>
     );
 
@@ -1123,9 +1157,9 @@ export const AttendantChatApp = observer(function AttendantChatApp() {
             className="flex items-center gap-1.5 rounded-md border border-subtle px-3 py-1.5 text-13 text-secondary hover:bg-layer-1 hover:text-primary"
           >
             <ArrowLeft className="h-3.5 w-3.5" />
-            Voltar
+            {t("common.back")}
           </button>
-          <span className="text-sm font-semibold">{isDash ? "Dashboard de atendimento" : "Configurações do chat"}</span>
+          <span className="text-sm font-semibold">{isDash ? "Support dashboard" : "Chat settings"}</span>
         </div>
         <div className="min-h-0 flex-1">
           {isDash ? (
@@ -1151,21 +1185,21 @@ export const AttendantChatApp = observer(function AttendantChatApp() {
               </div>
             )}
             <MessageSquare className="h-4.5 w-4.5 text-primary" />
-            <span className="text-sm font-semibold text-primary">Atendimentos</span>
+            <span className="text-sm font-semibold text-primary">Consultations</span>
           </div>
           <div className="flex items-center gap-0.5">
             <button
               onClick={() => setShowNewChat(true)}
-              className="rounded-md p-1.5 text-secondary hover:bg-layer-2 hover:text-primary transition-colors"
-              title="Novo atendimento (ativo)"
+              className="rounded-md p-1.5 text-secondary transition-colors hover:bg-layer-2 hover:text-primary"
+              title="New service request (ativo)"
             >
               <Plus className="h-4 w-4" />
             </button>
             {isAdmin && (
               <button
                 onClick={() => setShowDashboard(true)}
-                className="rounded-md p-1.5 text-secondary hover:bg-layer-2 hover:text-primary transition-colors"
-                title="Dashboard de atendimento"
+                className="rounded-md p-1.5 text-secondary transition-colors hover:bg-layer-2 hover:text-primary"
+                title="Support dashboard"
               >
                 <BarChart2 className="h-4 w-4" />
               </button>
@@ -1173,8 +1207,8 @@ export const AttendantChatApp = observer(function AttendantChatApp() {
             {isManager && (
               <button
                 onClick={() => setShowConfig(true)}
-                className="rounded-md p-1.5 text-secondary hover:bg-layer-2 hover:text-primary transition-colors"
-                title="Configurações do chat"
+                className="rounded-md p-1.5 text-secondary transition-colors hover:bg-layer-2 hover:text-primary"
+                title="Chat settings"
               >
                 <Settings2 className="h-4 w-4" />
               </button>
@@ -1185,10 +1219,10 @@ export const AttendantChatApp = observer(function AttendantChatApp() {
         {avisoDoSistemaIndisponivel && (
           <div
             className="border-b border-subtle bg-warning-subtle px-3 py-2 text-11 leading-snug text-warning-primary"
-            title="O navegador só libera notificações do sistema em páginas HTTPS."
+            title="The browser only allows system notifications on HTTPS pages."
           >
-            Avisos do sistema indisponíveis nesta conexão: o navegador só os libera em HTTPS. Enquanto isso, a contagem
-            de mensagens novas aparece no título da aba e toca um alerta.
+            System notifications are unavailable on this connection: the browser only allows them over HTTPS. In the
+            meantime, the new message count appears in the tab title and an alert sound plays.
           </div>
         )}
 
@@ -1199,7 +1233,7 @@ export const AttendantChatApp = observer(function AttendantChatApp() {
             <input
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder="Buscar conversas..."
+              placeholder="Search conversations..."
               className="flex-1 bg-transparent text-13 text-primary outline-none placeholder:text-tertiary"
             />
           </div>
@@ -1208,28 +1242,46 @@ export const AttendantChatApp = observer(function AttendantChatApp() {
         {/* Stats row — click a tab to filter; click again to clear (back to abertos). */}
         <div className="flex border-b border-subtle">
           {[
-            { label: "Ativas", count: sessions.filter((s) => s.status === "active").length, status: "active" },
+            {
+              label: t("chat.app.tabs.active"),
+              count: sessions.filter((s) => s.status === "active").length,
+              status: "active",
+            },
             // "Na fila" and "Bot" are admin-only — regular attendants never see them.
             ...(isAdmin
               ? [
-                  { label: "Na fila", count: sessions.filter((s) => s.status === "queued").length, status: "queued" },
-                  { label: "Bot", count: sessions.filter((s) => s.status === "bot").length, status: "bot" },
+                  {
+                    label: t("chat.app.tabs.queued"),
+                    count: sessions.filter((s) => s.status === "queued").length,
+                    status: "queued",
+                  },
+                  {
+                    label: t("chat.app.tabs.bot"),
+                    count: sessions.filter((s) => s.status === "bot").length,
+                    status: "bot",
+                  },
                 ]
               : []),
-            { label: "Encerrados", count: sessions.filter((s) => s.status === "closed").length, status: "closed" },
+            {
+              label: t("chat.app.tabs.closed"),
+              count: sessions.filter((s) => s.status === "closed").length,
+              status: "closed",
+            },
           ].map(({ label, count, status }) => {
             const selected = listFilter === status;
             return (
               <button
                 key={status}
                 onClick={() => setListFilter(status)}
-                className={`relative flex flex-1 flex-col items-center gap-0.5 border-r border-subtle px-2 py-2 last:border-r-0 transition-colors ${
+                className={`relative flex flex-1 flex-col items-center gap-0.5 border-r border-subtle px-2 py-2 transition-colors last:border-r-0 ${
                   selected ? "bg-layer-1" : "hover:bg-layer-1"
                 }`}
               >
-                <span className={`text-base font-semibold ${selected ? "text-primary" : "text-secondary"}`}>{count}</span>
+                <span className={`text-base font-semibold ${selected ? "text-primary" : "text-secondary"}`}>
+                  {count}
+                </span>
                 <span className={`text-10 ${selected ? "font-semibold text-primary" : "text-tertiary"}`}>{label}</span>
-                {selected && <span className="absolute inset-x-0 bottom-0 h-0.5 bg-primary" />}
+                {selected && <span className="bg-primary absolute inset-x-0 bottom-0 h-0.5" />}
               </button>
             );
           })}
@@ -1240,70 +1292,72 @@ export const AttendantChatApp = observer(function AttendantChatApp() {
           {filteredSessions.map((s) => {
             const isUnread = (s.unread ?? 0) > 0 || newAssigned.has(s.id);
             return (
-            <button
-              key={s.id}
-              onClick={() => openSession(s.id)}
-              className={`relative flex w-full items-start gap-3 border-b border-subtle px-3 py-3 text-left transition-colors ${
-                activeId === s.id
-                  ? "bg-layer-1 before:absolute before:inset-y-0 before:left-0 before:w-0.5 before:bg-primary"
-                  : isUnread
-                    ? "bg-indigo-50 hover:bg-indigo-100 before:absolute before:inset-y-0 before:left-0 before:w-1 before:bg-indigo-500 dark:bg-indigo-900/20 dark:hover:bg-indigo-900/30"
-                    : "hover:bg-layer-1"
-              }`}
-            >
-              <SessionAvatar name={s.client_name} phone={s.client_phone} size="sm" />
-              <div className="min-w-0 flex-1">
-                <div className="flex items-start justify-between gap-1">
-                  <span className={`truncate text-13 ${isUnread ? "font-bold text-primary" : "font-medium text-primary"}`}>
-                    {s.client_name || s.client_phone || "Visitante"}
-                  </span>
-                  <span className={`shrink-0 text-10 ${isUnread ? "font-semibold text-indigo-600 dark:text-indigo-400" : "text-tertiary"}`}>
-                    {formatDate(s.last_message_at)}
-                  </span>
-                </div>
-                <div className="mt-0.5 flex items-center gap-1.5">
-                  <span
-                    className={`rounded-full px-1.5 py-0.5 text-10 font-medium ${statusBadgeCls(s.status)}`}
-                  >
-                    {statusLabel(s.status)}
-                  </span>
-                  {s.channel === "whatsapp" && (
-                    <span className="flex items-center gap-0.5 text-10 text-tertiary">
-                      <Phone className="h-2.5 w-2.5" />
-                      WA
+              <button
+                key={s.id}
+                onClick={() => openSession(s.id)}
+                className={`relative flex w-full items-start gap-3 border-b border-subtle px-3 py-3 text-left transition-colors ${
+                  activeId === s.id
+                    ? "before:bg-primary bg-layer-1 before:absolute before:inset-y-0 before:left-0 before:w-0.5"
+                    : isUnread
+                      ? "bg-indigo-50 hover:bg-indigo-100 before:bg-indigo-500 dark:bg-indigo-900/20 dark:hover:bg-indigo-900/30 before:absolute before:inset-y-0 before:left-0 before:w-1"
+                      : "hover:bg-layer-1"
+                }`}
+              >
+                <SessionAvatar name={s.client_name} phone={s.client_phone} size="sm" />
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-start justify-between gap-1">
+                    <span
+                      className={`truncate text-13 ${isUnread ? "font-bold text-primary" : "font-medium text-primary"}`}
+                    >
+                      {s.client_name || s.client_phone || "Visitor"}
                     </span>
-                  )}
-                  {s.project_identifier && (
-                    <span className="rounded bg-indigo-100 px-1 py-0.5 text-9 font-medium text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-300">
-                      {s.project_identifier}
+                    <span
+                      className={`shrink-0 text-10 ${isUnread ? "text-indigo-600 dark:text-indigo-400 font-semibold" : "text-tertiary"}`}
+                    >
+                      {formatDate(s.last_message_at)}
                     </span>
-                  )}
-                  <span className="text-10 text-tertiary">#{s.protocol}</span>
-                </div>
-                <div className="mt-0.5 flex items-center justify-between gap-2">
-                  <span className={`truncate text-12 ${isUnread ? "font-medium text-secondary" : "text-tertiary"}`}>
-                    {s.last_message || "Sem mensagens"}
-                  </span>
-                  {(s.unread ?? 0) > 0 ? (
-                    <span className="ml-2 flex h-5 min-w-[20px] shrink-0 items-center justify-center rounded-full bg-red-500 px-1.5 text-11 font-bold text-white shadow-sm">
-                      {s.unread}
+                  </div>
+                  <div className="mt-0.5 flex items-center gap-1.5">
+                    <span className={`rounded-full px-1.5 py-0.5 text-10 font-medium ${statusBadgeCls(s.status)}`}>
+                      {t(`chat.app.status.${s.status}`)}
                     </span>
-                  ) : (
-                    newAssigned.has(s.id) && (
-                      <span className="ml-2 flex h-5 shrink-0 items-center rounded-full bg-red-500 px-2 text-10 font-bold uppercase tracking-wide text-white shadow-sm">
-                        Novo
+                    {s.channel === "whatsapp" && (
+                      <span className="flex items-center gap-0.5 text-10 text-tertiary">
+                        <Phone className="h-2.5 w-2.5" />
+                        WA
                       </span>
-                    )
-                  )}
+                    )}
+                    {s.project_identifier && (
+                      <span className="bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-300 rounded px-1 py-0.5 text-9 font-medium">
+                        {s.project_identifier}
+                      </span>
+                    )}
+                    <span className="text-10 text-tertiary">#{s.protocol}</span>
+                  </div>
+                  <div className="mt-0.5 flex items-center justify-between gap-2">
+                    <span className={`truncate text-12 ${isUnread ? "font-medium text-secondary" : "text-tertiary"}`}>
+                      {s.last_message || "No messages"}
+                    </span>
+                    {(s.unread ?? 0) > 0 ? (
+                      <span className="bg-red-500 shadow-sm ml-2 flex h-5 min-w-[20px] shrink-0 items-center justify-center rounded-full px-1.5 text-11 font-bold text-white">
+                        {s.unread}
+                      </span>
+                    ) : (
+                      newAssigned.has(s.id) && (
+                        <span className="bg-red-500 shadow-sm ml-2 flex h-5 shrink-0 items-center rounded-full px-2 text-10 font-bold tracking-wide text-white uppercase">
+                          New
+                        </span>
+                      )
+                    )}
+                  </div>
                 </div>
-              </div>
-            </button>
+              </button>
             );
           })}
           {filteredSessions.length === 0 && (
             <div className="flex flex-col items-center justify-center gap-2 p-8 text-secondary">
               <MessageSquare className="h-8 w-8 opacity-30" />
-              <span className="text-13">Nenhum atendimento</span>
+              <span className="text-13">No support activity</span>
             </div>
           )}
         </div>
@@ -1313,7 +1367,7 @@ export const AttendantChatApp = observer(function AttendantChatApp() {
       {encerrando && activeSession && (
         <ModalDeEncerramento
           sessao={activeSession}
-          projetos={(joinedProjectIds ?? []).map((pid) => ({value: pid, label: getProjectById(pid)?.name ?? pid}))}
+          projetos={(joinedProjectIds ?? []).map((pid) => ({ value: pid, label: getProjectById(pid)?.name ?? pid }))}
           entidades={entidades}
           onConfirmar={encerrarAtendimento}
           onCancelar={() => setEncerrando(false)}
@@ -1322,90 +1376,95 @@ export const AttendantChatApp = observer(function AttendantChatApp() {
 
       {/* ── Chat window ─────────────────────────────────────────────────── */}
       <section
-        className={`flex min-w-0 flex-1 flex-col bg-layer-1 ${slaActive ? "ring-4 ring-danger-primary ring-inset" : ""}`}
+        className={`flex min-w-0 flex-1 flex-col bg-layer-1 ${slaActive ? "ring-danger-primary ring-4 ring-inset" : ""}`}
       >
         {!activeSession ? (
           <div className="flex flex-1 flex-col items-center justify-center gap-3 text-secondary">
             <MessageSquare className="h-12 w-12 opacity-20" />
-            <span className="text-sm">Selecione um atendimento</span>
+            <span className="text-sm">Select a service</span>
           </div>
         ) : (
           <>
             {/* Chat header */}
             <header className="flex items-center justify-between border-b border-subtle bg-surface-1 px-4 py-3">
-              <div className="flex items-center gap-3 min-w-0">
+              <div className="flex min-w-0 items-center gap-3">
                 <SessionAvatar name={activeSession.client_name} phone={activeSession.client_phone} />
                 <div className="min-w-0">
                   <div className="flex items-center gap-2">
-                    <span className="truncate text-sm font-semibold text-primary">
+                    <span className="text-sm truncate font-semibold text-primary">
                       {activeSession.client_name || activeSession.client_phone || "Visitante"}
                     </span>
                     {activeSession.channel === "whatsapp" && (
-                      <span className="flex shrink-0 items-center gap-1 rounded-full bg-green-100 px-2 py-0.5 text-10 font-medium text-green-700 dark:bg-green-900/30 dark:text-green-400">
+                      <span className="bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400 flex shrink-0 items-center gap-1 rounded-full px-2 py-0.5 text-10 font-medium">
                         <Phone className="h-2.5 w-2.5" />
                         WhatsApp
                       </span>
                     )}
                   </div>
-                  <div className="flex items-center gap-1.5 mt-0.5">
+                  <div className="mt-0.5 flex items-center gap-1.5">
                     <span className="text-11 text-tertiary">#{activeSession.protocol}</span>
                     <span className="text-tertiary">·</span>
-                    <span className={`rounded-full px-1.5 py-0.5 text-10 font-medium ${statusBadgeCls(activeSession.status)}`}>
-                      {statusLabel(activeSession.status)}
+                    <span
+                      className={`rounded-full px-1.5 py-0.5 text-10 font-medium ${statusBadgeCls(activeSession.status)}`}
+                    >
+                      {t(`chat.app.status.${activeSession.status}`)}
                     </span>
                     {(activeSession.project_identifier || activeSession.project_name) && (
-                      <span className="flex shrink-0 items-center gap-1 rounded-full bg-indigo-100 px-1.5 py-0.5 text-10 font-medium text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-300">
+                      <span className="bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-300 flex shrink-0 items-center gap-1 rounded-full px-1.5 py-0.5 text-10 font-medium">
                         {activeSession.project_identifier || activeSession.project_name}
                       </span>
                     )}
                     {slaActive && (
-                      <span className="text-11 font-medium text-danger-primary">· ⚠ Aguardando resposta</span>
+                      <span className="text-11 font-medium text-danger-primary">· ⚠ Awaiting response</span>
                     )}
                     {clientTyping && (
-                      <span className="text-11 font-medium text-green-600 dark:text-green-400">· digitando…</span>
+                      <span className="text-green-600 dark:text-green-400 text-11 font-medium">· typing…</span>
                     )}
                   </div>
                 </div>
               </div>
 
-              <div className="flex shrink-0 items-center gap-1.5 ml-3">
+              <div className="ml-3 flex shrink-0 items-center gap-1.5">
                 {activeSession.status !== "active" && activeSession.status !== "closed" && (
                   <button
                     onClick={assign}
-                    className="rounded-md bg-primary px-3 py-1.5 text-12 font-medium text-on-color hover:bg-primary/90 transition-colors"
+                    className="bg-primary hover:bg-primary/90 rounded-md px-3 py-1.5 text-12 font-medium text-on-color transition-colors"
                   >
-                    Assumir
+                    {t("chat.app.actions.claim")}
                   </button>
                 )}
                 <button
                   onClick={copyLink}
-                  className="rounded-md border border-subtle px-2.5 py-1.5 text-12 text-secondary hover:bg-layer-1 transition-colors"
-                  title="Copiar link do chat"
+                  className="rounded-md border border-subtle px-2.5 py-1.5 text-12 text-secondary transition-colors hover:bg-layer-1"
+                  title={t("chat.app.actions.copy_chat_link")}
                 >
                   Link
                 </button>
                 <SelectPesquisavel
                   value={intakeProjectId}
                   onChange={setIntakeProjectId}
-                  opcoes={(joinedProjectIds ?? []).map((pid) => ({value: pid, label: getProjectById(pid)?.name ?? pid}))}
-                  opcaoVazia={{value: "", label: "Intake…"}}
-                  searchPlaceholder="Buscar sistema"
+                  opcoes={(joinedProjectIds ?? []).map((pid) => ({
+                    value: pid,
+                    label: getProjectById(pid)?.name ?? pid,
+                  }))}
+                  opcaoVazia={{ value: "", label: "Intake…" }}
+                  searchPlaceholder="Search system"
                   className="w-44"
                   buttonClassName="h-8 border-subtle bg-transparent text-12 hover:bg-layer-1"
                 />
                 {intakeProjectId && (
                   <button
                     onClick={createIntake}
-                    className="rounded-md border border-subtle px-2.5 py-1.5 text-12 text-secondary hover:bg-layer-1 transition-colors"
+                    className="rounded-md border border-subtle px-2.5 py-1.5 text-12 text-secondary transition-colors hover:bg-layer-1"
                   >
-                    Criar
+                    Create
                   </button>
                 )}
                 {isManager && activeSession.status !== "closed" && activeSession.status !== "bot" && (
                   <button
                     onClick={() => setShowTransfer(true)}
-                    className="flex items-center gap-1 rounded-md border border-subtle px-2.5 py-1.5 text-12 text-secondary hover:bg-layer-1 transition-colors"
-                    title="Transferir atendimento"
+                    className="flex items-center gap-1 rounded-md border border-subtle px-2.5 py-1.5 text-12 text-secondary transition-colors hover:bg-layer-1"
+                    title={t("chat.app.actions.transfer_service_title")}
                   >
                     <Users className="h-3.5 w-3.5" />
                     Transferir
@@ -1414,11 +1473,11 @@ export const AttendantChatApp = observer(function AttendantChatApp() {
                 {activeSession.status === "active" && (
                   <button
                     onClick={closeChat}
-                    className="flex items-center gap-1 rounded-md border border-red-300 px-2.5 py-1.5 text-12 text-red-600 hover:bg-red-50 transition-colors dark:border-red-800 dark:text-red-400 dark:hover:bg-red-900/20"
-                    title="Encerrar atendimento"
+                    className="border-red-300 text-red-600 hover:bg-red-50 dark:border-red-800 dark:text-red-400 dark:hover:bg-red-900/20 flex items-center gap-1 rounded-md border px-2.5 py-1.5 text-12 transition-colors"
+                    title={t("chat.app.actions.end_service_title")}
                   >
                     <X className="h-3.5 w-3.5" />
-                    Encerrar
+                    {t("chat.app.actions.end")}
                   </button>
                 )}
               </div>
@@ -1426,16 +1485,18 @@ export const AttendantChatApp = observer(function AttendantChatApp() {
 
             {/* Queued banner — prominent call to action */}
             {activeSession.status === "queued" && (
-              <div className="flex items-center justify-between gap-3 border-b border-amber-200 bg-amber-50 px-4 py-3 dark:border-amber-800/50 dark:bg-amber-900/20">
-                <div className="flex items-center gap-2 text-13 text-amber-800 dark:text-amber-400">
-                  <span className="font-semibold">Aguardando atendente.</span>
-                  <span className="text-amber-700 dark:text-amber-500">Clique em Assumir para iniciar o atendimento.</span>
+              <div className="border-amber-200 bg-amber-50 dark:border-amber-800/50 dark:bg-amber-900/20 flex items-center justify-between gap-3 border-b px-4 py-3">
+                <div className="text-amber-800 dark:text-amber-400 flex items-center gap-2 text-13">
+                  <span className="font-semibold">Waiting for an agent.</span>
+                  <span className="text-amber-700 dark:text-amber-500">
+                    Click "Take Over" to start handling the request.
+                  </span>
                 </div>
                 <button
                   onClick={assign}
-                  className="shrink-0 rounded-lg bg-amber-600 px-4 py-2 text-13 font-semibold text-white hover:bg-amber-700 transition-colors"
+                  className="bg-amber-600 hover:bg-amber-700 shrink-0 rounded-lg px-4 py-2 text-13 font-semibold text-white transition-colors"
                 >
-                  Assumir agora
+                  {t("chat.app.actions.claim_now")}
                 </button>
               </div>
             )}
@@ -1462,9 +1523,9 @@ export const AttendantChatApp = observer(function AttendantChatApp() {
               }}
             >
               {dragOver && (
-                <div className="pointer-events-none absolute inset-2 z-10 flex flex-col items-center justify-center gap-2 rounded-2xl border-2 border-dashed border-primary bg-primary/10 text-primary backdrop-blur-sm">
+                <div className="border-primary bg-primary/10 pointer-events-none absolute inset-2 z-10 flex flex-col items-center justify-center gap-2 rounded-2xl border-2 border-dashed text-primary backdrop-blur-sm">
                   <Paperclip className="h-7 w-7" />
-                  <span className="text-13 font-medium">Solte para enviar</span>
+                  <span className="text-13 font-medium">Release to send</span>
                 </div>
               )}
               {messages.map((m) => {
@@ -1480,7 +1541,7 @@ export const AttendantChatApp = observer(function AttendantChatApp() {
                   return (
                     <div key={m.id} className="flex justify-center py-1">
                       <span
-                        className={`max-w-[80%] whitespace-pre-wrap rounded-2xl px-3 py-1.5 text-center text-11 ${
+                        className={`max-w-[80%] rounded-2xl px-3 py-1.5 text-center text-11 whitespace-pre-wrap ${
                           isBot
                             ? "border border-subtle bg-layer-2 text-secondary"
                             : "border border-subtle bg-surface-1 text-tertiary"
@@ -1502,21 +1563,23 @@ export const AttendantChatApp = observer(function AttendantChatApp() {
                       {!mine && <SessionAvatar name={m.sender_name ?? null} phone={null} size="sm" />}
                       <div className={`flex max-w-[70%] flex-col ${mine ? "items-end" : "items-start"}`}>
                         {!mine && m.sender_name && <span className="mb-1 text-11 text-secondary">{m.sender_name}</span>}
-                        <div className="flex items-center gap-2 rounded-2xl border border-dashed border-subtle bg-layer-2 px-4 py-2 text-sm italic text-tertiary">
+                        <div className="text-sm flex items-center gap-2 rounded-2xl border border-dashed border-subtle bg-layer-2 px-4 py-2 text-tertiary italic">
                           {showOriginal ? (
                             <>
                               <span className="line-through">{m.text}</span>
-                              <span className="not-italic rounded-full bg-layer-1 px-1.5 py-0.5 text-10 font-medium text-secondary">
-                                apagada
+                              <span className="rounded-full bg-layer-1 px-1.5 py-0.5 text-10 font-medium text-secondary not-italic">
+                                delete
                               </span>
                             </>
                           ) : (
                             <span className="flex items-center gap-1">
-                              <Trash2 className="h-3 w-3" /> Mensagem apagada
+                              <Trash2 className="h-3 w-3" /> Deleted message
                             </span>
                           )}
                         </div>
-                        <div className={`mt-1 text-10 text-tertiary ${mine ? "text-right" : ""}`}>{formatTime(m.created_at)}</div>
+                        <div className={`mt-1 text-10 text-tertiary ${mine ? "text-right" : ""}`}>
+                          {formatTime(m.created_at)}
+                        </div>
                       </div>
                     </div>
                   );
@@ -1526,7 +1589,10 @@ export const AttendantChatApp = observer(function AttendantChatApp() {
                 const canEdit = mine && !isTemp && m.type === "text";
                 // Read by the client? (my message is older than the client's read mark)
                 const readByClient =
-                  mine && !isTemp && !!clientReadAt && new Date(m.created_at).getTime() <= new Date(clientReadAt).getTime();
+                  mine &&
+                  !isTemp &&
+                  !!clientReadAt &&
+                  new Date(m.created_at).getTime() <= new Date(clientReadAt).getTime();
 
                 return (
                   <div key={m.id} className={`group flex ${mine ? "justify-end" : "justify-start"} items-end gap-2`}>
@@ -1537,25 +1603,23 @@ export const AttendantChatApp = observer(function AttendantChatApp() {
                         <button
                           onClick={() => startEdit(m)}
                           className="rounded p-1 text-tertiary hover:bg-layer-2 hover:text-primary"
-                          title="Editar mensagem"
+                          title={t("chat.app.actions.edit_message")}
                         >
                           <Pencil className="h-3.5 w-3.5" />
                         </button>
                         <button
                           onClick={() => deleteMessage(m)}
                           className="rounded p-1 text-tertiary hover:bg-danger-subtle hover:text-danger-primary"
-                          title="Apagar mensagem"
+                          title={t("chat.app.actions.delete_message")}
                         >
                           <Trash2 className="h-3.5 w-3.5" />
                         </button>
                       </div>
                     )}
                     <div className={`flex max-w-[70%] flex-col ${mine ? "items-end" : "items-start"}`}>
-                      {!mine && m.sender_name && (
-                        <span className="mb-1 text-11 text-secondary">{m.sender_name}</span>
-                      )}
+                      {!mine && m.sender_name && <span className="mb-1 text-11 text-secondary">{m.sender_name}</span>}
                       {editing ? (
-                        <div className="flex w-72 flex-col gap-1.5 rounded-2xl border border-primary/40 bg-surface-1 p-2">
+                        <div className="border-primary/40 flex w-72 flex-col gap-1.5 rounded-2xl border bg-surface-1 p-2">
                           <textarea
                             value={editingText}
                             onChange={(e) => setEditingText(e.target.value)}
@@ -1568,29 +1632,40 @@ export const AttendantChatApp = observer(function AttendantChatApp() {
                             }}
                             rows={2}
                             autoFocus
-                            className="resize-none rounded-lg bg-layer-2 px-3 py-2 text-sm text-primary outline-none"
+                            className="text-sm resize-none rounded-lg bg-layer-2 px-3 py-2 text-primary outline-none"
                           />
                           <div className="flex justify-end gap-1.5">
-                            <button onClick={() => setEditingId(null)} className="rounded-md px-2.5 py-1 text-12 text-secondary hover:bg-layer-2">
-                              Cancelar
+                            <button
+                              onClick={() => setEditingId(null)}
+                              className="rounded-md px-2.5 py-1 text-12 text-secondary hover:bg-layer-2"
+                            >
+                              {t("chat.app.messages.cancel")}
                             </button>
-                            <button onClick={saveEdit} className="rounded-md bg-primary px-2.5 py-1 text-12 font-medium text-on-color hover:bg-primary/90">
-                              Salvar
+                            <button
+                              onClick={saveEdit}
+                              className="bg-primary hover:bg-primary/90 rounded-md px-2.5 py-1 text-12 font-medium text-on-color"
+                            >
+                              Save
                             </button>
                           </div>
                         </div>
                       ) : (
                         <div
-                          className={`rounded-2xl px-4 py-2.5 shadow-sm ${
+                          className={`shadow-sm rounded-2xl px-4 py-2.5 ${
                             mine
-                              ? `rounded-br-sm border border-indigo-600 bg-indigo-600 text-white ${isTemp ? "opacity-70" : ""}`
+                              ? `border-indigo-600 bg-indigo-600 rounded-br-sm border text-white ${isTemp ? "opacity-70" : ""}`
                               : "rounded-bl-sm border border-subtle bg-surface-1 text-primary"
                           }`}
                         >
-                          {/* Teto de ALTURA, não só de largura: retrato alto passava
-                              da tela inteira e empurrava a conversa para longe. */}
+                          {/* Ceiling on HEIGHT, not only width: a tall portrait
+                              went past the whole screen and pushed the conversation away. */}
                           {url && m.type === "image" && (
-                            <a href={url} target="_blank" rel="noreferrer" title="Abrir em tamanho real">
+                            <a
+                              href={url}
+                              target="_blank"
+                              rel="noreferrer"
+                              title={t("chat.app.messages.open_full_size")}
+                            >
                               <img
                                 src={url}
                                 className="mb-1 max-h-56 w-auto max-w-full cursor-zoom-in rounded-xl object-contain"
@@ -1607,40 +1682,41 @@ export const AttendantChatApp = observer(function AttendantChatApp() {
                               href={url}
                               target="_blank"
                               rel="noreferrer"
-                              className="flex items-center gap-1.5 text-sm underline"
+                              className="text-sm flex items-center gap-1.5 underline"
                             >
                               <Paperclip className="h-3.5 w-3.5 shrink-0" />
                               {m.media_name || "Arquivo"}
                             </a>
                           )}
-                          {m.text && (
-                            <span className="whitespace-pre-wrap text-sm wrap-break-word">{m.text}</span>
-                          )}
+                          {m.text && <span className="text-sm wrap-break-word whitespace-pre-wrap">{m.text}</span>}
                         </div>
                       )}
-                      <div className={`mt-1 flex items-center gap-1 text-10 text-tertiary ${mine ? "flex-row-reverse" : ""}`}>
+                      <div
+                        className={`mt-1 flex items-center gap-1 text-10 text-tertiary ${mine ? "flex-row-reverse" : ""}`}
+                      >
                         <span>{formatTime(m.created_at)}</span>
-                        {mine && !isTemp && (
-                          <CheckCheck className={`h-3 w-3 ${readByClient ? "text-blue-500" : ""}`} />
-                        )}
-                        {m.edited_at && <span className="italic">· editado</span>}
+                        {mine && !isTemp && <CheckCheck className={`h-3 w-3 ${readByClient ? "text-blue-500" : ""}`} />}
+                        {m.edited_at && <span className="italic">· {t("chat.app.messages.edited")}</span>}
                         {isManager && (m.edit_history?.length ?? 0) > 0 && (
                           <button
                             onClick={() => setHistoryFor(historyFor === m.id ? null : m.id)}
                             className="flex items-center gap-0.5 underline hover:text-secondary"
                           >
-                            <History className="h-2.5 w-2.5" /> {m.edit_history!.length} versão(ões)
+                            <History className="h-2.5 w-2.5" />{" "}
+                            {t("chat.app.messages.versions", { count: m.edit_history!.length })}
                           </button>
                         )}
                       </div>
                       {/* Edit history (managers) */}
                       {historyFor === m.id && (m.edit_history?.length ?? 0) > 0 && (
                         <div className="mt-1 w-72 rounded-lg border border-subtle bg-layer-2 p-2 text-11 text-secondary">
-                          <div className="mb-1 font-semibold text-tertiary">Versões anteriores</div>
+                          <div className="mb-1 font-semibold text-tertiary">Previous versions</div>
                           <div className="flex flex-col gap-1">
                             {m.edit_history!.map((h, i) => (
                               <div key={i} className="border-t border-subtle pt-1 first:border-t-0 first:pt-0">
-                                <span className="whitespace-pre-wrap">{h.text || "(vazio)"}</span>
+                                <span className="whitespace-pre-wrap">
+                                  {h.text || t("chat.app.messages.empty_text")}
+                                </span>
                                 <span className="ml-1 text-10 text-tertiary">— {formatTime(h.edited_at)}</span>
                               </div>
                             ))}
@@ -1652,17 +1728,15 @@ export const AttendantChatApp = observer(function AttendantChatApp() {
                 );
               })}
               {messages.length === 0 && (
-                <div className="flex flex-1 items-center justify-center text-13 text-tertiary">
-                  Sem mensagens ainda.
-                </div>
+                <div className="flex flex-1 items-center justify-center text-13 text-tertiary">No messages yet.</div>
               )}
               {clientTyping && (
                 <div className="flex items-end gap-2">
                   <SessionAvatar name={activeSession.client_name} phone={activeSession.client_phone} size="sm" />
                   <div className="flex items-center gap-1 rounded-2xl rounded-bl-sm border border-subtle bg-surface-1 px-4 py-3">
-                    <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-tertiary" />
-                    <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-tertiary [animation-delay:150ms]" />
-                    <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-tertiary [animation-delay:300ms]" />
+                    <span className="bg-tertiary h-1.5 w-1.5 animate-bounce rounded-full" />
+                    <span className="bg-tertiary h-1.5 w-1.5 animate-bounce rounded-full [animation-delay:150ms]" />
+                    <span className="bg-tertiary h-1.5 w-1.5 animate-bounce rounded-full [animation-delay:300ms]" />
                   </div>
                 </div>
               )}
@@ -1680,15 +1754,15 @@ export const AttendantChatApp = observer(function AttendantChatApp() {
                 />
                 <button
                   onClick={() => fileRef.current?.click()}
-                  className="rounded-lg p-2 text-secondary hover:bg-layer-2 hover:text-primary transition-colors"
-                  title="Anexar arquivo"
+                  className="rounded-lg p-2 text-secondary transition-colors hover:bg-layer-2 hover:text-primary"
+                  title={t("common.attach_file")}
                 >
                   <Paperclip className="h-5 w-5" />
                 </button>
                 <button
                   onClick={toggleRecord}
                   className={`rounded-lg p-2 transition-colors ${recording ? "text-danger-primary hover:bg-danger-subtle" : "text-secondary hover:bg-layer-2 hover:text-primary"}`}
-                  title={recording ? "Parar gravação" : "Gravar áudio"}
+                  title={recording ? "Stop recording" : "Record audio"}
                 >
                   <Mic className="h-5 w-5" />
                 </button>
@@ -1711,15 +1785,15 @@ export const AttendantChatApp = observer(function AttendantChatApp() {
                       uploadFile(f);
                     }
                   }}
-                  placeholder="Digite sua mensagem… (Enter para enviar, Shift+Enter para nova linha)"
+                  placeholder="ype your message… (Enter to send, Shift+Enter for a new line)"
                   rows={1}
-                  className="flex-1 resize-none rounded-xl border border-subtle bg-layer-2 px-4 py-2.5 text-sm text-primary outline-none placeholder:text-tertiary focus:border-primary/50 max-h-32 overflow-y-auto"
+                  className="text-sm focus:border-primary/50 max-h-32 flex-1 resize-none overflow-y-auto rounded-xl border border-subtle bg-layer-2 px-4 py-2.5 text-primary outline-none placeholder:text-tertiary"
                 />
                 <button
                   onClick={handleSend}
                   disabled={!draft.trim()}
-                  className="rounded-xl bg-primary p-2.5 text-on-color transition-all hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-40"
-                  title="Enviar mensagem"
+                  className="bg-primary hover:bg-primary/90 rounded-xl p-2.5 text-on-color transition-all disabled:cursor-not-allowed disabled:opacity-40"
+                  title="Send message"
                 >
                   <SendHorizontal className="h-5 w-5" />
                 </button>
@@ -1727,7 +1801,7 @@ export const AttendantChatApp = observer(function AttendantChatApp() {
             )}
             {activeSession.status === "closed" && (
               <div className="flex items-center justify-center border-t border-subtle bg-surface-1 p-3">
-                <span className="text-13 text-tertiary">Atendimento encerrado</span>
+                <span className="text-13 text-tertiary">Service closed</span>
               </div>
             )}
           </>
@@ -1736,18 +1810,18 @@ export const AttendantChatApp = observer(function AttendantChatApp() {
 
       {/* ── Info panel ──────────────────────────────────────────────────── */}
       {activeSession && (
-        <aside className="flex w-72 shrink-0 flex-col border-l border-subtle bg-surface-1 overflow-y-auto">
+        <aside className="flex w-72 shrink-0 flex-col overflow-y-auto border-l border-subtle bg-surface-1">
           {/* Contact */}
           <div className="border-b border-subtle p-4">
-            <div className="mb-3 text-11 font-semibold uppercase tracking-wider text-tertiary">Cliente</div>
+            <div className="tracking-wider mb-3 text-11 font-semibold text-tertiary uppercase">Client</div>
             <div className="flex items-center gap-3">
               <SessionAvatar name={activeSession.client_name} phone={activeSession.client_phone} size="lg" />
               <div className="min-w-0">
-                <div className="text-sm font-semibold text-primary truncate">
+                <div className="text-sm truncate font-semibold text-primary">
                   {activeSession.client_name || "Visitante"}
                 </div>
-                <div className="flex items-center gap-1 mt-0.5">
-                  <div className="h-2 w-2 rounded-full bg-green-500" />
+                <div className="mt-0.5 flex items-center gap-1">
+                  <div className="bg-green-500 h-2 w-2 rounded-full" />
                   <span className="text-11 text-secondary">Online</span>
                 </div>
               </div>
@@ -1756,25 +1830,27 @@ export const AttendantChatApp = observer(function AttendantChatApp() {
 
           {/* Channels */}
           <div className="border-b border-subtle p-4">
-            <div className="mb-2 text-11 font-semibold uppercase tracking-wider text-tertiary">
-              Canais de contato
+            <div className="tracking-wider mb-2 text-11 font-semibold text-tertiary uppercase">
+              {t("chat.app.sidebar.contact_channels")}
             </div>
             <div className="flex flex-col gap-2">
               {activeSession.client_phone && (
                 <div className="flex items-center gap-2 text-13">
-                  <Phone className="h-3.5 w-3.5 shrink-0 text-green-600" />
+                  <Phone className="text-green-600 h-3.5 w-3.5 shrink-0" />
                   <span className="text-primary">{activeSession.client_phone}</span>
                 </div>
               )}
               {!activeSession.client_phone && !activeSession.client_name && (
-                <span className="text-12 text-tertiary italic">Nenhum canal disponível</span>
+                <span className="text-12 text-tertiary italic">No channels available</span>
               )}
             </div>
           </div>
 
           {/* Info */}
           <div className="border-b border-subtle p-4">
-            <div className="mb-2 text-11 font-semibold uppercase tracking-wider text-tertiary">Informações</div>
+            <div className="tracking-wider mb-2 text-11 font-semibold text-tertiary uppercase">
+              {t("chat.app.sidebar.information_heading")}
+            </div>
             <div className="flex flex-col gap-1.5 text-13">
               <div className="flex justify-between">
                 <span className="text-tertiary">Canal</span>
@@ -1783,7 +1859,7 @@ export const AttendantChatApp = observer(function AttendantChatApp() {
               {(activeSession.project_name || activeSession.project_identifier) && (
                 <div className="flex justify-between gap-2">
                   <span className="text-tertiary">Sistema</span>
-                  <span className="truncate text-primary text-right">
+                  <span className="truncate text-right text-primary">
                     {activeSession.project_name || activeSession.project_identifier}
                   </span>
                 </div>
@@ -1794,8 +1870,10 @@ export const AttendantChatApp = observer(function AttendantChatApp() {
               </div>
               <div className="flex justify-between">
                 <span className="text-tertiary">Status</span>
-                <span className={`rounded-full px-1.5 py-0.5 text-10 font-medium ${statusBadgeCls(activeSession.status)}`}>
-                  {statusLabel(activeSession.status)}
+                <span
+                  className={`rounded-full px-1.5 py-0.5 text-10 font-medium ${statusBadgeCls(activeSession.status)}`}
+                >
+                  {t(`chat.app.status.${activeSession.status}`)}
                 </span>
               </div>
             </div>
@@ -1804,12 +1882,14 @@ export const AttendantChatApp = observer(function AttendantChatApp() {
           {/* Satisfaction rating (after the survey) */}
           {activeSession.rating_score != null && (
             <div className="border-b border-subtle p-4">
-              <div className="mb-2 text-11 font-semibold uppercase tracking-wider text-tertiary">Avaliação</div>
+              <div className="tracking-wider mb-2 text-11 font-semibold text-tertiary uppercase">
+                {t("chat.app.sidebar.rating_heading")}
+              </div>
               <div className="flex items-center gap-1">
                 {[1, 2, 3, 4, 5].map((n) => (
                   <Star
                     key={n}
-                    className={`h-4 w-4 ${n <= (activeSession.rating_score ?? 0) ? "fill-current text-amber-400" : "text-tertiary"}`}
+                    className={`h-4 w-4 ${n <= (activeSession.rating_score ?? 0) ? "text-amber-400 fill-current" : "text-tertiary"}`}
                   />
                 ))}
                 <span className="ml-1 text-13 font-medium text-primary">{activeSession.rating_score}/5</span>
@@ -1824,31 +1904,33 @@ export const AttendantChatApp = observer(function AttendantChatApp() {
 
           {/* Quick actions */}
           <div className="p-4">
-            <div className="mb-2 text-11 font-semibold uppercase tracking-wider text-tertiary">Ações rápidas</div>
+            <div className="tracking-wider mb-2 text-11 font-semibold text-tertiary uppercase">
+              {t("chat.app.sidebar.quick_actions_heading")}
+            </div>
             <div className="flex flex-col gap-1.5">
               {activeSession.status !== "active" && activeSession.status !== "closed" && (
                 <button
                   onClick={assign}
-                  className="flex items-center gap-2 rounded-lg border border-subtle px-3 py-2 text-13 text-secondary hover:bg-layer-1 transition-colors text-left"
+                  className="flex items-center gap-2 rounded-lg border border-subtle px-3 py-2 text-left text-13 text-secondary transition-colors hover:bg-layer-1"
                 >
                   <MessageSquare className="h-3.5 w-3.5 shrink-0" />
-                  Assumir atendimento
+                  {t("chat.app.actions.claim_service")}
                 </button>
               )}
               <button
                 onClick={copyLink}
-                className="flex items-center gap-2 rounded-lg border border-subtle px-3 py-2 text-13 text-secondary hover:bg-layer-1 transition-colors text-left"
+                className="flex items-center gap-2 rounded-lg border border-subtle px-3 py-2 text-left text-13 text-secondary transition-colors hover:bg-layer-1"
               >
                 <Mail className="h-3.5 w-3.5 shrink-0" />
-                Copiar link do chat
+                {t("chat.app.actions.copy_chat_link")}
               </button>
               {activeSession.status === "active" && (
                 <button
                   onClick={closeChat}
-                  className="flex items-center gap-2 rounded-lg border border-red-200 px-3 py-2 text-13 text-red-600 hover:bg-red-50 transition-colors text-left dark:border-red-800 dark:text-red-400 dark:hover:bg-red-900/20"
+                  className="border-red-200 text-red-600 hover:bg-red-50 dark:border-red-800 dark:text-red-400 dark:hover:bg-red-900/20 flex items-center gap-2 rounded-lg border px-3 py-2 text-left text-13 transition-colors"
                 >
                   <X className="h-3.5 w-3.5 shrink-0" />
-                  Encerrar atendimento
+                  {t("chat.app.actions.end_service")}
                 </button>
               )}
             </div>

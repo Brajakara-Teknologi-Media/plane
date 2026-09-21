@@ -340,7 +340,7 @@ export async function addMember(
   }
 }
 
-/** Usuário + token + associação a um workspace/projeto existentes, em uma chamada. */
+/** Username + token + associação a um workspace/projeto existentes, em uma chamada. */
 export async function createMemberWithToken(
   workspaceId: string,
   role: number,

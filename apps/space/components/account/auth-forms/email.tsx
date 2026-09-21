@@ -30,7 +30,7 @@ export const AuthEmailForm = observer(function AuthEmailForm(props: TAuthEmailFo
   const [email, setEmail] = useState(defaultEmail);
 
   const emailError = useMemo(
-    () => (email && !checkEmailValidity(email) ? { email: "E-mail inválido" } : undefined),
+    () => (email && !checkEmailValidity(email) ? { email: "Invalid email" } : undefined),
     [email]
   );
 

@@ -74,7 +74,7 @@ export const premiumModule = new Elysia()
     const ws = await getWorkspaceOrFail(slug);
     await getProjectOrFail(ws.id, project_id, user.id);
     const b = body as any;
-    if (!b.duration_minutes || !b.logged_date) { set.status = 400; return { detail: "duration_minutes e logged_date são obrigatórios." }; }
+    if (!b.duration_minutes || !b.logged_date) { set.status = 400; return { detail: "duration_minutes and logged_date are required." }; }
 
     const log = await prisma.issueTimeLog.create({
       data: {
@@ -123,7 +123,7 @@ export const premiumModule = new Elysia()
   .post("/workspaces/:slug/projects/:project_id/intakes/", async ({ params: { slug, project_id }, body, user, set }) => {
     const ws = await getWorkspaceOrFail(slug);
     const { member } = await getProjectOrFail(ws.id, project_id, user.id);
-    if (member.role < 15) { set.status = 403; return { detail: "Permissão negada." }; }
+    if (member.role < 15) { set.status = 403; return { detail: "Permission denied." }; }
     const b = body as any;
     const intake = await prisma.intake.create({
       data: { projectId: project_id, workspaceId: ws.id, name: b.name ?? "Intake", description: b.description ?? "", createdById: user.id },
@@ -211,7 +211,7 @@ export const premiumModule = new Elysia()
     const ws = await getWorkspaceOrFail(slug);
     await requireWorkspaceWriter(ws.id, user.id);
     const b = body as any;
-    if (!b.source) { set.status = 400; return { detail: "source é obrigatório (jira|linear|asana|clickup|github|notion|confluence|csv)." }; }
+    if (!b.source) { set.status = 400; return { detail: "source is required (jira|linear|asana|clickup|github|notion|confluence|csv)." }; }
     const job = await prisma.importJob.create({
       data: {
         workspaceId: ws.id, projectId: b.project_id ?? null, source: b.source,
@@ -273,7 +273,7 @@ export const premiumModule = new Elysia()
     const ws = await getWorkspaceOrFail(slug);
     await requireWorkspaceWriter(ws.id, user.id);
     const b = body as any;
-    if (!b.name) { set.status = 400; return { detail: "O nome é obrigatório." }; }
+    if (!b.name) { set.status = 400; return { detail: "Name is required." }; }
     const type = await prisma.issueType.create({
       data: { workspaceId: ws.id, projectId: b.project_id ?? null, name: b.name, description: b.description ?? "", isEpic: b.is_epic ?? false, level: b.level ?? 0, isDefault: b.is_default ?? false },
     });
@@ -293,7 +293,7 @@ export const premiumModule = new Elysia()
     const ws = await getWorkspaceOrFail(slug);
     await requireWorkspaceWriter(ws.id, user.id);
     const b = body as any;
-    if (!b.name || !b.property_type) { set.status = 400; return { detail: "name e property_type são obrigatórios." }; }
+    if (!b.name || !b.property_type) { set.status = 400; return { detail: "name and property_type are required." }; }
     const prop = await prisma.issueProperty.create({
       data: { workspaceId: ws.id, issueTypeId: b.issue_type_id ?? null, name: b.name, displayName: b.display_name ?? b.name, propertyType: b.property_type, isRequired: b.is_required ?? false, isMulti: b.is_multi ?? false, defaultValue: b.default_value ?? null, extraSettings: b.extra_settings ?? null, sortOrder: b.sort_order ?? 65535 },
     });
@@ -322,7 +322,7 @@ export const premiumModule = new Elysia()
       set.status = 201;
       return r;
     } catch (e: any) {
-      if (e?.code === "P2002") { set.status = 409; return { detail: "Você já reagiu." }; }
+      if (e?.code === "P2002") { set.status = 409; return { detail: "You already reacted." }; }
       throw e;
     }
   })
@@ -345,7 +345,7 @@ export const premiumModule = new Elysia()
       set.status = 201;
       return v;
     } catch (e: any) {
-      if (e?.code === "P2002") { set.status = 409; return { detail: "Você já votou." }; }
+      if (e?.code === "P2002") { set.status = 409; return { detail: "You already voted." }; }
       throw e;
     }
   })
@@ -374,7 +374,7 @@ export const premiumModule = new Elysia()
       set.status = 201;
       return sub;
     } catch (e: any) {
-      if (e?.code === "P2002") { set.status = 409; return { detail: "Você já está inscrito." }; }
+      if (e?.code === "P2002") { set.status = 409; return { detail: "You are already subscribed." }; }
       throw e;
     }
   })
@@ -427,7 +427,7 @@ export const premiumModule = new Elysia()
     const updates = ((body as any)?.updates ?? []) as Array<{id: string; start_date?: string | null; target_date?: string | null}>;
     if (!Array.isArray(updates) || updates.length === 0) {
       set.status = 400;
-      return { detail: "Informe ao menos uma alteração em `updates`." };
+      return { detail: "Provide at least one change in `updates`." };
     }
     for (const u of updates) {
       if (!u?.id) continue;
@@ -465,7 +465,7 @@ export const premiumModule = new Elysia()
 
     const b = body as any;
     const issueIds: string[] = b.issue_ids ?? [];
-    if (!issueIds.length) { set.status = 400; return { detail: "issue_ids é obrigatório." }; }
+    if (!issueIds.length) { set.status = 400; return { detail: "issue_ids is required." }; }
 
     const data: any = { updatedById: user.id };
     if (b.state !== undefined) data.stateId = b.state;
@@ -544,7 +544,7 @@ export const premiumModule = new Elysia()
     const ws = await getWorkspaceOrFail(slug);
     await requireWorkspaceMember(ws.id, user.id);
     const b = body as any;
-    if (!b.name) { set.status = 400; return { detail: "O nome é obrigatório." }; }
+    if (!b.name) { set.status = 400; return { detail: "Name is required." }; }
     const view = await prisma.issueView.create({
       data: { workspaceId: ws.id, name: b.name, description: b.description ?? "", filters: b.filters ?? {}, queryData: b.query_data ?? {}, isGlobal: true, access: b.access ?? "PUBLIC", createdById: user.id },
     });
@@ -568,7 +568,7 @@ export const premiumModule = new Elysia()
     const ws = await getWorkspaceOrFail(slug);
     await getProjectOrFail(ws.id, project_id, user.id);
     const b = body as any;
-    if (!b.name) { set.status = 400; return { detail: "O nome é obrigatório." }; }
+    if (!b.name) { set.status = 400; return { detail: "Name is required." }; }
     const view = await prisma.issueView.create({
       data: { workspaceId: ws.id, projectId: project_id, name: b.name, description: b.description ?? "", filters: b.filters ?? {}, queryData: b.query_data ?? {}, isGlobal: false, access: b.access ?? "PUBLIC", createdById: user.id },
     });
@@ -587,7 +587,7 @@ export const premiumModule = new Elysia()
     const ws = await getWorkspaceOrFail(slug);
     await requireWorkspaceMember(ws.id, user.id);
     const view = await prisma.issueView.findFirst({ where: { id: view_id, workspaceId: ws.id, deletedAt: null } });
-    if (!view) { set.status = 404; return { detail: "Visualização não encontrada." }; }
+    if (!view) { set.status = 404; return { detail: "View not found." }; }
     return serializeView(view);
   })
 
@@ -595,7 +595,7 @@ export const premiumModule = new Elysia()
     const ws = await getWorkspaceOrFail(slug);
     await getProjectOrFail(ws.id, project_id, user.id);
     const view = await prisma.issueView.findFirst({ where: { id: view_id, projectId: project_id, deletedAt: null } });
-    if (!view) { set.status = 404; return { detail: "Visualização não encontrada." }; }
+    if (!view) { set.status = 404; return { detail: "View not found." }; }
     return serializeView(view);
   })
 
@@ -610,7 +610,7 @@ export const premiumModule = new Elysia()
     if (b.query_data !== undefined) data.queryData = b.query_data;
     if (b.access !== undefined) data.access = b.access;
     const {count} = await prisma.issueView.updateMany({ where: { id: view_id, projectId: project_id }, data });
-    if (!count) { set.status = 404; return { detail: "Visualização não encontrada." }; }
+    if (!count) { set.status = 404; return { detail: "View not found." }; }
     return serializeView(await prisma.issueView.findUnique({ where: { id: view_id } }));
   })
 
@@ -656,7 +656,7 @@ export const premiumModule = new Elysia()
   .post("/workspaces/:slug/projects/:project_id/deploy-boards/", async ({ params: { slug, project_id }, body, user, set }) => {
     const ws = await getWorkspaceOrFail(slug);
     const { member } = await getProjectOrFail(ws.id, project_id, user.id);
-    if (member.role < 15) { set.status = 403; return { detail: "Permissão negada." }; }
+    if (member.role < 15) { set.status = 403; return { detail: "Permission denied." }; }
     const b = body as any;
     const board = await prisma.deployBoard.create({
       data: {

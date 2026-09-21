@@ -7,6 +7,7 @@
 import { useState } from "react";
 import { XCircle } from "lucide-react";
 // plane imports
+import { useTranslation } from "@plane/i18n";
 import { PROFILE_SETTINGS_TRACKER_ELEMENTS } from "@plane/constants";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { IApiToken } from "@plane/types";
@@ -25,13 +26,14 @@ export function ApiTokenListItem(props: Props) {
   // states
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   // hooks
+  const { t } = useTranslation();
   const { isMobile } = usePlatformOS();
 
   return (
     <>
       <DeleteApiTokenModal isOpen={deleteModalOpen} onClose={() => setDeleteModalOpen(false)} tokenId={token.id} />
       <div className="group relative flex flex-col justify-center border-b border-subtle py-3">
-        <Tooltip tooltipContent="Excluir token" isMobile={isMobile}>
+        <Tooltip tooltipContent={t("common.delete_token_tooltip")} isMobile={isMobile}>
           <button
             onClick={() => setDeleteModalOpen(true)}
             className="absolute right-4 hidden place-items-center group-hover:grid"
@@ -57,8 +59,11 @@ export function ApiTokenListItem(props: Props) {
           <p className="mb-1 text-11 leading-6 text-placeholder">
             {token.is_active
               ? token.expired_at
-                ? `Expira em ${renderFormattedDate(token.expired_at)} às ${renderFormattedTime(token.expired_at)}`
-                : "Nunca expira"
+                ? t("common.token_expires_at", {
+                    date: renderFormattedDate(token.expired_at),
+                    time: renderFormattedTime(token.expired_at),
+                  })
+                : t("workspace_settings.settings.api_tokens.never_expires")
               : `Expired ${calculateTimeAgo(token.expired_at)}`}
           </p>
         </div>

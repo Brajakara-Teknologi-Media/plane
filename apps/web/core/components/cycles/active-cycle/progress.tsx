@@ -55,9 +55,10 @@ export const ActiveCycleProgress = observer(function ActiveCycleProgress(props: 
           <h3 className="text-14 font-semibold text-tertiary">{t("project_cycles.active_cycle.progress")}</h3>
           {cycle.total_issues > 0 && (
             <span className="flex gap-1 rounded-xs px-3 py-1 text-13 font-medium whitespace-nowrap text-placeholder">
-              {`${cycle.completed_issues + cycle.cancelled_issues}/${cycle.total_issues - cycle.cancelled_issues} ${
-                cycle.completed_issues + cycle.cancelled_issues > 1 ? "chamados" : "chamado"
-              } closed`}
+              {`${cycle.completed_issues + cycle.cancelled_issues}/${cycle.total_issues - cycle.cancelled_issues} ${t(
+                "misc.work_item_label",
+                { count: cycle.completed_issues + cycle.cancelled_issues }
+              )} closed`}
             </span>
           )}
         </div>
@@ -85,9 +86,9 @@ export const ActiveCycleProgress = observer(function ActiveCycleProgress(props: 
                       />
                       <span className="w-16 font-medium text-tertiary capitalize">{group}</span>
                     </div>
-                    <span className="text-tertiary">{`${groupedIssues[group]} ${
-                      groupedIssues[group] > 1 ? "chamados" : "chamado"
-                    }`}</span>
+                    <span className="text-tertiary">{`${groupedIssues[group]} ${t("misc.work_item_label", {
+                      count: groupedIssues[group],
+                    })}`}</span>
                   </div>
                 </div>
               )}
@@ -96,9 +97,7 @@ export const ActiveCycleProgress = observer(function ActiveCycleProgress(props: 
           {cycle.cancelled_issues > 0 && (
             <span className="flex items-center gap-2 text-13 text-tertiary">
               <span>
-                {`${cycle.cancelled_issues} cancelled ${
-                  cycle.cancelled_issues > 1 ? "chamados foram" : "chamado foi"
-                } excluded from this report.`}{" "}
+                {`${cycle.cancelled_issues} ${t("misc.were_excluded", { count: cycle.cancelled_issues })} excluded from this report.`}{" "}
               </span>
             </span>
           )}

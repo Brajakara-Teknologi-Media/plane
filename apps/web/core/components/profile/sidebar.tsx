@@ -134,7 +134,7 @@ export const ProfileSidebar = observer(function ProfileSidebar(props: TProfileSi
               <h4 className="text-16 font-semibold">
                 {userData?.first_name} {userData?.last_name}
               </h4>
-              <h6 className="text-13 text-secondary">({userData?.display_name})</h6>
+              {userData?.display_name ? <h6 className="text-13 text-secondary">({userData.display_name})</h6> : null}
             </div>
             <div className="mt-6 space-y-5">
               {userDetails.map((detail) => (
@@ -171,7 +171,7 @@ export const ProfileSidebar = observer(function ProfileSidebar(props: TProfileSi
                           </div>
                           <div className="flex flex-shrink-0 items-center gap-2">
                             {project.assigned_issues > 0 && (
-                              <Tooltip tooltipContent="Percentual de conclusão" position="left" isMobile={isMobile}>
+                              <Tooltip tooltipContent="Completion percentage" position="left" isMobile={isMobile}>
                                 <div
                                   className={`rounded-sm px-1 py-0.5 text-11 font-medium ${
                                     completedIssuePercentage <= 35

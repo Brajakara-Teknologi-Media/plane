@@ -9,8 +9,9 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR, { mutate } from "swr";
 import { CheckCircle } from "lucide-react";
-import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
+import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { IAppIntegration, IWorkspaceIntegration } from "@plane/types";
@@ -36,13 +37,13 @@ type Props = {
 const integrationDetails: { [key: string]: any } = {
   github: {
     logo: GithubLogo,
-    installed: "Ative o GitHub em projetos individuais para sincronizar com repositórios específicos.",
-    notInstalled: "Conecte o GitHub ao seu espaço de trabalho do Avião para sincronizar os chamados do sistema.",
+    installed: "Enable GitHub in individual projects to sync with specific repositories.",
+    notInstalled: "Connect GitHub to your Avião workspace to sync system calls.",
   },
   slack: {
     logo: SlackLogo,
-    installed: "Ative o Slack em projetos individuais para sincronizar com canais específicos.",
-    notInstalled: "Conecte o Slack ao seu espaço de trabalho do Avião para sincronizar os chamados do sistema.",
+    installed: "Activate Slack in individual projects to sync with specific channels.",
+    notInstalled: "Connect Slack to your Avião workspace to sync system calls.",
   },
 };
 
@@ -57,6 +58,7 @@ export const SingleIntegrationCard = observer(function SingleIntegrationCard({ i
   // store hooks
   const { config } = useInstance();
   const { allowPermissions } = useUserPermissions();
+  const { t } = useTranslation();
 
   const isUserAdmin = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.WORKSPACE);
   const { isMobile } = usePlatformOS();
@@ -89,8 +91,8 @@ export const SingleIntegrationCard = observer(function SingleIntegrationCard({ i
 
         setToast({
           type: TOAST_TYPE.SUCCESS,
-          title: "Excluído com sucesso!",
-          message: `Integração ${integration.title} removida com sucesso.`,
+          title: "Deleted successfully!",
+          message: t("common.integration_removed_success_message", { integration_name: integration.title }),
         });
       })
       .catch(() => {
@@ -98,8 +100,8 @@ export const SingleIntegrationCard = observer(function SingleIntegrationCard({ i
 
         setToast({
           type: TOAST_TYPE.ERROR,
-          title: "Erro!",
-          message: `Não foi possível remover a integração ${integration.title}. Tente novamente.`,
+          title: t("common.error.label"),
+          message: t("common.failed_to_remove_integration", { integration_name: integration.title }),
         });
       });
   };
@@ -128,7 +130,7 @@ export const SingleIntegrationCard = observer(function SingleIntegrationCard({ i
               ? isInstalled
                 ? integrationDetails[integration.provider].installed
                 : integrationDetails[integration.provider].notInstalled
-              : "Carregando..."}
+              : t("common.loading")}
           </p>
         </div>
       </div>
@@ -138,7 +140,7 @@ export const SingleIntegrationCard = observer(function SingleIntegrationCard({ i
           <Tooltip
             isMobile={isMobile}
             disabled={isUserAdmin}
-            tooltipContent={!isUserAdmin ? "Você não tem permissão para executar esta ação" : null}
+            tooltipContent={!isUserAdmin ? "You do not have permission to perform this action" : null}
           >
             <Button
               className={`${!isUserAdmin ? "hover:cursor-not-allowed" : ""}`}
@@ -157,7 +159,7 @@ export const SingleIntegrationCard = observer(function SingleIntegrationCard({ i
           <Tooltip
             isMobile={isMobile}
             disabled={isUserAdmin}
-            tooltipContent={!isUserAdmin ? "Você não tem permissão para executar esta ação" : null}
+            tooltipContent={!isUserAdmin ? "You do not have permission to perform this action" : null}
           >
             <Button
               className={`${!isUserAdmin ? "hover:cursor-not-allowed" : ""}`}

@@ -6,6 +6,7 @@
 
 import React from "react";
 import { observer } from "mobx-react";
+import { useTranslation } from "@plane/i18n";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { ISearchIssueResponse, TIssue, TIssueServiceType, TWorkItemWidgets } from "@plane/types";
 // components
@@ -31,6 +32,7 @@ type Props = {
 
 export const IssueDetailWidgetModals = observer(function IssueDetailWidgetModals(props: Props) {
   const { workspaceSlug, projectId, issueId, issueServiceType, hideWidgets } = props;
+  const { t } = useTranslation();
   // store hooks
   const {
     isIssueLinkModalOpen,
@@ -113,8 +115,8 @@ export const IssueDetailWidgetModals = observer(function IssueDetailWidgetModals
     if (data.length === 0) {
       setToast({
         type: TOAST_TYPE.ERROR,
-        title: "Erro!",
-        message: "Selecione pelo menos um chamado.",
+        title: t("toast.error"),
+        message: t("misc.select_one_work_item"),
       });
       return;
     }

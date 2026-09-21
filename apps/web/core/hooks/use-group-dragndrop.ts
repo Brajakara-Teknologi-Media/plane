@@ -4,6 +4,7 @@
  * See the LICENSE file for details.
  */
 
+import { useTranslation } from "@plane/i18n";
 import { useParams } from "next/navigation";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { EIssuesStoreType, TIssue, TIssueGroupByOptions, TIssueOrderByOptions } from "@plane/types";
@@ -34,6 +35,7 @@ export const useGroupIssuesDragNDrop = (
   subGroupBy?: TIssueGroupByOptions
 ) => {
   const { workspaceSlug } = useParams();
+  const { t } = useTranslation();
 
   const {
     issue: { getIssueById },
@@ -63,11 +65,11 @@ export const useGroupIssuesDragNDrop = (
   ) => {
     const errorToastProps = {
       type: TOAST_TYPE.ERROR,
-      title: "Erro!",
-      message: "Erro ao atualizar o chamado",
+      title: t("common.toast.error"),
+      message: t("common.work_item_update_error"),
     };
-    // Surface the backend reason (e.g. "Sua função não permite esta transição de
-    // estado.") instead of the generic message whenever the API returns one.
+    // Surface the backend reason (e.g. "Your role does not allow this state
+    // transition.") instead of the generic message whenever the API returns one.
     const showError = (err: any) =>
       setToast({ ...errorToastProps, message: err?.detail ?? err?.error ?? errorToastProps.message });
     const moduleKey = ISSUE_FILTER_DEFAULT_DATA["module"];
@@ -78,7 +80,9 @@ export const useGroupIssuesDragNDrop = (
 
     if (isCycleChanged && workspaceSlug) {
       if (data[cycleKey]) {
-        addCycleToIssue(workspaceSlug.toString(), projectId, data[cycleKey]?.toString() ?? "", issueId).catch(showError);
+        addCycleToIssue(workspaceSlug.toString(), projectId, data[cycleKey]?.toString() ?? "", issueId).catch(
+          showError
+        );
       } else {
         removeCycleFromIssue(workspaceSlug.toString(), projectId, issueId).catch(showError);
       }
@@ -119,9 +123,9 @@ export const useGroupIssuesDragNDrop = (
       orderBy !== "sort_order"
     ).catch((err) => {
       setToast({
-        title: "Erro!",
+        title: t("common.toast.error"),
         type: TOAST_TYPE.ERROR,
-        message: err?.detail ?? "Não foi possível executar esta ação",
+        message: err?.detail ?? "Could not perform this action",
       });
     });
   };

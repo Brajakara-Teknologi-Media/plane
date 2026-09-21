@@ -13,6 +13,7 @@ import { PriorityIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 import { Row, Avatar } from "@plane/ui";
 import { cn, renderFormattedDate, getFileURL } from "@plane/utils";
+import { useTranslation } from "@plane/i18n";
 // components
 import { ButtonAvatars } from "@/components/dropdowns/member/avatar";
 // hooks
@@ -42,6 +43,7 @@ export const InboxIssueListItem = observer(function InboxIssueListItem(props: In
   const { currentTab, getIssueInboxByIssueId } = useProjectInbox();
   const { projectLabels } = useLabel();
   const { isMobile } = usePlatformOS();
+  const { t } = useTranslation();
   const { getUserDetails } = useMember();
   const inboxIssue = getIssueInboxByIssueId(inboxIssueId);
   const issue = inboxIssue?.issue;
@@ -85,7 +87,7 @@ export const InboxIssueListItem = observer(function InboxIssueListItem(props: In
           <div className="flex items-center justify-between">
             <div className="flex flex-wrap items-center gap-2">
               <Tooltip
-                tooltipHeading="Criado em"
+                tooltipHeading={t("common.created_at")}
                 tooltipContent={`${renderFormattedDate(issue.created_at ?? "")}`}
                 isMobile={isMobile}
               >

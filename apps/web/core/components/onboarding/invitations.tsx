@@ -4,23 +4,24 @@
  * See the LICENSE file for details.
  */
 
-import {useState} from "react";
+import { useState } from "react";
+import { useTranslation } from "@plane/i18n";
 // plane imports
-import {ROLE} from "@plane/constants";
+import { ROLE } from "@plane/constants";
 // types
-import {Button} from "@plane/propel/button";
-import type {IWorkspaceMemberInvitation} from "@plane/types";
+import { Button } from "@plane/propel/button";
+import type { IWorkspaceMemberInvitation } from "@plane/types";
 // ui
-import {Checkbox, Spinner} from "@plane/ui";
-import {truncateText} from "@plane/utils";
+import { Checkbox, Spinner } from "@plane/ui";
+import { truncateText } from "@plane/utils";
 // constants
 // helpers
-import {WorkspaceLogo} from "@/components/workspace/logo";
+import { WorkspaceLogo } from "@/components/workspace/logo";
 // hooks
-import {useWorkspace} from "@/hooks/store/use-workspace";
-import {useUserSettings} from "@/hooks/store/user";
+import { useWorkspace } from "@/hooks/store/use-workspace";
+import { useUserSettings } from "@/hooks/store/user";
 // services
-import {WorkspaceService} from "@/services/workspace.service";
+import { WorkspaceService } from "@/services/workspace.service";
 
 type Props = {
   invitations: IWorkspaceMemberInvitation[];
@@ -30,13 +31,15 @@ type Props = {
 const workspaceService = new WorkspaceService();
 
 export function Invitations(props: Props) {
-  const {invitations, handleNextStep, handleCurrentViewChange} = props;
+  const { invitations, handleNextStep, handleCurrentViewChange } = props;
+  // i18n
+  const { t } = useTranslation();
   // states
   const [isJoiningWorkspaces, setIsJoiningWorkspaces] = useState(false);
   const [invitationsRespond, setInvitationsRespond] = useState<string[]>([]);
   // store hooks
-  const {fetchWorkspaces} = useWorkspace();
-  const {fetchCurrentUserSettings} = useUserSettings();
+  const { fetchWorkspaces } = useWorkspace();
+  const { fetchCurrentUserSettings } = useUserSettings();
 
   const handleInvitation = (workspace_invitation: IWorkspaceMemberInvitation, action: "accepted" | "withdraw") => {
     if (action === "accepted") {
@@ -51,7 +54,7 @@ export function Invitations(props: Props) {
     if (invitationsRespond.length <= 0 && !invitation?.role) return;
     setIsJoiningWorkspaces(true);
     try {
-      await workspaceService.joinWorkspaces({invitations: invitationsRespond});
+      await workspaceService.joinWorkspaces({ invitations: invitationsRespond });
       await fetchWorkspaces();
       await fetchCurrentUserSettings();
       await handleNextStep();
@@ -64,8 +67,8 @@ export function Invitations(props: Props) {
   return invitations && invitations.length > 0 ? (
     <div className="space-y-4">
       <div className="mx-auto space-y-1 py-4 text-center">
-        <h3 className="text-24 font-bold text-primary">Você foi convidado!</h3>
-        <p className="font-medium text-placeholder">Aceite os convites para colaborar com sua equipe.</p>
+        <h3 className="text-24 font-bold text-primary">{t("onboarding.invites.you_were_invited")}</h3>
+        <p className="font-medium text-placeholder">{t("onboarding.invites.accept_hint")}</p>
       </div>
       <div>
         {invitations &&
@@ -104,14 +107,7 @@ export function Invitations(props: Props) {
         onClick={submitInvitations}
         disabled={isJoiningWorkspaces || !invitationsRespond.length}
       >
-        {isJoiningWorkspaces ? (
-          <Spinner
-            height="20px"
-            width="20px"
-          />
-        ) : (
-          "Continuar para o espaço de trabalho"
-        )}
+        {isJoiningWorkspaces ? <Spinner height="20px" width="20px" /> : "Continue to the workspace"}
       </Button>
       <div className="mx-auto mt-4 flex items-center sm:w-96">
         <hr className="w-full border-strong" />
@@ -125,10 +121,10 @@ export function Invitations(props: Props) {
         onClick={handleCurrentViewChange}
         disabled={isJoiningWorkspaces}
       >
-        Crie seu próprio espaço de trabalho
+        Create your own workspace
       </Button>
     </div>
   ) : (
-    <div>Nenhum convite encontrado</div>
+    <div>{t("onboarding.invites.empty")}</div>
   );
 }

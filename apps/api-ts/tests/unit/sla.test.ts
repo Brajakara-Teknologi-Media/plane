@@ -26,7 +26,7 @@ describe("SLA", () => {
     const ws = await createWorkspace(user.id);
     workspaceId = ws.id;
     projectId = (await createProject(ws.id, user.id)).id;
-    correcao = (await createLabel(projectId, workspaceId, {name: "Correção", slaHours: 16})).id;
+    correcao = (await createLabel(projectId, workspaceId, {name: "Fix", slaHours: 16})).id;
     melhoria = (await createLabel(projectId, workspaceId, {name: "Melhoria", slaHours: 96})).id;
     semSla = (await createLabel(projectId, workspaceId, {name: "Projeto", slaHours: null})).id;
   });
@@ -49,7 +49,7 @@ describe("SLA", () => {
       expect(second).toBe(first);
     });
 
-    it("mescla o que a instância define por cima dos padrões", async () => {
+    it("It blends what the instance defines on top of the standards", async () => {
       await prisma.instance.create({
         data: {instanceName: "Teste SLA", instanceId: `sla-${Date.now()}`, configurations: {priority_sla: {urgent: -24}}},
       });

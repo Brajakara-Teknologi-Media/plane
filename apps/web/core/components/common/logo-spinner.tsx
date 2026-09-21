@@ -4,6 +4,7 @@
  * See the LICENSE file for details.
  */
 
+import { useTranslation } from "@plane/i18n";
 // assets
 import AviaoMark from "@/app/assets/logos/aviao-mark.svg?url";
 
@@ -13,11 +14,12 @@ import AviaoMark from "@/app/assets/logos/aviao-mark.svg?url";
  * avião cruzar a tela.
  */
 export function LogoSpinner() {
+  const { t } = useTranslation();
   return (
     <div className="flex items-center justify-center">
       <img
         src={AviaoMark}
-        alt="Carregando"
+        alt={t("common.loading_alt")}
         className="aviao-loader__bob h-6 w-auto object-contain sm:h-11"
       />
     </div>

@@ -13,13 +13,13 @@ export function TermsAndConditions(props: Props) {
   return (
     <span className="flex items-center justify-center py-6">
       <p className="text-center text-13 whitespace-pre-line text-secondary">
-        {isSignUp ? "Ao criar uma conta" : "Ao entrar"}, você concorda com nossos{" \n"}
+        {isSignUp ? "By creating an account" : "By signing in"}, you agree with our{" \n"}
         <a href="https://plane.so/legals/terms-and-conditions" target="_blank" rel="noopener noreferrer">
-          <span className="text-13 font-medium underline hover:cursor-pointer">Termos de serviço</span>
+          <span className="text-13 font-medium underline hover:cursor-pointer">Terms of Service</span>
         </a>{" "}
-        e a{" "}
+        and{" "}
         <a href="https://plane.so/legals/privacy-policy" target="_blank" rel="noopener noreferrer">
-          <span className="text-13 font-medium underline hover:cursor-pointer">Política de Privacidade</span>
+          <span className="text-13 font-medium underline hover:cursor-pointer">Privacy Policy</span>
         </a>
         {"."}
       </p>

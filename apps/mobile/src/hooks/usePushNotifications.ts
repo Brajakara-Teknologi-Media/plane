@@ -73,7 +73,7 @@ export function usePushNotifications() {
           await Notifications.scheduleNotificationAsync({
             content: {
               title: n.title || "Chamado urgente",
-              body: n.message ?? "Você recebeu um chamado urgente.",
+              body: n.message ?? "You received an urgent work item.",
               data: { notificationId: n.id, ...(n.data ?? {}) },
             },
             trigger: null,

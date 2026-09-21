@@ -231,13 +231,13 @@ export function FavoriteFolder(props: Props) {
                   <CustomMenu.MenuItem onClick={() => handleRemoveFromFavorites(favorite)}>
                     <span className="flex items-center justify-start gap-2">
                       <Star className="fill-yellow-500 stroke-yellow-500 h-3.5 w-3.5" />
-                      <span>Remover dos favoritos</span>
+                      <span>{t("common.remove_from_favorites")}</span>
                     </span>
                   </CustomMenu.MenuItem>
                   <CustomMenu.MenuItem onClick={() => setFolderToRename(favorite.id)}>
                     <div className="flex items-center justify-start gap-2">
                       <DraftIcon className="h-3.5 w-3.5 stroke-[1.5] text-tertiary" />
-                      <span>Renomear pasta</span>
+                      <span>{t("common.rename_folder")}</span>
                     </div>
                   </CustomMenu.MenuItem>
                 </CustomMenu>

@@ -12,6 +12,7 @@ import { ArchiveRestoreIcon, Settings, UserPlus } from "lucide-react";
 // plane imports
 import { EUserPermissions, EUserPermissionsLevel, IS_FAVORITE_MENU_OPEN } from "@plane/constants";
 import { useLocalStorage } from "@plane/hooks";
+import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { Logo } from "@plane/propel/emoji-icon-picker";
 import { LinkIcon, LockIcon, NewTabIcon, TrashIcon, CheckIcon } from "@plane/propel/icons";
@@ -40,6 +41,8 @@ type Props = {
 
 export const ProjectCard = observer(function ProjectCard(props: Props) {
   const { project } = props;
+  // plane hooks
+  const { t } = useTranslation();
   // states
   const [deleteProjectModalOpen, setDeleteProjectModal] = useState(false);
   const [joinProjectModalOpen, setJoinProjectModal] = useState(false);
@@ -50,7 +53,7 @@ export const ProjectCard = observer(function ProjectCard(props: Props) {
   const router = useAppRouter();
   const { workspaceSlug } = useParams();
   // store hooks
-  const { getUserDetails } = useMember();
+  const { getUserDetails, memberMap } = useMember();
   const { addProjectToFavorites, removeProjectFromFavorites } = useProject();
   const { allowPermissions } = useUserPermissions();
   // hooks
@@ -80,7 +83,7 @@ export const ProjectCard = observer(function ProjectCard(props: Props) {
     setPromiseToast(addToFavoritePromise, {
       loading: "Adding project to favorites...",
       success: {
-        title: "Sucesso!",
+        title: "Sucess!",
         message: () => "Project added to favorites.",
         actionItems: () => {
           if (!isFavoriteMenuOpen) toggleFavoriteMenu(true);
@@ -88,8 +91,8 @@ export const ProjectCard = observer(function ProjectCard(props: Props) {
         },
       },
       error: {
-        title: "Erro!",
-        message: () => "Não foi possível adicionar o projeto aos favoritos. Tente novamente.",
+        title: t("common.toast.error"),
+        message: () => "Could not add project to favorites. Please try again.",
       },
     });
   };
@@ -101,12 +104,12 @@ export const ProjectCard = observer(function ProjectCard(props: Props) {
     setPromiseToast(removeFromFavoritePromise, {
       loading: "Removing project from favorites...",
       success: {
-        title: "Sucesso!",
+        title: "Sucess!",
         message: () => "Project removed from favorites.",
       },
       error: {
-        title: "Erro!",
-        message: () => "Não foi possível remover o projeto dos favoritos. Tente novamente.",
+        title: t("common.toast.error"),
+        message: () => "Could not remove project from favorites. Please try again.",
       },
     });
   };
@@ -116,8 +119,8 @@ export const ProjectCard = observer(function ProjectCard(props: Props) {
     copyUrlToClipboard(projectLink).then(() =>
       setToast({
         type: TOAST_TYPE.INFO,
-        title: "Link copiado!",
-        message: "Link do projeto copiado para a área de transferência.",
+        title: "Link copied!",
+        message: "Project link copied to clipboard.",
       })
     );
   const handleOpenInNewTab = () => window.open(`/${projectLink}`, "_blank");
@@ -126,42 +129,42 @@ export const ProjectCard = observer(function ProjectCard(props: Props) {
     {
       key: "settings",
       action: () => router.push(`/${workspaceSlug}/settings/projects/${project.id}`),
-      title: "Configurações",
+      title: "Settings",
       icon: Settings,
       shouldRender: !isArchived && (hasAdminRole || hasMemberRole),
     },
     {
       key: "join",
       action: () => setJoinProjectModal(true),
-      title: "Entrar",
+      title: "Enter",
       icon: UserPlus,
       shouldRender: !isMemberOfProject && !isArchived,
     },
     {
       key: "open-new-tab",
       action: handleOpenInNewTab,
-      title: "Abrir em nova aba",
+      title: "Open in new tab",
       icon: NewTabIcon,
       shouldRender: !isMemberOfProject && !isArchived,
     },
     {
       key: "copy-link",
       action: handleCopyText,
-      title: "Copiar link",
+      title: "copy link",
       icon: LinkIcon,
       shouldRender: !isArchived,
     },
     {
       key: "restore",
       action: () => setRestoreProject(true),
-      title: "Restaurar",
+      title: "Restore",
       icon: ArchiveRestoreIcon,
       shouldRender: isArchived && hasAdminRole,
     },
     {
       key: "delete",
       action: () => setDeleteProjectModal(true),
-      title: "Excluir",
+      title: "Delete",
       icon: TrashIcon,
       shouldRender: isArchived && hasAdminRole,
     },
@@ -280,29 +283,28 @@ export const ProjectCard = observer(function ProjectCard(props: Props) {
             <div className="flex items-center justify-center gap-2">
               <Tooltip
                 isMobile={isMobile}
-                tooltipHeading="Membros"
+                tooltipHeading="Members"
                 tooltipContent={
-                  project.members && project.members.length > 0 ? `${project.members.length} membros` : "Nenhum membro"
+                  project.members && project.members.length > 0 ? `${project.members.length} members` : "No Member"
                 }
                 position="top"
               >
-                {projectMembersIds && projectMembersIds.length > 0 ? (
-                  <div className="flex cursor-pointer items-center gap-2 text-secondary">
-                    <AvatarGroup showTooltip={false}>
-                      {projectMembersIds.map((memberId) => {
-                        const member = getUserDetails(memberId);
-                        if (!member) return null;
-                        return (
-                          <Avatar key={member.id} name={member.display_name} src={getFileURL(member.avatar_url)} />
-                        );
-                      })}
-                    </AvatarGroup>
-                  </div>
-                ) : (
-                  <span className="text-13 text-placeholder italic">Nenhum membro ainda</span>
-                )}
+                {(() => {
+                  const members = (projectMembersIds ?? []).map((id) => memberMap?.[id]).filter(Boolean);
+                  return members.length > 0 ? (
+                    <div className="flex cursor-pointer items-center gap-2 text-secondary">
+                      <AvatarGroup showTooltip={false}>
+                        {members.map((member) => (
+                          <Avatar key={member!.id} name={member!.display_name} src={getFileURL(member!.avatar_url)} />
+                        ))}
+                      </AvatarGroup>
+                    </div>
+                  ) : (
+                    <span className="text-13 text-placeholder italic">No members yet</span>
+                  );
+                })()}
               </Tooltip>
-              {isArchived && <div className="text-11 font-medium text-placeholder">Arquivado</div>}
+              {isArchived && <div className="text-11 font-medium text-placeholder">Archived</div>}
             </div>
             {isArchived ? (
               hasAdminRole && (

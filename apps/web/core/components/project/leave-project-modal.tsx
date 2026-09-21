@@ -5,6 +5,7 @@
  */
 
 import { observer } from "mobx-react";
+import { useTranslation } from "@plane/i18n";
 import { useParams } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
 import { AlertTriangleIcon } from "lucide-react";
@@ -35,6 +36,7 @@ export interface ILeaveProjectModal {
 
 export const LeaveProjectModal = observer(function LeaveProjectModal(props: ILeaveProjectModal) {
   const { project, isOpen, onClose } = props;
+  const { t } = useTranslation();
   // router
   const router = useAppRouter();
   const { workspaceSlug } = useParams();
@@ -58,7 +60,7 @@ export const LeaveProjectModal = observer(function LeaveProjectModal(props: ILea
 
     if (data) {
       if (data.projectName === project?.name) {
-        if (data.confirmLeave === "Sair do projeto") {
+        if (data.confirmLeave === t("common.leave_project")) {
           router.push(`/${workspaceSlug}/projects`);
           return leaveProject(workspaceSlug.toString(), project.id)
             .then(() => {
@@ -67,29 +69,29 @@ export const LeaveProjectModal = observer(function LeaveProjectModal(props: ILea
             .catch((_err) => {
               setToast({
                 type: TOAST_TYPE.ERROR,
-                title: "Erro!",
-                message: "Algo deu errado, tente novamente mais tarde.",
+                title: t("common.toast.error"),
+                message: "Something went wrong. Please try again later.",
               });
             });
         } else {
           setToast({
             type: TOAST_TYPE.ERROR,
-            title: "Erro!",
-            message: "Confirme a saída do projeto digitando 'Sair do projeto'.",
+            title: t("common.toast.error"),
+            message: "Confirm leaving the project by typing 'Leave project'.",
           });
         }
       } else {
         setToast({
           type: TOAST_TYPE.ERROR,
-          title: "Erro!",
-          message: "Insira o nome do projeto exatamente como mostrado na descrição.",
+          title: t("common.toast.error"),
+          message: "Enter the project name exactly as shown in the description.",
         });
       }
     } else {
       setToast({
         type: TOAST_TYPE.ERROR,
-        title: "Erro!",
-        message: "Preencha todos os campos.",
+        title: t("common.toast.error"),
+        message: "Fill in all the fields.",
       });
     }
   };
@@ -102,27 +104,27 @@ export const LeaveProjectModal = observer(function LeaveProjectModal(props: ILea
             <AlertTriangleIcon className="h-6 w-6 text-danger-primary" aria-hidden="true" />
           </span>
           <span className="flex items-center justify-start">
-            <h3 className="text-18 font-medium 2xl:text-20">Sair do projeto</h3>
+            <h3 className="text-18 font-medium 2xl:text-20">{t("common.leave_project")}</h3>
           </span>
         </div>
 
         <span>
           <p className="text-13 leading-7 text-secondary">
-            Tem certeza de que deseja sair do projeto -
-            <span className="font-medium text-primary">{` "${project?.name}" `}</span>? Todos os chamados
-            associados a você ficarão inacessíveis.
+            Are you sure you want to leave the project? -
+            <span className="font-medium text-primary">{` "${project?.name}" `}</span>? All tickets associated with you
+            will become inaccessible.
           </p>
         </span>
 
         <div className="text-secondary">
           <p className="text-13 break-words">
-            Insira o nome do projeto <span className="font-medium text-primary">{project?.name}</span> para continuar:
+            Enter the project name <span className="font-medium text-primary">{project?.name}</span> to continue:
           </p>
           <Controller
             control={control}
             name="projectName"
             rules={{
-              required: "O nome do projeto é obrigatório",
+              required: "Project name is required",
             }}
             render={({ field: { value, onChange, ref } }) => (
               <Input
@@ -133,7 +135,7 @@ export const LeaveProjectModal = observer(function LeaveProjectModal(props: ILea
                 onChange={onChange}
                 ref={ref}
                 hasError={Boolean(errors.projectName)}
-                placeholder="Insira o nome do projeto"
+                placeholder="Enter the project name"
                 className="mt-2 w-full"
               />
             )}
@@ -142,7 +144,7 @@ export const LeaveProjectModal = observer(function LeaveProjectModal(props: ILea
 
         <div className="text-secondary">
           <p className="text-13">
-            Para confirmar, digite <span className="font-medium text-primary">Sair do projeto</span> abaixo:
+            {t("common.leave_project_confirm_prefix")} <span className="font-medium text-primary">{t("common.leave_project")}</span> {t("common.leave_project_confirm_suffix")}
           </p>
           <Controller
             control={control}
@@ -156,7 +158,7 @@ export const LeaveProjectModal = observer(function LeaveProjectModal(props: ILea
                 onChange={onChange}
                 ref={ref}
                 hasError={Boolean(errors.confirmLeave)}
-                placeholder="Digite 'Sair do projeto'"
+                placeholder={t("common.type_leave_project")}
                 className="mt-2 w-full"
               />
             )}
@@ -164,10 +166,10 @@ export const LeaveProjectModal = observer(function LeaveProjectModal(props: ILea
         </div>
         <div className="flex justify-end gap-2">
           <Button variant="secondary" size="lg" onClick={handleClose}>
-            Cancelar
+            {t("common.cancel")}
           </Button>
           <Button variant="error-fill" size="lg" type="submit" loading={isSubmitting}>
-            {isSubmitting ? "Saindo..." : "Sair do projeto"}
+            {isSubmitting ? t("common.leaving_project") : t("common.leave_project")}
           </Button>
         </div>
       </form>

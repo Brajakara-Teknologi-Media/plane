@@ -11,7 +11,7 @@ import { PageHead } from "@/components/core/page-title";
 export default function WorkspaceChatPage() {
   return (
     <>
-      <PageHead title="Atendimento" />
+      <PageHead title="Support" />
       <div className="relative h-full w-full overflow-hidden">
         <AttendantChatApp />
       </div>

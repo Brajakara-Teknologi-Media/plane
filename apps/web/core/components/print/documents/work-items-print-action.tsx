@@ -23,8 +23,8 @@ type Props = {
 };
 
 /**
- * Botão "Imprimir" + documento para qualquer listagem de chamados. Os chamados
- * vêm do próprio store do layout, portanto respeitam os filtros da tela.
+ * "Print" button + document for any work item list. The work items come from
+ * the layout's own store, so they respect the screen's filters.
  */
 export const WorkItemsPrintAction = observer(function WorkItemsPrintAction(props: Props) {
   const { storeType, title, subtitle, meta, showProject = true } = props;
@@ -33,7 +33,7 @@ export const WorkItemsPrintAction = observer(function WorkItemsPrintAction(props
 
   return (
     <>
-      {/* LGPD: imprimir uma listagem é acesso ao conjunto de dados exibido. */}
+      {/* LGPD: printing a list is access to the displayed data set. */}
       <PrintButton
         documentTitle={title}
         auditEntity="issue"

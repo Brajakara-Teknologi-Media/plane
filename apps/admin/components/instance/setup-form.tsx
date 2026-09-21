@@ -163,7 +163,7 @@ export function InstanceSetupForm() {
             <div className="flex flex-col items-center gap-4 sm:flex-row">
               <div className="w-full space-y-1">
                 <label className="text-13 font-medium text-tertiary" htmlFor="first_name">
-                  Nome <span className="text-danger-primary">*</span>
+                  Name <span className="text-danger-primary">*</span>
                 </label>
                 <Input
                   className="w-full border border-subtle !bg-surface-1 placeholder:text-placeholder"
@@ -231,7 +231,7 @@ export function InstanceSetupForm() {
 
             <div className="w-full space-y-1">
               <label className="text-13 font-medium text-tertiary" htmlFor="company_name">
-                Nome da empresa <span className="text-danger-primary">*</span>
+                Company Name <span className="text-danger-primary">*</span>
               </label>
               <Input
                 className="w-full border border-subtle !bg-surface-1 placeholder:text-placeholder"
@@ -239,7 +239,7 @@ export function InstanceSetupForm() {
                 name="company_name"
                 type="text"
                 inputSize="md"
-                placeholder="Nome da empresa"
+                placeholder="Company Name"
                 value={formData.company_name}
                 onChange={(e) => {
                   const validation = validateCompanyName(e.target.value, false);
@@ -253,7 +253,7 @@ export function InstanceSetupForm() {
 
             <div className="w-full space-y-1">
               <label className="text-13 font-medium text-tertiary" htmlFor="password">
-                Defina uma senha <span className="text-danger-primary">*</span>
+                Set a password <span className="text-danger-primary">*</span>
               </label>
               <div className="relative">
                 <Input

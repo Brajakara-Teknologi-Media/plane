@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { observer } from "mobx-react";
+import { useTranslation } from "@plane/i18n";
 import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 import { useProject } from "@/hooks/store/use-project";
 import { InboxIssueCreateModalRoot } from "./create-modal/modal";
@@ -14,10 +15,13 @@ type Props = {
   projectIds: string[];
   isOpen: boolean;
   onClose: () => void;
+  /** Display fallback for projects that are not in the project store (non-member). */
+  projects?: { id: string; identifier: string; name: string }[];
 };
 
 export const IntakeQuickCreate = observer(function IntakeQuickCreate(props: Props) {
-  const { workspaceSlug, projectIds, isOpen, onClose } = props;
+  const { workspaceSlug, projectIds, isOpen, onClose, projects } = props;
+  const { t } = useTranslation();
   const { getProjectById } = useProject();
   // pré-seleciona quando há apenas um projeto
   const [selectedProjectId, setSelectedProjectId] = useState<string | null>(
@@ -46,19 +50,21 @@ export const IntakeQuickCreate = observer(function IntakeQuickCreate(props: Prop
   return (
     <ModalCore isOpen={isOpen} position={EModalPosition.CENTER} width={EModalWidth.LG}>
       <div className="p-5">
-        <h3 className="mb-1 text-lg font-medium text-primary">Novo intake</h3>
-        <p className="mb-4 text-xs text-secondary-text">Selecione o projeto para abrir um novo intake.</p>
+        <h3 className="text-lg mb-1 font-medium text-primary">New intake</h3>
+        <p className="text-xs text-secondary-text mb-4">{t("intake_quick_create.select_project")}</p>
         <div className="max-h-[320px] space-y-1 overflow-y-auto">
           {projectIds.length === 0 && (
-            <p className="py-6 text-center text-sm text-secondary-text">Você não pertence a nenhum projeto de atendimento.</p>
+            <p className="text-sm text-secondary-text py-6 text-center">
+              {t("intake_quick_create.not_a_service_member")}
+            </p>
           )}
           {projectIds.map((pid) => {
-            const project = getProjectById(pid);
+            const project = getProjectById(pid) ?? projects?.find((p) => p.id === pid);
             return (
               <button
                 key={pid}
                 onClick={() => setSelectedProjectId(pid)}
-                className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-left text-sm text-primary transition-colors hover:bg-surface-2"
+                className="text-sm flex w-full items-center gap-2 rounded-md px-3 py-2 text-left text-primary transition-colors hover:bg-surface-2"
               >
                 <span className="font-medium">{project?.identifier ?? ""}</span>
                 <span className="truncate">{project?.name ?? pid}</span>
@@ -67,8 +73,8 @@ export const IntakeQuickCreate = observer(function IntakeQuickCreate(props: Prop
           })}
         </div>
         <div className="mt-4 flex justify-end">
-          <button onClick={close} className="rounded-md px-3 py-1.5 text-sm text-secondary-text hover:bg-surface-2">
-            Cancelar
+          <button onClick={close} className="text-sm text-secondary-text rounded-md px-3 py-1.5 hover:bg-surface-2">
+            {t("common.cancel")}
           </button>
         </div>
       </div>

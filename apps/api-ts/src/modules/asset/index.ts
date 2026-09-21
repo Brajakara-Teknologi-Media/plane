@@ -34,7 +34,7 @@ export const assetModule = new Elysia({ prefix: "/workspaces/:slug" })
     const ws = await getWorkspaceOrFail(slug);
     await requireWorkspaceMember(ws.id, user.id);
     const b = body as any;
-    if (!b.asset) { set.status = 400; return { detail: "asset (caminho/chave do arquivo) é obrigatório." }; }
+    if (!b.asset) { set.status = 400; return { detail: "asset (file path/key) is required." }; }
 
     const asset = await prisma.fileAsset.create({
       data: {
@@ -113,7 +113,7 @@ export const assetModule = new Elysia({ prefix: "/workspaces/:slug" })
       const ws = await getWorkspaceOrFail(slug);
       await getProjectOrFail(ws.id, project_id, user.id);
       const b = body as any;
-      if (!b.asset) { set.status = 400; return { detail: "asset é obrigatório." }; }
+      if (!b.asset) { set.status = 400; return { detail: "asset is required." }; }
 
       const attachment = await prisma.issueAttachment.create({
         data: {
@@ -171,22 +171,31 @@ export const assetV2Module = new Elysia({ prefix: "/assets/v2/workspaces/:slug" 
 
   .patch("/:asset_id/", async ({params: {slug, asset_id}}) => {
     const ws = await getWorkspaceOrFail(slug);
-    await prisma.fileAsset.updateMany({where: {id: asset_id, workspaceId: ws.id}, data: {isUploaded: true}}).catch(() => {});
+    const asset = await prisma.fileAsset.findFirst({where: {id: asset_id, workspaceId: ws.id}});
+    await prisma.fileAsset.updateMany({where: {id: asset_id, workspaceId: ws.id}, data: {isUploaded: true}});
+    if (asset && asset.entityType === 0) {
+      await prisma.workspace.update({where: {id: ws.id}, data: {logo: asset_id}});
+    }
     return {status: "uploaded"};
   })
 
   .post("/:asset_id/upload/", async ({params: {slug, asset_id}, body}) => {
     const ws = await getWorkspaceOrFail(slug);
     const file: Blob | null = (body as any).file ?? null;
-    if (file) await saveFile(asset_id, file).catch(() => {});
-    await prisma.fileAsset.updateMany({where: {id: asset_id, workspaceId: ws.id}, data: {isUploaded: true}}).catch(() => {});
+    if (!file) throw new Error("No file provided in request body");
+    await saveFile(asset_id, file);
+    const asset = await prisma.fileAsset.findFirst({where: {id: asset_id, workspaceId: ws.id}});
+    await prisma.fileAsset.updateMany({where: {id: asset_id, workspaceId: ws.id}, data: {isUploaded: true}});
+    if (asset && asset.entityType === 0) {
+      await prisma.workspace.update({where: {id: ws.id}, data: {logo: asset_id}});
+    }
     return {status: "uploaded", asset_id};
   })
 
   .get("/:asset_id/", async ({params: {slug, asset_id}, set, user, headers}) => {
     const ws = await getWorkspaceOrFail(slug);
     const asset = await prisma.fileAsset.findFirst({where: {id: asset_id, workspaceId: ws.id, isDeleted: false}});
-    if (!asset) { set.status = 404; return {detail: "Arquivo não encontrado."}; }
+    if (!asset) { set.status = 404; return {detail: "File not found."}; }
     // LGPD: baixar um anexo é acesso a dado — registra quem, o quê e de onde.
     recordAudit({
       workspaceId: ws.id,
@@ -232,7 +241,7 @@ export const assetV2Module = new Elysia({ prefix: "/assets/v2/workspaces/:slug" 
     const ws = await getWorkspaceOrFail(slug);
     const b = body as any;
     const original = await prisma.fileAsset.findFirst({where: {id: asset_id, workspaceId: ws.id}});
-    if (!original) { set.status = 404; return {detail: "Arquivo não encontrado."}; }
+    if (!original) { set.status = 404; return {detail: "File not found."}; }
     const dup = await prisma.fileAsset.create({
       data: {
         workspaceId: ws.id, projectId: b.project_id || original.projectId,
@@ -296,22 +305,23 @@ export const assetV2Module = new Elysia({ prefix: "/assets/v2/workspaces/:slug" 
 
   .patch("/projects/:project_id/:asset_id/", async ({params: {slug, project_id, asset_id}}) => {
     const ws = await getWorkspaceOrFail(slug);
-    await prisma.fileAsset.updateMany({where: {id: asset_id, workspaceId: ws.id}, data: {isUploaded: true}}).catch(() => {});
+    await prisma.fileAsset.updateMany({where: {id: asset_id, workspaceId: ws.id}, data: {isUploaded: true}});
     return {status: "uploaded"};
   })
 
   .post("/projects/:project_id/:asset_id/upload/", async ({params: {slug, project_id, asset_id}, body}) => {
     const ws = await getWorkspaceOrFail(slug);
     const file: Blob | null = (body as any).file ?? null;
-    if (file) await saveFile(asset_id, file).catch(() => {});
-    await prisma.fileAsset.updateMany({where: {id: asset_id, workspaceId: ws.id}, data: {isUploaded: true}}).catch(() => {});
+    if (!file) throw new Error("No file provided in request body");
+    await saveFile(asset_id, file);
+    await prisma.fileAsset.updateMany({where: {id: asset_id, workspaceId: ws.id}, data: {isUploaded: true}});
     return {status: "uploaded", asset_id};
   })
 
   .get("/projects/:project_id/:asset_id/", async ({params: {slug, project_id, asset_id}, set, user, headers}) => {
     const ws = await getWorkspaceOrFail(slug);
     const asset = await prisma.fileAsset.findFirst({where: {id: asset_id, workspaceId: ws.id, isDeleted: false}});
-    if (!asset) { set.status = 404; return {detail: "Arquivo não encontrado."}; }
+    if (!asset) { set.status = 404; return {detail: "File not found."}; }
     // LGPD: baixar um anexo é acesso a dado — registra quem, o quê e de onde.
     recordAudit({
       workspaceId: ws.id,
@@ -334,60 +344,137 @@ export const assetV2Module = new Elysia({ prefix: "/assets/v2/workspaces/:slug" 
     return {updated: ids.length};
   })
 
-  .get("/projects/:project_id/issues/:issue_id/attachments/", async ({params: {slug, project_id, issue_id}, user, query}) => {
+  // ── Issue/Epic/Work-item attachments (alias routes) ──
+  // Frontend uses /:service_type/ segment (issues | epics | work-items), but Elysia radix router
+  // requires identical param names at the same position. Rename to :asset_id to match existing routes.
+  // The literal "attachments/" segment after :issue_id disambiguates from other :asset_id routes.
+  .get("/projects/:project_id/:asset_id/:issue_id/attachments/", async ({params: {slug, project_id, issue_id}, user, query}) => {
     const ws = await getWorkspaceOrFail(slug);
     await getProjectOrFail(ws.id, project_id, user.id);
     const where = {issueId: issue_id, deletedAt: null};
+    const cursor = typeof query.cursor === "string" ? query.cursor : undefined;
     return paginate({
       query: (skip, take) => prisma.issueAttachment.findMany({where, skip, take, orderBy: {createdAt: "desc"}}),
       count: () => prisma.issueAttachment.count({where}),
-      cursor: (query as any).cursor as string | undefined,
-      transform: (items) => items.map((a: any) => ({
-        id: a.id, issue: issue_id, workspace: ws.id, project: project_id,
-        asset: a.asset, attributes: a.attributes ?? {},
-        created_at: a.createdAt?.toISOString(), updated_at: a.updatedAt?.toISOString(),
+      cursor,
+      // Local shape covers the columns we read; keeps this callsite type-safe
+      // regardless of whether Prisma client types are generated.
+      transform: (items) => (items as ReadonlyArray<{
+        id: string;
+        asset: string;
+        attributes: unknown;
+        createdAt: Date;
+        updatedAt: Date;
+      }>).map((a) => ({
+        id: a.id,
+        issue_id: issue_id,
+        asset_url: `/api/assets/v2/workspaces/${slug}/projects/${project_id}/${a.asset}/`,
+        attributes: (a.attributes ?? {}) as Record<string, unknown>,
+        created_at: a.createdAt.toISOString(),
+        updated_at: a.updatedAt.toISOString(),
+        created_by: "",
+        updated_by: "",
       })),
     });
   })
 
-  .post("/projects/:project_id/issues/:issue_id/attachments/", async ({params: {slug, project_id, issue_id}, body, user, set}) => {
+  .post("/projects/:project_id/:asset_id/:issue_id/attachments/", async ({params: {slug, project_id, issue_id}, body, user, set}) => {
     const ws = await getWorkspaceOrFail(slug);
     await getProjectOrFail(ws.id, project_id, user.id);
-    const b = body as any;
-    const attachment = await prisma.issueAttachment.create({
-      data: {issueId: issue_id, workspaceId: ws.id, projectId: project_id, asset: b.asset ?? "", attributes: b.attributes ?? {}},
+
+    const meta = (typeof body === "object" && body !== null ? body : {}) as {
+      name?: string; type?: string; size?: number;
+    };
+    const name = typeof meta.name === "string" ? meta.name : "file";
+    const size = typeof meta.size === "number" ? meta.size : 0;
+    const mimeType = typeof meta.type === "string" ? meta.type : null;
+
+    // 1. Create FileAsset placeholder (isUploaded false — flipped by /upload/).
+    const asset = await prisma.fileAsset.create({
+      data: {
+        workspaceId: ws.id, projectId: project_id,
+        entityType: ENTITY_TYPE_MAP["ISSUE_ATTACHMENT"] ?? 2,
+        entityId: issue_id,
+        asset: `issues/${issue_id}/${Date.now()}-${name}`,
+        size,
+        mimeType,
+        attributes: {name, type: mimeType, size},
+        isUploaded: false,
+      },
     });
+
+    // 2. Create IssueAttachment row pointing at FileAsset.id.
+    const attachment = await prisma.issueAttachment.create({
+      data: {
+        issueId: issue_id,
+        workspaceId: ws.id,
+        projectId: project_id,
+        asset: asset.id,
+        attributes: {name, size},
+      },
+    });
+
     set.status = 201;
-    return {id: attachment.id, issue: issue_id, workspace: ws.id, project: project_id, asset: attachment.asset, attributes: attachment.attributes ?? {}, created_at: attachment.createdAt?.toISOString()};
+    // 3. Return signed-URL response (matches TIssueAttachmentUploadResponse).
+    return {
+      asset_id: asset.id,
+      asset_url: `/api/assets/v2/workspaces/${slug}/projects/${project_id}/${asset.id}/`,
+      upload_data: {
+        url: `/api/assets/v2/workspaces/${slug}/projects/${project_id}/${asset.id}/upload/`,
+        fields: {},
+      },
+      attachment: {
+        id: attachment.id,
+        issue_id: issue_id,
+        asset_url: `/api/assets/v2/workspaces/${slug}/projects/${project_id}/${asset.id}/`,
+        attributes: (attachment.attributes ?? {}) as Record<string, unknown>,
+        created_at: attachment.createdAt.toISOString(),
+        updated_at: attachment.updatedAt.toISOString(),
+        created_by: user.id,
+        updated_by: user.id,
+      },
+    };
   })
 
-  .delete("/projects/:project_id/issues/:issue_id/attachments/:attachment_id/", async ({params: {slug, project_id, issue_id, attachment_id}, user, set}) => {
+  .patch("/projects/:project_id/:asset_id/:issue_id/attachments/:attachment_id/", async ({params: {slug, project_id, issue_id, attachment_id}, user, set}) => {
+    const ws = await getWorkspaceOrFail(slug);
+    await getProjectOrFail(ws.id, project_id, user.id);
+
+    // Frontend passes the FileAsset id (asset_id from the signed-URL response) as attachment_id.
+    // Locate the IssueAttachment via the `asset` foreign key, then finalize the upload.
+    const attachment = await prisma.issueAttachment.findFirst({
+      where: {asset: attachment_id, issueId: issue_id, deletedAt: null},
+    });
+    if (!attachment) { set.status = 404; return {detail: "Attachment not found."}; }
+
+    await prisma.fileAsset.updateMany({
+      where: {id: attachment_id, workspaceId: ws.id},
+      data: {isUploaded: true},
+    });
+
+    const updated = await prisma.issueAttachment.update({
+      where: {id: attachment.id},
+      data: {updatedAt: new Date()},
+    });
+
+    return {
+      id: updated.id,
+      issue_id: issue_id,
+      asset_url: `/api/assets/v2/workspaces/${slug}/projects/${project_id}/${attachment_id}/`,
+      attributes: (updated.attributes ?? {}) as Record<string, unknown>,
+      created_at: updated.createdAt.toISOString(),
+      updated_at: updated.updatedAt.toISOString(),
+      created_by: user.id,
+      updated_by: user.id,
+    };
+  })
+
+  .delete("/projects/:project_id/:asset_id/:issue_id/attachments/:attachment_id/", async ({params: {slug, project_id, issue_id, attachment_id}, user, set}) => {
     const ws = await getWorkspaceOrFail(slug);
     await getProjectOrFail(ws.id, project_id, user.id);
     await prisma.issueAttachment.update({where: {id: attachment_id}, data: {deletedAt: new Date()}});
     set.status = 204;
     return null;
-  })
-
-  .post("/projects/:project_id/issues/:issue_id/attachments/generate-upload-url/", async ({params: {slug, project_id, issue_id}, body, user, set}) => {
-    const ws = await getWorkspaceOrFail(slug);
-    await getProjectOrFail(ws.id, project_id, user.id);
-    const b = body as any;
-    const asset = await prisma.fileAsset.create({
-      data: {
-        workspaceId: ws.id, projectId: project_id,
-        entityType: ENTITY_TYPE_MAP["ISSUE_ATTACHMENT"] ?? 2, entityId: issue_id,
-        asset: `issues/${issue_id}/${Date.now()}-${b.name ?? "file"}`,
-        size: b.size ?? 0, mimeType: b.type ?? null, attributes: {name: b.name},
-        isUploaded: false,
-      },
-    });
-    set.status = 200;
-    return {
-      asset_id: asset.id,
-      asset_url: `/api/assets/v2/workspaces/${slug}/projects/${project_id}/${asset.id}/`,
-      upload_data: {url: `/api/assets/v2/workspaces/${slug}/projects/${project_id}/${asset.id}/upload/`, fields: {}},
-    };
   });
 
 // ── User assets module (separate prefix) ─────────────────────────────────────
@@ -416,20 +503,21 @@ export const userAssetV2Module = new Elysia({ prefix: "/assets/v2/user-assets" }
   })
 
   .patch("/:asset_id/", async ({params: {asset_id}, user}) => {
-    await prisma.fileAsset.updateMany({where: {id: asset_id, entityId: user.id}, data: {isUploaded: true}}).catch(() => {});
+    await prisma.fileAsset.updateMany({where: {id: asset_id, entityId: user.id}, data: {isUploaded: true}});
     return {status: "uploaded"};
   })
 
   .post("/:asset_id/upload/", async ({params: {asset_id}, body, user}) => {
     const file: Blob | null = (body as any).file ?? null;
-    if (file) await saveFile(asset_id, file).catch(() => {});
-    await prisma.fileAsset.updateMany({where: {id: asset_id}, data: {isUploaded: true}}).catch(() => {});
+    if (!file) throw new Error("No file provided in request body");
+    await saveFile(asset_id, file);
+    await prisma.fileAsset.updateMany({where: {id: asset_id}, data: {isUploaded: true}});
     return {status: "uploaded", asset_id};
   })
 
   .get("/:asset_id/", async ({params: {asset_id}, set, user, headers}) => {
     const asset = await prisma.fileAsset.findFirst({where: {id: asset_id, isDeleted: false}});
-    if (!asset) { set.status = 404; return {detail: "Arquivo não encontrado."}; }
+    if (!asset) { set.status = 404; return {detail: "File not found."}; }
     // LGPD: baixar um anexo é acesso a dado — registra quem, o quê e de onde.
     // Esta rota não tem workspace no caminho; usa o do próprio arquivo.
     if (asset.workspaceId) recordAudit({

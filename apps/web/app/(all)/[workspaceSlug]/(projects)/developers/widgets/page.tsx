@@ -12,16 +12,16 @@ import { PageHead } from "@/components/core/page-title";
 
 function Section({ id, title, children }: { id: string; title: string; children: React.ReactNode }) {
   return (
-    <section id={id} className="scroll-mt-20 flex flex-col gap-3">
-      <h2 className="text-20 font-semibold text-custom-text-100">{title}</h2>
-      <div className="flex flex-col gap-3 text-14 leading-relaxed text-custom-text-200">{children}</div>
+    <section id={id} className="flex scroll-mt-20 flex-col gap-3">
+      <h2 className="text-custom-text-100 text-20 font-semibold">{title}</h2>
+      <div className="text-custom-text-200 flex flex-col gap-3 text-14 leading-relaxed">{children}</div>
     </section>
   );
 }
 
 function Code({ children }: { children: string }) {
   return (
-    <pre className="overflow-x-auto rounded-lg border border-custom-border-200 bg-custom-background-90 p-3 text-12 leading-relaxed text-custom-text-200">
+    <pre className="border-custom-border-200 bg-custom-background-90 text-custom-text-200 overflow-x-auto rounded-lg border p-3 text-12 leading-relaxed">
       <code>{children}</code>
     </pre>
   );
@@ -29,19 +29,19 @@ function Code({ children }: { children: string }) {
 
 function Pill({ children }: { children: React.ReactNode }) {
   return (
-    <code className="mr-1 inline-block rounded bg-custom-background-80 px-1.5 py-0.5 text-12 text-custom-text-200">
+    <code className="bg-custom-background-80 text-custom-text-200 mr-1 inline-block rounded px-1.5 py-0.5 text-12">
       {children}
     </code>
   );
 }
 
 const PERMISSIONS = [
-  ["worker-items.read", "Listar e ler chamados"],
-  ["intakes.read", "Listar solicitações"],
-  ["actions.read", "Ler o histórico de ações/atividades"],
-  ["stats.read", "Ler estatísticas agregadas e relatórios"],
-  ["users.read", "Listar membros do workspace"],
-  ["entities.read", "Listar entidades (clientes)"],
+  ["worker-items.read", "List and read work items"],
+  ["intakes.read", "List requests"],
+  ["actions.read", "Read action/activity history"],
+  ["stats.read", "Read aggregated statistics and reports"],
+  ["users.read", "List workspace members"],
+  ["entities.read", "List entities (clients)"],
 ];
 
 // ── Page ──────────────────────────────────────────────────────────────────────
@@ -52,31 +52,31 @@ export default function WidgetDocsPage() {
 
   return (
     <>
-      <PageHead title="Widgets & Integrações — Documentação" />
+      <PageHead title="Widgets & Integrations — Documentation" />
       <div className="h-full w-full overflow-y-auto">
         <div className="mx-auto flex max-w-3xl flex-col gap-10 px-6 py-10">
           {/* Header */}
           <header className="flex flex-col gap-2">
-            <span className="text-12 font-medium uppercase tracking-wider text-custom-primary-100">
-              Documentação para desenvolvedores
+            <span className="tracking-wider text-custom-primary-100 text-12 font-medium uppercase">
+              Developer documentation
             </span>
-            <h1 className="text-28 font-bold text-custom-text-100">Widgets &amp; Integrações Customizadas</h1>
-            <p className="text-14 text-custom-text-200">
-              Estenda a plataforma com widgets React embutidos na home e integrações que consomem nossa API em
-              TypeScript. Esta página documenta o que adicionamos: o marketplace de widgets, o SDK, as permissões e os
-              webhooks/integrações customizadas.
+            <h1 className="text-custom-text-100 text-28 font-bold">Widgets &amp; Custom Integrations</h1>
+            <p className="text-custom-text-200 text-14">
+              Extend the platform with React widgets embedded in the home page and integrations that consume our
+              TypeScript API. This page documents what we've added: the widget marketplace, the SDK, permissions, and
+              custom webhooks/integrations.
             </p>
           </header>
 
           {/* TOC */}
-          <nav className="flex flex-wrap gap-2 rounded-xl border border-custom-border-200 bg-custom-background-90 p-3 text-13">
+          <nav className="border-custom-border-200 bg-custom-background-90 flex flex-wrap gap-2 rounded-xl border p-3 text-13">
             {[
-              ["overview", "Visão geral"],
+              ["overview", "Overview"],
               ["sdk", "SDK"],
-              ["create", "Criar um widget"],
-              ["manifest", "Manifest & permissões"],
-              ["upload", "Upload & aprovação"],
-              ["integrations", "Integrações customizadas"],
+              ["create", "Create a widget"],
+              ["manifest", "Manifest & permissions"],
+              ["upload", "Upload & approval"],
+              ["integrations", "Custom integrations"],
             ].map(([id, label]) => (
               <a key={id} href={`#${id}`} className="text-custom-primary-100 hover:underline">
                 {label}
@@ -84,47 +84,46 @@ export default function WidgetDocsPage() {
             ))}
           </nav>
 
-          <Section id="overview" title="Visão geral">
+          <Section id="overview" title="Overview">
             <p>
-              Widgets são componentes React isolados, compilados em um único bundle, que rodam na home do workspace e
-              consomem dados através do <strong>SDK de widgets</strong>. O fluxo é: você desenvolve e empacota o widget,
-              um administrador faz o upload e o ativa, e ele passa a aparecer para os usuários.
+              Widgets are isolated React components, compiled into a single bundle, that run on the workspace home page
+              and consume data through the <strong>widget SDK</strong>. The flow is: you develop and package the widget,
+              an administrator uploads and activates it, and it starts appearing to users.
             </p>
             <p>
-              Diferente do Plane original, este recurso é totalmente <strong>livre de paywall</strong> e roda contra a
-              API TypeScript do projeto, com um gateway dedicado que aplica as permissões declaradas no manifest.
+              Unlike the original Plane, this feature is completely <strong>paywall-free</strong> and runs against the
+              project's TypeScript API, with a dedicated gateway that enforces the permissions declared in the manifest.
             </p>
           </Section>
 
-          <Section id="sdk" title="SDK de widgets">
+          <Section id="sdk" title="Widget SDK">
             <p>
-              Instale o pacote do SDK para acessar hooks React e o runtime global{" "}
-              <Pill>window.WidgetSDK</Pill>:
+              Install the SDK package to access React hooks and the global runtime <Pill>window.WidgetSDK</Pill>:
             </p>
             <Code>{`npm install @mateusseiboth/widgets-aviao`}</Code>
-            <p>Hooks disponíveis (todos respeitam as permissões do manifest):</p>
+            <p>Available hooks (all respect manifest permissions):</p>
             <ul className="ml-5 list-disc">
               <li>
-                <Pill>useWorkerItems(filters)</Pill> — work items / chamados
+                <Pill>useWorkerItems(filters)</Pill> — work items / tickets
               </li>
               <li>
-                <Pill>useIntakes(filters)</Pill> — itens de intake
+                <Pill>useIntakes(filters)</Pill> — intake items
               </li>
               <li>
-                <Pill>useStats(params)</Pill> — estatísticas e relatórios
+                <Pill>useStats(params)</Pill> — statistics and reports
               </li>
               <li>
-                <Pill>useUsers()</Pill> / <Pill>useEntities()</Pill> — membros e entidades
+                <Pill>useUsers()</Pill> / <Pill>useEntities()</Pill> — members and entities
               </li>
             </ul>
           </Section>
 
-          <Section id="create" title="Criar um widget">
-            <p>1. Crie um projeto Vite em modo biblioteca:</p>
-            <Code>{`npm create vite@latest meu-widget -- --template react-ts`}</Code>
+          <Section id="create" title="Create a widget">
+            <p>1. Create a Vite project in library mode:</p>
+            <Code>{`npm create vite@latest my-widget -- --template react-ts`}</Code>
             <p>
-              2. Configure o <Pill>vite.config.ts</Pill> deixando o React como dependência externa (a plataforma o
-              fornece):
+              2. Configure <Pill>vite.config.ts</Pill> leaving React as an external dependency (the platform provides
+              it):
             </p>
             <Code>{`export default defineConfig({
   plugins: [react()],
@@ -141,14 +140,14 @@ export default function WidgetDocsPage() {
   },
 });`}</Code>
             <p>
-              3. Exporte um componente React como <strong>default export</strong>. Ele recebe props de contexto (por
-              exemplo <Pill>entityId</Pill>):
+              3. Export a React component as <strong>default export</strong>. It receives context props (e.g.{" "}
+              <Pill>entityId</Pill>):
             </p>
             <Code>{`import { useWorkerItems } from "@mateusseiboth/widgets-aviao";
 
-export default function MeuWidget({ entityId }) {
+export default function MyWidget({ entityId }) {
   const { data, loading } = useWorkerItems({ entity_id: entityId });
-  if (loading) return <p>Carregando…</p>;
+  if (loading) return <p>Loading…</p>;
   return (
     <ul>
       {data?.data.map((item) => (
@@ -159,33 +158,33 @@ export default function MeuWidget({ entityId }) {
 }`}</Code>
           </Section>
 
-          <Section id="manifest" title="Manifest & permissões">
+          <Section id="manifest" title="Manifest & permissions">
             <p>
-              Todo widget declara um <Pill>manifest.json</Pill> com metadados e as permissões que precisa. O gateway só
-              libera os dados das permissões declaradas:
+              Every widget declares a <Pill>manifest.json</Pill> with metadata and the permissions it needs. The gateway
+              only releases data for the declared permissions:
             </p>
             <Code>{`{
-  "name": "Meu Widget",
+  "name": "My Widget",
   "version": "1.0.0",
-  "author": "Seu Nome",
+  "author": "Your Name",
   "entry": "widget.js",
   "permissions": ["worker-items.read", "stats.read"]
 }`}</Code>
-            <div className="overflow-hidden rounded-xl border border-custom-border-200">
+            <div className="border-custom-border-200 overflow-hidden rounded-xl border">
               <table className="w-full text-13">
                 <thead className="bg-custom-background-90 text-custom-text-300">
                   <tr>
-                    <th className="px-3 py-2 text-left font-medium">Permissão</th>
-                    <th className="px-3 py-2 text-left font-medium">O que libera</th>
+                    <th className="px-3 py-2 text-left font-medium">Permission</th>
+                    <th className="px-3 py-2 text-left font-medium">What it grants</th>
                   </tr>
                 </thead>
                 <tbody>
                   {PERMISSIONS.map(([perm, desc]) => (
-                    <tr key={perm} className="border-t border-custom-border-200">
+                    <tr key={perm} className="border-custom-border-200 border-t">
                       <td className="px-3 py-2 align-top">
                         <Pill>{perm}</Pill>
                       </td>
-                      <td className="px-3 py-2 text-custom-text-200">{desc}</td>
+                      <td className="text-custom-text-200 px-3 py-2">{desc}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -193,40 +192,39 @@ export default function MeuWidget({ entityId }) {
             </div>
           </Section>
 
-          <Section id="upload" title="Upload & aprovação">
-            <p>Compile e empacote o widget junto do manifest:</p>
+          <Section id="upload" title="Upload & approval">
+            <p>Build and package the widget along with the manifest:</p>
             <Code>{`npm run build
 zip widget.zip manifest.json -j dist/widget.js`}</Code>
             <p>
-              Em seguida, um administrador acessa{" "}
+              Then, an administrator goes to{" "}
               <a href={`/${slug}/settings/widgets/`} className="text-custom-primary-100 hover:underline">
-                Configurações → Widgets
+                Settings → Widgets
               </a>{" "}
-              e faz o upload do <Pill>widget.zip</Pill>. Após a ativação, o widget aparece na home para todos os
-              usuários do workspace.
+              and uploads the <Pill>widget.zip</Pill>. After activation, the widget appears on the home page for all
+              workspace users.
             </p>
           </Section>
 
-          <Section id="integrations" title="Integrações customizadas">
+          <Section id="integrations" title="Custom integrations">
             <p>
-              Além dos widgets, a plataforma expõe um módulo de <strong>webhooks/integrações customizadas</strong> para
-              reagir a eventos (criação/atualização de chamados, visitas, intakes) e integrar sistemas externos.
-              Configure-os em{" "}
+              Beyond widgets, the platform exposes a <strong>custom webhooks/integrations</strong> module to react to
+              events (ticket creation/updates, visits, intakes) and integrate external systems. Configure them at{" "}
               <a href={`/${slug}/settings/webhooks/`} className="text-custom-primary-100 hover:underline">
-                Configurações → Webhooks
+                Settings → Webhooks
               </a>
               .
             </p>
             <p>
-              Cada integração recebe um payload JSON assinado e pode ser filtrada por tipo de evento. Para detalhes de
-              payloads, autenticação por <Pill>X-Api-Key</Pill> e exemplos completos, consulte{" "}
-              <Pill>docs/custom-integration-guide.md</Pill> e <Pill>docs/widget-development-guide.md</Pill> no
-              repositório.
+              Each integration receives a signed JSON payload and can be filtered by event type. For payload details,
+              <Pill>X-Api-Key</Pill> authentication, and full examples, see{" "}
+              <Pill>docs/custom-integration-guide.md</Pill> and <Pill>docs/widget-development-guide.md</Pill> in the
+              repository.
             </p>
           </Section>
 
-          <footer className="border-t border-custom-border-200 pt-6 text-13 text-custom-text-300">
-            Documentação mantida pelo time. Sugestões de melhoria são bem-vindas via pull request.
+          <footer className="border-custom-border-200 text-custom-text-300 border-t pt-6 text-13">
+            Documentation maintained by the team. Improvement suggestions welcome via pull request.
           </footer>
         </div>
       </div>

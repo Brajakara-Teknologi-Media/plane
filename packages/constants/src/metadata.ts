@@ -11,7 +11,7 @@
  * mechanism the rest of the web app uses), or just edit the defaults below.
  *
  *   VITE_APP_NAME=Avião
- *   VITE_APP_TAGLINE="Gestão de chamados, visitas e projetos"
+ *   VITE_APP_TAGLINE="Work item management, visits and projects"
  *   VITE_APP_URL=https://app.example.com
  * ─────────────────────────────────────────────────────────────────────────────
  */
@@ -19,7 +19,7 @@
 /** Product / brand name. Single switch point for whitelabel builds. */
 export const APP_NAME = process.env.VITE_APP_NAME || "Avião";
 /** Short tagline shown alongside the product name. */
-export const APP_TAGLINE = process.env.VITE_APP_TAGLINE || "Gestão de chamados, visitas e projetos";
+export const APP_TAGLINE = process.env.VITE_APP_TAGLINE || "Work item management, visits and projects";
 /** Marketing / app URL. */
 export const APP_URL = process.env.VITE_APP_URL || "https://www.qualitysistemas.com.br";
 
@@ -39,9 +39,9 @@ export const PRIVACY_URL = process.env.VITE_PRIVACY_URL || SUPPORT_SITE;
 export const SITE_NAME = `${APP_NAME} | ${APP_TAGLINE}`;
 export const SITE_TITLE = `${APP_NAME} | ${APP_TAGLINE}`;
 export const SITE_DESCRIPTION =
-  "Sistema de chamados, atendimento e visitas técnicas da Quality Sistemas: triagem, acompanhamento e indicadores num só lugar";
+  "Quality Sistemas work item, support and technical visit system: triage, tracking and indicators in one place";
 export const SITE_KEYWORDS =
-  "chamados, service desk, atendimento, suporte, gestão de projetos, triagem, kanban, ciclos, módulos, SLA, quality sistemas";
+  "work items, service desk, support, support, project management, intake, kanban, cycles, modules, SLA, quality systems";
 export const SITE_URL = APP_URL;
 export const TWITTER_USER_NAME = `${APP_NAME} | ${APP_TAGLINE}`;
 
@@ -50,6 +50,6 @@ export const SPACE_SITE_NAME = `${APP_NAME} Publish | Torne seus quadros e roadm
 export const SPACE_SITE_TITLE = `${APP_NAME} Publish | Torne seus quadros públicos com um clique`;
 export const SPACE_SITE_DESCRIPTION = `${APP_NAME} Publish é uma ferramenta de gestão de feedback de clientes.`;
 export const SPACE_SITE_KEYWORDS =
-  "chamados, feedback de clientes, quadros públicos, roadmap, gestão de projetos, kanban, quality sistemas";
+  "work items, customer feedback, public boards, roadmap, project management, kanban, quality systems";
 export const SPACE_SITE_URL = APP_URL;
 export const SPACE_TWITTER_USER_NAME = APP_NAME;

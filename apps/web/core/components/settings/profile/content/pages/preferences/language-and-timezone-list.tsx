@@ -6,7 +6,7 @@
 
 import { observer } from "mobx-react";
 // plane imports
-import { SUPPORTED_LANGUAGES, useTranslation } from "@plane/i18n";
+import { SUPPORTED_LANGUAGES, setLanguage, useTranslation, type TLanguage } from "@plane/i18n";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { CustomSelect } from "@plane/ui";
 // components
@@ -32,14 +32,14 @@ export const ProfileSettingsLanguageAndTimezonePreferencesList = observer(
       try {
         await updateCurrentUser({ user_timezone: value });
         setToast({
-          title: "Sucesso!",
-          message: "Fuso horário atualizado com sucesso",
+          title: "Success!",
+          message: "Timezone updated successfully",
           type: TOAST_TYPE.SUCCESS,
         });
       } catch (_error) {
         setToast({
-          title: "Erro!",
-          message: "Falha ao atualizar o fuso horário",
+          title: "Error!",
+          message: "Failed to update timezone",
           type: TOAST_TYPE.ERROR,
         });
       }
@@ -48,15 +48,16 @@ export const ProfileSettingsLanguageAndTimezonePreferencesList = observer(
     const handleLanguageChange = async (value: string) => {
       try {
         await updateUserProfile({ language: value });
+        await setLanguage(value as TLanguage);
         setToast({
-          title: "Sucesso!",
-          message: "Idioma atualizado com sucesso",
+          title: "Success!",
+          message: "Language updated successfully",
           type: TOAST_TYPE.SUCCESS,
         });
       } catch (_error) {
         setToast({
-          title: "Erro!",
-          message: "Falha ao atualizar o idioma",
+          title: "Error!",
+          message: "Failed to update language",
           type: TOAST_TYPE.ERROR,
         });
       }
@@ -98,8 +99,8 @@ export const ProfileSettingsLanguageAndTimezonePreferencesList = observer(
         />
         <StartOfWeekPreference
           option={{
-            title: "Primeiro dia da semana",
-            description: "Isso mudará a aparência de todos os calendários no seu aplicativo.",
+            title: "First day of the week",
+            description: "This will change the appearance of all calendars in your app.",
           }}
         />
       </div>

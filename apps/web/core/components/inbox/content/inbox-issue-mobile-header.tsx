@@ -6,6 +6,7 @@
 
 import { observer } from "mobx-react";
 import { Clock, FileStack, MoreHorizontal, PanelLeft, MoveRight } from "lucide-react";
+import { useTranslation } from "@plane/i18n";
 import { IconButton, getIconButtonStyling } from "@plane/propel/icon-button";
 import {
   LinkIcon,
@@ -80,6 +81,7 @@ export const InboxIssueActionsMobileHeader = observer(function InboxIssueActions
     handleActionWithPermission,
   } = props;
   const router = useAppRouter();
+  const { t } = useTranslation();
   const { getProjectIdentifierById } = useProject();
 
   const issue = inboxIssue?.issue;
@@ -116,14 +118,14 @@ export const InboxIssueActionsMobileHeader = observer(function InboxIssueActions
             variant="secondary"
             size="lg"
             icon={ChevronUpIcon}
-            aria-label="Solicitação anterior"
+            aria-label="Request anterior"
             onClick={() => handleInboxIssueNavigation("prev")}
           />
           <IconButton
             variant="secondary"
             size="lg"
             icon={ChevronDownIcon}
-            aria-label="Próxima solicitação"
+            aria-label="Next request"
             onClick={() => handleInboxIssueNavigation("next")}
           />
         </div>
@@ -143,7 +145,7 @@ export const InboxIssueActionsMobileHeader = observer(function InboxIssueActions
               <CustomMenu.MenuItem onClick={handleCopyIssueLink}>
                 <div className="flex items-center gap-2">
                   <LinkIcon width={14} height={14} strokeWidth={2} />
-                  Copiar link da solicitação
+                  Copy request link
                 </div>
               </CustomMenu.MenuItem>
             )}
@@ -151,7 +153,7 @@ export const InboxIssueActionsMobileHeader = observer(function InboxIssueActions
               <CustomMenu.MenuItem onClick={() => router.push(workItemLink)}>
                 <div className="flex items-center gap-2">
                   <NewTabIcon width={14} height={14} strokeWidth={2} />
-                  Abrir solicitação
+                  Open request
                 </div>
               </CustomMenu.MenuItem>
             )}
@@ -161,13 +163,15 @@ export const InboxIssueActionsMobileHeader = observer(function InboxIssueActions
                   handleActionWithPermission(
                     isProjectAdmin,
                     handleIssueSnoozeAction,
-                    "Apenas administradores do projeto podem adiar ou reativar solicitações"
+                    t("inbox_issue.errors.snooze_permission")
                   )
                 }
               >
                 <div className="flex items-center gap-2">
                   <Clock size={14} strokeWidth={2} />
-                  {inboxIssue?.snoozed_till && numberOfDaysLeft && numberOfDaysLeft > 0 ? "Un-snooze" : "Snooze"}
+                  {inboxIssue?.snoozed_till && numberOfDaysLeft && numberOfDaysLeft > 0
+                    ? t("inbox_issue.actions.unsnooze")
+                    : t("inbox_issue.actions.snooze")}
                 </div>
               </CustomMenu.MenuItem>
             )}
@@ -177,7 +181,7 @@ export const InboxIssueActionsMobileHeader = observer(function InboxIssueActions
                   handleActionWithPermission(
                     isProjectAdmin,
                     () => setSelectDuplicateIssue(true),
-                    "Apenas administradores do projeto podem marcar solicitações como duplicadas"
+                    t("inbox_issue.errors.duplicate_permission")
                   )
                 }
               >
@@ -193,7 +197,7 @@ export const InboxIssueActionsMobileHeader = observer(function InboxIssueActions
                   handleActionWithPermission(
                     isProjectAdmin,
                     () => setAcceptIssueModal(true),
-                    "Apenas administradores do projeto podem aceitar solicitações"
+                    t("inbox_issue.errors.accept_permission")
                   )
                 }
               >
@@ -209,7 +213,7 @@ export const InboxIssueActionsMobileHeader = observer(function InboxIssueActions
                   handleActionWithPermission(
                     isProjectAdmin,
                     () => setDeclineIssueModal(true),
-                    "Apenas administradores do projeto podem recusar solicitações"
+                    t("inbox_issue.errors.decline_permission")
                   )
                 }
               >
@@ -223,7 +227,7 @@ export const InboxIssueActionsMobileHeader = observer(function InboxIssueActions
               <CustomMenu.MenuItem onClick={() => setDeleteIssueModal(true)}>
                 <div className="flex items-center gap-2 text-danger-primary">
                   <TrashIcon height={14} width={14} strokeWidth={2} />
-                  Excluir
+                  {t("common.delete")}
                 </div>
               </CustomMenu.MenuItem>
             )}

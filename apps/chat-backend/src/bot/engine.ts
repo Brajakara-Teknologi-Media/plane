@@ -194,7 +194,7 @@ export async function handleInboundClient(sessionId: string, text: string) {
         where: { workspaceId: session.workspaceId, isActive: true, key: body },
       });
       if (!option) {
-        await sendBot(session, "Opção inválida. " + cfg.menuHeader);
+        await sendBot(session, "Invalid option. " + cfg.menuHeader);
         await presentMenu(session);
         return;
       }

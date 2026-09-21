@@ -5,7 +5,7 @@
  */
 
 import { observer } from "mobx-react";
-// hooks
+import { useTranslation } from "@plane/i18n";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // Plane-web
 import { getRelationActivityContent, useTimeLineRelationOptions } from "@/plane-web/components/relations";
@@ -24,7 +24,8 @@ export const IssueRelationActivity = observer(function IssueRelationActivity(pro
 
   const activity = getActivityById(activityId);
   const ISSUE_RELATION_OPTIONS = useTimeLineRelationOptions();
-  const activityContent = getRelationActivityContent(activity);
+  const { t } = useTranslation();
+  const activityContent = getRelationActivityContent(activity, t);
 
   if (!activity) return <></>;
   return (

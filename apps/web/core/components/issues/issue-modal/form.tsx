@@ -299,8 +299,8 @@ export const IssueFormRoot = observer(function IssueFormRoot(props: IssueFormPro
     } catch {
       setToast({
         type: TOAST_TYPE.ERROR,
-        title: "Erro!",
-        message: "Falha ao mover o chamado para o projeto. Tente novamente.",
+        title: t("toast.error"),
+        message: t("common.failed_to_move_issue_to_project"),
       });
     } finally {
       setIsMoving(false);
@@ -542,8 +542,8 @@ export const IssueFormRoot = observer(function IssueFormRoot(props: IssueFormPro
                           } else {
                             setToast({
                               type: TOAST_TYPE.ERROR,
-                              title: "Erro!",
-                              message: "O editor ainda está processando alterações. Aguarde antes de continuar.",
+                              title: t("common.toast.error"),
+                              message: "The editor is still processing changes. Please wait before continuing.",
                             });
                           }
                         }}

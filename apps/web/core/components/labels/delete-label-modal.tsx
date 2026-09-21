@@ -10,6 +10,8 @@ import { useParams } from "next/navigation";
 // types
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IIssueLabel } from "@plane/types";
+// plane imports
+import { useTranslation } from "@plane/i18n";
 // ui
 import { AlertModalCore } from "@plane/ui";
 // hooks
@@ -27,6 +29,7 @@ export const DeleteLabelModal = observer(function DeleteLabelModal(props: Props)
   const { workspaceSlug, projectId } = useParams();
   // store hooks
   const { deleteLabel } = useLabel();
+  const { t } = useTranslation();
   // states
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
 
@@ -46,10 +49,10 @@ export const DeleteLabelModal = observer(function DeleteLabelModal(props: Props)
       })
       .catch((err) => {
         setIsDeleteLoading(false);
-        const error = err?.error || "Não foi possível excluir a etiqueta. Tente novamente.";
+        const error = err?.error || "Could not delete the label. Please try again.";
         setToast({
           type: TOAST_TYPE.ERROR,
-          title: "Erro!",
+          title: t("common.toast.error"),
           message: error,
         });
       });
@@ -61,7 +64,7 @@ export const DeleteLabelModal = observer(function DeleteLabelModal(props: Props)
       handleSubmit={handleDeletion}
       isSubmitting={isDeleteLoading}
       isOpen={isOpen}
-      title="Excluir etiqueta"
+      title={t("common.delete_label")}
       content={
         <>
           Tem certeza de que deseja excluir <span className="font-medium text-primary">{data?.name}</span>? This will

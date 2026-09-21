@@ -267,7 +267,7 @@ async function onWsMessage(
           }
         }
       } catch (e) {
-        console.error("[agent.close] falha ao gravar classificação/cadastro", e);
+        console.error("[agent.close] failed to save classification/registration", e);
       }
       await closeSession(sessionId, ctx.userId);
     })();
@@ -314,7 +314,7 @@ const app = new Elysia()
     const user = await resolveAttendant(headers);
     if (!user) {
       set.status = 401;
-      return { detail: "Não autenticado." };
+      return { detail: "Not authenticated." };
     }
     const ticket = await signWsTicket(user.id, slug);
     return { ticket };
@@ -384,7 +384,7 @@ const app = new Elysia()
     const b = (body as any) ?? {};
     if (!b.workspace_id) {
       set.status = 400;
-      return { detail: "workspace_id é obrigatório." };
+      return { detail: "workspace_id is required." };
     }
     const browserId = b.browser_id || randomUUID();
 
@@ -435,7 +435,7 @@ const app = new Elysia()
   // ── Read-only public view of a chat (for the editor chat-embed link) ──
   .get("/sessions/by-protocol/:protocol/", async ({ params: { protocol }, headers }) => {
     const session = await prisma.chatSession.findUnique({ where: { protocol }, include: { contact: true } });
-    if (!session) return new Response(JSON.stringify({ detail: "Não encontrado." }), { status: 404 });
+    if (!session) return new Response(JSON.stringify({ detail: "Not found." }), { status: 404 });
     const messages = await prisma.chatMessage.findMany({ where: { sessionId: session.id }, orderBy: { createdAt: "asc" } });
     // LGPD: abrir a transcrição é acesso ao conteúdo da conversa do cliente.
     const viewer = await resolveAttendant(headers);
@@ -456,7 +456,7 @@ const app = new Elysia()
     const user = await resolveAttendant(headers as any);
     if (!user) {
       set.status = 401;
-      return { detail: "Não autenticado." };
+      return { detail: "Not authenticated." };
     }
     const status = (query as any).status as string | undefined;
 
@@ -541,7 +541,7 @@ const app = new Elysia()
           }),
           prisma.chatMessage.findFirst({ where: { sessionId: s.id, deletedAt: null }, orderBy: { createdAt: "desc" }, select: { text: true, type: true, sender: true, createdAt: true } }),
         ]);
-        const preview = last ? (last.text || (last.type === "image" ? "📷 Imagem" : last.type === "audio" ? "🎤 Áudio" : last.type === "video" ? "🎬 Vídeo" : last.type === "file" ? "📎 Arquivo" : "")) : "";
+        const preview = last ? (last.text || (last.type === "image" ? "📷 Image" : last.type === "audio" ? "🎤 Audio" : last.type === "video" ? "🎬 Video" : last.type === "file" ? "📎 File" : "")) : "";
         return { ...serializeSession(s), unread, last_message: preview, last_message_at: last?.createdAt ?? s.lastClientMessageAt ?? s.createdAt };
       })
     );
@@ -553,7 +553,7 @@ const app = new Elysia()
     const user = await resolveAttendant(headers);
     if (!user) {
       set.status = 401;
-      return { detail: "Não autenticado." };
+      return { detail: "Not authenticated." };
     }
     const startOfToday = new Date();
     startOfToday.setHours(0, 0, 0, 0);
@@ -592,7 +592,7 @@ const app = new Elysia()
     const user = await resolveAttendant(headers);
     if (!user) {
       set.status = 401;
-      return { detail: "Não autenticado." };
+      return { detail: "Not authenticated." };
     }
     if (!(await isWorkspaceManager(slug, user.id))) {
       set.status = 403;
@@ -606,7 +606,7 @@ const app = new Elysia()
     const user = await resolveAttendant(headers);
     if (!user) {
       set.status = 401;
-      return { detail: "Não autenticado." };
+      return { detail: "Not authenticated." };
     }
     if (!(await isWorkspaceManager(slug, user.id))) {
       set.status = 403;
@@ -621,7 +621,7 @@ const app = new Elysia()
     const user = await resolveAttendant(headers as any);
     if (!user) {
       set.status = 401;
-      return { detail: "Não autenticado." };
+      return { detail: "Not authenticated." };
     }
     const b = (body as any) ?? {};
     const contact = await prisma.contact.findFirst({ where: { workspaceId: slug, id: b.contact_id } });
@@ -656,7 +656,7 @@ const app = new Elysia()
     const user = await resolveAttendant(headers);
     if (!user) {
       set.status = 401;
-      return { detail: "Não autenticado." };
+      return { detail: "Not authenticated." };
     }
     let members: Array<{ id: string; name: string }> = [];
     try {
@@ -684,7 +684,7 @@ const app = new Elysia()
     const user = await resolveAttendant(headers);
     if (!user) {
       set.status = 401;
-      return { detail: "Não autenticado." };
+      return { detail: "Not authenticated." };
     }
     // Only admins / project managers (workspace role >= 15) may transfer.
     let isManager = false;
@@ -750,7 +750,7 @@ const app = new Elysia()
   .get("/media/*", async ({ params, query }) => {
     const key = (params as any)["*"];
     const res = await serveMedia(key, (query as any).mime);
-    return res ?? new Response("Não encontrado", { status: 404 });
+    return res ?? new Response("Not found", { status: 404 });
   })
 
   // ── Rating: native client form submits its score + comment here ──

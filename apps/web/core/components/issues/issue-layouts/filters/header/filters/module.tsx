@@ -11,6 +11,7 @@ import { useParams } from "next/navigation";
 // components
 import { ModuleIcon } from "@plane/propel/icons";
 import { Loader } from "@plane/ui";
+import { useTranslation } from "@plane/i18n";
 import { FilterHeader, FilterOption } from "@/components/issues/issue-layouts/filters";
 import { useModule } from "@/hooks/store/use-module";
 // ui
@@ -23,6 +24,7 @@ type Props = {
 
 export const FilterModule = observer(function FilterModule(props: Props) {
   const { appliedFilters, handleUpdate, searchQuery } = props;
+  const { t } = useTranslation();
   // hooks
   const { projectId } = useParams();
   const { getModuleById, getProjectModuleIds } = useModule();
@@ -85,7 +87,7 @@ export const FilterModule = observer(function FilterModule(props: Props) {
                 )}
               </>
             ) : (
-              <p className="text-11 text-placeholder italic">Nenhum resultado encontrado</p>
+              <p className="text-11 text-placeholder italic">{t("common.no_results_found")}</p>
             )
           ) : (
             <Loader className="space-y-2">

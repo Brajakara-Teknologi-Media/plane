@@ -36,7 +36,7 @@
       [
         "expo-image-picker",
         {
-          "photosPermission": "Avião precisa acessar suas fotos para anexar imagens a chamados e visitas."
+          "photosPermission": "Avião precisa acessar suas fotos para anexar imagens a work items e visitas."
         }
       ],
       [

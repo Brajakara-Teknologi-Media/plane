@@ -5,39 +5,43 @@
  */
 
 // plane imports
+import { useTranslation } from "@plane/i18n";
 import { CycleIcon, ModuleIcon, PageIcon, ViewsIcon, WorkItemsIcon } from "@plane/propel/icons";
 import type { ISvgIcons } from "@plane/propel/icons";
+import type { TTranslationStore } from "@plane/i18n";
 // types
 import type { TTourSteps } from "./root";
 
-const sidebarOptions: {
+const getSidebarOptions = (
+  t: TTranslationStore["t"]
+): {
   key: TTourSteps;
   label: string;
   Icon: React.FC<ISvgIcons>;
-}[] = [
+}[] => [
   {
     key: "work-items",
-    label: "Chamados",
+    label: t("common.work_items"),
     Icon: WorkItemsIcon,
   },
   {
     key: "cycles",
-    label: "Ciclos",
+    label: t("common.cycles"),
     Icon: CycleIcon,
   },
   {
     key: "modules",
-    label: "Módulos",
+    label: t("common.modules"),
     Icon: ModuleIcon,
   },
   {
     key: "views",
-    label: "Visualizações",
+    label: t("common.views"),
     Icon: ViewsIcon,
   },
   {
     key: "pages",
-    label: "Páginas",
+    label: t("common.pages"),
     Icon: PageIcon,
   },
 ];
@@ -48,12 +52,16 @@ type Props = {
 };
 
 export function TourSidebar({ step, setStep }: Props) {
+  const { t } = useTranslation();
+
+  const sidebarOptions = getSidebarOptions(t);
+
   return (
     <div className="col-span-3 hidden bg-surface-2 p-8 lg:block">
       <h3 className="text-16 font-medium">
         Let{"'"}s get started!
         <br />
-        Aproveite mais o Avião.
+        {t("onboarding.tour.sidebar_subtitle")}
       </h3>
       <div className="mt-8 space-y-5">
         {sidebarOptions.map((option) => (

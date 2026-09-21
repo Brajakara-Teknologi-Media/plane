@@ -40,9 +40,23 @@ async function getClient(): Promise<any | null> {
   let client: any | null = null;
   try {
     const instance = await prisma.instance.findFirst({select: {configurations: true}});
-    const cfg = (instance?.configurations as any)?.s3 as S3Config | undefined;
+    const configs = (instance?.configurations as any) ?? {};
+    
+    // Try nested first
+    let cfg = configs.s3 as S3Config | undefined;
+    
+    // Fallback to flat keys if nested is not usable
+    if (!isUsable(cfg)) {
+      cfg = {
+        endpoint: configs.S3_ENDPOINT,
+        region: configs.S3_REGION,
+        bucket: configs.S3_BUCKET,
+        access_key: configs.S3_ACCESS_KEY,
+        secret_key: configs.S3_SECRET_KEY,
+      };
+    }
+
     if (isUsable(cfg)) {
-      // Bun.S3Client is provided by the Bun runtime (untyped in plain tsc).
       client = new (Bun as any).S3Client({
         accessKeyId: cfg.access_key,
         secretAccessKey: cfg.secret_key,

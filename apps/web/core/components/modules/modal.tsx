@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { useForm } from "react-hook-form";
 // Plane imports
+import { useTranslation } from "@plane/i18n";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IModule } from "@plane/types";
 import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
@@ -43,6 +44,8 @@ export const CreateUpdateModuleModal = observer(function CreateUpdateModuleModal
   const { workspaceProjectIds } = useProject();
   const { createModule, updateModuleDetails } = useModule();
   const { isMobile } = usePlatformOS();
+  // plane hooks
+  const { t } = useTranslation();
 
   const handleClose = () => {
     reset(defaultValues);
@@ -62,15 +65,15 @@ export const CreateUpdateModuleModal = observer(function CreateUpdateModuleModal
         handleClose();
         setToast({
           type: TOAST_TYPE.SUCCESS,
-          title: "Sucesso!",
-          message: "Módulo criado com sucesso.",
+          title: t("common.toast.success"),
+          message: "Module created successfully.",
         });
       })
       .catch((err) => {
         setToast({
           type: TOAST_TYPE.ERROR,
-          title: "Erro!",
-          message: err?.detail ?? err?.error ?? "Não foi possível criar o módulo. Tente novamente.",
+          title: t("common.toast.error"),
+          message: err?.detail ?? err?.error ?? "Could not create module. Please try again.",
         });
       });
   };
@@ -85,15 +88,15 @@ export const CreateUpdateModuleModal = observer(function CreateUpdateModuleModal
 
         setToast({
           type: TOAST_TYPE.SUCCESS,
-          title: "Sucesso!",
-          message: "Módulo atualizado com sucesso.",
+          title: t("common.toast.success"),
+          message: "Module updated successfully.",
         });
       })
       .catch((err) => {
         setToast({
           type: TOAST_TYPE.ERROR,
-          title: "Erro!",
-          message: err?.detail ?? err?.error ?? "Não foi possível atualizar o módulo. Tente novamente.",
+          title: t("common.toast.error"),
+          message: err?.detail ?? err?.error ?? "Could not update module. Please try again.",
         });
       });
   };

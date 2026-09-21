@@ -25,7 +25,7 @@ export const cycleModule = new Elysia({ prefix: "/workspaces/:slug/projects/:pro
     await requireProjectAction(ws.id, project_id, user.id, EProjectAction.CYCLE_MANAGE);
 
     const b = body as any;
-    if (!b.name) { set.status = 400; return { detail: "O nome é obrigatório." }; }
+    if (!b.name) { set.status = 400; return { detail: "Name is required." }; }
 
     const cycle = await prisma.cycle.create({
       data: {

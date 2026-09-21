@@ -67,7 +67,7 @@ export const AddComment = observer(function AddComment(props: Props) {
         setToast({
           type: TOAST_TYPE.ERROR,
           title: "Erro!",
-          message: "Não foi possível publicar o comentário. Tente novamente.",
+          message: "Could not publish the comment. Try again.",
         })
       );
   };

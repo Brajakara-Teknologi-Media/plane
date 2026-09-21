@@ -59,7 +59,7 @@ export const useEditorMention = (args: TArgs) => {
             }));
             suggestionSections.push({
               key: "users",
-              title: "Usuários",
+              title: "Usernames",
               items,
             });
           }

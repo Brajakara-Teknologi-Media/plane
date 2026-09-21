@@ -7,6 +7,7 @@
 import { observer } from "mobx-react";
 // plane imports
 import { setPromiseToast } from "@plane/propel/toast";
+import { useTranslation } from "@plane/i18n";
 import type { IProject } from "@plane/types";
 import { ToggleSwitch } from "@plane/ui";
 // components
@@ -28,6 +29,8 @@ export const ProjectSettingsFeatureControlItem = observer(function ProjectSettin
   const { description, disabled, featureProperty, projectId, title, value, workspaceSlug } = props;
   // store hooks
   const { getProjectById, updateProject } = useProject();
+  // plane hooks
+  const { t } = useTranslation();
   // derived values
   const currentProjectDetails = getProjectById(projectId);
 
@@ -41,14 +44,14 @@ export const ProjectSettingsFeatureControlItem = observer(function ProjectSettin
     const updateProjectPromise = updateProject(workspaceSlug, projectId, settingsPayload);
 
     setPromiseToast(updateProjectPromise, {
-      loading: "Atualizando recurso do projeto...",
+      loading: "Updating project feature...",
       success: {
-        title: "Sucesso!",
+        title: t("common.toast.success"),
         message: () => "Project feature updated successfully.",
       },
       error: {
-        title: "Erro!",
-        message: () => "Algo deu errado ao atualizar o recurso do projeto. Tente novamente.",
+        title: t("common.toast.error"),
+        message: () => "Could not update the project feature. Please try again.",
       },
     });
     void updateProjectPromise.then(() => {

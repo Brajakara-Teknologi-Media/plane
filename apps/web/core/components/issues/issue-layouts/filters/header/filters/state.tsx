@@ -12,6 +12,7 @@ import { StateGroupIcon } from "@plane/propel/icons";
 import type { IState } from "@plane/types";
 // components
 import { Loader } from "@plane/ui";
+import { useTranslation } from "@plane/i18n";
 import { FilterHeader, FilterOption } from "@/components/issues/issue-layouts/filters";
 // ui
 // types
@@ -25,6 +26,7 @@ type Props = {
 
 export const FilterState = observer(function FilterState(props: Props) {
   const { appliedFilters, handleUpdate, searchQuery, states } = props;
+  const { t } = useTranslation();
 
   const [itemsToRender, setItemsToRender] = useState(5);
   const [previewEnabled, setPreviewEnabled] = useState(true);
@@ -84,7 +86,7 @@ export const FilterState = observer(function FilterState(props: Props) {
                 )}
               </>
             ) : (
-              <p className="text-11 text-placeholder italic">Nenhum resultado encontrado</p>
+              <p className="text-11 text-placeholder italic">{t("common.no_results_found")}</p>
             )
           ) : (
             <Loader className="space-y-2">

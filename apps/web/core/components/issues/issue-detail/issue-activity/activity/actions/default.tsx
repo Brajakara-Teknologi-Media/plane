@@ -10,6 +10,7 @@ import { WorkItemsIcon } from "@plane/propel/icons";
 import { EInboxIssueSource } from "@plane/types";
 // hooks
 import { capitalizeFirstLetter } from "@plane/utils";
+import { useTranslation } from "@plane/i18n";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // local imports
 import { IssueActivityBlockComponent } from "./";
@@ -22,6 +23,8 @@ export const IssueDefaultActivity = observer(function IssueDefaultActivity(props
   const {
     activity: { getActivityById },
   } = useIssueDetail();
+
+  const { t } = useTranslation();
 
   const activity = getActivityById(activityId);
 
@@ -38,14 +41,14 @@ export const IssueDefaultActivity = observer(function IssueDefaultActivity(props
         {activity.verb === "created" ? (
           source && source !== EInboxIssueSource.IN_APP ? (
             <span>
-              criou o chamado via{" "}
+              {t("work-item.activity.created_via")}
               <span className="font-medium">{capitalizeFirstLetter(source.toLowerCase() || "")}</span>.
             </span>
           ) : (
-            <span> criou o chamado.</span>
+            <span> {t("work-item.activity.created")}</span>
           )
         ) : (
-          <span> excluiu um chamado.</span>
+          <span> {t("work-item.activity.deleted")}</span>
         )}
       </>
     </IssueActivityBlockComponent>

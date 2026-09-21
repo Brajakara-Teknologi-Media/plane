@@ -19,7 +19,7 @@ export function EntityDropdown({
   onChange,
   workspaceSlug,
   buttonVariant = "border-with-text",
-  placeholder = "Entidade",
+  placeholder = "Entity",
   disabled = false,
   className,
   tabIndex,
@@ -73,9 +73,7 @@ export function EntityDropdown({
         disabled={disabled}
         className={cn(
           "flex h-full items-center gap-1 rounded text-caption-sm-regular",
-          isBorderVariant
-            ? "border-[0.5px] border-strong px-2 py-0.5 hover:bg-layer-1"
-            : "px-1 hover:bg-layer-1",
+          isBorderVariant ? "border-[0.5px] border-strong px-2 py-0.5 hover:bg-layer-1" : "px-1 hover:bg-layer-1",
           disabled && "cursor-not-allowed opacity-60"
         )}
       >
@@ -86,8 +84,11 @@ export function EntityDropdown({
             {!disabled && (
               <span
                 role="button"
-                onClick={(e) => { e.stopPropagation(); onChange(null); }}
-                className="ml-0.5 rounded hover:bg-layer-2 p-px"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onChange(null);
+                }}
+                className="ml-0.5 rounded p-px hover:bg-layer-2"
               >
                 <X className="h-2.5 w-2.5" />
               </span>
@@ -102,35 +103,37 @@ export function EntityDropdown({
       </button>
 
       {open && (
-        <div className="absolute left-0 top-full z-[200] mt-1 w-56 overflow-hidden rounded-md border border-strong bg-surface-1 shadow-lg">
+        <div className="shadow-lg absolute top-full left-0 z-[200] mt-1 w-56 overflow-hidden rounded-md border border-strong bg-surface-1">
           <div className="flex items-center gap-1.5 border-b border-strong px-2 py-1.5">
             <Search className="h-3.5 w-3.5 shrink-0 text-secondary" />
             <input
               autoFocus
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder="Buscar entidade..."
+              placeholder="Search entity..."
               className="w-full bg-transparent text-caption-sm-regular outline-none placeholder:text-secondary"
             />
           </div>
 
           <div className="max-h-48 overflow-y-auto py-1">
-            {loading && (
-              <p className="px-3 py-2 text-caption-sm-regular text-secondary">Carregando...</p>
-            )}
+            {loading && <p className="px-3 py-2 text-caption-sm-regular text-secondary">Loading...</p>}
 
             {!loading && filtered.length === 0 && (
-              <p className="px-3 py-2 text-caption-sm-regular text-secondary">Nenhuma entidade encontrada.</p>
+              <p className="px-3 py-2 text-caption-sm-regular text-secondary">No entity found.</p>
             )}
 
             {!loading && value && (
               <button
                 type="button"
-                onClick={() => { onChange(null); setOpen(false); setSearch(""); }}
+                onClick={() => {
+                  onChange(null);
+                  setOpen(false);
+                  setSearch("");
+                }}
                 className="flex w-full items-center gap-2 px-3 py-1.5 text-caption-sm-regular text-secondary hover:bg-layer-1"
               >
                 <X className="h-3 w-3" />
-                Remover entidade
+                Remove entity
               </button>
             )}
 
@@ -139,7 +142,11 @@ export function EntityDropdown({
                 <button
                   key={entity.id}
                   type="button"
-                  onClick={() => { onChange(entity.id); setOpen(false); setSearch(""); }}
+                  onClick={() => {
+                    onChange(entity.id);
+                    setOpen(false);
+                    setSearch("");
+                  }}
                   className={cn(
                     "flex w-full items-center gap-2 px-3 py-1.5 text-left text-caption-sm-regular hover:bg-layer-1",
                     entity.id === value && "bg-layer-2 font-medium"
@@ -149,7 +156,7 @@ export function EntityDropdown({
                   <div className="min-w-0 grow">
                     <p className="truncate">{entity.name}</p>
                     {(entity.city || entity.entity_type != null) && (
-                      <p className="truncate text-secondary text-xs">
+                      <p className="text-xs truncate text-secondary">
                         {[entityTypeLabel(entity.entity_type), entity.city].filter(Boolean).join(" · ")}
                       </p>
                     )}

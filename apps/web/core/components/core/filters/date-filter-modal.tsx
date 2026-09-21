@@ -10,6 +10,7 @@ import { Calendar } from "@plane/propel/calendar";
 import { CloseIcon } from "@plane/propel/icons";
 import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 import { renderFormattedPayloadDate, renderFormattedDate, getDate } from "@plane/utils";
+import { useTranslation } from "@plane/i18n";
 import { DateFilterSelect } from "./date-filter-select";
 type Props = {
   title: string;
@@ -34,6 +35,7 @@ export function DateFilterModal({ title, handleClose, isOpen, onSelect }: Props)
   const { handleSubmit, watch, control } = useForm<TFormValues>({
     defaultValues,
   });
+  const { t } = useTranslation();
 
   const handleFormSubmit = (formData: TFormValues) => {
     const { filterType, date1, date2 } = formData;
@@ -121,7 +123,7 @@ export function DateFilterModal({ title, handleClose, isOpen, onSelect }: Props)
         )}
         <div className="flex justify-end gap-4">
           <Button variant="secondary" size="lg" onClick={handleClose}>
-            Cancelar
+            {t("common.cancel")}
           </Button>
           <Button
             variant="primary"

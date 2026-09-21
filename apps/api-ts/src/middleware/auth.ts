@@ -64,7 +64,7 @@ async function tentar(resolver: () => Promise<AuthUser | null>): Promise<AuthUse
   try {
     return await resolver();
   } catch (error) {
-    throw new AuthUnavailableError("Serviço de autenticação indisponível. Tente novamente.", { cause: error });
+    throw new AuthUnavailableError("Authentication service unavailable. Try again.", { cause: error });
   }
 }
 
@@ -91,11 +91,11 @@ export const authPlugin = new Elysia({ name: "auth" })
       }
     } catch (error) {
       if (!(error instanceof AuthUnavailableError)) throw error;
-      console.error("[auth] falha ao resolver credencial:", error.cause);
+      console.error("[auth] failed to resolve credential:", error);
       ctx.set.status = 503;
       throw new Error(error.message);
     }
 
     ctx.set.status = 401;
-    throw new Error("Credenciais de autenticação não foram fornecidas.");
+    throw new Error("Authentication credentials were not provided.");
   });

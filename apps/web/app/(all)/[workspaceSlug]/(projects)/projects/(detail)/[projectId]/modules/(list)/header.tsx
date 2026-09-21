@@ -37,10 +37,7 @@ export const ModulesListHeader = observer(function ModulesListHeader() {
   const { t } = useTranslation();
 
   // auth
-  const canUserCreateModule = allowPermissions(
-    PROJECT_WORK_ROLES,
-    EUserPermissionsLevel.PROJECT
-  );
+  const canUserCreateModule = allowPermissions(PROJECT_WORK_ROLES, EUserPermissionsLevel.PROJECT);
 
   return (
     <Header>
@@ -51,7 +48,7 @@ export const ModulesListHeader = observer(function ModulesListHeader() {
             <Breadcrumbs.Item
               component={
                 <BreadcrumbLink
-                  label="Módulos"
+                  label="Modules"
                   href={`/${workspaceSlug}/projects/${projectId}/modules/`}
                   icon={<ModuleIcon className="h-4 w-4 text-tertiary" />}
                   isLast

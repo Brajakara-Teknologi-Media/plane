@@ -79,9 +79,9 @@ export function InstanceEmailForm(props: IInstanceEmailForm) {
     {
       key: "EMAIL_FROM",
       type: "text",
-      label: "Endereço de e-mail do remetente",
+      label: "Sender email address",
       description:
-        "Este é o e-mail que seus usuários verão ao receber mensagens desta instância. Você precisará verificar este endereço.",
+        "This is the email your users will see when receiving messages from this instance. You will need to verify this address.",
       placeholder: "nao-responda@qualitysistemas.com.br",
       error: Boolean(errors.EMAIL_FROM),
       required: true,
@@ -92,7 +92,7 @@ export function InstanceEmailForm(props: IInstanceEmailForm) {
     {
       key: "EMAIL_HOST_USER",
       type: "text",
-      label: "Usuário",
+      label: "Username",
       placeholder: "suporte@qualitysistemas.com.br",
       error: Boolean(errors.EMAIL_HOST_USER),
       required: false,
@@ -114,8 +114,8 @@ export function InstanceEmailForm(props: IInstanceEmailForm) {
       .then(() =>
         setToast({
           type: TOAST_TYPE.SUCCESS,
-          title: "Sucesso",
-          message: "Configurações de e-mail atualizadas com sucesso",
+          title: "Success",
+          message: "Email Settings atualizadas com sucesso",
         })
       )
       .catch((err) => console.error(err));
@@ -183,7 +183,7 @@ export function InstanceEmailForm(props: IInstanceEmailForm) {
           <div className="flex w-full max-w-xl flex-col gap-y-10 px-1">
             <div className="mr-8 flex items-center gap-10 pt-4">
               <div className="grow">
-                <div className="text-13 font-medium text-primary">Autenticação</div>
+                <div className="text-13 font-medium text-primary">Authentication</div>
                 <div className="text-11 font-regular text-tertiary">
                   Isto é opcional, mas recomendamos configurar um usuário e uma senha para o seu servidor SMTP.
                 </div>
@@ -215,7 +215,7 @@ export function InstanceEmailForm(props: IInstanceEmailForm) {
           loading={isSubmitting}
           disabled={!isValid || !isDirty}
         >
-          {isSubmitting ? "Salvando…" : "Salvar alterações"}
+          {isSubmitting ? "Saving…" : "Save changes"}
         </Button>
         <Button
           variant="secondary"

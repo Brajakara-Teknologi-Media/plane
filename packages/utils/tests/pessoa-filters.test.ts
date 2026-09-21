@@ -5,7 +5,7 @@
  *
  * O caso que quebra em silêncio é desligar quando o usuário é o único da lista:
  * deixar a condição vazia faz a listagem devolver ZERO chamados, e a pessoa lê
- * isso como "não tenho nada", não como "o filtro ficou quebrado".
+ * this as "I have nothing", not "the filter broke".
  */
 import { describe, expect, it } from "bun:test";
 import {
@@ -26,7 +26,7 @@ describe("PESSOA_FILTER_PROPERTY", () => {
 });
 
 describe("toPessoaList", () => {
-  it("normaliza os formatos que a condição pode guardar", () => {
+  it("normalizes the formats that the condition can store", () => {
     expect(toPessoaList([EU, OUTRO])).toEqual([EU, OUTRO]);
     expect(toPessoaList(EU)).toEqual([EU]);
     expect(toPessoaList(undefined)).toEqual([]);
@@ -34,13 +34,13 @@ describe("toPessoaList", () => {
     expect(toPessoaList("")).toEqual([]);
   });
 
-  it("descarta buracos deixados por uma condição recém-criada", () => {
+  it("discards holes left by a newly-created condition", () => {
     expect(toPessoaList([EU, "", undefined])).toEqual([EU]);
   });
 });
 
 describe("isCurrentUserSelected", () => {
-  it("só é verdadeiro quando há usuário e ele está na lista", () => {
+  it("is only true when there is a user and they are in the list", () => {
     expect(isCurrentUserSelected([EU, OUTRO], EU)).toBe(true);
     expect(isCurrentUserSelected([OUTRO], EU)).toBe(false);
     expect(isCurrentUserSelected([EU], undefined)).toBe(false);
@@ -48,24 +48,24 @@ describe("isCurrentUserSelected", () => {
 });
 
 describe("resolvePessoaFilterAction", () => {
-  it("sem usuário carregado não faz nada", () => {
+  it("without loaded user does nothing", () => {
     expect(resolvePessoaFilterAction([], undefined, false)).toEqual({ type: "noop" });
   });
 
-  it("ligar sem a condição cria com o usuário atual", () => {
+  it("enabling without condition creates with current user", () => {
     expect(resolvePessoaFilterAction([], EU, false)).toEqual({ type: "add", values: [EU] });
   });
 
-  it("ligar sobre a escolha de outra pessoa acrescenta, não substitui", () => {
+  it("enabling over another person's choice appends, does not replace", () => {
     // Preservar a escolha é o ponto do atalho: ele compõe, o modelo substitui.
     expect(resolvePessoaFilterAction([OUTRO], EU, true)).toEqual({ type: "update", values: [OUTRO, EU] });
   });
 
-  it("desligar quando sou o único REMOVE a condição", () => {
+  it("disabling when I am the only one REMOVES the condition", () => {
     expect(resolvePessoaFilterAction([EU], EU, true)).toEqual({ type: "remove" });
   });
 
-  it("desligar com outras pessoas na lista tira só a mim", () => {
+  it("disabling with others in the list removes only me", () => {
     expect(resolvePessoaFilterAction([EU, OUTRO], EU, true)).toEqual({ type: "update", values: [OUTRO] });
   });
 
@@ -77,11 +77,11 @@ describe("resolvePessoaFilterAction", () => {
     expect(desligado).toEqual({ type: "update", values: original });
   });
 
-  it("condição existente mas ainda vazia trata como ligar do zero", () => {
+  it("existing but still empty condition treats as enabling from scratch", () => {
     expect(resolvePessoaFilterAction([], EU, true)).toEqual({ type: "update", values: [EU] });
   });
 
-  it("os dois atalhos são independentes: a decisão só olha a própria lista", () => {
+  it("the two shortcuts are independent: the decision only looks at its own list", () => {
     // "Meus chamados" ligado não pode influenciar "Abertos por mim".
     const responsaveis = [EU];
     const criadores: string[] = [];

@@ -1,10 +1,10 @@
-import {useIssueDetail} from "@/hooks/store/use-issue-detail";
-import entityService, {type TEntity, entityTypeLabel} from "@/services/entity.service";
-import {cn} from "@plane/utils";
-import {Building2, ChevronDown, Search, X} from "lucide-react";
-import {observer} from "mobx-react";
-import {useCallback, useEffect, useRef, useState} from "react";
-import type {TIssueOperations} from "./root";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
+import entityService, { type TEntity, entityTypeLabel } from "@/services/entity.service";
+import { cn } from "@plane/utils";
+import { Building2, ChevronDown, Search, X } from "lucide-react";
+import { observer } from "mobx-react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import type { TIssueOperations } from "./root";
 
 type Props = {
   workspaceSlug: string;
@@ -24,7 +24,7 @@ export const IssueEntitySelect = observer(function IssueEntitySelect({
   className,
 }: Props) {
   const {
-    issue: {getIssueById},
+    issue: { getIssueById },
   } = useIssueDetail();
 
   const issue = getIssueById(issueId);
@@ -73,9 +73,9 @@ export const IssueEntitySelect = observer(function IssueEntitySelect({
     async (entityId: string | null) => {
       setOpen(false);
       setSearch("");
-      await issueOperations.update(workspaceSlug, projectId, issueId, {entity_id: entityId} as any);
+      await issueOperations.update(workspaceSlug, projectId, issueId, { entity_id: entityId } as any);
     },
-    [workspaceSlug, projectId, issueId, issueOperations],
+    [workspaceSlug, projectId, issueId, issueOperations]
   );
 
   const filtered = entities.filter((e) => {
@@ -89,22 +89,19 @@ export const IssueEntitySelect = observer(function IssueEntitySelect({
   });
 
   return (
-    <div
-      ref={dropdownRef}
-      className={cn("relative w-full", className)}
-    >
+    <div ref={dropdownRef} className={cn("relative w-full", className)}>
       <button
         type="button"
         onClick={() => !disabled && setOpen((o) => !o)}
         className={cn(
-          "flex w-full items-center gap-1.5 rounded px-2 py-1 text-body-xs-regular h-7.5",
-          "text-left hover:bg-surface-2 transition-colors",
+          "flex h-7.5 w-full items-center gap-1.5 rounded px-2 py-1 text-body-xs-regular",
+          "text-left transition-colors hover:bg-surface-2",
           disabled && "cursor-not-allowed opacity-60",
-          currentEntity ? "" : "text-secondary-text",
+          currentEntity ? "" : "text-secondary-text"
         )}
       >
-        <Building2 className="h-3.5 w-3.5 shrink-0 text-secondary-text" />
-        <span className="grow truncate">{selectedEntity ? selectedEntity.name : "Adicionar entidade"}</span>
+        <Building2 className="text-secondary-text h-3.5 w-3.5 shrink-0" />
+        <span className="grow truncate">{selectedEntity ? selectedEntity.name : "Add entity"}</span>
         {selectedEntity && !disabled && (
           <span
             role="button"
@@ -112,42 +109,42 @@ export const IssueEntitySelect = observer(function IssueEntitySelect({
               e.stopPropagation();
               handleSelect(null);
             }}
-            className="shrink-0 rounded-full hover:bg-surface-3 p-0.5"
+            className="hover:bg-surface-3 shrink-0 rounded-full p-0.5"
           >
             <X className="h-3 w-3" />
           </span>
         )}
-        {!currentEntity && <ChevronDown className="h-3 w-3 shrink-0 text-secondary-text" />}
+        {!currentEntity && <ChevronDown className="text-secondary-text h-3 w-3 shrink-0" />}
       </button>
 
       {open && (
-        <div className="absolute left-0 top-full z-50 mt-1 w-full min-w-[240px] overflow-hidden rounded-md border border-subtle bg-surface-1 shadow-md">
+        <div className="shadow-md absolute top-full left-0 z-50 mt-1 w-full min-w-[240px] overflow-hidden rounded-md border border-subtle bg-surface-1">
           <div className="flex items-center gap-2 border-b border-subtle px-2 py-1.5">
-            <Search className="h-3.5 w-3.5 shrink-0 text-secondary-text" />
+            <Search className="text-secondary-text h-3.5 w-3.5 shrink-0" />
             <input
               autoFocus
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder="Buscar entidade..."
-              className="w-full bg-transparent text-body-xs-regular outline-none placeholder:text-secondary-text"
+              placeholder="Search entity..."
+              className="placeholder:text-secondary-text w-full bg-transparent text-body-xs-regular outline-none"
             />
           </div>
 
           <div className="max-h-48 overflow-y-auto py-1">
-            {loading && <div className="px-3 py-2 text-body-xs-regular text-secondary-text">Carregando...</div>}
+            {loading && <div className="text-secondary-text px-3 py-2 text-body-xs-regular">Loading...</div>}
 
             {!loading && filtered.length === 0 && (
-              <div className="px-3 py-2 text-body-xs-regular text-secondary-text">Nenhuma entidade encontrada.</div>
+              <div className="text-secondary-text px-3 py-2 text-body-xs-regular">No entity found.</div>
             )}
 
             {!loading && currentEntityId && (
               <button
                 type="button"
                 onClick={() => handleSelect(null)}
-                className="flex w-full items-center gap-2 px-3 py-1.5 text-body-xs-regular text-secondary-text hover:bg-surface-2"
+                className="text-secondary-text flex w-full items-center gap-2 px-3 py-1.5 text-body-xs-regular hover:bg-surface-2"
               >
                 <X className="h-3 w-3" />
-                Remover entidade
+                Remove entity
               </button>
             )}
 
@@ -159,14 +156,14 @@ export const IssueEntitySelect = observer(function IssueEntitySelect({
                   onClick={() => handleSelect(entity.id)}
                   className={cn(
                     "flex w-full items-center gap-2 px-3 py-1.5 text-left text-body-xs-regular hover:bg-surface-2",
-                    entity.id === currentEntityId && "bg-surface-1-80 font-medium",
+                    entity.id === currentEntityId && "bg-surface-1-80 font-medium"
                   )}
                 >
-                  <Building2 className="h-3.5 w-3.5 shrink-0 text-secondary-text" />
+                  <Building2 className="text-secondary-text h-3.5 w-3.5 shrink-0" />
                   <div className="min-w-0 grow">
                     <p className="truncate">{entity.name}</p>
                     {(entity.city || entity.entity_type != null) && (
-                      <p className="truncate text-secondary-text text-body-2xs-regular">
+                      <p className="text-secondary-text text-body-2xs-regular truncate">
                         {[entityTypeLabel(entity.entity_type), entity.city].filter(Boolean).join(" · ")}
                       </p>
                     )}

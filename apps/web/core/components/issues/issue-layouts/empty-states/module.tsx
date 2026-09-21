@@ -38,10 +38,7 @@ export const ModuleEmptyState = observer(function ModuleEmptyState() {
   const { allowPermissions } = useUserPermissions();
   // derived values
   const moduleWorkItemFilter = useWorkItemFilterInstance(EIssuesStoreType.MODULE, moduleId);
-  const canPerformEmptyStateActions = allowPermissions(
-    PROJECT_WORK_ROLES,
-    EUserPermissionsLevel.PROJECT
-  );
+  const canPerformEmptyStateActions = allowPermissions(PROJECT_WORK_ROLES, EUserPermissionsLevel.PROJECT);
 
   const handleAddIssuesToModule = async (data: ISearchIssueResponse[]) => {
     if (!workspaceSlug || !projectId || !moduleId) return;
@@ -52,15 +49,15 @@ export const ModuleEmptyState = observer(function ModuleEmptyState() {
       .then(() =>
         setToast({
           type: TOAST_TYPE.SUCCESS,
-          title: "Sucesso!",
-          message: "Chamados adicionados ao módulo com sucesso.",
+          title: t("common.toast.success"),
+          message: "Work items added to module successfully.",
         })
       )
       .catch(() =>
         setToast({
           type: TOAST_TYPE.ERROR,
-          title: "Erro!",
-          message: "Não foi possível adicionar os itens selecionados ao módulo. Tente novamente.",
+          title: t("common.toast.error"),
+          message: "Could not add selected items to module. Please try again.",
         })
       );
   };

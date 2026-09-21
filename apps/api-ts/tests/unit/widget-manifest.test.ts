@@ -40,7 +40,7 @@ describe("validateManifest", () => {
   });
 
   it("throws 400 for unknown permissions", () => {
-    expect(() => validateManifest({ ...VALID, permissions: ["unknown.perm"] })).toThrow("permissões desconhecidas");
+    expect(() => validateManifest({ ...VALID, permissions: ["unknown.perm"] })).toThrow("unknown permissions");
   });
 
   it("accepts empty permissions array", () => {

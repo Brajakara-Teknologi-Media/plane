@@ -79,7 +79,7 @@ function AnalyticsPage({ params }: Route.ComponentProps) {
                 <div className={"flex h-full w-full flex-col"} data-print-area>
                   <div data-print-only>
                     <PrintHeader
-                      title="Análises"
+                      title="Analytics"
                       subtitle={currentWorkspace?.name}
                       meta={[{ label: "Aba", value: activeTabLabel }]}
                     />

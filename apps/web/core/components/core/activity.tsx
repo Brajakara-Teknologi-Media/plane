@@ -56,7 +56,7 @@ export function IssueLink({ activity }: { activity: IIssueActivity }) {
 
   return (
     <Tooltip
-      tooltipContent={activity?.issue_detail ? activity.issue_detail.name : "Este chamado foi excluído"}
+      tooltipContent={activity?.issue_detail ? activity.issue_detail.name : "This work item was deleted"}
       isMobile={isMobile}
     >
       {activity?.issue_detail ? (
@@ -72,7 +72,7 @@ export function IssueLink({ activity }: { activity: IIssueActivity }) {
         </a>
       ) : (
         <span className="inline-flex items-center gap-1 font-medium whitespace-nowrap text-primary">
-          {" um chamado"}{" "}
+          {" a work item"}{" "}
         </span>
       )}
     </Tooltip>
@@ -118,20 +118,20 @@ const LabelPill = observer(function LabelPill({ labelId, workspaceSlug }: { labe
 
 const inboxActivityMessage = {
   declined: {
-    showIssue: "recusou a solicitação",
-    noIssue: "recusou esta solicitação.",
+    showIssue: "declined the request",
+    noIssue: "declined this request.",
   },
   snoozed: {
-    showIssue: "adiou a solicitação",
-    noIssue: "adiou esta solicitação.",
+    showIssue: "snoozed the request",
+    noIssue: "snoozed this request.",
   },
   accepted: {
-    showIssue: "aceitou a solicitação",
-    noIssue: "aceitou esta solicitação.",
+    showIssue: "accepted the request",
+    noIssue: "accepted this request.",
   },
   markedDuplicate: {
-    showIssue: "recusou a solicitação",
-    noIssue: "recusou esta solicitação, marcando-a como duplicada.",
+    showIssue: "declined the request",
+    noIssue: "declined this request, marking it as duplicate.",
   },
 };
 
@@ -146,7 +146,7 @@ const getInboxUserActivityMessage = (activity: IIssueActivity, showIssue: boolea
     case "2":
       return showIssue ? inboxActivityMessage.markedDuplicate.showIssue : inboxActivityMessage.markedDuplicate.noIssue;
     default:
-      return "atualizou o status da solicitação.";
+      return "updated the request status.";
   }
 };
 
@@ -161,11 +161,11 @@ const activityDetails: {
       if (activity.old_value === "")
         return (
           <>
-            adicionou um novo responsável <UserLink activity={activity} />
+            added a new assignee <UserLink activity={activity} />
             {showIssue && (
               <>
                 {" "}
-                para <IssueLink activity={activity} />
+                to <IssueLink activity={activity} />
               </>
             )}
           </>
@@ -173,11 +173,11 @@ const activityDetails: {
       else
         return (
           <>
-            removeu o responsável <UserLink activity={activity} />
+            removed assignee <UserLink activity={activity} />
             {showIssue && (
               <>
                 {" "}
-                de <IssueLink activity={activity} />
+                from <IssueLink activity={activity} />
               </>
             )}
           </>
@@ -190,13 +190,13 @@ const activityDetails: {
       if (activity.new_value === "restore")
         return (
           <>
-            restaurou <IssueLink activity={activity} />
+            restored <IssueLink activity={activity} />
           </>
         );
       else
         return (
           <>
-            arquivou <IssueLink activity={activity} />
+            archived <IssueLink activity={activity} />
           </>
         );
     },
@@ -207,11 +207,11 @@ const activityDetails: {
       if (activity.verb === "created")
         return (
           <>
-            enviou um novo anexo
+            uploaded a new attachment
             {showIssue && (
               <>
                 {" "}
-                para <IssueLink activity={activity} />
+                to <IssueLink activity={activity} />
               </>
             )}
           </>
@@ -219,11 +219,11 @@ const activityDetails: {
       else
         return (
           <>
-            removeu um anexo
+            removed an attachment
             {showIssue && (
               <>
                 {" "}
-                de <IssueLink activity={activity} />
+                from <IssueLink activity={activity} />
               </>
             )}
           </>
@@ -234,11 +234,11 @@ const activityDetails: {
   description: {
     message: (activity, showIssue) => (
       <>
-        atualizou a descrição
+        updated the description
         {showIssue && (
           <>
             {" "}
-            de <IssueLink activity={activity} />
+            of <IssueLink activity={activity} />
           </>
         )}
       </>
@@ -250,11 +250,11 @@ const activityDetails: {
       if (!activity.new_value)
         return (
           <>
-            removeu o ponto de estimativa
+            removed the estimate point
             {showIssue && (
               <>
                 {" "}
-                de <IssueLink activity={activity} />
+                from <IssueLink activity={activity} />
               </>
             )}
           </>
@@ -262,11 +262,11 @@ const activityDetails: {
       else
         return (
           <>
-            definiu o ponto de estimativa como {activity.new_value}
+            set estimate point to {activity.new_value}
             {showIssue && (
               <>
                 {" "}
-                em <IssueLink activity={activity} />
+                on <IssueLink activity={activity} />
               </>
             )}
           </>
@@ -279,19 +279,19 @@ const activityDetails: {
       if (activity.verb === "created")
         return (
           <>
-            criou <IssueLink activity={activity} />
+            created <IssueLink activity={activity} />
           </>
         );
       else if (activity.verb === "converted")
         return (
           <>
-            converteu <IssueLink activity={activity} /> em um épico
+            converted <IssueLink activity={activity} /> to an epic
           </>
         );
       else
         return (
           <>
-            excluiu <IssueLink activity={activity} />
+            deleted <IssueLink activity={activity} />
           </>
         );
     },
@@ -302,19 +302,19 @@ const activityDetails: {
       if (activity.verb === "created")
         return (
           <>
-            criou <IssueLink activity={activity} />
+            created <IssueLink activity={activity} />
           </>
         );
       else if (activity.verb === "converted")
         return (
           <>
-            converteu <IssueLink activity={activity} /> em um chamado
+            converted <IssueLink activity={activity} /> to a work item
           </>
         );
       else
         return (
           <>
-            excluiu <IssueLink activity={activity} />
+            deleted <IssueLink activity={activity} />
           </>
         );
     },
@@ -325,7 +325,7 @@ const activityDetails: {
       if (activity.old_value === "")
         return (
           <span className="overflow-hidden">
-            adicionou uma nova etiqueta{" "}
+            added a new label{" "}
             <span className="inline-flex items-center gap-2 rounded-full border border-strong px-2 py-0.5 text-11">
               <LabelPill labelId={activity.new_identifier ?? ""} workspaceSlug={workspaceSlug} />
               <span className="line-clamp-1 flex-shrink font-medium break-all text-primary">{activity.new_value}</span>
@@ -333,7 +333,7 @@ const activityDetails: {
             {showIssue && (
               <span className="">
                 {" "}
-                para <IssueLink activity={activity} />
+                to <IssueLink activity={activity} />
               </span>
             )}
           </span>
@@ -341,7 +341,7 @@ const activityDetails: {
       else
         return (
           <>
-            removeu a etiqueta{" "}
+            removed label{" "}
             <span className="inline-flex items-center gap-2 rounded-full border border-strong px-2 py-0.5 text-11">
               <LabelPill labelId={activity.old_identifier ?? ""} workspaceSlug={workspaceSlug} />
               <span className="line-clamp-1 flex-shrink font-medium break-all text-primary">{activity.old_value}</span>
@@ -349,7 +349,7 @@ const activityDetails: {
             {showIssue && (
               <span>
                 {" "}
-                de <IssueLink activity={activity} />
+                from <IssueLink activity={activity} />
               </span>
             )}
           </>
@@ -362,7 +362,7 @@ const activityDetails: {
       if (activity.verb === "created")
         return (
           <>
-            adicionou este{" "}
+            added this{" "}
             <a
               href={`${activity.new_value}`}
               target="_blank"
@@ -374,7 +374,7 @@ const activityDetails: {
             {showIssue && (
               <>
                 {" "}
-                para <IssueLink activity={activity} />
+                to <IssueLink activity={activity} />
               </>
             )}
           </>
@@ -382,7 +382,7 @@ const activityDetails: {
       else if (activity.verb === "updated")
         return (
           <>
-            atualizou o{" "}
+            updated the{" "}
             <a
               href={`${activity.old_value}`}
               target="_blank"
@@ -394,7 +394,7 @@ const activityDetails: {
             {showIssue && (
               <>
                 {" "}
-                de <IssueLink activity={activity} />
+                on <IssueLink activity={activity} />
               </>
             )}
           </>
@@ -402,7 +402,7 @@ const activityDetails: {
       else
         return (
           <>
-            removeu este{" "}
+            removed this{" "}
             <a
               href={`${activity.old_value}`}
               target="_blank"
@@ -414,7 +414,7 @@ const activityDetails: {
             {showIssue && (
               <>
                 {" "}
-                de <IssueLink activity={activity} />
+                from <IssueLink activity={activity} />
               </>
             )}
           </>
@@ -428,8 +428,8 @@ const activityDetails: {
         return (
           <>
             <span className="flex-shrink-0">
-              adicionou {showIssue ? <IssueLink activity={activity} /> : "este chamado"}{" "}
-              <span className="whitespace-nowrap">ao ciclo</span>{" "}
+              added {showIssue ? <IssueLink activity={activity} /> : "this work item"}{" "}
+              <span className="whitespace-nowrap">to cycle</span>{" "}
             </span>
             <a
               href={`/${workspaceSlug}/projects/${activity.project}/cycles/${activity.new_identifier}`}
@@ -444,7 +444,7 @@ const activityDetails: {
       else if (activity.verb === "updated")
         return (
           <>
-            <span className="flex-shrink-0 whitespace-nowrap">definiu o ciclo como </span>
+            <span className="flex-shrink-0 whitespace-nowrap">set cycle to </span>
             <a
               href={`/${workspaceSlug}/projects/${activity.project}/cycles/${activity.new_identifier}`}
               target="_blank"
@@ -458,7 +458,7 @@ const activityDetails: {
       else
         return (
           <>
-            removeu <IssueLink activity={activity} /> do ciclo{" "}
+            removed <IssueLink activity={activity} /> from cycle{" "}
             <a
               href={`/${workspaceSlug}/projects/${activity.project}/cycles/${activity.old_identifier}`}
               target="_blank"
@@ -477,7 +477,7 @@ const activityDetails: {
       if (activity.verb === "created")
         return (
           <>
-            adicionou {showIssue ? <IssueLink activity={activity} /> : "este chamado"} ao módulo{" "}
+            added {showIssue ? <IssueLink activity={activity} /> : "this work item"} to module{" "}
             <a
               href={`/${workspaceSlug}/projects/${activity.project}/modules/${activity.new_identifier}`}
               target="_blank"
@@ -491,7 +491,7 @@ const activityDetails: {
       else if (activity.verb === "updated")
         return (
           <>
-            definiu o módulo como{" "}
+            set module to{" "}
             <a
               href={`/${workspaceSlug}/projects/${activity.project}/modules/${activity.new_identifier}`}
               target="_blank"
@@ -505,7 +505,7 @@ const activityDetails: {
       else
         return (
           <>
-            removeu <IssueLink activity={activity} /> do módulo{" "}
+            removed <IssueLink activity={activity} /> from module{" "}
             <a
               href={`/${workspaceSlug}/projects/${activity.project}/modules/${activity.old_identifier}`}
               target="_blank"
@@ -522,11 +522,11 @@ const activityDetails: {
   name: {
     message: (activity, showIssue) => (
       <>
-        definiu o título como <span className="break-all">{activity.new_value}</span>
+        set title to <span className="break-all">{activity.new_value}</span>
         {showIssue && (
           <>
             {" "}
-            de <IssueLink activity={activity} />
+            on <IssueLink activity={activity} />
           </>
         )}
       </>
@@ -538,11 +538,11 @@ const activityDetails: {
       if (!activity.new_value)
         return (
           <>
-            removeu o item pai <span className="font-medium whitespace-nowrap text-primary">{activity.old_value}</span>
+            removed parent item <span className="font-medium whitespace-nowrap text-primary">{activity.old_value}</span>
             {showIssue && (
               <>
                 {" "}
-                de <IssueLink activity={activity} />
+                from <IssueLink activity={activity} />
               </>
             )}
           </>
@@ -550,11 +550,11 @@ const activityDetails: {
       else
         return (
           <>
-            definiu o item pai como <span className="font-medium whitespace-nowrap text-primary">{activity.new_value}</span>
+            set parent item to <span className="font-medium whitespace-nowrap text-primary">{activity.new_value}</span>
             {showIssue && (
               <>
                 {" "}
-                em <IssueLink activity={activity} />
+                on <IssueLink activity={activity} />
               </>
             )}
           </>
@@ -565,14 +565,14 @@ const activityDetails: {
   priority: {
     message: (activity, showIssue) => (
       <>
-        definiu a prioridade como{" "}
+        set priority to{" "}
         <span className="font-medium text-primary">
-          {activity.new_value ? capitalizeFirstLetter(activity.new_value) : "Nenhuma"}
+          {activity.new_value ? capitalizeFirstLetter(activity.new_value) : "None"}
         </span>
         {showIssue && (
           <>
             {" "}
-            em <IssueLink activity={activity} />
+            on <IssueLink activity={activity} />
           </>
         )}
       </>
@@ -584,14 +584,14 @@ const activityDetails: {
       if (activity.old_value === "")
         return (
           <>
-            marcou que {showIssue ? <IssueLink activity={activity} /> : "este chamado"} se relaciona com{" "}
+            marked {showIssue ? <IssueLink activity={activity} /> : "this work item"} as related to{" "}
             <span className="font-medium whitespace-nowrap text-primary">{activity.new_value}</span>.
           </>
         );
       else
         return (
           <>
-            removeu a relação com{" "}
+            removed relation with{" "}
             <span className="font-medium whitespace-nowrap text-primary">{activity.old_value}</span>.
           </>
         );
@@ -603,14 +603,14 @@ const activityDetails: {
       if (activity.old_value === "")
         return (
           <>
-            marcou que {showIssue ? <IssueLink activity={activity} /> : "este chamado"} está bloqueando o chamado{" "}
+            marked {showIssue ? <IssueLink activity={activity} /> : "this work item"} as blocking work item{" "}
             <span className="font-medium whitespace-nowrap text-primary">{activity.new_value}</span>.
           </>
         );
       else
         return (
           <>
-            removeu o chamado bloqueado{" "}
+            removed blocked work item{" "}
             <span className="font-medium whitespace-nowrap text-primary">{activity.old_value}</span>.
           </>
         );
@@ -622,14 +622,14 @@ const activityDetails: {
       if (activity.old_value === "")
         return (
           <>
-            marcou que {showIssue ? <IssueLink activity={activity} /> : "este chamado"} está bloqueado por{" "}
+            marked {showIssue ? <IssueLink activity={activity} /> : "this work item"} as blocked by{" "}
             <span className="font-medium whitespace-nowrap text-primary">{activity.new_value}</span>.
           </>
         );
       else
         return (
           <>
-            removeu o bloqueio de {showIssue ? <IssueLink activity={activity} /> : "este chamado"} pelo chamado{" "}
+            removed blocker on {showIssue ? <IssueLink activity={activity} /> : "this work item"} from work item{" "}
             <span className="font-medium whitespace-nowrap text-primary">{activity.old_value}</span>.
           </>
         );
@@ -641,14 +641,14 @@ const activityDetails: {
       if (activity.old_value === "")
         return (
           <>
-            marcou {showIssue ? <IssueLink activity={activity} /> : "este chamado"} como duplicado de{" "}
+            marked {showIssue ? <IssueLink activity={activity} /> : "this work item"} as duplicate of{" "}
             <span className="font-medium whitespace-nowrap text-primary">{activity.new_value}</span>.
           </>
         );
       else
         return (
           <>
-            removeu {showIssue ? <IssueLink activity={activity} /> : "este chamado"} como duplicado de{" "}
+            removed {showIssue ? <IssueLink activity={activity} /> : "this work item"} as duplicate of{" "}
             <span className="font-medium whitespace-nowrap text-primary">{activity.old_value}</span>.
           </>
         );
@@ -658,11 +658,11 @@ const activityDetails: {
   state: {
     message: (activity, showIssue) => (
       <>
-        definiu o estado como <span className="font-medium break-all text-primary">{activity.new_value}</span>
+        set state to <span className="font-medium break-all text-primary">{activity.new_value}</span>
         {showIssue && (
           <>
             {" "}
-            em <IssueLink activity={activity} />
+            on <IssueLink activity={activity} />
           </>
         )}
       </>
@@ -674,11 +674,11 @@ const activityDetails: {
       if (!activity.new_value)
         return (
           <>
-            removeu a data de início
+            removed the start date
             {showIssue && (
               <>
                 {" "}
-                de <IssueLink activity={activity} />
+                from <IssueLink activity={activity} />
               </>
             )}
           </>
@@ -686,14 +686,14 @@ const activityDetails: {
       else
         return (
           <>
-            definiu a data de início como{" "}
+            set start date to{" "}
             <span className="font-medium whitespace-nowrap text-primary">
               {renderFormattedDate(activity.new_value)}
             </span>
             {showIssue && (
               <>
                 {" "}
-                em <IssueLink activity={activity} />
+                on <IssueLink activity={activity} />
               </>
             )}
           </>
@@ -706,11 +706,11 @@ const activityDetails: {
       if (!activity.new_value)
         return (
           <>
-            removeu a data de entrega
+            removed the due date
             {showIssue && (
               <>
                 {" "}
-                de <IssueLink activity={activity} />
+                from <IssueLink activity={activity} />
               </>
             )}
           </>
@@ -718,7 +718,7 @@ const activityDetails: {
       else
         return (
           <>
-            definiu a data de entrega como{" "}
+            set due date to{" "}
             <span className="font-medium whitespace-nowrap text-primary">
               {renderFormattedDate(activity.new_value)}
             </span>
@@ -742,7 +742,7 @@ const activityDetails: {
             <IssueLink activity={activity} />
           </>
         )}
-        {activity.verb === "2" && `, marcando-a como duplicada.`}
+        {activity.verb === "2" && `, marking it as duplicate.`}
       </>
     ),
     icon: <IntakeIcon className="size-3 text-secondary" aria-hidden="true" />,

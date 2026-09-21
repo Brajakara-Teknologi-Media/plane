@@ -6,6 +6,7 @@
 
 import type { CSSProperties } from "react";
 import { extractInstruction } from "@atlaskit/pragmatic-drag-and-drop-hitbox/tree-item";
+import { Building2 } from "lucide-react";
 import { clone, isNil, pull, uniq, concat } from "lodash-es";
 import scrollIntoView from "smooth-scroll-into-view-if-needed";
 // plane types
@@ -74,12 +75,15 @@ export const isWorkspaceLevel = (type: EIssuesStoreType) =>
     ? true
     : false;
 
+type TTranslate = (key: string, params?: Record<string, unknown>) => string;
+
 type TGetGroupByColumns = {
   groupBy: GroupByColumnTypes | null;
   includeNone: boolean;
   isWorkspaceLevel: boolean;
   isEpic?: boolean;
   projectId?: string;
+  t: TTranslate;
 };
 
 // NOTE: Type of groupBy is different compared to what's being passed from the components.
@@ -91,13 +95,14 @@ export const getGroupByColumns = ({
   isWorkspaceLevel,
   isEpic = false,
   projectId,
+  t,
 }: TGetGroupByColumns): IGroupByColumn[] | undefined => {
-  // Sem agrupamento: um único grupo que reúne tudo.
+  // No grouping: a single group that gathers everything.
   if (!groupBy && includeNone) {
     return [
       {
         id: "All Issues",
-        name: isEpic ? "Todas as épicas" : "Todos os chamados",
+        name: isEpic ? "All epics" : "All work items",
         payload: {},
         icon: undefined,
       },
@@ -110,7 +115,7 @@ export const getGroupByColumns = ({
   // Map of group by options to their corresponding column getter functions
   const groupByColumnMap: Record<
     GroupByColumnTypes,
-    ({ isWorkspaceLevel, projectId }: TGetColumns) => IGroupByColumn[] | undefined
+    ({ isWorkspaceLevel, projectId, t }: TGetColumns & { t: TTranslate }) => IGroupByColumn[] | undefined
   > = {
     project: getProjectColumns,
     cycle: getCycleColumns,
@@ -122,10 +127,11 @@ export const getGroupByColumns = ({
     assignees: getAssigneeColumns,
     created_by: getCreatedByColumns,
     team_project: getTeamProjectColumns,
+    entity: getEntityColumns,
   };
 
   // Get and return the columns for the specified group by option
-  return groupByColumnMap[groupBy]?.({ isWorkspaceLevel, projectId });
+  return groupByColumnMap[groupBy]?.({ isWorkspaceLevel, projectId, t });
 };
 
 const getProjectColumns = (): IGroupByColumn[] | undefined => {
@@ -151,7 +157,7 @@ const getProjectColumns = (): IGroupByColumn[] | undefined => {
     .filter((column) => column !== undefined) as IGroupByColumn[];
 };
 
-const getCycleColumns = (): IGroupByColumn[] | undefined => {
+const getCycleColumns = ({ t }: TGetColumns & { t: TTranslate }): IGroupByColumn[] | undefined => {
   const { currentProjectDetails } = store.projectRoot.project;
   // Check for the current project details
   if (!currentProjectDetails || !currentProjectDetails?.id) return;
@@ -169,19 +175,19 @@ const getCycleColumns = (): IGroupByColumn[] | undefined => {
       icon: <CycleGroupIcon cycleGroup={cycleStatus} className="h-3.5 w-3.5" />,
       payload: { cycle_id: cycle.id },
       isDropDisabled,
-      dropErrorMessage: isDropDisabled ? "O chamado não pode ser movido para ciclos concluídos" : undefined,
+      dropErrorMessage: isDropDisabled ? t("common.cannot_move_to_completed_cycle") : undefined,
     });
   });
   cycles.push({
     id: "None",
-    name: "Nenhum",
+    name: t("common.none"),
     icon: <CycleIcon className="h-3.5 w-3.5" />,
     payload: {},
   });
   return cycles;
 };
 
-const getModuleColumns = (): IGroupByColumn[] | undefined => {
+const getModuleColumns = ({ t }: TGetColumns & { t: TTranslate }): IGroupByColumn[] | undefined => {
   // get current project details
   const { currentProjectDetails } = store.projectRoot.project;
   if (!currentProjectDetails || !currentProjectDetails?.id) return;
@@ -201,11 +207,32 @@ const getModuleColumns = (): IGroupByColumn[] | undefined => {
   });
   modules.push({
     id: "None",
-    name: "Nenhum",
+    name: t("common.none"),
     icon: <ModuleIcon className="h-3.5 w-3.5" />,
     payload: {},
   });
   return modules;
+};
+
+const getEntityColumns = (): IGroupByColumn[] | undefined => {
+  const workspaceSlug = store.router.workspaceSlug;
+  if (!workspaceSlug) return;
+  const entities = store.entity.getWorkspaceEntities(workspaceSlug);
+  // undefined while still loading
+  if (entities === undefined) return;
+  const columns: IGroupByColumn[] = entities.map((entity) => ({
+    id: entity.id,
+    name: entity.name,
+    icon: <Building2 className="h-3.5 w-3.5" />,
+    payload: { entity_id: entity.id } as Partial<TIssue>,
+  }));
+  columns.push({
+    id: "None",
+    name: "None",
+    icon: <Building2 className="h-3.5 w-3.5" />,
+    payload: {},
+  });
+  return columns;
 };
 
 const getStateColumns = ({ projectId }: TGetColumns): IGroupByColumn[] | undefined => {
@@ -251,12 +278,12 @@ const getPriorityColumns = (): IGroupByColumn[] => {
   }));
 };
 
-const getLabelsColumns = ({ isWorkspaceLevel }: TGetColumns): IGroupByColumn[] => {
+const getLabelsColumns = ({ isWorkspaceLevel, t }: TGetColumns & { t: TTranslate }): IGroupByColumn[] => {
   const { workspaceLabels, projectLabels } = store.label;
   // map labels to group by columns
   const labels = [
     ...(isWorkspaceLevel ? workspaceLabels || [] : projectLabels || []),
-    { id: "None", name: "Nenhuma", color: "#666" },
+    { id: "None", name: t("common.none_fem"), color: "#666" },
   ];
   // map labels to group by columns
   return labels.map((label) => ({
@@ -269,7 +296,11 @@ const getLabelsColumns = ({ isWorkspaceLevel }: TGetColumns): IGroupByColumn[] =
   }));
 };
 
-const getAssigneeColumns = ({ isWorkspaceLevel, projectId }: TGetColumns): IGroupByColumn[] | undefined => {
+const getAssigneeColumns = ({
+  isWorkspaceLevel,
+  projectId,
+  t,
+}: TGetColumns & { t: TTranslate }): IGroupByColumn[] | undefined => {
   // store values
   const { getUserDetails } = store.memberRoot;
   // derived values
@@ -289,7 +320,7 @@ const getAssigneeColumns = ({ isWorkspaceLevel, projectId }: TGetColumns): IGrou
     });
   });
   if (includeNone) {
-    assigneeColumns.push({ id: "None", name: "Nenhum", icon: <Avatar size="md" />, payload: {} });
+    assigneeColumns.push({ id: "None", name: t("common.none"), icon: <Avatar size="md" />, payload: {} });
   }
 
   return assigneeColumns;

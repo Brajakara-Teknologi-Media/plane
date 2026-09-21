@@ -11,6 +11,7 @@ export interface PaginatedResult<T> {
   prev_cursor: string;
   next_page_results: boolean;
   prev_page_results: boolean;
+  total_pages: number;
   total_results: number;
   results: T[];
 }
@@ -52,12 +53,15 @@ export async function paginate<T>(opts: {
 
   const transformed = opts.transform ? opts.transform(results) : results;
 
+  const totalPages = Math.ceil(total / limit) || 1;
+
   return {
     total_count: total,
     next_cursor: buildCursor(limit, page + 1, false),
     prev_cursor: buildCursor(limit, Math.max(0, page - 1), true),
     next_page_results: hasNext,
     prev_page_results: page > 0,
+    total_pages: totalPages,
     total_results: total,
     results: transformed as unknown[],
   };

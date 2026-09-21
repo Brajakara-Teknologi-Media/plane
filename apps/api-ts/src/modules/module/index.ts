@@ -59,7 +59,7 @@ export const moduleModule = new Elysia({ prefix: "/workspaces/:slug/projects/:pr
     const { member } = await getProjectOrFail(ws.id, project_id, user.id);
     await requireProjectAction(ws.id, project_id, user.id, EProjectAction.MODULE_MANAGE);
     const b = body as any;
-    if (!b.name) { set.status = 400; return { detail: "O nome é obrigatório." }; }
+    if (!b.name) { set.status = 400; return { detail: "Name is required." }; }
     const mod = await prisma.module.create({
       data: {
         projectId: project_id, workspaceId: ws.id,
@@ -224,7 +224,7 @@ export const moduleModule = new Elysia({ prefix: "/workspaces/:slug/projects/:pr
     const ws = await getWorkspaceOrFail(slug);
     await getProjectOrFail(ws.id, project_id, user.id);
     const b = body as any;
-    if (!b.url) { set.status = 400; return { detail: "A URL é obrigatória." }; }
+    if (!b.url) { set.status = 400; return { detail: "URL is required." }; }
     const link = await prisma.moduleLink.create({
       data: { moduleId: module_id, workspaceId: ws.id, projectId: project_id, url: b.url, title: b.title ?? "", createdById: user.id },
     });
@@ -238,7 +238,7 @@ export const moduleModule = new Elysia({ prefix: "/workspaces/:slug/projects/:pr
     const link = await prisma.moduleLink.findFirst({
       where: { id: link_id, moduleId: module_id, projectId: project_id, workspaceId: ws.id, deletedAt: null },
     });
-    if (!link) { set.status = 404; return { detail: "Link não encontrado." }; }
+    if (!link) { set.status = 404; return { detail: "Link not found." }; }
     await prisma.moduleLink.update({ where: { id: link_id }, data: { deletedAt: new Date() } });
     set.status = 204;
     return null;

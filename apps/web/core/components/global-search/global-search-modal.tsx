@@ -5,6 +5,7 @@ import { Dialog, Transition } from "@headlessui/react";
 import { useParams, useRouter } from "next/navigation";
 import { Search, X, FileText, Inbox, ArrowUpRight } from "lucide-react";
 import { cn } from "@plane/utils";
+import { useTranslation } from "@plane/i18n";
 import { WorkspaceService } from "@/services/workspace.service";
 
 function useDebounce<T>(value: T, delay: number): T {
@@ -19,8 +20,8 @@ function useDebounce<T>(value: T, delay: number): T {
 const workspaceService = new WorkspaceService();
 
 const CATEGORY_LABEL: Record<string, string> = {
-  "Work Items": "Chamados",
-  Intakes: "Solicitações",
+  "Work Items": "Work Items",
+  Intakes: "Requests",
 };
 
 const PRIORITY_COLOR: Record<string, string> = {
@@ -49,12 +50,16 @@ type Props = {
 
 export function GlobalSearchModal({ isOpen, onClose }: Props) {
   const [query, setQuery] = useState("");
-  const [results, setResults] = useState<{ issues: SearchResult[]; intakes: SearchResult[] }>({ issues: [], intakes: [] });
+  const [results, setResults] = useState<{ issues: SearchResult[]; intakes: SearchResult[] }>({
+    issues: [],
+    intakes: [],
+  });
   const [loading, setLoading] = useState(false);
   const [selected, setSelected] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
   const { workspaceSlug } = useParams();
   const router = useRouter();
+  const { t } = useTranslation();
   const debouncedQuery = useDebounce(query, 300);
 
   useEffect(() => {
@@ -100,8 +105,14 @@ export function GlobalSearchModal({ isOpen, onClose }: Props) {
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
       if (!isOpen) return;
-      if (e.key === "ArrowDown") { e.preventDefault(); setSelected((s) => Math.min(s + 1, allResults.length - 1)); }
-      if (e.key === "ArrowUp") { e.preventDefault(); setSelected((s) => Math.max(s - 1, 0)); }
+      if (e.key === "ArrowDown") {
+        e.preventDefault();
+        setSelected((s) => Math.min(s + 1, allResults.length - 1));
+      }
+      if (e.key === "ArrowUp") {
+        e.preventDefault();
+        setSelected((s) => Math.max(s - 1, 0));
+      }
       if (e.key === "Enter" && allResults[selected]) navigate(allResults[selected]);
     };
     window.addEventListener("keydown", handler);
@@ -111,42 +122,65 @@ export function GlobalSearchModal({ isOpen, onClose }: Props) {
   return (
     <Transition.Root show={isOpen} as={Fragment}>
       <Dialog as="div" className="relative z-50" onClose={onClose}>
-        <Transition.Child as={Fragment} enter="ease-out duration-150" enterFrom="opacity-0" enterTo="opacity-100" leave="ease-in duration-100" leaveFrom="opacity-100" leaveTo="opacity-0">
+        <Transition.Child
+          as={Fragment}
+          enter="ease-out duration-150"
+          enterFrom="opacity-0"
+          enterTo="opacity-100"
+          leave="ease-in duration-100"
+          leaveFrom="opacity-100"
+          leaveTo="opacity-0"
+        >
           <div className="fixed inset-0 bg-black/50" />
         </Transition.Child>
         <div className="fixed inset-0 overflow-y-auto">
-          <div className="flex min-h-full items-start justify-center pt-[15vh] px-4">
-            <Transition.Child as={Fragment} enter="ease-out duration-150" enterFrom="opacity-0 scale-95" enterTo="opacity-100 scale-100" leave="ease-in duration-100" leaveFrom="opacity-100 scale-100" leaveTo="opacity-0 scale-95">
-              <Dialog.Panel className="w-full max-w-2xl overflow-hidden rounded-2xl bg-surface-1 shadow-2xl">
+          <div className="flex min-h-full items-start justify-center px-4 pt-[15vh]">
+            <Transition.Child
+              as={Fragment}
+              enter="ease-out duration-150"
+              enterFrom="opacity-0 scale-95"
+              enterTo="opacity-100 scale-100"
+              leave="ease-in duration-100"
+              leaveFrom="opacity-100 scale-100"
+              leaveTo="opacity-0 scale-95"
+            >
+              <Dialog.Panel className="shadow-2xl w-full max-w-2xl overflow-hidden rounded-2xl bg-surface-1">
                 {/* Search input */}
                 <div className="flex items-center gap-3 border-b border-subtle px-4 py-3">
                   <Search className="h-5 w-5 shrink-0 text-secondary" />
                   <input
                     ref={inputRef}
                     value={query}
-                    onChange={(e) => { setQuery(e.target.value); setSelected(0); }}
-                    placeholder="Buscar chamados, solicitações, chamados legados… (#1234-2026)"
-                    className="flex-1 bg-transparent text-15 text-primary outline-none placeholder:text-tertiary"
+                    onChange={(e) => {
+                      setQuery(e.target.value);
+                      setSelected(0);
+                    }}
+                    placeholder="Search issues, requests, legacy tickets… (#1234-2026)"
+                    className="text-15 flex-1 bg-transparent text-primary outline-none placeholder:text-tertiary"
                   />
-                  {loading && <div className="h-4 w-4 animate-spin rounded-full border-2 border-accent-primary border-t-transparent" />}
+                  {loading && (
+                    <div className="border-accent-primary h-4 w-4 animate-spin rounded-full border-2 border-t-transparent" />
+                  )}
                   {query && !loading && (
                     <button onClick={() => setQuery("")} className="text-tertiary hover:text-primary">
                       <X className="h-4 w-4" />
                     </button>
                   )}
-                  <kbd className="hidden rounded border border-subtle px-1.5 py-0.5 text-11 text-tertiary sm:block">Esc</kbd>
+                  <kbd className="hidden rounded border border-subtle px-1.5 py-0.5 text-11 text-tertiary sm:block">
+                    Esc
+                  </kbd>
                 </div>
 
                 {/* Results */}
                 <div className="max-h-[60vh] overflow-y-auto p-2">
                   {!query && (
                     <p className="px-4 py-6 text-center text-13 text-secondary">
-                      Digite para buscar chamados, solicitações, chamados legados ou identificadores de sistema.
+                      {t("common.search_placeholder_hint")}
                     </p>
                   )}
                   {query && !loading && allResults.length === 0 && (
                     <p className="px-4 py-6 text-center text-13 text-secondary">
-                      Nenhum resultado encontrado para &ldquo;{query}&rdquo;
+                      {t("common.no_results_for", { query })}
                     </p>
                   )}
 
@@ -158,11 +192,17 @@ export function GlobalSearchModal({ isOpen, onClose }: Props) {
                     return (
                       <div key={category} className="mb-2">
                         <div className="flex items-center gap-2 px-3 py-1.5">
-                          {category === "Intakes" ? <Inbox className="h-3.5 w-3.5 text-tertiary" /> : <FileText className="h-3.5 w-3.5 text-tertiary" />}
-                          <span className="text-11 font-semibold uppercase tracking-wider text-tertiary">
+                          {category === "Intakes" ? (
+                            <Inbox className="h-3.5 w-3.5 text-tertiary" />
+                          ) : (
+                            <FileText className="h-3.5 w-3.5 text-tertiary" />
+                          )}
+                          <span className="tracking-wider text-11 font-semibold text-tertiary uppercase">
                             {CATEGORY_LABEL[category] ?? category}
                           </span>
-                          <span className="rounded-full bg-surface-2 px-1.5 text-10 font-medium text-tertiary">{items.length}</span>
+                          <span className="rounded-full bg-surface-2 px-1.5 text-10 font-medium text-tertiary">
+                            {items.length}
+                          </span>
                         </div>
                         {items.map((item, idx) => {
                           const globalIdx = baseIdx + idx;
@@ -178,21 +218,26 @@ export function GlobalSearchModal({ isOpen, onClose }: Props) {
                             >
                               {/* Work item identifier (e.g. SIARTW-32) */}
                               {item.project?.identifier && item.sequence_id != null && (
-                                <span className="shrink-0 rounded bg-surface-2 px-1.5 py-0.5 text-10 font-mono font-semibold text-secondary">
+                                <span className="font-mono shrink-0 rounded bg-surface-2 px-1.5 py-0.5 text-10 font-semibold text-secondary">
                                   {item.project.identifier}-{item.sequence_id}
                                 </span>
                               )}
 
                               {/* Legacy ticket badge */}
                               {item.legacy_ticket_number && (
-                                <span className="shrink-0 rounded bg-amber-100 px-1.5 py-0.5 text-10 font-mono font-semibold text-amber-800 ring-1 ring-amber-300">
+                                <span className="bg-amber-100 font-mono text-amber-800 ring-amber-300 shrink-0 rounded px-1.5 py-0.5 text-10 font-semibold ring-1">
                                   #{item.legacy_ticket_number}
                                 </span>
                               )}
 
                               {/* Priority indicator */}
                               {item.priority && item.priority !== "none" && (
-                                <span className={cn("shrink-0 rounded px-1.5 py-0.5 text-10 font-semibold", PRIORITY_COLOR[item.priority] ?? "")}>
+                                <span
+                                  className={cn(
+                                    "shrink-0 rounded px-1.5 py-0.5 text-10 font-semibold",
+                                    PRIORITY_COLOR[item.priority] ?? ""
+                                  )}
+                                >
                                   {item.priority.toUpperCase()}
                                 </span>
                               )}
@@ -201,13 +246,13 @@ export function GlobalSearchModal({ isOpen, onClose }: Props) {
                               <span className="flex-1 truncate text-13 text-primary">{item.name}</span>
 
                               {/* State */}
-                              {item.state && (
-                                <span className="shrink-0 text-11 text-tertiary">{item.state.name}</span>
-                              )}
+                              {item.state && <span className="shrink-0 text-11 text-tertiary">{item.state.name}</span>}
 
                               {/* Project name */}
                               {item.project && (
-                                <span className="max-w-40 shrink-0 truncate text-11 text-tertiary">{item.project.name}</span>
+                                <span className="max-w-40 shrink-0 truncate text-11 text-tertiary">
+                                  {item.project.name}
+                                </span>
                               )}
 
                               <ArrowUpRight className="h-3.5 w-3.5 shrink-0 text-tertiary opacity-0 group-hover:opacity-100" />
@@ -221,10 +266,12 @@ export function GlobalSearchModal({ isOpen, onClose }: Props) {
 
                 {/* Footer hint */}
                 <div className="flex items-center gap-4 border-t border-subtle px-4 py-2">
-                  <span className="text-11 text-tertiary">↑↓ navegar</span>
-                  <span className="text-11 text-tertiary">↵ abrir</span>
-                  <span className="text-11 text-tertiary">Esc fechar</span>
-                  <span className="ml-auto text-11 text-tertiary">Busca com tolerância a erros habilitada</span>
+                  <span className="text-11 text-tertiary">{t("work-item.global_search.hint_navigate")}</span>
+                  <span className="text-11 text-tertiary">{t("work-item.global_search.hint_open")}</span>
+                  <span className="text-11 text-tertiary">{t("work-item.global_search.hint_close")}</span>
+                  <span className="ml-auto text-11 text-tertiary">
+                    {t("work-item.global_search.fuzzy_search_enabled")}
+                  </span>
                 </div>
               </Dialog.Panel>
             </Transition.Child>

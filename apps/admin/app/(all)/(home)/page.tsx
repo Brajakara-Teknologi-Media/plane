@@ -45,6 +45,6 @@ function HomePage() {
 export default observer(HomePage);
 
 export const meta: Route.MetaFunction = () => [
-  { title: "Admin – Configuração da instância e login" },
+  { title: "Admin – Instance configuration and login" },
   { name: "description", content: "Configure your Avião instance or sign in to the admin portal." },
 ];

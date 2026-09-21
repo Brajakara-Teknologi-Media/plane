@@ -41,17 +41,17 @@ export function InstanceAIForm(props: IInstanceAIForm) {
     {
       key: "LLM_MODEL",
       type: "text",
-      label: "Modelo de LLM",
+      label: "LLM Model",
       description: (
         <>
-          Escolha um modelo da OpenAI.{" "}
+          Choose an OpenAI model.{" "}
           <a
             href="https://platform.openai.com/docs/models/overview"
             target="_blank"
             className="text-accent-primary hover:underline"
             rel="noreferrer"
           >
-            Saiba mais
+            Learn more
           </a>
         </>
       ),
@@ -62,17 +62,17 @@ export function InstanceAIForm(props: IInstanceAIForm) {
     {
       key: "LLM_API_KEY",
       type: "password",
-      label: "Chave de API",
+      label: "API Key",
       description: (
         <>
-          A chave de API fica{" "}
+          The API key can be found{" "}
           <a
             href="https://platform.openai.com/api-keys"
             target="_blank"
             className="text-accent-primary hover:underline"
             rel="noreferrer"
           >
-            aqui.
+            here.
           </a>
         </>
       ),
@@ -89,8 +89,8 @@ export function InstanceAIForm(props: IInstanceAIForm) {
       .then(() =>
         setToast({
           type: TOAST_TYPE.SUCCESS,
-          title: "Sucesso",
-          message: "Configurações de IA atualizadas com sucesso",
+          title: "Success",
+          message: "AI settings updated successfully",
         })
       )
       .catch((err) => console.error(err));
@@ -101,7 +101,7 @@ export function InstanceAIForm(props: IInstanceAIForm) {
       <div className="space-y-3">
         <div>
           <div className="pb-1 text-18 font-medium text-primary">OpenAI</div>
-          <div className="text-13 font-regular text-tertiary">Se você usa o ChatGPT, isto é para você.</div>
+          <div className="text-13 font-regular text-tertiary">If you use ChatGPT, this is for you.</div>
         </div>
         <div className="grid-col grid w-full grid-cols-1 items-center justify-between gap-x-12 gap-y-8 lg:grid-cols-3">
           {aiFormFields.map((field) => (
@@ -122,15 +122,15 @@ export function InstanceAIForm(props: IInstanceAIForm) {
 
       <div className="flex flex-col items-start gap-4">
         <Button variant="primary" size="lg" onClick={handleSubmit(onSubmit)} loading={isSubmitting}>
-          {isSubmitting ? "Salvando…" : "Salvar alterações"}
+          {isSubmitting ? "Saving…" : "Save changes"}
         </Button>
 
         <div className="relative inline-flex items-center gap-1.5 rounded-sm border border-accent-subtle bg-accent-subtle px-4 py-2 text-caption-sm-regular text-accent-secondary">
           <Lightbulb className="size-4" />
           <div>
-            Prefere outro fornecedor de modelos de IA? Entre em{" "}
+            Prefer another AI model provider? Please{" "}
             <a className="font-medium underline" href="https://www.qualitysistemas.com.br">
-              contato conosco.
+              contact us.
             </a>
           </div>
         </div>

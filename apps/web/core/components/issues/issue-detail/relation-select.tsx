@@ -14,6 +14,7 @@ import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { ISearchIssueResponse } from "@plane/types";
 import { cn, generateWorkItemLink } from "@plane/utils";
+import { useTranslation } from "@plane/i18n";
 // components
 import { ExistingIssuesListModal } from "@/components/core/modals/existing-issues-list-modal";
 // hooks
@@ -37,6 +38,7 @@ type TIssueRelationSelect = {
 
 export const IssueRelationSelect = observer(function IssueRelationSelect(props: TIssueRelationSelect) {
   const { className = "", workspaceSlug, projectId, issueId, relationKey, disabled = false } = props;
+  const { t } = useTranslation();
   // hooks
   const { getProjectById } = useProject();
   const {
@@ -55,8 +57,8 @@ export const IssueRelationSelect = observer(function IssueRelationSelect(props: 
     if (data.length === 0) {
       setToast({
         type: TOAST_TYPE.ERROR,
-        title: "Erro!",
-        message: "Selecione pelo menos um chamado.",
+        title: t("toast.error"),
+        message: t("issue.select.error"),
       });
       return;
     }
@@ -119,7 +121,7 @@ export const IssueRelationSelect = observer(function IssueRelationSelect(props: 
                     key={relationIssueId}
                     className={`group flex items-center gap-1 rounded-sm px-1.5 pt-1 pb-1 leading-3 hover:bg-surface-2 ${currRelationOption?.className}`}
                   >
-                    <Tooltip tooltipHeading="Título" tooltipContent={currentIssue.name} isMobile={isMobile}>
+                    <Tooltip tooltipHeading="Title" tooltipContent={currentIssue.name} isMobile={isMobile}>
                       <Link
                         href={generateWorkItemLink({
                           workspaceSlug,
@@ -137,7 +139,7 @@ export const IssueRelationSelect = observer(function IssueRelationSelect(props: 
                       </Link>
                     </Tooltip>
                     {!disabled && (
-                      <Tooltip tooltipContent="Remover" position="bottom" isMobile={isMobile}>
+                      <Tooltip tooltipContent={t("common.remove")} position="bottom" isMobile={isMobile}>
                         <span
                           onClick={(e) => {
                             e.preventDefault();

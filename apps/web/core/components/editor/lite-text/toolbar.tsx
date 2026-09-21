@@ -51,7 +51,7 @@ const COMMENT_ACCESS_SPECIFIERS: TCommentAccessType[] = [
   {
     icon: GlobeIcon,
     key: EIssueCommentAccessSpecifier.EXTERNAL,
-    label: "Público",
+    label: "Public",
   },
 ];
 

@@ -45,10 +45,7 @@ export const PagesListMainContent = observer(function PagesListMainContent(props
   // derived values
   const pageIds = getCurrentProjectPageIdsByTab(pageType);
   const filteredPageIds = getCurrentProjectFilteredPageIdsByTab(pageType);
-  const canPerformEmptyStateActions = allowPermissions(
-    PROJECT_WORK_ROLES,
-    EUserPermissionsLevel.PROJECT
-  );
+  const canPerformEmptyStateActions = allowPermissions(PROJECT_WORK_ROLES, EUserPermissionsLevel.PROJECT);
 
   // handle page create
   const handleCreatePage = async () => {
@@ -66,8 +63,8 @@ export const PagesListMainContent = observer(function PagesListMainContent(props
       .catch((err) => {
         setToast({
           type: TOAST_TYPE.ERROR,
-          title: "Erro!",
-          message: err?.data?.error || "Não foi possível criar a página. Tente novamente.",
+          title: t("common.toast.error"),
+          message: err?.data?.error || "Could not create the page. Please try again.",
         });
       })
       .finally(() => setIsCreatingPage(false));

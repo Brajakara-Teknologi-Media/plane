@@ -23,6 +23,7 @@ export type TIssueGroupByOptions =
   | "module"
   | "target_date"
   | "team_project"
+  | "entity"
   | null;
 
 export type TIssueOrderByOptions =
@@ -54,7 +55,13 @@ export type TIssueOrderByOptions =
   | "attachment_count"
   | "-attachment_count"
   | "sub_issues_count"
-  | "-sub_issues_count";
+  | "-sub_issues_count"
+  | "sequence_id"
+  | "-sequence_id"
+  | "type_id"
+  | "-type_id"
+  | "entity_id"
+  | "-entity_id";
 
 export type TIssueGroupingFilters = "active" | "backlog";
 

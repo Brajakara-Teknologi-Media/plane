@@ -51,8 +51,8 @@ export const entityModule = new Elysia({ prefix: "/workspaces/:slug" })
     const ws = await getWorkspaceOrFail(slug);
     await requireWorkspaceWriter(ws.id, user.id);
     const b = body as any;
-    if (!b.name) { set.status = 400; return { detail: "O nome é obrigatório." }; }
-    // Nome de entidade é único por workspace (não há índice único no banco, então
+    if (!b.name) { set.status = 400; return { detail: "Name is required." }; }
+    // Entity name is unique per workspace (no unique index in the database, so
     // a checagem é explícita; o tratamento de P2002 abaixo cobre corridas caso um
     // índice seja criado no futuro).
     const duplicate = await prisma.entity.findFirst({
@@ -61,7 +61,7 @@ export const entityModule = new Elysia({ prefix: "/workspaces/:slug" })
     });
     if (duplicate) {
       set.status = 409;
-      return { detail: "Já existe uma entidade com este nome.", id: duplicate.id };
+      return { detail: "An entity with this name already exists.", id: duplicate.id };
     }
     try {
       const entity = await prisma.entity.create({
@@ -89,7 +89,7 @@ export const entityModule = new Elysia({ prefix: "/workspaces/:slug" })
           where: { workspaceId: ws.id, name: b.name, deletedAt: null },
         });
         set.status = 409;
-        return { detail: "Já existe uma entidade com este nome.", id: existing?.id };
+        return { detail: "An entity with this name already exists.", id: existing?.id };
       }
       throw e;
     }

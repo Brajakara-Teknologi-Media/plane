@@ -21,11 +21,11 @@ type Props = {
 };
 
 /**
- * Documento pronto para impressão. É montado em um portal filho direto de
- * <body> (fica oculto na tela) para que, ao imprimir, o navegador pagine o
- * conteúdo normalmente sem herdar `overflow`/alturas fixas do layout do app.
+ * Print-ready document. It is mounted in a portal that is a direct child of
+ * <body> (hidden on screen) so that, when printing, the browser paginates the
+ * content normally without inheriting `overflow`/fixed heights from the app layout.
  *
- * Use junto com `usePrint().print()` no modo padrão (`document`).
+ * Use together with `usePrint().print()` in the default mode (`document`).
  */
 export const PrintDocument = function PrintDocument(props: Props) {
   const { title, subtitle, meta, children, className } = props;

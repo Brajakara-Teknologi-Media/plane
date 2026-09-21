@@ -6,6 +6,7 @@
 
 import { useCallback, useMemo } from "react";
 import { observer } from "mobx-react";
+import { useTranslation } from "@plane/i18n";
 import { useParams } from "next/navigation";
 // icons
 import { DueDatePropertyIcon, StartDatePropertyIcon } from "@plane/propel/icons";
@@ -41,6 +42,7 @@ export interface IIssueProperties {
 
 export const DraftIssueProperties = observer(function DraftIssueProperties(props: IIssueProperties) {
   const { issue, updateIssue, className } = props;
+  const { t } = useTranslation();
   // store hooks
   const { getProjectById } = useProject();
   const { labelMap } = useLabel();
@@ -180,7 +182,7 @@ export const DraftIssueProperties = observer(function DraftIssueProperties(props
           value={issue.start_date ?? null}
           onChange={handleStartDate}
           maxDate={maxDate}
-          placeholder="Data de início"
+          placeholder="Start date"
           icon={<StartDatePropertyIcon className="h-3 w-3 flex-shrink-0" />}
           buttonVariant={issue.start_date ? "border-with-text" : "border-without-text"}
           optionsClassName="z-10"
@@ -195,7 +197,7 @@ export const DraftIssueProperties = observer(function DraftIssueProperties(props
           value={issue?.target_date ?? null}
           onChange={handleTargetDate}
           minDate={minDate}
-          placeholder="Data de vencimento"
+          placeholder={t("issue.add.due_date")}
           icon={<DueDatePropertyIcon className="h-3 w-3 flex-shrink-0" />}
           buttonVariant={issue.target_date ? "border-with-text" : "border-without-text"}
           buttonClassName={
@@ -218,7 +220,7 @@ export const DraftIssueProperties = observer(function DraftIssueProperties(props
           buttonVariant={issue.assignee_ids?.length > 0 ? "transparent-without-text" : "border-without-text"}
           buttonClassName={issue.assignee_ids?.length > 0 ? "hover:bg-transparent px-0" : ""}
           showTooltip={issue?.assignee_ids?.length === 0}
-          placeholder="Responsáveis"
+          placeholder="Responsible"
           optionsClassName="z-10"
           tooltipContent=""
           renderByDefault={isMobile}

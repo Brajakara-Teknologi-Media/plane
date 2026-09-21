@@ -9,6 +9,7 @@ import { observer } from "mobx-react";
 import { ArrowUpToLine, Clipboard, History } from "lucide-react";
 // plane imports
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { useTranslation } from "@plane/i18n";
 import { ToggleSwitch } from "@plane/ui";
 // hooks
 import { useAppRouter } from "@/hooks/use-app-router";
@@ -31,6 +32,8 @@ type Props = {
 
 export const PageOptionsDropdown = observer(function PageOptionsDropdown(props: Props) {
   const { page, storeType } = props;
+  // language support
+  const { t } = useTranslation();
   // states
   const [isExportModalOpen, setIsExportModalOpen] = useState(false);
   // navigation
@@ -79,11 +82,11 @@ export const PageOptionsDropdown = observer(function PageOptionsDropdown(props: 
             editorRef.copyMarkdownToClipboard();
             setToast({
               type: TOAST_TYPE.SUCCESS,
-              title: "Sucesso!",
-              message: "Markdown copiado para a área de transferência.",
+              title: t("common.toast.success"),
+              message: "Markdown copied to clipboard.",
             });
           },
-          title: "Copiar markdown",
+          title: "Copy markdown",
           icon: Clipboard,
           shouldRender: true,
         },
@@ -98,14 +101,14 @@ export const PageOptionsDropdown = observer(function PageOptionsDropdown(props: 
             });
             router.push(updatedRoute);
           },
-          title: "Histórico de versões",
+          title: "Version history",
           icon: History,
           shouldRender: true,
         },
         {
           key: "export",
           action: () => setIsExportModalOpen(true),
-          title: "Exportar",
+          title: "Export",
           icon: ArrowUpToLine,
           shouldRender: true,
         },

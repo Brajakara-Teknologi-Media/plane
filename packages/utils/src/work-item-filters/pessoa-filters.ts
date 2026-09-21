@@ -5,14 +5,14 @@
  */
 
 /**
- * Decisão dos atalhos de pessoa: **Meus chamados** (`assignee_id`) e
+ * Decision for person shortcuts: **My work items** (`assignee_id`) and
  * **Abertos por mim** (`created_by_id`).
  *
- * Os dois ligam/desligam o usuário atual numa condição **sem apagar o resto do
- * filtro** — é o que permite combinar "chamados do meu setor" com "só os meus".
- * A regra tem cantos que quebram a listagem em silêncio (uma condição com lista
- * vazia devolve zero chamados, não "sem filtro"), então ela vive aqui, longe do
- * React, e é testada.
+ * Both toggle the current user on a condition **without erasing the rest of the
+ * filter** — which allows combining "work items from my sector" with "just mine".
+ * The rule has corners that break the listing silently (a condition with empty
+ * list returns zero work items, not "no filter"), so it lives here, far from
+ * React, and is tested.
  */
 
 /** Propriedades que os atalhos manipulam. */
@@ -23,7 +23,7 @@ export const PESSOA_FILTER_PROPERTY = {
 
 export type TPessoaFilterProperty = (typeof PESSOA_FILTER_PROPERTY)[keyof typeof PESSOA_FILTER_PROPERTY];
 
-/** O que o componente deve fazer com a condição. */
+/** What the component should do with the condition. */
 export type TPessoaFilterAction =
   | { type: "add"; values: string[] }
   | { type: "update"; values: string[] }
@@ -41,8 +41,8 @@ export const isCurrentUserSelected = (values: string[], currentUserId: string | 
   !!currentUserId && values.includes(currentUserId);
 
 /**
- * @param values Pessoas já filtradas (vazio quando não há condição).
- * @param hasCondition Se a condição existe no filtro.
+ * @param values People already filtered (empty when there is no condition).
+ * @param hasCondition Whether the condition exists in the filter.
  */
 export const resolvePessoaFilterAction = (
   values: string[],
@@ -58,11 +58,11 @@ export const resolvePessoaFilterAction = (
   }
 
   const restante = values.filter((id) => id !== currentUserId);
-  // Condição vazia não é "sem filtro": a listagem devolveria zero chamados.
+  // Empty condition is not "no filter": the listing would return zero work items.
   return restante.length === 0 ? { type: "remove" } : { type: "update", values: restante };
 };
 
-// Nomes antigos, mantidos porque a versão anterior só tratava responsáveis.
+// Old names, kept because the previous version only handled assignees.
 export const toAssigneeList = toPessoaList;
 export const isAssignedToCurrentUser = isCurrentUserSelected;
 export const resolveMyWorkItemsAction = resolvePessoaFilterAction;

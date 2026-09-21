@@ -1,0 +1,65 @@
+{
+  "print": {
+    "table": {
+      "due_date": "Prazo"
+    },
+    "counts": {
+      "tickets": "{count} chamado(s)",
+      "requests": "{count} solicitação(ões)",
+      "visits": "{count} visita(s)",
+      "messages": "{count} mensagem(ns)"
+    },
+    "labels": {
+      "channel": "Canal",
+      "status": "Status",
+      "phone": "Telefone",
+      "opened_at": "Aberto em",
+      "duplicate_of": "Duplicada de",
+      "city": "Cidade",
+      "contacts": "Contatos",
+      "motivations": "Motivos",
+      "scheduled_for": "Agendada para",
+      "situation": "Situação",
+      "lead": "Responsável",
+      "total": "Total"
+    },
+    "chat": {
+      "sender_client": "Cliente",
+      "sender_attendant": "Atendente",
+      "sender_system": "Sistema",
+      "attachment_prefix": "[anexo] {name}",
+      "deleted_message": "(mensagem apagada)",
+      "data_section": "Dados do atendimento",
+      "no_messages": "Nenhuma mensagem registrada.",
+      "sender_bot": "Suporte automatizado"
+    },
+    "intake": {
+      "empty": "Nenhuma solicitação encontrada."
+    },
+    "visits": {
+      "mot_bug_fix": "Fix de erro",
+      "mot_training": "Treinamento",
+      "mot_improvement": "Melhoria",
+      "mot_commercial": "Comercial",
+      "mot_other": "Outro",
+      "empty": "Nenhuma visita técnica encontrada.",
+      "data_section": "Dados da visita",
+      "summary_section": "Resumo dos atendimentos",
+      "mot_update": "Atualização",
+      "no_summary": "Sem resumo."
+    },
+    "module": {
+      "document_title": "Módulo — {name}",
+      "total_issues": "Total de chamados"
+    },
+    "cycle": {
+      "document_title": "Ciclo — {name}"
+    },
+    "work_item": {
+      "comments_title": "Comentários ({count})",
+      "no_comments": "Nenhum comentário.",
+      "no_attachments": "Nenhum anexo.",
+      "attachments_title": "Anexos ({count})"
+    }
+  }
+}

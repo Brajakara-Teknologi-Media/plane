@@ -12,6 +12,7 @@ import type { EditorRefApi } from "@plane/editor";
 import { ChevronRightIcon } from "@plane/propel/icons";
 // plane ui
 import { Tooltip } from "@plane/propel/tooltip";
+import { useTranslation } from "@plane/i18n";
 // components
 import { cn } from "@plane/utils";
 import { RichTextEditor } from "@/components/editor/rich-text";
@@ -46,7 +47,7 @@ const MENU_ITEMS: {
 const TONES_LIST = [
   {
     key: "default",
-    label: "Padrão",
+    label: "Default",
     casual_score: 5,
     formal_score: 5,
   },
@@ -66,6 +67,7 @@ const TONES_LIST = [
 
 export function EditorAIMenu(props: Props) {
   const { editorRef, isOpen, onClose, workspaceId, workspaceSlug } = props;
+  const { t } = useTranslation();
   // states
   const [activeTask, setActiveTask] = useState<AI_EDITOR_TASKS | null>(null);
   const [response, setResponse] = useState<string | undefined>(undefined);
@@ -234,7 +236,7 @@ export function EditorAIMenu(props: Props) {
                       >
                         Replace selection
                       </button>
-                      <Tooltip tooltipContent="Adicionar à próxima linha">
+                      <Tooltip tooltipContent="Add to next line">
                         <button
                           type="button"
                           className="grid size-6 flex-shrink-0 place-items-center rounded-sm outline-none hover:bg-layer-1"
@@ -243,7 +245,7 @@ export function EditorAIMenu(props: Props) {
                           <CornerDownRight className="size-4 text-tertiary" />
                         </button>
                       </Tooltip>
-                      <Tooltip tooltipContent="Gerar resposta novamente">
+                      <Tooltip tooltipContent={t("misc.ai.regenerate")}>
                         <button
                           type="button"
                           className="grid size-6 flex-shrink-0 place-items-center rounded-sm outline-none hover:bg-layer-1"
@@ -299,9 +301,7 @@ export function EditorAIMenu(props: Props) {
           <span className="grid size-4 flex-shrink-0 place-items-center">
             <TriangleAlert className="size-3" />
           </span>
-          <p className="flex-shrink-0 text-11 font-medium">
-            Ao usar este recurso, você concorda em compartilhar a mensagem com um serviço de terceiros.
-          </p>
+          <p className="flex-shrink-0 text-11 font-medium">{t("misc.ai.third_party_disclaimer")}</p>
         </div>
       )}
     </div>

@@ -73,7 +73,7 @@ export const analyticsModule = new Elysia({ prefix: "/workspaces/:slug" })
     const ws = await getWorkspaceOrFail(slug);
     await requireWorkspaceWriter(ws.id, user.id);
     const b = body as any;
-    if (!b.name) { set.status = 400; return { detail: "O nome é obrigatório." }; }
+    if (!b.name) { set.status = 400; return { detail: "Name is required." }; }
     const view = await prisma.analyticView.create({
       data: {
         workspaceId: ws.id, name: b.name, description: b.description ?? "",

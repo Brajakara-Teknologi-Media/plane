@@ -147,7 +147,7 @@ export const AuthPasswordForm = observer(function AuthPasswordForm(props: Props)
 
       <div className="space-y-1">
         <label className="text-13 font-medium text-tertiary" htmlFor="password">
-          {mode === EAuthModes.SIGN_IN ? "Password" : "Defina uma senha"}
+          {mode === EAuthModes.SIGN_IN ? "Password" : "Set a password"}
         </label>
         <div className="relative flex items-center rounded-md bg-surface-1">
           <Input
@@ -232,13 +232,13 @@ export const AuthPasswordForm = observer(function AuthPasswordForm(props: Props)
                 className="w-full"
                 size="xl"
               >
-                Entrar com código único
+                Sign in with unique code
               </Button>
             )}
           </>
         ) : (
           <Button type="submit" variant="primary" className="w-full" size="xl" disabled={isButtonDisabled}>
-            {isSubmitting ? <Spinner height="20px" width="20px" /> : "Criar conta"}
+            {isSubmitting ? <Spinner height="20px" width="20px" /> : "Create account"}
           </Button>
         )}
       </div>

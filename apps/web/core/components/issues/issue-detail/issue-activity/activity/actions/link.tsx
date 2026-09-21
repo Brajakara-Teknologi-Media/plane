@@ -5,6 +5,7 @@
  */
 
 import { observer } from "mobx-react";
+import { useTranslation } from "@plane/i18n";
 import { MessageSquare } from "lucide-react";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
@@ -15,7 +16,7 @@ type TIssueLinkActivity = { activityId: string; showIssue?: boolean; ends: "top"
 
 export const IssueLinkActivity = observer(function IssueLinkActivity(props: TIssueLinkActivity) {
   const { activityId, showIssue = false, ends } = props;
-  // hooks
+  const { t } = useTranslation();
   const {
     activity: { getActivityById },
   } = useIssueDetail();
@@ -32,7 +33,7 @@ export const IssueLinkActivity = observer(function IssueLinkActivity(props: TIss
       <>
         {activity.verb === "created" ? (
           <>
-            <span>adicionou </span>
+            <span>{t("work-item.activity.added_link")}</span>
             <a
               href={`${activity.new_value}`}
               target="_blank"
@@ -44,7 +45,7 @@ export const IssueLinkActivity = observer(function IssueLinkActivity(props: TIss
           </>
         ) : activity.verb === "updated" ? (
           <>
-            <span>atualizou o </span>
+            <span>{t("work-item.activity.updated_link")}</span>
             <a
               href={`${activity.old_value}`}
               target="_blank"
@@ -56,7 +57,7 @@ export const IssueLinkActivity = observer(function IssueLinkActivity(props: TIss
           </>
         ) : (
           <>
-            <span>removeu este </span>
+            <span>{t("work-item.activity.removed_link")}</span>
             <a
               href={`${activity.old_value}`}
               target="_blank"
@@ -67,7 +68,7 @@ export const IssueLinkActivity = observer(function IssueLinkActivity(props: TIss
             </a>
           </>
         )}
-        {showIssue && (activity.verb === "created" ? ` em ` : ` de `)}
+        {showIssue && (activity.verb === "created" ? ` ${t("activity.for")} ` : ` ${t("activity.from")} `)}
         {showIssue && <IssueLink activityId={activityId} />}.
       </>
     </IssueActivityBlockComponent>

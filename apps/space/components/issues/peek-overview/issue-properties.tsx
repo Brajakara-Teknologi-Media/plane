@@ -55,7 +55,7 @@ export const PeekOverviewIssueProperties = observer(function PeekOverviewIssuePr
       setToast({
         type: TOAST_TYPE.INFO,
         title: "Link copiado!",
-        message: "Link do chamado copiado para a área de transferência",
+        message: "Work item link copied to clipboard",
       });
     });
   };

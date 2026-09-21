@@ -49,7 +49,7 @@ export const FilterAccess = observer(function FilterAccess(props: Props) {
               />
             ))
           ) : (
-            <p className="text-11 text-placeholder italic">Nenhum resultado encontrado</p>
+            <p className="text-11 text-placeholder italic">{t("common.no_results_found")}</p>
           )}
         </div>
       )}

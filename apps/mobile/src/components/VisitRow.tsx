@@ -8,8 +8,8 @@ import { SyncBadge } from "./badges";
 import { Row, Text } from "./ui";
 
 const MOTIVATIONS: { key: keyof TechnicalVisit; label: string }[] = [
-  { key: "mot_update", label: "Atualização" },
-  { key: "mot_bug_fix", label: "Correção" },
+  { key: "mot_update", label: "Update" },
+  { key: "mot_bug_fix", label: "Fix" },
   { key: "mot_training", label: "Treinamento" },
   { key: "mot_improvement", label: "Melhoria" },
   { key: "mot_commercial", label: "Comercial" },
@@ -33,7 +33,7 @@ export function VisitRow({ visit, onPress }: { visit: TechnicalVisit; onPress?: 
       })}
     >
       <Row align="space-between">
-        <Text weight="bold">{visit.visit_number ? `Visita #${visit.visit_number}` : "Visita técnica"}</Text>
+        <Text weight="bold">{visit.visit_number ? `Visit #${visit.visit_number}` : "Technical visit"}</Text>
         {pending ? <SyncBadge compact /> : <Text variant="tertiary">{shortDate(visit.scheduled_date)}</Text>}
       </Row>
       {visit.city ? <Text variant="secondary">{visit.city}</Text> : null}

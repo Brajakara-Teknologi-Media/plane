@@ -10,8 +10,8 @@ import { useTheme } from "@/theme";
 import { shortDate } from "@/utils/format";
 
 const MOTIVATIONS: { key: keyof TechnicalVisit; label: string }[] = [
-  { key: "mot_update", label: "Atualização" },
-  { key: "mot_bug_fix", label: "Correção de erros" },
+  { key: "mot_update", label: "Update" },
+  { key: "mot_bug_fix", label: "Bug fix" },
   { key: "mot_training", label: "Treinamento" },
   { key: "mot_improvement", label: "Melhoria" },
   { key: "mot_commercial", label: "Comercial" },
@@ -44,14 +44,14 @@ export default function VisitDetailScreen() {
 
   return (
     <Screen scroll refreshControl={<RefreshControl refreshing={visit.loading} onRefresh={visit.refetch} tintColor={colors.primary} />}>
-      <Text variant="title">{v.visit_number ? `Visita #${v.visit_number}` : "Visita técnica"}</Text>
+      <Text variant="title">{v.visit_number ? `Visit #${v.visit_number}` : "Technical visit"}</Text>
 
       <Card>
         <Field label="Entidade" value={entity?.name} />
         <Divider />
-        <Field label="Município" value={v.city} />
+        <Field label="Municipality" value={v.city} />
         <Divider />
-        <Field label="Período" value={v.period} />
+        <Field label="Period" value={v.period} />
         <Divider />
         <Field label="Programada" value={shortDate(v.scheduled_date)} />
         <Divider />

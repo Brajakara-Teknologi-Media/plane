@@ -45,12 +45,12 @@ const InstanceGitlabAuthenticationPage = observer(function InstanceGitlabAuthent
     setPromiseToast(updateConfigPromise, {
       loading: "Saving Configuration",
       success: {
-        title: "Configuração salva",
+        title: "Configuration saved",
         message: () => `GitLab authentication is now ${value === "1" ? "active" : "disabled"}.`,
       },
       error: {
-        title: "Erro",
-        message: () => "Falha ao salvar a configuração",
+        title: "Error",
+        message: () => "Failed to save configuration",
       },
     });
 
@@ -68,7 +68,7 @@ const InstanceGitlabAuthenticationPage = observer(function InstanceGitlabAuthent
       customHeader={
         <AuthenticationMethodCard
           name="GitLab"
-          description="Permita que membros entrem ou se cadastrem no Avião com suas contas do GitLab."
+          description="Allow members to sign in or register in Avião with their GitLab accounts."
           icon={<img src={GitlabLogo} height={24} width={24} alt="Logo do GitLab" />}
           config={
             <ToggleSwitch
@@ -104,6 +104,6 @@ const InstanceGitlabAuthenticationPage = observer(function InstanceGitlabAuthent
   );
 });
 
-export const meta: Route.MetaFunction = () => [{ title: "Autenticação GitLab - God Mode" }];
+export const meta: Route.MetaFunction = () => [{ title: "Authentication GitLab - God Mode" }];
 
 export default InstanceGitlabAuthenticationPage;

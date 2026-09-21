@@ -36,7 +36,7 @@ const WorkspaceManagementPage = observer(function WorkspaceManagementPage(_props
     fetchNextWorkspaces,
   } = useWorkspace();
   // derived values
-  const disableWorkspaceCreation = formattedConfig?.DISABLE_WORKSPACE_CREATION ?? "";
+  const disableWorkspaceCreation = formattedConfig?.IS_WORKSPACE_CREATION_DISABLED ?? "";
   const hasNextPage = paginationInfo?.next_page_results && paginationInfo?.next_cursor !== undefined;
 
   // fetch data
@@ -53,14 +53,14 @@ const WorkspaceManagementPage = observer(function WorkspaceManagementPage(_props
     const updateConfigPromise = updateInstanceConfigurations(payload);
 
     setPromiseToast(updateConfigPromise, {
-      loading: "Salvando configuração",
+      loading: "Saving configuration",
       success: {
-        title: "Sucesso",
-        message: () => "Configuração salva com sucesso",
+        title: "Success",
+        message: () => "Configuration saved com sucesso",
       },
       error: {
         title: "Erro",
-        message: () => "Falha ao salvar a configuração",
+        message: () => "Failed to save configuration",
       },
     });
 
@@ -77,8 +77,8 @@ const WorkspaceManagementPage = observer(function WorkspaceManagementPage(_props
   return (
     <PageWrapper
       header={{
-        title: "Espaços de trabalho nesta instância",
-        description: "Veja todos os espaços de trabalho e controle quem pode criá-los.",
+        title: "Workspaces in this instance",
+        description: "View all workspaces and control who can create them.",
       }}
     >
       <div className="space-y-3">
@@ -86,9 +86,9 @@ const WorkspaceManagementPage = observer(function WorkspaceManagementPage(_props
           <div className={cn("flex w-full items-center gap-14 rounded-sm")}>
             <div className="flex grow items-center gap-4">
               <div className="grow">
-                <div className="pb-1 text-16 font-medium">Impedir que outras pessoas criem espaços de trabalho.</div>
+                <div className="pb-1 text-16 font-medium">Prevent others from creating workspaces.</div>
                 <div className={cn("text-11 leading-5 font-regular text-tertiary")}>
-                  Ativar isto permitirá que apenas você crie espaços de trabalho. Você terá que convidar usuários para novos espaços.
+                  Enabling this allows only you to create workspaces. You will have to invite users to new spaces.
                 </div>
               </div>
             </div>
@@ -98,9 +98,9 @@ const WorkspaceManagementPage = observer(function WorkspaceManagementPage(_props
                   value={Boolean(parseInt(disableWorkspaceCreation))}
                   onChange={() => {
                     if (Boolean(parseInt(disableWorkspaceCreation)) === true) {
-                      updateConfig("DISABLE_WORKSPACE_CREATION", "0");
+                      updateConfig("IS_WORKSPACE_CREATION_DISABLED", "0");
                     } else {
-                      updateConfig("DISABLE_WORKSPACE_CREATION", "1");
+                      updateConfig("IS_WORKSPACE_CREATION_DISABLED", "1");
                     }
                   }}
                   size="sm"
@@ -119,19 +119,19 @@ const WorkspaceManagementPage = observer(function WorkspaceManagementPage(_props
             <div className="flex items-center justify-between gap-2 pt-6">
               <div className="flex flex-col items-start gap-x-2">
                 <div className="flex items-center gap-2 text-16 font-medium">
-                  Todos os espaços de trabalho nesta instância <span className="text-tertiary">• {workspaceIds.length}</span>
+                  All workspaces in this instance <span className="text-tertiary">• {workspaceIds.length}</span>
                   {workspaceLoader && ["mutation", "pagination"].includes(workspaceLoader) && (
                     <LoaderIcon className="h-4 w-4 animate-spin" />
                   )}
                 </div>
                 <div className={cn("text-11 leading-5 font-regular text-tertiary")}>
-                  Ainda não é possível excluir espaços de trabalho por aqui, e só dá para entrar num deles se você for
+                  You cannot delete workspaces here yet, and you can only enter one if you are
                   administrador ou membro.
                 </div>
               </div>
               <div className="flex items-center gap-2">
                 <Link href="/workspace/create" className={getButtonStyling("primary", "base")}>
-                  Criar espaço de trabalho
+                  Create workspace
                 </Link>
               </div>
             </div>
@@ -167,6 +167,6 @@ const WorkspaceManagementPage = observer(function WorkspaceManagementPage(_props
   );
 });
 
-export const meta: Route.MetaFunction = () => [{ title: "Gerenciamento de espaços de trabalho - God Mode" }];
+export const meta: Route.MetaFunction = () => [{ title: "Workspace Management - Admin" }];
 
 export default WorkspaceManagementPage;

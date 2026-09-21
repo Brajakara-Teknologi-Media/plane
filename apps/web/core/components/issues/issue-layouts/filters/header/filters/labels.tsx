@@ -10,6 +10,7 @@ import { observer } from "mobx-react";
 import type { IIssueLabel } from "@plane/types";
 // components
 import { Loader } from "@plane/ui";
+import { useTranslation } from "@plane/i18n";
 import { FilterHeader, FilterOption } from "@/components/issues/issue-layouts/filters";
 
 // ui
@@ -28,6 +29,7 @@ type Props = {
 
 export const FilterLabels = observer(function FilterLabels(props: Props) {
   const { appliedFilters, handleUpdate, labels, searchQuery } = props;
+  const { t } = useTranslation();
 
   const [itemsToRender, setItemsToRender] = useState(5);
   const [previewEnabled, setPreviewEnabled] = useState(true);
@@ -85,7 +87,7 @@ export const FilterLabels = observer(function FilterLabels(props: Props) {
                 )}
               </>
             ) : (
-              <p className="text-11 text-placeholder italic">Nenhum resultado encontrado</p>
+              <p className="text-11 text-placeholder italic">{t("common.no_results_found")}</p>
             )
           ) : (
             <Loader className="space-y-2">

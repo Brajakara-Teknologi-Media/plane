@@ -98,8 +98,8 @@ export const IssueDescriptionEditor = observer(function IssueDescriptionEditor(p
     } else {
       setToast({
         type: TOAST_TYPE.ERROR,
-        title: "Erro!",
-        message: "O editor ainda está processando alterações. Aguarde antes de continuar.",
+        title: t("common.toast.error"),
+        message: "The editor is still processing changes. Please wait before continuing.",
       });
       event.preventDefault(); // Prevent default action if editor is not ready to discard
     }
@@ -122,15 +122,15 @@ export const IssueDescriptionEditor = observer(function IssueDescriptionEditor(p
     aiService
       .createGptTask(workspaceSlug.toString(), {
         prompt: issueName,
-        task: "Gere uma descrição adequada para este chamado.",
+        task: "Generate an appropriate description for this work item.",
       })
       .then((res) => {
         if (res.response === "")
           setToast({
             type: TOAST_TYPE.ERROR,
-            title: "Erro!",
+            title: t("common.toast.error"),
             message:
-              "O título do chamado não é informativo o suficiente para gerar a descrição. Tente com um título diferente.",
+              "The work item title is not descriptive enough to generate a description. Try with a different title.",
           });
         else handleAiAssistance(res.response_html);
       })
@@ -140,14 +140,14 @@ export const IssueDescriptionEditor = observer(function IssueDescriptionEditor(p
         if (err.status === 429)
           setToast({
             type: TOAST_TYPE.ERROR,
-            title: "Erro!",
-            message: error || "Você atingiu o limite máximo de 50 solicitações por mês por usuário.",
+            title: t("common.toast.error"),
+            message: error || "You have reached the maximum limit of 50 requests per month per user.",
           });
         else
           setToast({
             type: TOAST_TYPE.ERROR,
-            title: "Erro!",
-            message: error || "Ocorreu um erro. Tente novamente.",
+            title: t("common.toast.error"),
+            message: error || "An error occurred. Please try again.",
           });
       })
       .finally(() => setIAmFeelingLucky(false));
@@ -222,7 +222,7 @@ export const IssueDescriptionEditor = observer(function IssueDescriptionEditor(p
                     return asset_id;
                   } catch (error) {
                     console.log("Error in uploading issue asset:", error);
-                    throw new Error("Falha ao enviar o arquivo. Tente novamente mais tarde.");
+                    throw new Error(t("common.failed_to_upload_file"));
                   }
                 }}
                 duplicateFile={async (assetId: string) => {
@@ -237,7 +237,7 @@ export const IssueDescriptionEditor = observer(function IssueDescriptionEditor(p
                     onAssetUpload(asset_id);
                     return asset_id;
                   } catch {
-                    throw new Error("Falha ao duplicar o arquivo. Tente novamente mais tarde.");
+                    throw new Error(t("common.failed_to_duplicate_file"));
                   }
                 }}
               />

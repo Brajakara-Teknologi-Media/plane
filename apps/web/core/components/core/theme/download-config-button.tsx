@@ -45,14 +45,14 @@ export const CustomThemeDownloadConfigButton = observer(function CustomThemeDown
       setToast({
         type: TOAST_TYPE.SUCCESS,
         title: t("success"),
-        message: "Configuração de tema baixada com sucesso.",
+        message: t("common.theme_downloaded"),
       });
     } catch (error) {
       console.error("Failed to download config:", error);
       setToast({
         type: TOAST_TYPE.ERROR,
         title: t("error"),
-        message: "Falha ao baixar a configuração de tema.",
+        message: t("common.theme_download_failed"),
       });
     }
   };

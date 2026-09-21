@@ -1,6 +1,6 @@
 // H4 — intake replication.
 //
-// When a work item is marked completed (Concluído) or cancelled (Cancelado),
+// When a work item is marked completed or cancelled,
 // its comments and activities are replicated onto any intake item that was
 // linked to it as a duplicate (IntakeIssue.duplicateOf === issue). This lets the
 // original requester see the resolution on their intake. Cancelled behaves like

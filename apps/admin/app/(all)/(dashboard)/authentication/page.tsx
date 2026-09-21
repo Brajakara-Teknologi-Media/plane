@@ -55,9 +55,9 @@ const InstanceAuthenticationPage = observer(function InstanceAuthenticationPage(
           if (!canDisable) {
             setToast({
               type: TOAST_TYPE.ERROR,
-              title: "Não é possível desativar a autenticação",
+              title: "Cannot disable authentication",
               message:
-                "Pelo menos um método de autenticação deve permanecer ativado. Ative outro método antes de desativar este.",
+                "At least one authentication method must remain enabled. Enable another method before disabling this one.",
             });
             return;
           }
@@ -74,14 +74,14 @@ const InstanceAuthenticationPage = observer(function InstanceAuthenticationPage(
       const updateConfigPromise = updateInstanceConfigurations(payload);
 
       setPromiseToast(updateConfigPromise, {
-        loading: "Salvando configuração",
+        loading: "Saving configuration",
         success: {
-          title: "Sucesso",
-          message: () => "Configuração salva com sucesso",
+          title: "Success",
+          message: () => "Configuration saved successfully",
         },
         error: {
-          title: "Erro",
-          message: () => "Falha ao salvar a configuração",
+          title: "Error",
+          message: () => "Failed to save configuration",
         },
       });
 
@@ -111,8 +111,8 @@ const InstanceAuthenticationPage = observer(function InstanceAuthenticationPage(
   return (
     <PageWrapper
       header={{
-        title: "Gerencie os modos de autenticação da sua instância",
-        description: "Configure os modos de autenticação da sua equipe e restrinja os cadastros apenas a convidados.",
+        title: "Manage authentication methods for your instance",
+        description: "Configure authentication methods for your team and restrict signups to invitations only.",
       }}
     >
       {formattedConfig ? (
@@ -120,9 +120,9 @@ const InstanceAuthenticationPage = observer(function InstanceAuthenticationPage(
           <div className={cn("flex w-full items-center gap-14 rounded-sm")}>
             <div className="flex grow items-center gap-4">
               <div className="grow">
-                <div className="pb-1 text-16 font-medium">Permitir que qualquer pessoa se cadastre mesmo sem convite</div>
+                <div className="pb-1 text-16 font-medium">Allow anyone to sign up without an invitation</div>
                 <div className={cn("text-11 leading-5 font-regular text-tertiary")}>
-                  Desativar isto só permitirá que usuários se cadastrem quando forem convidados.
+                  Disabling this will only allow users to sign up when invited.
                 </div>
               </div>
             </div>
@@ -143,7 +143,7 @@ const InstanceAuthenticationPage = observer(function InstanceAuthenticationPage(
               </div>
             </div>
           </div>
-          <div className="text-lg pt-6 font-medium">Modos de autenticação disponíveis</div>
+          <div className="text-lg pt-6 font-medium">Available authentication methods</div>
           {authenticationModes.map((method) => (
             <AuthenticationMethodCard
               key={method.key}

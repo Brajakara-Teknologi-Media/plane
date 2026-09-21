@@ -19,12 +19,14 @@ import { createCopyMenuWithDuplication } from "@/plane-web/components/issues/iss
 // Generic helper function to handle optional function calls gracefully
 // Overload for functions without parameters
 export function handleOptionalAction(
+  t: (key: string, params?: Record<string, unknown>) => string,
   optionalFn: (() => void) | (() => Promise<void>) | undefined,
   actionName: string
 ): void;
 
 // Overload for functions with one parameter
 export function handleOptionalAction<T>(
+  t: (key: string, params?: Record<string, unknown>) => string,
   optionalFn: ((param: T) => void) | ((param: T) => Promise<void>) | undefined,
   actionName: string,
   param: T
@@ -32,6 +34,7 @@ export function handleOptionalAction<T>(
 
 // Implementation
 export function handleOptionalAction<T>(
+  t: (key: string, params?: Record<string, unknown>) => string,
   optionalFn: (() => void) | (() => Promise<void>) | ((param: T) => void) | ((param: T) => Promise<void>) | undefined,
   actionName: string,
   param?: T
@@ -45,8 +48,8 @@ export function handleOptionalAction<T>(
   } else {
     setToast({
       type: TOAST_TYPE.ERROR,
-      title: "Ação não disponível",
-      message: `A ação ${actionName} não está implementada.`,
+      title: "Action not available",
+      message: t("work-item.quick_actions.action_not_implemented", { action: actionName }),
     });
   }
 }
@@ -83,6 +86,7 @@ export interface MenuItemFactoryProps {
 // Common action handlers hook
 export const useIssueActionHandlers = (props: MenuItemFactoryProps) => {
   const { issue, workspaceSlug, projectIdentifier, handleRestore } = props;
+  const { t } = useTranslation();
 
   const workItemLink = useMemo(
     () =>
@@ -100,31 +104,30 @@ export const useIssueActionHandlers = (props: MenuItemFactoryProps) => {
     copyUrlToClipboard(workItemLink).then(() =>
       setToast({
         type: TOAST_TYPE.SUCCESS,
-        title: "Link copiado",
-        message: "Link do chamado copiado para a área de transferência",
+        title: t("common.link_copied"),
+        message: "Work item link copied to clipboard",
       })
     );
 
   const handleOpenInNewTab = () => window.open(workItemLink, "_blank");
-
   const handleIssueRestore = async () => {
     if (!handleRestore) {
-      handleOptionalAction(handleRestore, "Restore");
+      handleOptionalAction(t, handleRestore, "Restore");
       return;
     }
     await handleRestore()
       .then(() => {
         setToast({
           type: TOAST_TYPE.SUCCESS,
-          title: "Restaurado com sucesso",
-          message: "Seu chamado pode ser encontrado nos chamados do projeto.",
+          title: t("common.restore_success_title"),
+          message: t("common.restore_success_message"),
         });
       })
       .catch(() => {
         setToast({
           type: TOAST_TYPE.ERROR,
-          title: "Erro!",
-          message: "Não foi possível restaurar o chamado. Tente novamente.",
+          title: t("toast.error"),
+          message: t("issue.restore.failed.message"),
         });
       });
   };
@@ -207,17 +210,17 @@ export const useMenuItemFactory = (props: MenuItemFactoryProps) => {
 
   const createRemoveFromCycleMenuItem = (): TContextMenuItem => ({
     key: "remove-from-cycle",
-    title: "Remover do ciclo",
+    title: t("work-item.quick_actions.remove_from_cycle"),
     icon: XCircle,
-    action: () => handleOptionalAction(handleRemoveFromView, "Remover do ciclo"),
+    action: () => handleOptionalAction(t, handleRemoveFromView, t("work-item.quick_actions.remove_from_cycle")),
     shouldRender: isEditingAllowed,
   });
 
   const createRemoveFromModuleMenuItem = (): TContextMenuItem => ({
     key: "remove-from-module",
-    title: "Remover do módulo",
+    title: t("work-item.quick_actions.remove_from_module"),
     icon: XCircle,
-    action: () => handleOptionalAction(handleRemoveFromView, "Remover do módulo"),
+    action: () => handleOptionalAction(t, handleRemoveFromView, t("work-item.quick_actions.remove_from_module")),
     shouldRender: isEditingAllowed,
   });
 
@@ -225,17 +228,16 @@ export const useMenuItemFactory = (props: MenuItemFactoryProps) => {
     key: "archive",
     title: t("common.actions.archive"),
     description: isInArchivableGroup ? undefined : t("issue.archive.description"),
-    icon: ArchiveIcon,
+    action: () => handleOptionalAction(t, setArchiveIssueModal, "Archive", true),
     className: "items-start",
     iconClassName: "mt-1",
-    action: () => handleOptionalAction(setArchiveIssueModal, "Archive", true),
     disabled: !isInArchivableGroup,
     shouldRender: isArchivingAllowed,
   });
 
   const createRestoreMenuItem = (): TContextMenuItem => ({
     key: "restore",
-    title: "Restaurar",
+    title: t("common.actions.restore"),
     icon: ArchiveRestoreIcon,
     action: actionHandlers.handleIssueRestore,
     shouldRender: isRestoringAllowed,

@@ -12,10 +12,10 @@ import { useSync } from "@/offline/SyncProvider";
 import { useTheme } from "@/theme";
 
 const MOTIVATIONS: { key: string; label: string }[] = [
-  { key: "mot_update", label: "Atualização" },
-  { key: "mot_bug_fix", label: "Correção de erros" },
+  { key: "mot_update", label: "Update" },
+  { key: "mot_bug_fix", label: "Bug fix" },
   { key: "mot_training", label: "Acompanhamento/Treinamento" },
-  { key: "mot_improvement", label: "Solicitação de melhoria" },
+  { key: "mot_improvement", label: "Request de melhoria" },
   { key: "mot_commercial", label: "Comercial" },
   { key: "mot_other", label: "Outros" },
 ];
@@ -67,7 +67,7 @@ export default function NewVisitScreen() {
       router.back();
     } catch {
       await enqueue({ kind: "visit", slug, label: city || "Visita", body: body as Record<string, unknown> });
-      Alert.alert("Salvo offline", "A visita será sincronizada quando a conexão voltar.");
+      Alert.alert("Saved offline", "The visit will be synced when the connection is restored.");
       router.back();
     } finally {
       setSaving(false);
@@ -85,12 +85,12 @@ export default function NewVisitScreen() {
 
       <Row gap={spacing.md}>
         <View style={{ flex: 1, gap: spacing.xs }}>
-          <Text variant="caption">Município</Text>
+          <Text variant="caption">Municipality</Text>
           <Input value={city} onChangeText={setCity} placeholder="Cidade" />
         </View>
         <View style={{ flex: 1, gap: spacing.xs }}>
-          <Text variant="caption">Período</Text>
-          <Input value={period} onChangeText={setPeriod} placeholder="Manhã/Tarde" />
+          <Text variant="caption">Period</Text>
+          <Input value={period} onChangeText={setPeriod} placeholder="Morning/Afternoon" />
         </View>
       </Row>
 
@@ -132,11 +132,11 @@ export default function NewVisitScreen() {
 
       <Text variant="heading">Conclusão</Text>
       <Card style={{ padding: 0, overflow: "hidden" }}>
-        <RichTextEditor value={conclusion} onChange={setConclusion} placeholder="Conclusão / próximos passos…" minHeight={160} />
+        <RichTextEditor value={conclusion} onChange={setConclusion} placeholder="Conclusion / next steps…" minHeight={160} />
       </Card>
 
       {!online ? <Text variant="tertiary" color={colors.pending}>Offline — será sincronizado depois.</Text> : null}
-      <Button title="Salvar visita" onPress={submit} loading={saving} />
+      <Button title="Save visita" onPress={submit} loading={saving} />
 
       <OptionSheet
         visible={entitySheet}

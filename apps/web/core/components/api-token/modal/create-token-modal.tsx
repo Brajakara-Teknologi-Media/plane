@@ -7,6 +7,7 @@
 import { useState } from "react";
 import { mutate } from "swr";
 // plane imports
+import { useTranslation } from "@plane/i18n";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { APITokenService } from "@plane/services";
 import type { IApiToken } from "@plane/types";
@@ -28,6 +29,7 @@ const apiTokenService = new APITokenService();
 
 export function CreateApiTokenModal(props: Props) {
   const { isOpen, onClose } = props;
+  const { t } = useTranslation();
   // states
   const [neverExpires, setNeverExpires] = useState<boolean>(false);
   const [generatedToken, setGeneratedToken] = useState<IApiToken | null | undefined>(null);
@@ -45,7 +47,7 @@ export function CreateApiTokenModal(props: Props) {
     const csvData = {
       Title: data.label,
       Description: data.description,
-      Expiry: data.expired_at ? (renderFormattedDate(data.expired_at)?.replace(",", " ") ?? "") : "Nunca expira",
+      Expiry: data.expired_at ? (renderFormattedDate(data.expired_at)?.replace(",", " ") ?? "") : t("workspace_settings.settings.api_tokens.never_expires"),
       "Secret key": data.token ?? "",
     };
 
@@ -73,8 +75,10 @@ export function CreateApiTokenModal(props: Props) {
       .catch((err) => {
         setToast({
           type: TOAST_TYPE.ERROR,
-          title: "Erro!",
-          message: err.message || err.detail,
+          title: t("common.toast.error"),
+          message: (err && typeof err === "object" && "message" in err && typeof err.message === "string")
+            ? err.message
+            : (err && typeof err === "object" && "detail" in err && typeof err.detail === "string" ? err.detail : ""),
         });
 
         throw err;

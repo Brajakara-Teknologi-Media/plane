@@ -5,6 +5,8 @@
  */
 
 import { observer } from "mobx-react";
+// plane imports
+import { useTranslation } from "@plane/i18n";
 import {
   StatePropertyIcon,
   MembersPropertyIcon,
@@ -42,6 +44,7 @@ type Props = {
 export const InboxIssueContentProperties = observer(function InboxIssueContentProperties(props: Props) {
   const { workspaceSlug, projectId, issue, issueOperations, isEditable, duplicateIssueDetails, isIntakeAccepted } =
     props;
+  const { t } = useTranslation();
 
   const router = useAppRouter();
   // store hooks
@@ -70,7 +73,7 @@ export const InboxIssueContentProperties = observer(function InboxIssueContentPr
             <div className="flex h-8 items-center gap-2">
               <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-13 text-tertiary">
                 <StatePropertyIcon className="h-4 w-4 flex-shrink-0" />
-                <span>Estado</span>
+                <span>{t("common.state")}</span>
               </div>
               {issue?.state_id && (
                 <DropdownComponent
@@ -91,7 +94,7 @@ export const InboxIssueContentProperties = observer(function InboxIssueContentPr
             <div className="flex h-8 items-center gap-2">
               <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-13 text-tertiary">
                 <MembersPropertyIcon className="h-4 w-4 flex-shrink-0" />
-                <span>Responsáveis</span>
+                <span>Responsible</span>
               </div>
               <MemberDropdown
                 value={issue?.assignee_ids ?? []}
@@ -100,7 +103,7 @@ export const InboxIssueContentProperties = observer(function InboxIssueContentPr
                 }
                 disabled={!isEditable}
                 projectId={projectId?.toString() ?? ""}
-                placeholder="Adicionar responsáveis"
+                placeholder="Add assignees"
                 multiple
                 buttonVariant={
                   (issue?.assignee_ids || [])?.length > 0 ? "transparent-without-text" : "transparent-with-text"
@@ -141,10 +144,10 @@ export const InboxIssueContentProperties = observer(function InboxIssueContentPr
             <div className="flex h-8 items-center gap-2">
               <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-13 text-tertiary">
                 <DueDatePropertyIcon className="h-4 w-4 flex-shrink-0" />
-                <span>Data de vencimento</span>
+                <span>{t("common.due_date")}</span>
               </div>
               <DateDropdown
-                placeholder="Adicionar data de vencimento"
+                placeholder={t("issue.add.due_date")}
                 value={issue.target_date || null}
                 onChange={(val) =>
                   issue?.id &&
@@ -166,7 +169,7 @@ export const InboxIssueContentProperties = observer(function InboxIssueContentPr
             <div className="flex min-h-8 items-center gap-2">
               <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-13 text-tertiary">
                 <LabelPropertyIcon className="h-4 w-4 flex-shrink-0" />
-                <span>Etiquetas</span>
+                <span>{t("common.labels")}</span>
               </div>
               <div className="h-full min-h-8 w-3/5 flex-grow pt-1">
                 {issue?.id && (

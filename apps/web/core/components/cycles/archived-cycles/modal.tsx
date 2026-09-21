@@ -9,6 +9,7 @@ import { useState } from "react";
 import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
+import { useTranslation } from "@plane/i18n";
 // hooks
 import { useCycle } from "@/hooks/store/use-cycle";
 import { useAppRouter } from "@/hooks/use-app-router";
@@ -24,6 +25,7 @@ type Props = {
 
 export function ArchiveCycleModal(props: Props) {
   const { workspaceSlug, projectId, cycleId, isOpen, handleClose } = props;
+  const { t } = useTranslation();
   // router
   const router = useAppRouter();
   // states
@@ -54,8 +56,8 @@ export function ArchiveCycleModal(props: Props) {
       .catch(() => {
         setToast({
           type: TOAST_TYPE.ERROR,
-          title: "Erro!",
-          message: "Não foi possível arquivar o ciclo. Tente novamente.",
+          title: t("common.toast.error"),
+          message: "Could not archive the cycle. Please try again.",
         });
       })
       .finally(() => setIsArchiving(false));
@@ -66,11 +68,11 @@ export function ArchiveCycleModal(props: Props) {
       <div className="px-5 py-4">
         <h3 className="text-18 font-medium 2xl:text-20">Archive cycle {cycleName}</h3>
         <p className="mt-3 text-13 text-secondary">
-          Tem certeza de que deseja arquivar o ciclo? Todos os seus arquivos podem ser restaurados depois.
+          Are you sure you want to archive the cycle? All your files can be restored later.
         </p>
         <div className="mt-3 flex justify-end gap-2">
           <Button variant="secondary" size="lg" onClick={onClose}>
-            Cancelar
+            {t("common.cancel")}
           </Button>
           <Button variant="primary" size="lg" tabIndex={1} onClick={handleArchiveCycle} loading={isArchiving}>
             {isArchiving ? "Archiving" : "Archive"}

@@ -131,7 +131,7 @@ export const memberModule = new Elysia({prefix: "/workspaces/:slug"})
     const role = await resolveRole(ws.id, member.role, (member as any).workflowRoleId);
     if (!roleCan(role, EProjectAction.MEMBER_MANAGE)) {
       set.status = 403;
-      return {detail: "Apenas administradores ou gestores de projeto podem adicionar membros."};
+      return {detail: "Only administrators or project managers can add members."};
     }
     const b = body as any;
     const m = await prisma.projectMember.create({
@@ -149,7 +149,7 @@ export const memberModule = new Elysia({prefix: "/workspaces/:slug"})
     const role = await resolveRole(ws.id, member.role, (member as any).workflowRoleId);
     if (!roleCan(role, EProjectAction.MEMBER_MANAGE)) {
       set.status = 403;
-      return {detail: "Apenas administradores ou gestores de projeto podem atualizar funções de membros."};
+      return {detail: "Only administrators or project managers can update member roles."};
     }
     const m = await prisma.projectMember.update({where: {id: pk}, data: {role: (body as any).role}});
     return {id: m.id, member: m.memberId, role: m.role, original_role: m.role};
@@ -163,7 +163,7 @@ export const memberModule = new Elysia({prefix: "/workspaces/:slug"})
     const role = await resolveRole(ws.id, member.role, (member as any).workflowRoleId);
     if (!roleCan(role, EProjectAction.MEMBER_MANAGE)) {
       set.status = 403;
-      return {detail: "Apenas administradores ou gestores de projeto podem remover membros."};
+      return {detail: "Only administrators or project managers can remove members."};
     }
     await prisma.projectMember.update({where: {id: pk}, data: {deletedAt: new Date(), isActive: false}});
     set.status = 204;

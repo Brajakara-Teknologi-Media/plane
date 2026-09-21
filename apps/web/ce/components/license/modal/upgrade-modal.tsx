@@ -5,7 +5,7 @@
  */
 
 import { observer } from "mobx-react";
-// plane imports
+import { useTranslation } from "@plane/i18n";
 import {
   BUSINESS_PLAN_FEATURES,
   ENTERPRISE_PLAN_FEATURES,
@@ -32,6 +32,7 @@ export type PaidPlanUpgradeModalProps = {
 };
 
 export const PaidPlanUpgradeModal = observer(function PaidPlanUpgradeModal(props: PaidPlanUpgradeModalProps) {
+  const { t } = useTranslation();
   // Paywall removed in this fork: the upgrade modal never renders.
   return null;
   // eslint-disable-next-line no-unreachable
@@ -56,11 +57,11 @@ export const PaidPlanUpgradeModal = observer(function PaidPlanUpgradeModal(props
         <div className="grid h-full grid-cols-12 gap-6">
           {/* Free Plan Section */}
           <div className={cn(COMMON_CARD_CLASSNAME)}>
-            <div className="flex text-24 leading-8 font-bold">Faça upgrade para um plano pago e desbloqueie os recursos que faltam.</div>
+            <div className="flex text-24 leading-8 font-bold">{t("misc.license.upgrade_heading")}</div>
             <div className="mt-4 mb-2">
               <p className="mb-4 pr-8 text-13 text-primary">
-                Painéis, fluxos de trabalho, aprovações, gestão de tempo e outros superpoderes estão a um clique de
-                distância. Faça o upgrade hoje e libere os recursos que a sua equipe já precisava ontem.
+                Dashboards, workflows, approvals, time management, and other superpowers are just a click away. Upgrade
+                today and unlock the features your team needed yesterday.
               </p>
             </div>
 

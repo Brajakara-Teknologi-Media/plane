@@ -84,7 +84,7 @@ export default function HomeScreen() {
       </Row>
 
       <View>
-        <Text variant="title">Olá, {displayName(me).split(" ")[0]}</Text>
+        <Text variant="title">Hello, {displayName(me).split(" ")[0]}</Text>
         <Text variant="secondary">Seu papel: {label}</Text>
       </View>
 
@@ -94,12 +94,12 @@ export default function HomeScreen() {
             <Row align="space-between">
               <View style={{ flex: 1 }}>
                 <Text weight="bold" color={colors.pending}>
-                  {online ? "Itens pendentes de sincronização" : "Você está offline"}
+                  {online ? "Items pending synchronization" : "You are offline"}
                 </Text>
                 <Text variant="secondary">
                   {pendingCount > 0
                     ? `${pendingCount} item(ns) aguardando envio${online ? " — toque para sincronizar" : ""}.`
-                    : "Alterações novas serão sincronizadas quando a conexão voltar."}
+                    : "New changes will be synced when the connection is restored."}
                 </Text>
               </View>
               {pendingCount > 0 ? <SyncBadge compact /> : null}
@@ -111,17 +111,17 @@ export default function HomeScreen() {
       <Pressable onPress={() => router.push("/search")}>
         <Card style={{ flexDirection: "row", alignItems: "center", gap: spacing.sm }}>
           <Search size={18} color={colors.textSecondary} />
-          <Text variant="secondary">Buscar work items, intakes, chamados…</Text>
+          <Text variant="secondary">Buscar work items, intakes, work items…</Text>
         </Card>
       </Pressable>
 
       {/* Useful stats from my dashboard */}
-      <Text variant="heading">Meus chamados</Text>
+      <Text variant="heading">Meus work items</Text>
       {dash.loading && !dash.data ? (
         <Loading />
       ) : (
         <Row gap={spacing.sm} style={{ flexWrap: "wrap" }}>
-          <StatCard label="Atribuídos" value={issues.length} />
+          <StatCard label="Assigned" value={issues.length} />
           <StatCard label="Em aberto" value={openCount} />
           <StatCard label="Urgentes" value={urgent.length} tone="danger" />
         </Row>
@@ -151,7 +151,7 @@ export default function HomeScreen() {
       {/* Recent assigned */}
       {issues.length > 0 && (
         <View style={{ gap: spacing.sm }}>
-          <Text variant="heading">Atribuídos a mim</Text>
+          <Text variant="heading">Assigned a mim</Text>
           {issues.slice(0, 6).map((i) => (
             <Pressable key={i.id} onPress={() => openWorkItem(i)}>
               <Card style={{ gap: 6 }}>
@@ -169,8 +169,8 @@ export default function HomeScreen() {
 
       <Text variant="heading" style={{ marginTop: spacing.sm }}>Acesso rápido</Text>
       <Row gap={spacing.md} style={{ flexWrap: "wrap" }}>
-        <QuickAction icon={LayoutGrid} label="Chamados" onPress={() => router.push("/(tabs)/work-items")} />
-        <QuickAction icon={Inbox} label="Solicitações" onPress={() => router.push("/(tabs)/intake")} />
+        <QuickAction icon={LayoutGrid} label="Work Items" onPress={() => router.push("/(tabs)/work-items")} />
+        <QuickAction icon={Inbox} label="Requests" onPress={() => router.push("/(tabs)/intake")} />
         <QuickAction icon={Plane} label="Visitas" onPress={() => router.push("/(tabs)/visits")} />
         <QuickAction icon={FileText} label="Wiki" onPress={() => router.push("/wiki")} />
       </Row>

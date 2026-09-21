@@ -82,7 +82,7 @@ export const HOME_WIDGETS_LIST: {
   },
 };
 
-/** Já renderizados de forma fixa acima; não podem repetir na lista opcional. */
+/** Already rendered fixed above; cannot repeat in the optional list. */
 const WIDGETS_JA_FIXOS: THomeWidgetKeys[] = ["my_work_items", "open_intakes", "upcoming_dates", "quick_links"];
 
 export const DashboardWidgets = observer(function DashboardWidgets() {
@@ -101,28 +101,28 @@ export const DashboardWidgets = observer(function DashboardWidgets() {
   const slug = workspaceSlug?.toString() ?? "";
   const isWikiApp = pathname.includes(`/${slug}/pages`);
 
-  const { data: resumo, isLoading: carregandoResumo } = useSWR(
+  const { data: summary, isLoading: loadingSummary } = useSWR(
     slug ? `HOME_SUMMARY_${slug}` : null,
     slug ? () => homeSummaryService.summary(slug) : null,
     { revalidateOnFocus: false }
   );
-  const { data: atrasados, isLoading: carregandoAtrasados } = useSWR(
+  const { data: overdueItems, isLoading: loadingOverdue } = useSWR(
     slug ? `HOME_OVERDUE_${slug}` : null,
     slug ? () => homeSummaryService.overdue(slug) : null,
     { revalidateOnFocus: false }
   );
 
-  /** Uma linha de contexto ao lado da data, no lugar de um número solto. */
-  const frase = (() => {
-    if (!resumo) return undefined;
-    if (resumo.meus_atrasados > 0) {
-      return `${resumo.meus_atrasados} chamado${resumo.meus_atrasados > 1 ? "s" : ""} passou do prazo`;
+  /** A context line next to the date, in place of a bare number. */
+  const contextPhrase = (() => {
+    if (!summary) return undefined;
+    if (summary.my_overdue > 0) {
+      return `${summary.my_overdue} item${summary.my_overdue > 1 ? "s" : ""} overdue`;
     }
-    if (resumo.meus_vencem_hoje > 0) {
-      return `${resumo.meus_vencem_hoje} chamado${resumo.meus_vencem_hoje > 1 ? "s" : ""} vence hoje`;
+    if (summary.my_due_today > 0) {
+      return `${summary.my_due_today} item${summary.my_due_today > 1 ? "s" : ""} due today`;
     }
-    if (resumo.meus_abertos > 0) return `${resumo.meus_abertos} chamados abertos com você`;
-    return "Nenhum chamado aberto com você";
+    if (summary.my_open > 0) return `${summary.my_open} open items assigned to you`;
+    return "No open items assigned to you";
   })();
 
   if (!workspaceSlug) return null;
@@ -136,9 +136,9 @@ export const DashboardWidgets = observer(function DashboardWidgets() {
         handleOnClose={() => toggleWidgetSettings(false)}
       />
 
-      {/* Cabeçalho: saudação à esquerda, ações à direita. */}
+      {/* Header: greeting on the left, actions on the right. */}
       <div className="flex flex-wrap items-start justify-between gap-3 pt-2">
-        {currentUser ? <UserGreetingsView user={currentUser} resumo={frase} /> : <div />}
+        {currentUser ? <UserGreetingsView user={currentUser} resumo={contextPhrase} /> : <div />}
         <HomePageHeader />
       </div>
 
@@ -146,41 +146,41 @@ export const DashboardWidgets = observer(function DashboardWidgets() {
 
       {!isWikiApp && (
         <>
-          <HomeSummaryStrip workspaceSlug={slug} resumo={resumo} carregando={carregandoResumo} />
+          <HomeSummaryStrip workspaceSlug={slug} summary={summary} loading={loadingSummary} />
 
           <CriticalIssuesWidget workspaceSlug={slug} />
 
-          {/* Duas colunas: à esquerda o que exige ação, à direita o contexto.
-              Antes tudo dividia uma grade de três colunas iguais e a lista mais
-              importante ficava do mesmo tamanho de um contador. */}
+          {/* Two columns: actionable items on the left, context on the right.
+              Previously everything shared a three-column grid, so the most
+              important list was the same size as a counter. */}
           <div className="grid grid-cols-1 gap-4 xl:grid-cols-3">
             <div className="flex flex-col gap-4 xl:col-span-2">
-              <OverdueWidget workspaceSlug={slug} itens={atrasados ?? []} carregando={carregandoAtrasados} />
-              <MyWorkItemsWidget workspaceSlug={slug} />
+              <OverdueWidget workspaceSlug={slug} items={overdueItems ?? []} loading={loadingOverdue} />
+              <UpcomingDatesWidget workspaceSlug={slug} />
               <OpenIntakesWidget workspaceSlug={slug} />
             </div>
             <div className="flex flex-col gap-4">
-              <MyWorkBreakdownWidget resumo={resumo} carregando={carregandoResumo} />
-              <UpcomingDatesWidget workspaceSlug={slug} />
+              <MyWorkBreakdownWidget summary={summary} loading={loadingSummary} />
+              <MyWorkItemsWidget workspaceSlug={slug} />
               <DashboardQuickLinks workspaceSlug={slug} />
             </div>
           </div>
         </>
       )}
 
-      {/* Widgets do marketplace — enviados pelo painel de widgets. */}
+      {/* Marketplace widgets — sent by the widgets panel. */}
       {!isWikiApp && <MarketplaceWidgetsSection />}
 
-      {/* Widgets opcionais, ligados em "Gerenciar widgets". Os fixos acima já
-          cobrem o essencial, então aqui não há mais estado vazio de página
-          inteira: uma home sem widget opcional continua completa. */}
+      {/* Optional widgets, enabled in "Manage widgets". The fixed ones above
+          already cover the essentials, so there's no full-page empty state here:
+          a home without optional widgets is still complete. */}
       {isAnyWidgetEnabled && (
         <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
           {orderedWidgets.map((key) => {
             const WidgetComponent = HOME_WIDGETS_LIST[key]?.component;
             const isEnabled = widgetsMap[key]?.is_enabled;
-            // "Meus chamados" e "Solicitações" já aparecem fixos acima; repetir
-            // era o que deixava a home com o mesmo bloco duas vezes.
+            // "My work items" and "Requests" already appear fixed above; repeating
+            // them was what caused the home to show the same block twice.
             if (!WidgetComponent || !isEnabled || WIDGETS_JA_FIXOS.includes(key)) return null;
             return <WidgetComponent key={key} workspaceSlug={slug} />;
           })}

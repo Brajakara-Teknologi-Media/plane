@@ -10,6 +10,7 @@ import { dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element
 import { differenceInCalendarDays } from "date-fns/differenceInCalendarDays";
 import { observer } from "mobx-react";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { useTranslation } from "@plane/i18n";
 import type { TGroupedIssues, TIssue, TIssueMap, TPaginationData, ICalendarDate } from "@plane/types";
 // types
 // ui
@@ -76,6 +77,8 @@ export const CalendarDayTile = observer(function CalendarDayTile(props: Props) {
   } = props;
 
   const [isDraggingOver, setIsDraggingOver] = useState(false);
+  // translation
+  const { t } = useTranslation();
 
   const calendarLayout = issuesFilterStore?.issueFilters?.displayFilters?.calendar?.layout ?? "month";
 
@@ -112,8 +115,8 @@ export const CalendarDayTile = observer(function CalendarDayTile(props: Props) {
             if (diffInDays < 0) {
               setToast({
                 type: TOAST_TYPE.ERROR,
-                title: "Erro!",
-                message: "A data de vencimento não pode ser anterior à data de início do chamado.",
+                title: t("common.toast.error"),
+                message: "The due date cannot be before the work item start date.",
               });
               return;
             }

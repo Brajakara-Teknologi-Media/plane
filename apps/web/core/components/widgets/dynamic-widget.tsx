@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useRef, useState, type ComponentType } from "react";
+import { useTranslation } from "@plane/i18n";
 import { initializeSDK } from "@mateusseiboth/widgets-aviao";
 import { widgetRegistry } from "@/services/widget-registry.service";
 
@@ -90,7 +91,7 @@ function loadModule(url: string): Promise<unknown> {
     `;
     script.onerror = () => {
       delete (window as any)[callbackName];
-      reject(new Error(`Falha ao carregar o bundle do widget: ${url}`));
+      reject(new Error(`Failed to load the widget bundle: ${url}`));
     };
     document.head.appendChild(script);
     script.addEventListener("load", () => script.remove(), { once: true });
@@ -100,16 +101,19 @@ function loadModule(url: string): Promise<unknown> {
 // ── Sub-componentes ───────────────────────────────────────────────────────────
 
 const WidgetSkeleton: React.FC = () => (
-  <div className="animate-pulse rounded-xl bg-custom-background-80" style={{ minHeight: 120 }} />
+  <div className="bg-custom-background-80 animate-pulse rounded-xl" style={{ minHeight: 120 }} />
 );
 
-const WidgetErrorFallback: React.FC<{ message: string; widgetId: string }> = ({ message, widgetId }) => (
-  <div className="flex flex-col items-center justify-center rounded-xl border border-red-500/20 bg-red-500/5 p-6 text-center">
-    <p className="text-sm font-medium text-red-500">Falha ao carregar o widget</p>
-    <p className="mt-1 text-xs text-red-400">{message}</p>
-    <p className="mt-2 font-mono text-xs text-custom-text-400">id: {widgetId}</p>
-  </div>
-);
+const WidgetErrorFallback: React.FC<{ message: string; widgetId: string }> = ({ message, widgetId }) => {
+  const { t } = useTranslation();
+  return (
+    <div className="border-red-500/20 bg-red-500/5 flex flex-col items-center justify-center rounded-xl border p-6 text-center">
+      <p className="text-sm text-red-500 font-medium">{t("common.failed_to_load_widget")}</p>
+      <p className="text-xs text-red-400 mt-1">{message}</p>
+      <p className="font-mono text-xs text-custom-text-400 mt-2">id: {widgetId}</p>
+    </div>
+  );
+};
 
 class WidgetErrorBoundary extends React.Component<
   { widgetId: string; children: React.ReactNode },

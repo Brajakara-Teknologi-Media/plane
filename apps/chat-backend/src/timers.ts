@@ -43,7 +43,7 @@ async function checkIdle() {
     if (!s.idlePromptedAt) {
       if (now - lastActivity > TEN_MIN) {
         const cfg = await prisma.botConfig.findUnique({ where: { workspaceId: s.workspaceId } });
-        await deliverOutbound(s as any, { sender: "bot", type: "text", text: cfg?.idlePromptMessage ?? "Você ainda precisa de ajuda?" });
+        await deliverOutbound(s as any, { sender: "bot", type: "text", text: cfg?.idlePromptMessage ?? "Do you still need help?" });
         await prisma.chatSession.update({ where: { id: s.id }, data: { idlePromptedAt: new Date() } });
       }
     } else if (now - s.idlePromptedAt.getTime() > TEN_MIN && lastActivity <= s.idlePromptedAt.getTime()) {

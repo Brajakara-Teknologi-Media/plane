@@ -112,7 +112,7 @@ export const SidebarQuickActions = observer(function SidebarQuickActions() {
             <>
               <AddWorkItemIcon className="size-4" />
               <span className="max-w-[145px] truncate text-13 font-medium">
-                {isAtendimento ? "Nova solicitação" : t("sidebar.new_work_item")}
+                {isAtendimento ? t("common.new_request") : t("sidebar.new_work_item")}
               </span>
             </>
           }

@@ -181,7 +181,7 @@ export const GlobalIssuesHeader = observer(function GlobalIssuesHeader() {
               />
             </FiltersDropdown>
           )}
-          <WorkItemsPrintAction storeType={EIssuesStoreType.GLOBAL} title="Chamados" />
+          <WorkItemsPrintAction storeType={EIssuesStoreType.GLOBAL} title="Work Items" />
           <Button
             variant="primary"
             size="lg"

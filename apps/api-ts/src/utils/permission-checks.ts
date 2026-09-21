@@ -49,7 +49,7 @@ export async function requireProjectAction(
   const {project, member} = await getProjectOrFail(workspaceId, projectId, userId);
   const role = await resolveRole(workspaceId, member.role, (member as any).workflowRoleId);
   if (!roleCan(role, action)) {
-    throw {status: 403, message: "Sua função não permite esta ação."};
+    throw {status: 403, message: "Your role does not allow this action."};
   }
   return {project, member, role};
 }
@@ -71,7 +71,7 @@ export async function requireOwnOrAll(
   const role = await resolveRole(workspaceId, member.role, (member as any).workflowRoleId);
   if (roleCan(role, allAction)) return {project, member, role};
   if (roleCan(role, ownAction) && ownerId && ownerId === userId) return {project, member, role};
-  throw {status: 403, message: "Sua função não permite esta ação."};
+  throw {status: 403, message: "Your role does not allow this action."};
 }
 
 /** Whether a role may move an issue between two states. */

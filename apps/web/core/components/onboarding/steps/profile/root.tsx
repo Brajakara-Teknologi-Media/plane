@@ -9,6 +9,7 @@ import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 import { ImageIcon } from "lucide-react";
 // plane imports
+import { useTranslation } from "@plane/i18n";
 import { E_PASSWORD_STRENGTH } from "@plane/constants";
 import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
@@ -54,6 +55,8 @@ const defaultValues: Partial<TProfileSetupFormValues> = {
 };
 
 export const ProfileSetupStep = observer(function ProfileSetupStep({ handleStepChange }: Props) {
+  // i18n
+  const { t } = useTranslation();
   // states
   const [isImageUploadModalOpen, setIsImageUploadModalOpen] = useState(false);
   // store hooks
@@ -99,8 +102,8 @@ export const ProfileSetupStep = observer(function ProfileSetupStep({ handleStepC
     } catch {
       setToast({
         type: TOAST_TYPE.ERROR,
-        title: "Erro",
-        message: "Falha ao atualizar os dados do usuário. Tente novamente!",
+        title: t("common.error_bang"),
+        message: "Failed to update user data. Please try again!",
       });
     }
   };
@@ -147,7 +150,10 @@ export const ProfileSetupStep = observer(function ProfileSetupStep({ handleStepC
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-10">
       {/* Header */}
-      <CommonOnboardingHeader title="Crie seu perfil." description="This is how you will appear in Avião." />
+      <CommonOnboardingHeader
+        title={t("onboarding.profile.header_title")}
+        description="This is how you will appear in Avião."
+      />
 
       {/* Profile Picture Section */}
       <Controller
@@ -207,11 +213,11 @@ export const ProfileSetupStep = observer(function ProfileSetupStep({ handleStepC
             control={control}
             name="first_name"
             rules={{
-              required: "O nome é obrigatório",
+              required: "Name is required",
               validate: validatePersonName,
               maxLength: {
                 value: 50,
-                message: "O nome deve ter no máximo 50 caracteres.",
+                message: "Name must be at most 50 characters.",
               },
             }}
             render={({ field: { value, onChange, ref } }) => (
@@ -230,7 +236,7 @@ export const ProfileSetupStep = observer(function ProfileSetupStep({ handleStepC
                     "border-danger-strong": errors.first_name,
                   }
                 )}
-                placeholder="Insira seu nome completo"
+                placeholder={t("common.full_name")}
                 autoComplete="on"
               />
             )}

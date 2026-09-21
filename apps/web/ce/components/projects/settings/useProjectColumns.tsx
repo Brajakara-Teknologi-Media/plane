@@ -59,7 +59,7 @@ export const useProjectColumns = (props: TUseProjectColumnsProps) => {
   const columns = [
     {
       key: "Full Name",
-      content: "Nome completo",
+      content: "Full Name",
       thClassName: "text-left",
       thRender: () => (
         <MemberHeaderColumn
@@ -80,7 +80,7 @@ export const useProjectColumns = (props: TUseProjectColumnsProps) => {
     },
     {
       key: "Display Name",
-      content: "Nome de exibição",
+      content: "Display Name",
       thRender: () => (
         <MemberHeaderColumn
           property="display_name"

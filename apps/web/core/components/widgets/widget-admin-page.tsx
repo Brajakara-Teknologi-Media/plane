@@ -8,7 +8,7 @@ import React, { useState } from "react";
 import { WidgetDetailPanel } from "./widget-detail-panel";
 import { WidgetList } from "./widget-list";
 import { WidgetUploadModal } from "./widget-upload-modal";
-import {SelectPesquisavel} from "@/components/common/select-pesquisavel";
+import { SelectPesquisavel } from "@/components/common/select-pesquisavel";
 
 export const WidgetAdminPage: React.FC = observer(() => {
   const canManage = useCanManageExtensions();
@@ -37,8 +37,8 @@ export const WidgetAdminPage: React.FC = observer(() => {
 
   if (!canManage) {
     return (
-      <div className="mx-auto max-w-6xl px-4 py-16 text-center text-sm text-neutral-500 dark:text-neutral-400">
-        Você não tem permissão para gerenciar widgets. Apenas administradores da instância ou usuários do grupo TI.
+      <div className="text-sm text-neutral-500 dark:text-neutral-400 mx-auto max-w-6xl px-4 py-16 text-center">
+        You do not have permission to manage widgets. Only instance administrators or users in the IT group can.
       </div>
     );
   }
@@ -47,21 +47,21 @@ export const WidgetAdminPage: React.FC = observer(() => {
     <div className="mx-auto max-w-6xl px-4 py-8">
       <div className="mb-6 flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-neutral-900 dark:text-white">Widget Marketplace</h1>
-          <p className="mt-1 text-sm text-neutral-500 dark:text-neutral-400">
-            Gerencie widgets carregados dinamicamente para esta instância da plataforma.
+          <h1 className="text-2xl text-neutral-900 font-bold dark:text-white">Widget Marketplace</h1>
+          <p className="text-sm text-neutral-500 dark:text-neutral-400 mt-1">
+            Manage dynamically loaded widgets for this platform instance.
           </p>
         </div>
         <button
           onClick={() => setUploadOpen(true)}
-          className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
+          className="bg-blue-600 text-sm hover:bg-blue-700 rounded-lg px-4 py-2 font-medium text-white"
         >
           + Upload Widget
         </button>
       </div>
 
       {error && (
-        <div className="mb-4 rounded-lg bg-red-50 p-3 text-sm text-red-600 dark:bg-red-900/20 dark:text-red-400">
+        <div className="bg-red-50 text-sm text-red-600 dark:bg-red-900/20 dark:text-red-400 mb-4 rounded-lg p-3">
           {error}
         </div>
       )}
@@ -69,32 +69,32 @@ export const WidgetAdminPage: React.FC = observer(() => {
       <div className="mb-4 flex gap-3">
         <input
           type="text"
-          placeholder="Buscar por nome…"
+          placeholder="Search by name…"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="rounded-lg border border-neutral-200 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-white"
+          className="border-neutral-200 text-sm focus:ring-blue-500 dark:border-neutral-700 dark:bg-neutral-800 rounded-lg border px-3 py-2 outline-none focus:ring-2 dark:text-white"
         />
         <SelectPesquisavel
           value={statusFilter}
           onChange={setStatusFilter}
           opcoes={[
-            {value: "ACTIVE", label: "Ativo"},
-            {value: "INACTIVE", label: "Inativo"},
-            {value: "PENDING_APPROVAL", label: "Pendente"},
-            {value: "ARCHIVED", label: "Arquivado"},
+            { value: "ACTIVE", label: "Active" },
+            { value: "INACTIVE", label: "Inactive" },
+            { value: "PENDING_APPROVAL", label: "Pending" },
+            { value: "ARCHIVED", label: "Archived" },
           ]}
-          opcaoVazia={{value: "", label: "Todos os status"}}
+          opcaoVazia={{ value: "", label: "All statuses" }}
           className="w-44"
         />
         <button
           onClick={refetch}
-          className="rounded-lg border border-neutral-200 px-3 py-2 text-sm text-neutral-600 hover:bg-neutral-50 dark:border-neutral-700 dark:text-neutral-400 dark:hover:bg-neutral-800"
+          className="border-neutral-200 text-sm text-neutral-600 hover:bg-neutral-50 dark:border-neutral-700 dark:text-neutral-400 dark:hover:bg-neutral-800 rounded-lg border px-3 py-2"
         >
-          Atualizar
+          Refresh
         </button>
       </div>
 
-      <div className="rounded-xl border border-neutral-200 bg-white p-4 dark:border-neutral-700 dark:bg-neutral-900">
+      <div className="border-neutral-200 dark:border-neutral-700 dark:bg-neutral-900 rounded-xl border bg-white p-4">
         <WidgetList
           widgets={filtered}
           isLoading={isLoading}
@@ -114,9 +114,7 @@ export const WidgetAdminPage: React.FC = observer(() => {
         isUploading={isUploading}
       />
 
-      {selectedWidget && (
-        <WidgetDetailPanel widget={selectedWidget} onClose={() => setSelectedWidget(null)} />
-      )}
+      {selectedWidget && <WidgetDetailPanel widget={selectedWidget} onClose={() => setSelectedWidget(null)} />}
     </div>
   );
 });

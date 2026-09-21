@@ -88,12 +88,7 @@ export const InboxIssueActionsHeader = observer(function InboxIssueActionsHeader
 
   const issue = inboxIssue?.issue;
   // derived values
-  const isAllowed = allowPermissions(
-    PROJECT_WORK_ROLES,
-    EUserPermissionsLevel.PROJECT,
-    workspaceSlug,
-    projectId
-  );
+  const isAllowed = allowPermissions(PROJECT_WORK_ROLES, EUserPermissionsLevel.PROJECT, workspaceSlug, projectId);
   const canMarkAsDuplicate = isAllowed && (inboxIssue?.status === 0 || inboxIssue?.status === -2);
   const canMarkAsAccepted = isAllowed && (inboxIssue?.status === 0 || inboxIssue?.status === -2);
   const canMarkAsDeclined = isAllowed && (inboxIssue?.status === 0 || inboxIssue?.status === -2);
@@ -108,7 +103,7 @@ export const InboxIssueActionsHeader = observer(function InboxIssueActionsHeader
     projectId
   );
   const isAcceptedOrDeclined = inboxIssue?.status ? [-1, 1, 2, 3].includes(inboxIssue.status) : undefined;
-  // ── "Atendido" / "Devolver para Em Teste" (accepted chamados only) ──────────
+  // ── "Fulfilled" / "Return to In Testing" (accepted work items only) ──────────
   const { getStateById, getProjectStates } = useProjectState();
   const isCreator = issue?.created_by === currentUser?.id;
   const isManager = allowPermissions(
@@ -119,11 +114,11 @@ export const InboxIssueActionsHeader = observer(function InboxIssueActionsHeader
   );
   const isAccepted = inboxIssue?.status === EInboxIssueStatus.ACCEPTED;
   const isWorkItemDone = getStateById(issue?.state_id)?.group === "completed";
-  // The creator (cliente/atendente) or a manager can close or return an accepted
-  // chamado; "atendido" only once the work item is Concluído.
+  // The creator (customer/agent) or a manager can close or return an accepted
+  // work item; "fulfilled" only once the work item is Completed.
   const canManageAcceptedIntake = isAccepted && (isCreator || isManager);
   const canMarkFulfilled = canManageAcceptedIntake && isWorkItemDone;
-  const emTesteStateId = getProjectStates(projectId)?.find((s) => s.name === "Em Teste")?.id;
+  const inTestingStateId = getProjectStates(projectId)?.find((s) => s.name === "In Testing")?.id;
   // days left for snooze
   const numberOfDaysLeft = findHowManyDaysLeft(inboxIssue?.snoozed_till);
 
@@ -164,29 +159,33 @@ export const InboxIssueActionsHeader = observer(function InboxIssueActionsHeader
     handleRedirection(nextOrPreviousIssueId);
   };
 
-  // "Atendido": closes the accepted chamado (moves it to the Closed tab).
+  // "Fulfilled": closes the accepted work item (moves it to the Closed tab).
   const handleMarkFulfilled = async () => {
     try {
       await inboxIssue?.updateInboxIssueStatus(EInboxIssueStatus.FULFILLED);
-      setToast({ type: TOAST_TYPE.SUCCESS, title: "Solicitação atendida", message: "A solicitação foi marcada como atendida." });
+      setToast({
+        type: TOAST_TYPE.SUCCESS,
+        title: "Request handled",
+        message: "The request has been marked as handled.",
+      });
     } catch (err: unknown) {
       const error = err as { detail?: string };
-      setToast({ type: TOAST_TYPE.ERROR, title: "Erro", message: error?.detail || "Não foi possível marcar como atendido." });
+      setToast({ type: TOAST_TYPE.ERROR, title: "Error", message: error?.detail || "Could not mark as handled." });
     }
   };
 
-  // "Devolver para Em Teste": sends the work item back for rework; intake stays open.
+  // "Return to In Testing": sends the work item back for rework; intake stays open.
   const handleReturnToTest = async () => {
-    if (!emTesteStateId) {
-      setToast({ type: TOAST_TYPE.ERROR, title: "Erro", message: 'Estado "Em Teste" não encontrado neste projeto.' });
+    if (!inTestingStateId) {
+      setToast({ type: TOAST_TYPE.ERROR, title: "Error", message: 'State "In Testing" not found in this project.' });
       return;
     }
     try {
-      await inboxIssue?.updateIssue({ state_id: emTesteStateId });
-      setToast({ type: TOAST_TYPE.SUCCESS, title: "Devolvido", message: "Chamado devolvido para Em Teste." });
+      await inboxIssue?.updateIssue({ state_id: inTestingStateId });
+      setToast({ type: TOAST_TYPE.SUCCESS, title: "Returned", message: "Request returned to In Testing." });
     } catch (err: unknown) {
       const error = err as { detail?: string };
-      setToast({ type: TOAST_TYPE.ERROR, title: "Erro", message: error?.detail || "Não foi possível devolver para Em Teste." });
+      setToast({ type: TOAST_TYPE.ERROR, title: "Error", message: error?.detail || "Could not return to In Testing." });
     }
   };
 
@@ -261,7 +260,7 @@ export const InboxIssueActionsHeader = observer(function InboxIssueActionsHeader
     else {
       setToast({
         type: TOAST_TYPE.ERROR,
-        title: "Permissão negada",
+        title: "Permission denied",
         message: errorMessage,
       });
     }
@@ -355,14 +354,14 @@ export const InboxIssueActionsHeader = observer(function InboxIssueActionsHeader
                 variant="secondary"
                 size="lg"
                 icon={ChevronUpIcon}
-                aria-label="Solicitação anterior"
+                aria-label="Request anterior"
                 onClick={() => handleInboxIssueNavigation("prev")}
               />
               <IconButton
                 variant="secondary"
                 size="lg"
                 icon={ChevronDownIcon}
-                aria-label="Próxima solicitação"
+                aria-label="Next request"
                 onClick={() => handleInboxIssueNavigation("next")}
               />
             </div>
@@ -410,11 +409,11 @@ export const InboxIssueActionsHeader = observer(function InboxIssueActionsHeader
                 {canMarkFulfilled && (
                   <Button variant="primary" size="lg" onClick={handleMarkFulfilled}>
                     <CheckCircleFilledIcon className="size-4 shrink-0" />
-                    Marcar como atendido
+                    {t("inbox_issue.actions.mark_fulfilled")}
                   </Button>
                 )}
                 <Button variant="secondary" size="lg" onClick={handleReturnToTest}>
-                  Devolver para Em Teste
+                  {t("inbox_issue.actions.return_to_testing")}
                 </Button>
               </div>
             )}
@@ -467,7 +466,7 @@ export const InboxIssueActionsHeader = observer(function InboxIssueActionsHeader
                           handleActionWithPermission(
                             isProjectAdmin,
                             () => setSelectDuplicateIssue(true),
-                            "Apenas administradores do projeto podem marcar a solicitação como duplicada"
+                            t("inbox_issue.errors.duplicate_permission")
                           )
                         }
                       >

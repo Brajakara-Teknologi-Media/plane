@@ -122,9 +122,35 @@ function authUserDto(u: any, token: string) {
 
 
 /**
- * Registra tentativa de acesso na trilha LGPD. A trilha é por workspace, e no
- * login ainda não há workspace escolhido — usamos o primeiro do usuário (ou
- * ignoramos, se ele não pertence a nenhum: não há a quem prestar contas ainda).
+ * Serializes an API token row into the snake_case API contract expected by
+ * the frontend (Django-compatible field names).
+ */
+function apiTokenDto(t: {
+  id: string;
+  label: string;
+  description: string;
+  isActive: boolean;
+  expiredAt: Date | null;
+  lastUsed: Date | null;
+  createdAt: Date;
+  token?: string;
+}) {
+  return {
+    id: t.id,
+    label: t.label,
+    description: t.description,
+    is_active: t.isActive,
+    expired_at: t.expiredAt ? t.expiredAt.toISOString() : null,
+    last_used: t.lastUsed ? t.lastUsed.toISOString() : null,
+    created_at: t.createdAt.toISOString(),
+    ...(t.token !== undefined ? { token: t.token } : {}),
+  };
+}
+/**
+ * Records an access attempt in the LGPD audit trail. The trail is per
+ * workspace, and at login there is no workspace chosen yet — we use the
+ * user's first one (or skip it if they don't belong to any: there is no one
+ * to account to yet).
  */
 async function auditAuth(
   action: string,
@@ -157,7 +183,7 @@ async function auditAuth(
 }
 
 
-/** Resolve o usuário a partir do cookie de sessão (para o logout, que não usa authPlugin). */
+/** Resolves the user from the session cookie (for logout, which bypasses authPlugin). */
 async function userFromCookie(headers: any): Promise<{ id: string; email: string } | null> {
   try {
     const cookie: string = (typeof headers?.get === "function" ? headers.get("cookie") : headers?.cookie) ?? "";
@@ -180,22 +206,22 @@ async function signIn(b: any, set: any, json = false, headers?: any) {
   };
   if (!b?.email || !b?.password) {
     return json
-      ? jsonError(400, "Informe e-mail e senha.")
+      ? jsonError(400, "Email and password are required.")
       : authRedirect(set, `/?error_code=${AUTH_ERR.REQUIRED_SIGN_IN}`);
   }
   const email = String(b.email).toLowerCase().trim();
   const fail = () =>
     json
-      ? jsonError(403, "E-mail ou senha inválidos.")
+      ? jsonError(403, "Invalid email or password.")
       : authRedirect(set, `/?error_code=${AUTH_ERR.FAILED_SIGN_IN}&email=${encodeURIComponent(email)}`);
   const user = await prisma.user.findUnique({ where: { email } });
   if (!user?.password || !user.isActive) {
-    auditAuth(AUDIT_ACTIONS.LOGIN_FAILED, email, headers, user, { motivo: user ? "inativo ou sem senha" : "usuário inexistente" });
+    auditAuth(AUDIT_ACTIONS.LOGIN_FAILED, email, headers, user, { motivo: user ? "inactive or no password" : "nonexistent user" });
     return fail();
   }
   const valid = await Bun.password.verify(b.password, user.password);
   if (!valid) {
-    auditAuth(AUDIT_ACTIONS.LOGIN_FAILED, email, headers, user, { motivo: "senha inválida" });
+    auditAuth(AUDIT_ACTIONS.LOGIN_FAILED, email, headers, user, { motivo: "invalid password" });
     return fail();
   }
 
@@ -244,7 +270,7 @@ export const sessionAuthModule = new Elysia()
   // must clear the cookie AND redirect (302) to the app root — a 204 would leave
   // the user on a blank page, still "logged in" client-side.
   .post("/auth/sign-out/", async ({ set, headers }) => {
-    // Encerramento de sessão também entra na trilha (quem saiu, quando, de onde).
+    // Session termination also goes into the audit trail (who signed out, when, from where).
     const user = await userFromCookie(headers);
     if (user) auditAuth(AUDIT_ACTIONS.LOGOUT, user.email, headers, user);
     set.headers["Set-Cookie"] = clearCookieHeader();
@@ -273,18 +299,18 @@ export const sessionAuthModule = new Elysia()
     const cookieHeader = headers["cookie"] ?? "";
     const match = cookieHeader.match(/(?:^|;\s*)plane_auth=([^;]+)/);
     const rawToken = b?.refresh_token ?? (match?.[1] ? decodeURIComponent(match[1]) : null);
-    if (!rawToken) { set.status = 401; return { detail: "Nenhum token informado." }; }
+    if (!rawToken) { set.status = 401; return { detail: "No token provided." }; }
     try {
       const { payload } = await jwtVerify(rawToken, JWT_SECRET_BYTES);
-      if (!payload.sub) { set.status = 401; return { detail: "Token inválido." }; }
+      if (!payload.sub) { set.status = 401; return { detail: "Invalid token." }; }
       const user = await prisma.user.findUnique({ where: { id: payload.sub as string } });
-      if (!user?.isActive) { set.status = 401; return { detail: "Usuário inativo." }; }
+      if (!user?.isActive) { set.status = 401; return { detail: "Inactive username." }; }
       const newToken = await signToken(user.id, user.email);
       set.headers["Set-Cookie"] = setCookieHeader(newToken);
       return { token: newToken, access: newToken };
     } catch {
       set.status = 401;
-      return { detail: "Token inválido ou expirado." };
+      return { detail: "Invalid or expired token." };
     }
   })
 
@@ -292,97 +318,311 @@ export const sessionAuthModule = new Elysia()
   .post("/auth/forgot-password/", async ({ body, set }) => {
     // SMTP not configured; instruct user to use admin
     set.status = 400;
-    return { error_code: 5007, error_message: "SMTP_NOT_CONFIGURED", detail: "O e-mail não está configurado. Entre em contato com o administrador." };
+    return { error_code: 5007, error_message: "SMTP_NOT_CONFIGURED", detail: "Email is not configured. Contact the administrator." };
   })
   .post("/auth/spaces/forgot-password/", async ({ body, set }) => {
     set.status = 400;
-    return { error_code: 5007, error_message: "SMTP_NOT_CONFIGURED", detail: "O e-mail não está configurado. Entre em contato com o administrador." };
+    return { error_code: 5007, error_message: "SMTP_NOT_CONFIGURED", detail: "Email is not configured. Contact the administrator." };
   })
   .post("/auth/reset-password/:uidb64/:token/", async ({ params, body, set }) => {
     set.status = 400;
-    return { detail: "A redefinição de senha por e-mail não está disponível. Entre em contato com o administrador." };
+    return { detail: "Email password reset is not available. Contact your administrator." };
   })
   .post("/auth/spaces/reset-password/:uidb64/:token/", async ({ params, body, set }) => {
     set.status = 400;
-    return { detail: "A redefinição de senha por e-mail não está disponível. Entre em contato com o administrador." };
+    return { detail: "Email password reset is not available. Contact your administrator." };
   })
   .post("/auth/set-password/", async ({ body, headers, set }) => {
     const resolved = await resolveTokenFromRequest(headers as any);
-    if (!resolved) { set.status = 401; return { detail: "Não autenticado." }; }
+    if (!resolved) { set.status = 401; return { detail: "Not authenticated." }; }
     const b = body as any;
-    if (!b.password) { set.status = 400; return { detail: "password é obrigatório." }; }
+    if (!b.password) { set.status = 400; return { detail: "Password is required." }; }
     const hash = await Bun.password.hash(b.password, { algorithm: "bcrypt", cost: 12 });
     await prisma.user.update({
       where: { id: resolved.sub },
       data: { password: hash, isPasswordAutoset: false },
     });
-    return { detail: "Senha definida com sucesso." };
+    return { detail: "Password set successfully." };
   })
   .post("/auth/change-password/", async ({ body, headers, set }) => {
     const resolved = await resolveTokenFromRequest(headers as any);
-    if (!resolved) { set.status = 401; return { detail: "Não autenticado." }; }
+    if (!resolved) { set.status = 401; return { detail: "Not authenticated." }; }
     const b = body as any;
     if (!b.old_password || !b.new_password) {
       set.status = 400;
-      return { detail: "old_password e new_password são obrigatórios." };
+      return { detail: "old_password and new_password are required." };
     }
     const user = await prisma.user.findUnique({ where: { id: resolved.sub } });
-    if (!user?.password) { set.status = 400; return { detail: "Nenhuma senha definida. Use set-password." }; }
+    if (!user?.password) { set.status = 400; return { detail: "No password set. Use set-password." }; }
     const valid = await Bun.password.verify(b.old_password, user.password);
-    if (!valid) { set.status = 400; return { detail: "A senha atual está incorreta." }; }
+    if (!valid) { set.status = 400; return { detail: "The current password is incorrect." }; }
     const hash = await Bun.password.hash(b.new_password, { algorithm: "bcrypt", cost: 12 });
     await prisma.user.update({ where: { id: user.id }, data: { password: hash } });
-    return { detail: "Senha alterada com sucesso." };
+    return { detail: "Password changed successfully." };
   })
 
   // ── Magic link stubs (SMTP required — not configured) ───────────────────────
   .post("/auth/magic-generate/", ({ set }) => {
     set.status = 400;
-    return { error_code: 5007, error_message: "SMTP_NOT_CONFIGURED", detail: "O e-mail não está configurado." };
+    return { error_code: 5007, error_message: "SMTP_NOT_CONFIGURED", detail: "Email is not configured." };
   })
   .post("/auth/magic-sign-in/", ({ set }) => {
     set.status = 400;
-    return { error_code: 5007, error_message: "SMTP_NOT_CONFIGURED", detail: "O e-mail não está configurado." };
+    return { error_code: 5007, error_message: "SMTP_NOT_CONFIGURED", detail: "Email is not configured." };
   })
   .post("/auth/magic-sign-up/", ({ set }) => {
     set.status = 400;
-    return { error_code: 5007, error_message: "SMTP_NOT_CONFIGURED", detail: "O e-mail não está configurado." };
+    return { error_code: 5007, error_message: "SMTP_NOT_CONFIGURED", detail: "Email is not configured." };
   })
   .post("/auth/spaces/magic-generate/", ({ set }) => {
     set.status = 400;
-    return { error_code: 5007, error_message: "SMTP_NOT_CONFIGURED", detail: "O e-mail não está configurado." };
+    return { error_code: 5007, error_message: "SMTP_NOT_CONFIGURED", detail: "Email is not configured." };
   })
   .post("/auth/spaces/magic-sign-in/", ({ set }) => {
     set.status = 400;
-    return { error_code: 5007, error_message: "SMTP_NOT_CONFIGURED", detail: "O e-mail não está configurado." };
+    return { error_code: 5007, error_message: "SMTP_NOT_CONFIGURED", detail: "Email is not configured." };
   })
   .post("/auth/spaces/magic-sign-up/", ({ set }) => {
     set.status = 400;
-    return { error_code: 5007, error_message: "SMTP_NOT_CONFIGURED", detail: "O e-mail não está configurado." };
+    return { error_code: 5007, error_message: "SMTP_NOT_CONFIGURED", detail: "Email is not configured." };
   })
 
   // ── OAuth stubs (not configured) ─────────────────────────────────────────────
-  .get("/auth/gitlab/", ({ set }) => { set.status = 400; return { detail: "OAuth do GitLab não configurado." }; })
-  .get("/auth/gitlab/callback/", ({ set }) => { set.status = 400; return { detail: "OAuth do GitLab não configurado." }; })
-  .get("/auth/spaces/gitlab/", ({ set }) => { set.status = 400; return { detail: "OAuth do GitLab não configurado." }; })
-  .get("/auth/spaces/gitlab/callback/", ({ set }) => { set.status = 400; return { detail: "OAuth do GitLab não configurado." }; })
-  .get("/auth/github/", ({ set }) => { set.status = 400; return { detail: "OAuth do GitHub não configurado." }; })
-  .get("/auth/github/callback/", ({ set }) => { set.status = 400; return { detail: "OAuth do GitHub não configurado." }; })
-  .get("/auth/spaces/github/", ({ set }) => { set.status = 400; return { detail: "OAuth do GitHub não configurado." }; })
-  .get("/auth/spaces/github/callback/", ({ set }) => { set.status = 400; return { detail: "OAuth do GitHub não configurado." }; })
-  .get("/auth/google/", ({ set }) => { set.status = 400; return { detail: "OAuth do Google não configurado." }; })
-  .get("/auth/google/callback/", ({ set }) => { set.status = 400; return { detail: "OAuth do Google não configurado." }; })
-  .get("/auth/spaces/google/", ({ set }) => { set.status = 400; return { detail: "OAuth do Google não configurado." }; })
-  .get("/auth/spaces/google/callback/", ({ set }) => { set.status = 400; return { detail: "OAuth do Google não configurado." }; })
-  .get("/auth/gitea/", ({ set }) => { set.status = 400; return { detail: "OAuth do Gitea não configurado." }; })
-  .get("/auth/gitea/callback/", ({ set }) => { set.status = 400; return { detail: "OAuth do Gitea não configurado." }; })
-  .get("/auth/spaces/gitea/", ({ set }) => { set.status = 400; return { detail: "OAuth do Gitea não configurado." }; })
-  .get("/auth/spaces/gitea/callback/", ({ set }) => { set.status = 400; return { detail: "OAuth do Gitea não configurado." }; })
+  .get("/auth/gitlab/", ({ set }) => { set.status = 400; return { detail: "GitLab OAuth is not configured." }; })
+  .get("/auth/gitlab/callback/", ({ set }) => { set.status = 400; return { detail: "GitLab OAuth is not configured." }; })
+  .get("/auth/spaces/gitlab/", ({ set }) => { set.status = 400; return { detail: "GitLab OAuth is not configured." }; })
+  .get("/auth/spaces/gitlab/callback/", ({ set }) => { set.status = 400; return { detail: "GitLab OAuth is not configured." }; })
+  .get("/auth/github/", ({ set }) => { set.status = 400; return { detail: "GitHub OAuth is not configured." }; })
+  .get("/auth/github/callback/", ({ set }) => { set.status = 400; return { detail: "GitHub OAuth is not configured." }; })
+  .get("/auth/spaces/github/", ({ set }) => { set.status = 400; return { detail: "GitHub OAuth is not configured." }; })
+  .get("/auth/spaces/github/callback/", ({ set }) => { set.status = 400; return { detail: "GitHub OAuth is not configured." }; })
+  // ── Google OAuth ────────────────────────────────────────────────────────────
+  .get("/auth/google/", async ({ query, set, headers }) => {
+    const instance = await prisma.instance.findFirst();
+    if (!instance?.isSetupDone) {
+      set.status = 400;
+      return { detail: "Instance not configured." };
+    }
+    const cfg = (instance.configurations as Record<string, string>) ?? {};
+    const clientId = cfg["GOOGLE_CLIENT_ID"];
+    const frontendUrl = cfg["PUBLIC_BASE_URL"] || process.env.PUBLIC_BASE_URL || cfg["SPACE_BASE_URL"] || process.env.APP_BASE_URL || "http://localhost:3000";
+    const redirectUri = `${frontendUrl}/auth/google/callback/`;
+    if (!clientId) {
+      set.status = 400;
+      return { detail: "Google OAuth not configured." };
+    }
+    const state = Buffer.from(JSON.stringify({ next_path: query.next_path || "/" })).toString("base64");
+    const googleAuthUrl = new URL("https://accounts.google.com/o/oauth2/v2/auth");
+    googleAuthUrl.searchParams.append("client_id", clientId);
+    googleAuthUrl.searchParams.append("redirect_uri", redirectUri);
+    googleAuthUrl.searchParams.append("response_type", "code");
+    googleAuthUrl.searchParams.append("scope", "openid email profile");
+    googleAuthUrl.searchParams.append("state", state);
+    set.headers["Location"] = googleAuthUrl.toString();
+    set.status = 302;
+    return null;
+  })
+  .get("/auth/google/callback/", async ({ query, set, headers }) => {
+    const instance = await prisma.instance.findFirst();
+    if (!instance) {
+      set.status = 400;
+      return { detail: "Instance not configured." };
+    }
+    const cfg = (instance.configurations as Record<string, string>) ?? {};
+    const clientId = cfg["GOOGLE_CLIENT_ID"];
+    const clientSecret = cfg["GOOGLE_CLIENT_SECRET"];
+    const frontendUrl = cfg["PUBLIC_BASE_URL"] || process.env.PUBLIC_BASE_URL || cfg["SPACE_BASE_URL"] || process.env.APP_BASE_URL || "http://localhost:3000";
+    const redirectUri = `${frontendUrl}/auth/google/callback/`;
+    const code = query.code as string | undefined;
+    const state = query.state as string | undefined;
+    if (!code || !state) {
+      set.status = 400;
+      return { detail: "Missing code or state." };
+    }
+    if (!clientId || !clientSecret) {
+      set.status = 400;
+      return { detail: "Google OAuth not configured." };
+    }
+    try {
+      const tokenResp = await fetch("https://oauth2.googleapis.com/token", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: new URLSearchParams({
+          client_id: clientId,
+          client_secret: clientSecret,
+          redirect_uri: redirectUri,
+          grant_type: "authorization_code",
+          code,
+        }).toString(),
+      });
+      if (!tokenResp.ok) throw new Error(`Token exchange failed: ${tokenResp.statusText}`);
+      const tokenData: any = await tokenResp.json();
+      const accessToken = tokenData.access_token;
+      if (!accessToken) throw new Error("No access token received");
+      const userResp = await fetch("https://openidconnect.googleapis.com/v1/userinfo", {
+        headers: { Authorization: `Bearer ${accessToken}` },
+      });
+      if (!userResp.ok) throw new Error(`Userinfo fetch failed: ${userResp.statusText}`);
+      const userData: any = await userResp.json();
+      const email = userData.email?.toLowerCase().trim();
+      if (!email) throw new Error("No email in user info");
+      let user = await prisma.user.findUnique({ where: { email } });
+      if (!user) {
+        const saved = (instance.configurations as Record<string, string>) ?? {};
+        const emailEnabled = saved["ENABLE_EMAIL_PASSWORD"];
+        const signupEnabled = saved["ENABLE_SIGNUP"];
+        if (signupEnabled !== "1" && signupEnabled !== "true") {
+          set.status = 403;
+          return { detail: "Signup is disabled." };
+        }
+        user = await prisma.user.create({
+          data: {
+            email,
+            firstName: userData.given_name || "",
+            lastName: userData.family_name || "",
+            displayName: userData.name || email.split("@")[0],
+            avatar: userData.picture || "",
+            username: `user_${Date.now()}`,
+            isEmailVerified: userData.email_verified || false,
+            isActive: true,
+            language: "pt-BR",
+          },
+        });
+      }
+      const token = await signToken(user.id, user.email);
+      set.headers["Set-Cookie"] = setCookieHeader(token);
+      auditAuth(AUDIT_ACTIONS.LOGIN, email, headers, user, { provider: "google" });
+      let stateData: any = {};
+      try {
+        stateData = JSON.parse(Buffer.from(state, "base64").toString("utf-8"));
+      } catch { }
+      const nextPath = safeNext(stateData.next_path);
+      set.headers["Location"] = nextPath;
+      set.status = 302;
+      return null;
+    } catch (error) {
+      console.error("[google-oauth]", error);
+      set.status = 400;
+      return { detail: `OAuth error: ${error instanceof Error ? error.message : "Unknown error"}` };
+    }
+  })
+  .get("/auth/spaces/google/", async ({ query, set, headers }) => {
+    const instance = await prisma.instance.findFirst();
+    if (!instance?.isSetupDone) {
+      set.status = 400;
+      return { detail: "Instance not configured." };
+    }
+    const cfg = (instance.configurations as Record<string, string>) ?? {};
+    const clientId = cfg["GOOGLE_CLIENT_ID"];
+    const frontendUrl = cfg["PUBLIC_BASE_URL"] || process.env.PUBLIC_BASE_URL || cfg["SPACE_BASE_URL"] || process.env.APP_BASE_URL || "http://localhost:3000";
+    const redirectUri = `${frontendUrl}/auth/spaces/google/callback/`;
+    if (!clientId) {
+      set.status = 400;
+      return { detail: "Google OAuth not configured." };
+    }
+    const state = Buffer.from(JSON.stringify({ next_path: query.next_path || "/" })).toString("base64");
+    const googleAuthUrl = new URL("https://accounts.google.com/o/oauth2/v2/auth");
+    googleAuthUrl.searchParams.append("client_id", clientId);
+    googleAuthUrl.searchParams.append("redirect_uri", redirectUri);
+    googleAuthUrl.searchParams.append("response_type", "code");
+    googleAuthUrl.searchParams.append("scope", "openid email profile");
+    googleAuthUrl.searchParams.append("state", state);
+    set.headers["Location"] = googleAuthUrl.toString();
+    set.status = 302;
+    return null;
+  })
+  .get("/auth/spaces/google/callback/", async ({ query, set, headers }) => {
+    const instance = await prisma.instance.findFirst();
+    if (!instance) {
+      set.status = 400;
+      return { detail: "Instance not configured." };
+    }
+    const cfg = (instance.configurations as Record<string, string>) ?? {};
+    const clientId = cfg["GOOGLE_CLIENT_ID"];
+    const clientSecret = cfg["GOOGLE_CLIENT_SECRET"];
+    const frontendUrl = cfg["PUBLIC_BASE_URL"] || process.env.PUBLIC_BASE_URL || cfg["SPACE_BASE_URL"] || process.env.APP_BASE_URL || "http://localhost:3000";
+    const redirectUri = `${frontendUrl}/auth/spaces/google/callback/`;
+    const code = query.code as string | undefined;
+    const state = query.state as string | undefined;
+    if (!code || !state) {
+      set.status = 400;
+      return { detail: "Missing code or state." };
+    }
+    if (!clientId || !clientSecret) {
+      set.status = 400;
+      return { detail: "Google OAuth not configured." };
+    }
+    try {
+      const tokenResp = await fetch("https://oauth2.googleapis.com/token", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: new URLSearchParams({
+          client_id: clientId,
+          client_secret: clientSecret,
+          redirect_uri: redirectUri,
+          grant_type: "authorization_code",
+          code,
+        }).toString(),
+      });
+      if (!tokenResp.ok) throw new Error(`Token exchange failed: ${tokenResp.statusText}`);
+      const tokenData: any = await tokenResp.json();
+      const accessToken = tokenData.access_token;
+      if (!accessToken) throw new Error("No access token received");
+      const userResp = await fetch("https://openidconnect.googleapis.com/v1/userinfo", {
+        headers: { Authorization: `Bearer ${accessToken}` },
+      });
+      if (!userResp.ok) throw new Error(`Userinfo fetch failed: ${userResp.statusText}`);
+      const userData: any = await userResp.json();
+      const email = userData.email?.toLowerCase().trim();
+      if (!email) throw new Error("No email in user info");
+      let user = await prisma.user.findUnique({ where: { email } });
+      if (!user) {
+        const saved = (instance.configurations as Record<string, string>) ?? {};
+        const signupEnabled = saved["ENABLE_SIGNUP"];
+        if (signupEnabled !== "1" && signupEnabled !== "true") {
+          set.status = 403;
+          return { detail: "Signup is disabled." };
+        }
+        user = await prisma.user.create({
+          data: {
+            email,
+            firstName: userData.given_name || "",
+            lastName: userData.family_name || "",
+            displayName: userData.name || email.split("@")[0],
+            avatar: userData.picture || "",
+            username: `user_${Date.now()}`,
+            isEmailVerified: userData.email_verified || false,
+            isActive: true,
+            language: "pt-BR",
+          },
+        });
+      }
+      const token = await signToken(user.id, user.email);
+      set.headers["Set-Cookie"] = setCookieHeader(token);
+      auditAuth(AUDIT_ACTIONS.LOGIN, email, headers, user, { provider: "google" });
+      let stateData: any = {};
+      try {
+        stateData = JSON.parse(Buffer.from(state, "base64").toString("utf-8"));
+      } catch { }
+      const nextPath = safeNext(stateData.next_path);
+      set.headers["Location"] = nextPath;
+      set.status = 302;
+      return null;
+    } catch (error) {
+      console.error("[google-oauth]", error);
+      set.status = 400;
+      return { detail: `OAuth error: ${error instanceof Error ? error.message : "Unknown error"}` };
+    }
+  })
+  .get("/auth/gitea/", ({ set }) => { set.status = 400; return { detail: "Gitea OAuth is not configured." }; })
+  .get("/auth/gitea/callback/", ({ set }) => { set.status = 400; return { detail: "Gitea OAuth is not configured." }; })
+  .get("/auth/spaces/gitea/", ({ set }) => { set.status = 400; return { detail: "Gitea OAuth is not configured." }; })
+  .get("/auth/spaces/gitea/callback/", ({ set }) => { set.status = 400; return { detail: "Gitea OAuth is not configured." }; })
 
   // ── Me / session endpoints ────────────────────────────────────────────────────
   .get("/auth/me/", async ({ headers, set }) => {
     const resolved = await resolveTokenFromRequest(headers as any);
-    if (!resolved) { set.status = 401; return { detail: "Não autenticado." }; }
+    if (!resolved) { set.status = 401; return { detail: "Not authenticated." }; }
     const user = await prisma.user.findUnique({
       where: { id: resolved.sub },
       select: {
@@ -391,20 +631,20 @@ export const sessionAuthModule = new Elysia()
         isStaff: true, isInstanceAdmin: true, dateJoined: true,
       },
     });
-    if (!user) { set.status = 401; return { detail: "Usuário não encontrado." }; }
+    if (!user) { set.status = 401; return { detail: "Username not found." }; }
     return user;
   })
 
   .get("/auth/instance/", async ({ headers, set }) => {
     const resolved = await resolveTokenFromRequest(headers as any);
-    if (!resolved) { set.status = 401; return { detail: "Não autenticado." }; }
+    if (!resolved) { set.status = 401; return { detail: "Not authenticated." }; }
     const user = await prisma.user.findUnique({
       where: { id: resolved.sub },
       select: { id: true, email: true, displayName: true, isInstanceAdmin: true, isSuperuser: true },
     });
     if (!user || (!user.isInstanceAdmin && !user.isSuperuser)) {
       set.status = 403;
-      return { detail: "É necessário ser administrador da instância." };
+      return { detail: "You need to be an instance administrator." };
     }
     return { is_instance_admin: user.isInstanceAdmin, is_superuser: user.isSuperuser, user };
   });
@@ -423,6 +663,7 @@ export const authModule = new Elysia()
           orderBy: { createdAt: "desc" },
         }),
       count: () => prisma.apiToken.count({ where: { userId: user.id } }),
+      transform: (items) => items.map(apiTokenDto),
       cursor: query.cursor as string | undefined,
     });
   })
@@ -440,30 +681,31 @@ export const authModule = new Elysia()
       },
     });
     set.status = 201;
-    return token;
+    return apiTokenDto(token);
   })
 
   .get("/users/api-tokens/:token_id/", async ({ params: { token_id }, user, set }) => {
     const token = await prisma.apiToken.findFirst({ where: { id: token_id, userId: user.id } });
-    if (!token) { set.status = 404; return { detail: "Token não encontrado." }; }
-    return token;
+    if (!token) { set.status = 404; return { detail: "Token not found." }; }
+    return apiTokenDto(token);
   })
 
   .patch("/users/api-tokens/:token_id/", async ({ params: { token_id }, body, user, set }) => {
     const token = await prisma.apiToken.findFirst({ where: { id: token_id, userId: user.id } });
-    if (!token) { set.status = 404; return { detail: "Token não encontrado." }; }
+    if (!token) { set.status = 404; return { detail: "Token not found." }; }
     const b = body as any;
     const data: any = {};
     if (b.label !== undefined) data.label = b.label;
     if (b.description !== undefined) data.description = b.description;
     if (b.is_active !== undefined) data.isActive = b.is_active;
     if (b.expired_at !== undefined) data.expiredAt = b.expired_at ? new Date(b.expired_at) : null;
-    return prisma.apiToken.update({ where: { id: token_id }, data });
+    const updated = await prisma.apiToken.update({ where: { id: token_id }, data });
+    return apiTokenDto(updated);
   })
 
   .delete("/users/api-tokens/:token_id/", async ({ params: { token_id }, user, set }) => {
     const token = await prisma.apiToken.findFirst({ where: { id: token_id, userId: user.id } });
-    if (!token) { set.status = 404; return { detail: "Token não encontrado." }; }
+    if (!token) { set.status = 404; return { detail: "Token not found." }; }
     await prisma.apiToken.delete({ where: { id: token_id } });
     set.status = 204;
     return null;

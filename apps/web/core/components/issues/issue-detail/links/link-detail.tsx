@@ -54,7 +54,7 @@ export function IssueLinkDetail(props: TIssueLinkDetail) {
             setToast({
               type: TOAST_TYPE.SUCCESS,
               title: "Link copiado!",
-              message: "Link copiado para a área de transferência",
+              message: "Link copied to clipboard",
             });
           }}
         >

@@ -11,6 +11,7 @@ import { EditIcon, CloseIcon } from "@plane/propel/icons";
 // types
 import type { IIssueLabel } from "@plane/types";
 // hooks
+import { useTranslation } from "@plane/i18n";
 import { useLabel } from "@/hooks/store/use-label";
 // components
 import type { TLabelOperationsCallbacks } from "./create-update-label-inline";
@@ -52,6 +53,8 @@ export function ProjectSettingLabelItem(props: Props) {
   const [isEditLabelForm, setEditLabelForm] = useState(false);
   // router
   const { workspaceSlug, projectId } = useParams();
+  // i18n
+  const { t } = useTranslation();
   // store hooks
   const { updateLabel } = useLabel();
 
@@ -68,7 +71,7 @@ export function ProjectSettingLabelItem(props: Props) {
       CustomIcon: CloseIcon,
       onClick: removeFromGroup,
       isVisible: !!label.parent,
-      text: "Remover do grupo",
+      text: t("common.remove_from_group"),
       key: "remove_from_group",
     },
     {
@@ -78,7 +81,7 @@ export function ProjectSettingLabelItem(props: Props) {
         setIsUpdating(true);
       },
       isVisible: true,
-      text: "Editar etiqueta",
+      text: t("common.edit_label"),
       key: "edit_label",
     },
   ];

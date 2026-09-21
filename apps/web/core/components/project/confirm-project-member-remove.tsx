@@ -9,8 +9,9 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { AlertTriangle } from "lucide-react";
 // types
-import { Button } from "@plane/propel/button";
+import { useTranslation } from "@plane/i18n";
 import type { IUserLite } from "@plane/types";
+import { Button } from "@plane/propel/button";
 // ui
 import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 // hooks
@@ -33,6 +34,7 @@ export const ConfirmProjectMemberRemove = observer(function ConfirmProjectMember
   // store hooks
   const { data: currentUser } = useUser();
   const { getProjectById } = useProject();
+  const { t } = useTranslation();
 
   const handleClose = () => {
     onClose();
@@ -61,21 +63,16 @@ export const ConfirmProjectMemberRemove = observer(function ConfirmProjectMember
           </div>
           <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
             <h3 className="text-16 leading-6 font-medium text-primary">
-              {isCurrentUser ? "Sair do projeto?" : `Remover ${data?.display_name}?`}
+              {isCurrentUser
+                ? t("common.leave_project_confirmation")
+                : t("common.remove_member_title", { member_name: data?.display_name })}
             </h3>
             <div className="mt-2">
               <p className="text-13 text-secondary">
                 {isCurrentUser ? (
-                  <>
-                    Tem certeza de que deseja sair do projeto{" "}
-                    <span className="font-bold">{currentProjectDetails?.name}</span>? Você poderá entrar novamente se for
-                    convidado ou se o projeto for público.
-                  </>
+                  <>{t("common.leave_project_confirmation_message", { project_name: currentProjectDetails?.name })}</>
                 ) : (
-                  <>
-                    Tem certeza de que deseja remover o membro <span className="font-bold">{data?.display_name}</span>?
-                    Ele não terá mais acesso a este projeto. Esta ação não pode ser desfeita.
-                  </>
+                  <>{t("common.remove_member_confirmation_message", { member_name: data?.display_name })}</>
                 )}
               </p>
             </div>
@@ -84,10 +81,10 @@ export const ConfirmProjectMemberRemove = observer(function ConfirmProjectMember
       </div>
       <div className="flex justify-end gap-2 p-4 sm:px-6">
         <Button variant="secondary" size="lg" onClick={handleClose}>
-          Cancelar
+          {t("common.cancel")}
         </Button>
         <Button variant="error-fill" size="lg" tabIndex={1} onClick={handleDeletion} loading={isDeleteLoading}>
-          {isCurrentUser ? (isDeleteLoading ? "Saindo..." : "Sair") : isDeleteLoading ? "Removendo..." : "Remover"}
+          {isCurrentUser ? t("leaving") : t("removing")}
         </Button>
       </div>
     </ModalCore>

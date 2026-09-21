@@ -28,7 +28,18 @@ export abstract class APIService {
       (error) => {
         if (error.response && error.response.status === 401) {
           const currentPath = window.location.pathname;
-          window.location.replace(`/${currentPath ? `?next_path=${currentPath}` : ``}`);
+          // A 401 on the auth screens themselves is expected while logged out
+          // (e.g. /users/me/ probed by AuthenticationWrapper). Redirecting there
+          // would strip ?error_code=… and put the page in a reload loop.
+          const isAuthPage =
+            currentPath === "/" ||
+            currentPath.startsWith("/accounts/") ||
+            currentPath.startsWith("/sign-up") ||
+            currentPath.startsWith("/admin") ||
+            currentPath.startsWith("/god-mode");
+          if (!isAuthPage) {
+            window.location.replace(`/${currentPath ? `?next_path=${currentPath}` : ``}`);
+          }
         }
         return Promise.reject(error);
       }

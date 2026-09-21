@@ -8,6 +8,7 @@ import { observer } from "mobx-react";
 import { RotateCcw } from "lucide-react";
 // hooks
 import { ArchiveIcon } from "@plane/propel/icons";
+import { useTranslation } from "@plane/i18n";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // components
 import { IssueActivityBlockComponent } from "./";
@@ -21,7 +22,7 @@ export const IssueArchivedAtActivity = observer(function IssueArchivedAtActivity
   const {
     activity: { getActivityById },
   } = useIssueDetail();
-
+  const { t } = useTranslation();
   const activity = getActivityById(activityId);
 
   if (!activity) return <></>;
@@ -39,7 +40,7 @@ export const IssueArchivedAtActivity = observer(function IssueArchivedAtActivity
       ends={ends}
       customUserName={activity.new_value === "archive" ? "Avião" : undefined}
     >
-      {activity.new_value === "restore" ? "restaurou o chamado" : "arquivou o chamado"}.
+      {activity.new_value === "restore" ? t("work-item.activity.restored") : t("work-item.activity.archived")}.
     </IssueActivityBlockComponent>
   );
 });

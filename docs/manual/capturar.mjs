@@ -391,7 +391,7 @@ for (const [rota, nome, desc] of [
 // servido em /god-mode/. Se abrir em branco, o build do admin foi feito sem
 // VITE_ADMIN_BASE_PATH e os assets estão sendo pedidos na raiz.
 console.log("\n── god-mode ──");
-await ir("/god-mode/", "59-god-login", "God-mode: entrada do painel da instância", 5000);
+await ir("/god-mode/", "59-god-login", "God-mode: instance panel entry", 5000);
 // O formulário só aparece quando não há sessão de administrador ativa; com a
 // sessão do app já aberta o painel entra direto.
 const campoEmail = page.locator('input[name="email"], input[type="email"]').first();
@@ -402,10 +402,10 @@ if (await campoEmail.count()) {
   await page.waitForTimeout(7000);
 }
 for (const [rota, nome, desc] of [
-  ["general", "60-god-geral", "God-mode: identificação e telemetria da instância"],
-  ["workspace", "61-god-workspaces", "God-mode: espaços de trabalho da instância"],
+  ["general", "60-god-geral", "God-mode: Instance identification and telemetry"],
+  ["workspace", "61-god-workspaces", "God-mode: instance workspaces"],
   ["email", "62-god-email", "God-mode: servidor de e-mail (SMTP)"],
-  ["authentication", "63-god-autenticacao", "God-mode: formas de entrar no sistema"],
+  ["authentication", "63-god-authenticate", "God-mode: formas de entrar no sistema"],
   ["ai", "64-god-ia", "God-mode: chave da IA"],
   ["image", "65-god-imagens", "God-mode: banco de imagens de capa"],
 ])

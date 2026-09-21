@@ -9,7 +9,7 @@ import { useCallback, useEffect } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane constants
-import { EIssueFilterType, EUserPermissions, EUserPermissionsLevel, PROJECT_WORK_ROLES} from "@plane/constants";
+import { EIssueFilterType, EUserPermissions, EUserPermissionsLevel, PROJECT_WORK_ROLES } from "@plane/constants";
 // types
 import type { EIssuesStoreType, GroupByColumnTypes, TGroupedIssues, TIssueKanbanFilters } from "@plane/types";
 import { EIssueLayoutTypes } from "@plane/types";
@@ -80,8 +80,8 @@ export const BaseListRoot = observer(function BaseListRoot(props: IBaseListRoot)
   const orderBy = displayFilters?.order_by || undefined;
 
   const group_by = (displayFilters?.group_by || null) as GroupByColumnTypes | null;
-  // Mesma regra do quadro: agrupado por etapa, grupo vazio continua visível —
-  // é o que mostra que a etapa existe e para onde o chamado pode ir.
+  // Same rule as the board: grouped by state, an empty group stays visible —
+  // it shows the state exists and where the ticket can go.
   const showEmptyGroup =
     ["state", "state_detail.group"].includes(String(displayFilters?.group_by)) ||
     (displayFilters?.show_empty_groups ?? false);
@@ -105,10 +105,7 @@ export const BaseListRoot = observer(function BaseListRoot(props: IBaseListRoot)
 
   const groupedIssueIds = issues?.groupedIssueIds as TGroupedIssues | undefined;
   // auth
-  const isEditingAllowed = allowPermissions(
-    PROJECT_WORK_ROLES,
-    EUserPermissionsLevel.PROJECT
-  );
+  const isEditingAllowed = allowPermissions(PROJECT_WORK_ROLES, EUserPermissionsLevel.PROJECT);
   const { enableInlineEditing, enableQuickAdd, enableIssueCreation } = issues?.viewFlags || {};
 
   const canEditProperties = useCallback(

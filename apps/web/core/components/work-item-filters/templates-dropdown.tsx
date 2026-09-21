@@ -21,7 +21,7 @@ type TWorkItemFilterTemplatesDropdownProps = {
 const BUTTON_CLASSNAME =
   "flex h-7 items-center gap-1 rounded-md border border-subtle-1 px-2 py-0.5 text-12 text-secondary transition-all duration-200 cursor-pointer";
 
-/** Mesmo realce dos atalhos de pessoa — ligado tem de saltar aos olhos. */
+/** Same highlight as the person shortcuts — toggled-on must jump to the eye. */
 const ACTIVE_BUTTON_CLASSNAME = [
   "border border-accent-subtle-1 hover:border-accent-subtle-1",
   "bg-accent-subtle hover:bg-accent-subtle-hover",
@@ -46,9 +46,9 @@ export const WorkItemFilterTemplatesDropdown = observer(function WorkItemFilterT
     <Tooltip tooltipContent={t("common.filter_templates.tooltip")} position="bottom">
       <div className={cn(BUTTON_CLASSNAME, "px-1.5 @4xl:px-2", { [ACTIVE_BUTTON_CLASSNAME]: !!activeTemplate })}>
         <LayoutTemplate className="size-4 flex-shrink-0" />
-        {/* Em tela estreita fica só o ícone: a barra já disputa espaço com os
-            atalhos de pessoa, o layout, o menu de exibição e o botão de novo
-            chamado. O modelo ativo continua sinalizado pela cor. */}
+        {/* On narrow screens only the icon remains: the bar already competes
+            with the person shortcuts, the layout, the display menu and the new
+            work item button. The active template keeps being signaled by color. */}
         <span className="hidden max-w-32 truncate @4xl:inline">
           {activeTemplate?.label ?? t("common.filter_templates.label")}
         </span>

@@ -4,15 +4,15 @@
  * See the LICENSE file for details.
  */
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { observer } from "mobx-react";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IUserTheme } from "@plane/types";
-import { applyCustomTheme } from "@plane/utils";
+import { applyCustomTheme, validateHexColor } from "@plane/utils";
 // components
 import { ProfileSettingsHeading } from "@/components/settings/profile/heading";
 // hooks
@@ -23,6 +23,10 @@ import { CustomThemeDownloadConfigButton } from "./download-config-button";
 import { CustomThemeImportConfigButton } from "./import-config-button";
 import { CustomThemeModeSelector } from "./theme-mode-selector";
 
+// Debounce for live preview: long enough to avoid thrashing OKLCH palette
+// generation on every keystroke, short enough to feel responsive.
+const LIVE_PREVIEW_DEBOUNCE_MS = 250;
+
 export const CustomThemeSelector = observer(function CustomThemeSelector() {
   // store hooks
   const { data: userProfile, updateUserTheme } = useUserProfile();
@@ -31,6 +35,9 @@ export const CustomThemeSelector = observer(function CustomThemeSelector() {
 
   // Loading state for async palette generation
   const [isLoadingPalette, setIsLoadingPalette] = useState(false);
+  // Marks whether the user actually saved during this session. If they leave
+  // without saving, we restore the saved theme so live-preview never persists.
+  const savedDuringSessionRef = useRef(false);
 
   // Load saved theme from userProfile (fallback to defaults)
   const savedTheme = useMemo((): IUserTheme => {
@@ -63,6 +70,44 @@ export const CustomThemeSelector = observer(function CustomThemeSelector() {
     defaultValues: savedTheme,
   });
 
+  // Watched form values drive the live preview. useWatch re-renders this
+  // component (and its debounce effect) whenever any of the three change.
+  const watchedPrimary = useWatch({ control, name: "primary" });
+  const watchedBackground = useWatch({ control, name: "background" });
+  const watchedDarkPalette = useWatch({ control, name: "darkPalette" });
+
+  // Live preview: debounce-apply the palette on every valid change so the user
+  // sees the new theme immediately without hitting "Set theme". If the user
+  // leaves the page without saving, the cleanup below reverts to `savedTheme`.
+  useEffect(() => {
+    if (!watchedPrimary || !watchedBackground) return;
+    if (!validateHexColor(watchedPrimary) || !validateHexColor(watchedBackground)) return;
+    // Skip preview when the current form state already matches the saved
+    // theme: avoids a redundant CSS write on mount and after successful save.
+    if (
+      watchedPrimary === savedTheme.primary &&
+      watchedBackground === savedTheme.background &&
+      !!watchedDarkPalette === !!savedTheme.darkPalette
+    ) {
+      return;
+    }
+    const timeoutId = window.setTimeout(() => {
+      applyCustomTheme(watchedPrimary, watchedBackground, watchedDarkPalette ? "dark" : "light");
+    }, LIVE_PREVIEW_DEBOUNCE_MS);
+    return () => window.clearTimeout(timeoutId);
+  }, [watchedPrimary, watchedBackground, watchedDarkPalette, savedTheme]);
+
+  // On unmount, if the user previewed but never saved, restore the persisted
+  // theme so the preview does not bleed into the rest of the app.
+  useEffect(
+    () => () => {
+      if (savedDuringSessionRef.current) return;
+      if (!savedTheme.primary || !savedTheme.background) return;
+      applyCustomTheme(savedTheme.primary, savedTheme.background, savedTheme.darkPalette ? "dark" : "light");
+    },
+    [savedTheme]
+  );
+
   const handleUpdateTheme = async (formData: IUserTheme) => {
     if (!formData.primary || !formData.background) return;
 
@@ -76,11 +121,13 @@ export const CustomThemeSelector = observer(function CustomThemeSelector() {
         background: formData.background,
         darkPalette: formData.darkPalette,
       });
+      // Mark saved so the unmount cleanup skips restoring the previous theme.
+      savedDuringSessionRef.current = true;
 
       setToast({
         type: TOAST_TYPE.SUCCESS,
         title: t("success"),
-        message: "Recarregando para aplicar as alterações...",
+        message: "Reloading to apply changes...",
       });
       // reload the page after showing the toast
       setTimeout(() => {

@@ -13,7 +13,7 @@ type SectionProps = {
   className?: string;
 };
 
-/** Bloco titulado dentro de um documento de impressão. */
+/** Titled block inside a print document. */
 export const PrintSection = function PrintSection(props: SectionProps) {
   const { title, children, className } = props;
 
@@ -30,7 +30,7 @@ type FieldsProps = {
   columns?: 2 | 3;
 };
 
-/** Grade de pares rótulo/valor usada para as propriedades de um registro. */
+/** Grid of label/value pairs used for a record's properties. */
 export const PrintFields = function PrintFields(props: FieldsProps) {
   const { items, columns = 3 } = props;
 

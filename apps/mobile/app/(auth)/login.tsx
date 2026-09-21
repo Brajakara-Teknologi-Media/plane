@@ -22,7 +22,7 @@ export default function LoginScreen() {
       await signIn(server, email.trim(), password);
     } catch (e) {
       console.error("[login] sign-in failed", e);
-      setError(e instanceof ApiError ? e.detail : "Não foi possível entrar. Tente novamente.");
+      setError(e instanceof ApiError ? e.detail : "Could not sign in. Try again.");
     } finally {
       setLoading(false);
     }
@@ -33,7 +33,7 @@ export default function LoginScreen() {
       <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : undefined} style={{ flex: 1, gap: spacing.xl, justifyContent: "center" }}>
         <View style={{ alignItems: "center", gap: spacing.sm, marginBottom: spacing.lg }}>
           <Logo size="lg" />
-          <Text variant="secondary">Gestão de chamados e visitas técnicas</Text>
+          <Text variant="secondary">Gestão de work items e visitas técnicas</Text>
         </View>
 
         <View style={{ gap: spacing.md }}>

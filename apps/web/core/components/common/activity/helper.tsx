@@ -79,7 +79,10 @@ export const iconsMap: ActivityIconMap = {
   intake_view: IntakeIcon,
 };
 
-export const messages = (activity: TProjectActivity): { message: string | ReactNode; customUserName?: string } => {
+export const messages = (
+  activity: TProjectActivity,
+  t: (key: string, params?: Record<string, unknown>) => string
+): { message: string | ReactNode; customUserName?: string } => {
   const activityType = activity.field;
   const newValue = activity.new_value;
   const oldValue = activity.old_value;
@@ -87,8 +90,8 @@ export const messages = (activity: TProjectActivity): { message: string | ReactN
   const workspaceDetail = store.workspaceRoot.getWorkspaceById(activity.workspace);
 
   const getBooleanActionText = (value: string | undefined) => {
-    if (value === "true") return "ativou";
-    if (value === "false") return "desativou";
+    if (value === "true") return "enabled";
+    if (value === "false") return "disabled";
     return verb;
   };
 
@@ -97,26 +100,26 @@ export const messages = (activity: TProjectActivity): { message: string | ReactN
       return {
         message: (
           <>
-            definiu a prioridade como <span className="font-medium text-primary">{newValue || "nenhuma"}</span>
+            set priority to <span className="font-medium text-primary">{newValue || "none"}</span>
           </>
         ),
       };
     case "archived_at":
       return {
-        message: newValue === "restore" ? "restaurou o projeto" : "arquivou o projeto",
+        message: newValue === "restore" ? "restored the project" : "archived the project",
         customUserName: newValue === "archive" ? "Avião" : undefined,
       };
     case "name":
       return {
         message: (
           <>
-            renomeou o projeto para <span className="font-medium text-primary">{newValue}</span>
+            renamed the project to <span className="font-medium text-primary">{newValue}</span>
           </>
         ),
       };
     case "description":
       return {
-        message: newValue ? "atualizou a descrição do projeto" : "removeu a descrição do projeto",
+        message: newValue ? "updated the project description" : "removed the project description",
       };
     case "start_date":
       return {
@@ -124,10 +127,10 @@ export const messages = (activity: TProjectActivity): { message: string | ReactN
           <>
             {newValue ? (
               <>
-                definiu a data de início como <span className="font-medium text-primary">{newValue}</span>
+                set start date to <span className="font-medium text-primary">{newValue}</span>
               </>
             ) : (
-              "removeu a data de início"
+              "removed the start date"
             )}
           </>
         ),
@@ -138,10 +141,10 @@ export const messages = (activity: TProjectActivity): { message: string | ReactN
           <>
             {newValue ? (
               <>
-                definiu a data de entrega como <span className="font-medium text-primary">{newValue}</span>
+                set due date to <span className="font-medium text-primary">{newValue}</span>
               </>
             ) : (
-              "removeu a data de entrega"
+              "removed the due date"
             )}
           </>
         ),
@@ -150,7 +153,7 @@ export const messages = (activity: TProjectActivity): { message: string | ReactN
       return {
         message: (
           <>
-            definiu o estado como <span className="font-medium text-primary">{newValue || "nenhum"}</span>
+            set state to <span className="font-medium text-primary">{newValue || "none"}</span>
           </>
         ),
       };
@@ -160,11 +163,11 @@ export const messages = (activity: TProjectActivity): { message: string | ReactN
           <>
             {newValue ? (
               <>
-                definiu o ponto de estimativa como <span className="font-medium text-primary">{newValue}</span>
+                set estimate point to <span className="font-medium text-primary">{newValue}</span>
               </>
             ) : (
               <>
-                removeu o ponto de estimativa
+                removed the estimate point
                 {oldValue && (
                   <>
                     {" "}
@@ -181,7 +184,13 @@ export const messages = (activity: TProjectActivity): { message: string | ReactN
         message: (
           <>
             <span>
-              {verb} este projeto {verb === "removed" ? "do" : "ao"} ciclo{" "}
+              {t("work-item.project_activity.cycles", {
+                verb,
+                preposition:
+                  verb === "removed"
+                    ? t("work-item.project_activity.preposition_from")
+                    : t("work-item.project_activity.preposition_to"),
+              })}
             </span>
             {verb !== "removed" ? (
               <a
@@ -193,7 +202,7 @@ export const messages = (activity: TProjectActivity): { message: string | ReactN
                 {activity.new_value}
               </a>
             ) : (
-              <span className="font-medium text-primary">{activity.old_value || "Ciclo desconhecido"}</span>
+              <span className="font-medium text-primary">{activity.old_value || "Unknown cycle"}</span>
             )}
           </>
         ),
@@ -203,10 +212,10 @@ export const messages = (activity: TProjectActivity): { message: string | ReactN
         message: (
           <>
             <span>
-              {verb} este projeto {verb === "removed" ? "do" : "ao"} módulo{" "}
+              {verb} this project {verb === "removed" ? "from" : "to"} module{" "}
             </span>
             <span className="font-medium text-primary">
-              {verb === "removed" ? oldValue : newValue || "Módulo desconhecido"}
+              {verb === "removed" ? oldValue : newValue || "Unknown module"}
             </span>
           </>
         ),
@@ -215,33 +224,33 @@ export const messages = (activity: TProjectActivity): { message: string | ReactN
       return {
         message: (
           <>
-            {verb} a etiqueta{" "}
-            <span className="font-medium text-primary">{newValue || oldValue || "Etiqueta sem título"}</span>
+            {t("work-item.project_activity.labels", { verb })}{" "}
+            <span className="font-medium text-primary">{newValue || oldValue || "Label without title"}</span>
           </>
         ),
       };
     case "inbox":
       return {
-        message: <>{newValue ? "ativou" : "desativou"} a caixa de entrada</>,
+        message: <>{newValue ? "enabled" : "disabled"} the inbox</>,
       };
     case "page":
       return {
         message: (
           <>
-            {newValue ? "criou" : "removeu"} a página do projeto{" "}
-            <span className="font-medium text-primary">{newValue || oldValue || "Página sem título"}</span>
+            {newValue ? "created" : "removed"} the project page{" "}
+            <span className="font-medium text-primary">{newValue || oldValue || "Page without title"}</span>
           </>
         ),
       };
     case "network":
       return {
-        message: <>{newValue ? "ativou" : "desativou"} o acesso de rede</>,
+        message: <>{newValue ? "enabled" : "disabled"} network access</>,
       };
     case "identifier":
       return {
         message: (
           <>
-            atualizou o identificador do projeto para <span className="font-medium text-primary">{newValue || "nenhum"}</span>
+            updated the project identifier to <span className="font-medium text-primary">{newValue || "none"}</span>
           </>
         ),
       };
@@ -249,7 +258,7 @@ export const messages = (activity: TProjectActivity): { message: string | ReactN
       return {
         message: (
           <>
-            alterou o fuso horário do projeto para <span className="font-medium text-primary">{newValue || "padrão"}</span>
+            changed the project timezone to <span className="font-medium text-primary">{newValue || "default"}</span>
           </>
         ),
       };
@@ -261,29 +270,29 @@ export const messages = (activity: TProjectActivity): { message: string | ReactN
       return {
         message: (
           <>
-            {getBooleanActionText(newValue)} a visualização {activityType.replace(/_view$/, "").replace(/_/g, " ")}
+            {getBooleanActionText(newValue)} the {activityType.replace(/_view$/, "").replace(/_/g, " ")} view
           </>
         ),
       };
     case "is_project_updates_enabled":
       return {
-        message: <>{getBooleanActionText(newValue)} as atualizações do projeto</>,
+        message: <>{getBooleanActionText(newValue)} project updates</>,
       };
     case "is_epic_enabled":
       return {
-        message: <>{getBooleanActionText(newValue)} os épicos</>,
+        message: <>{getBooleanActionText(newValue)} epics</>,
       };
     case "is_workflow_enabled":
       return {
-        message: <>{getBooleanActionText(newValue)} o fluxo de trabalho personalizado</>,
+        message: <>{getBooleanActionText(newValue)} customized workflow</>,
       };
     case "is_time_tracking_enabled":
       return {
-        message: <>{getBooleanActionText(newValue)} o controle de tempo</>,
+        message: <>{getBooleanActionText(newValue)} time tracking</>,
       };
     case "is_issue_type_enabled":
       return {
-        message: <>{getBooleanActionText(newValue)} os tipos de chamado</>,
+        message: <>{getBooleanActionText(newValue)} work item types</>,
       };
     default:
       return {

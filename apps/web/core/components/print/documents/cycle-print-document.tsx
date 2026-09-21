@@ -7,6 +7,7 @@
 import { observer } from "mobx-react";
 // plane imports
 import { EIssuesStoreType } from "@plane/types";
+import { useTranslation } from "@plane/i18n";
 import { renderFormattedDate } from "@plane/utils";
 // hooks
 import { useCycle } from "@/hooks/store/use-cycle";
@@ -23,46 +24,47 @@ type Props = {
   cycleId: string;
 };
 
-/** Visão geral de um ciclo + chamados atualmente listados. */
+/** Cycle overview + work items currently listed. */
 export const CyclePrintDocument = observer(function CyclePrintDocument(props: Props) {
   const { cycleId } = props;
   const { getCycleById } = useCycle();
   const { getProjectById } = useProject();
   const { getUserDetails } = useMember();
+  const { t } = useTranslation();
   const issues = usePrintableIssues(EIssuesStoreType.CYCLE);
 
   const cycle = getCycleById(cycleId);
   if (!cycle) return null;
 
-  const title = `Ciclo — ${cycle.name}`;
+  const title = t("print.cycle.document_title", { name: cycle.name });
 
   return (
     <>
       <PrintButton documentTitle={title} auditEntity="cycle" auditEntityId={cycleId} />
       <PrintDocument title={title} subtitle={getProjectById(cycle.project_id)?.name}>
-        <PrintSection title="Visão geral">
+        <PrintSection title="Overview">
           <PrintFields
             items={[
-              { label: "Início", value: cycle.start_date ? renderFormattedDate(cycle.start_date) : "—" },
-              { label: "Término", value: cycle.end_date ? renderFormattedDate(cycle.end_date) : "—" },
-              { label: "Responsável", value: getUserDetails(cycle.owned_by_id)?.display_name ?? "—" },
-              { label: "Total de chamados", value: String(cycle.total_issues ?? 0) },
-              { label: "Concluídos", value: String(cycle.completed_issues ?? 0) },
-              { label: "Em andamento", value: String(cycle.started_issues ?? 0) },
-              { label: "Não iniciados", value: String(cycle.unstarted_issues ?? 0) },
+              { label: "Home", value: cycle.start_date ? renderFormattedDate(cycle.start_date) : "—" },
+              { label: "End date", value: cycle.end_date ? renderFormattedDate(cycle.end_date) : "—" },
+              { label: "Responsible", value: getUserDetails(cycle.owned_by_id)?.display_name ?? "—" },
+              { label: "Total work items", value: String(cycle.total_issues ?? 0) },
+              { label: "Completed", value: String(cycle.completed_issues ?? 0) },
+              { label: "In Progress", value: String(cycle.started_issues ?? 0) },
+              { label: "Unstarted", value: String(cycle.unstarted_issues ?? 0) },
               { label: "Backlog", value: String(cycle.backlog_issues ?? 0) },
-              { label: "Cancelados", value: String(cycle.cancelled_issues ?? 0) },
+              { label: "Cancelled", value: String(cycle.cancelled_issues ?? 0) },
             ]}
           />
         </PrintSection>
 
         {cycle.description && (
-          <PrintSection title="Descrição">
+          <PrintSection title="Description">
             <p>{cycle.description}</p>
           </PrintSection>
         )}
 
-        <PrintSection title={`Chamados (${issues.length})`}>
+        <PrintSection title={`Work Items (${issues.length})`}>
           <PrintIssuesTable issues={issues} showProject={false} />
         </PrintSection>
       </PrintDocument>

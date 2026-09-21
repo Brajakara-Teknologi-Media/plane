@@ -120,7 +120,7 @@ export class ProfileStore implements IUserProfileStore {
         this.isLoading = false;
         this.error = {
           status: "user-profile-fetch-error",
-          message: "Falha ao buscar o perfil do usuário",
+          message: "Failed to fetch user profile",
         };
       });
       throw error;
@@ -150,7 +150,7 @@ export class ProfileStore implements IUserProfileStore {
       runInAction(() => {
         this.error = {
           status: "user-profile-update-error",
-          message: "Falha ao atualizar o perfil do usuário",
+          message: "Failed to update user profile",
         };
       });
     }
@@ -193,7 +193,7 @@ export class ProfileStore implements IUserProfileStore {
       runInAction(() => {
         this.error = {
           status: "user-profile-onboard-finish-error",
-          message: "Falha ao concluir a integração do usuário",
+          message: "Failed to complete user onboarding",
         };
       });
       throw error;
@@ -215,7 +215,7 @@ export class ProfileStore implements IUserProfileStore {
         this.mutateUserProfile({ is_tour_completed: isUserProfileTourCompleted });
         this.error = {
           status: "user-profile-tour-complete-error",
-          message: "Falha ao atualizar o perfil do usuário (is_tour_completed)",
+          message: "Failed to update user profile (is_tour_completed)",
         };
       });
       throw error;
@@ -247,7 +247,7 @@ export class ProfileStore implements IUserProfileStore {
         });
         this.error = {
           status: "user-profile-theme-update-error",
-          message: "Falha ao atualizar o tema do perfil do usuário",
+          message: "Failed to update user profile theme",
         };
       });
       throw error;

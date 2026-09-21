@@ -14,7 +14,7 @@ type Props = {
   className?: string;
 };
 
-/** Rodapé configurável do workspace, exibido ao final do documento impresso. */
+/** Configurable workspace footer, shown at the end of the printed document. */
 export const PrintFooter = observer(function PrintFooter(props: Props) {
   const { className } = props;
   const { printSettings } = usePrintSettings();

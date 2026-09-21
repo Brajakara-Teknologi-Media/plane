@@ -88,7 +88,7 @@ export const ProjectViewLayoutRoot = observer(function ProjectViewLayoutRoot() {
       <ProjectLevelWorkItemFiltersHOC
         enableSaveView
         saveViewOptions={{
-          label: "Salvar como",
+          label: "Save as",
         }}
         enableUpdateView
         entityId={viewId}

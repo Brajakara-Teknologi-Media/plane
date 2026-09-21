@@ -6,6 +6,7 @@
 
 import { useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
+import { useTranslation } from "@plane/i18n";
 // plane types
 import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
@@ -28,6 +29,7 @@ const defaultValues: ModuleLink = {
 
 export function CreateUpdateModuleLinkModal(props: Props) {
   const { isOpen, handleClose, createLink, updateLink, data } = props;
+  const { t } = useTranslation();
   // form info
   const {
     formState: { errors, isSubmitting },
@@ -54,23 +56,23 @@ export function CreateUpdateModuleLinkModal(props: Props) {
         await createLink(payload);
         setToast({
           type: TOAST_TYPE.SUCCESS,
-          title: "Sucesso!",
-          message: "Link do módulo criado com sucesso.",
+          title: t("common.toast.success"),
+          message: "Module link created successfully.",
         });
       } else {
         await updateLink(payload, data.id);
         setToast({
           type: TOAST_TYPE.SUCCESS,
-          title: "Sucesso!",
-          message: "Link do módulo atualizado com sucesso.",
+          title: t("common.toast.success"),
+          message: "Module link updated successfully.",
         });
       }
       onClose();
     } catch (error: any) {
       setToast({
         type: TOAST_TYPE.ERROR,
-        title: "Erro!",
-        message: error?.data?.error ?? "Ocorreu um erro. Tente novamente.",
+        title: t("common.toast.error"),
+        message: error?.data?.error ?? "An error occurred. Please try again.",
       });
     }
   };
@@ -96,7 +98,7 @@ export function CreateUpdateModuleLinkModal(props: Props) {
                 control={control}
                 name="url"
                 rules={{
-                  required: "A URL é obrigatória",
+                  required: "URL is required",
                 }}
                 render={({ field: { value, onChange, ref } }) => (
                   <Input
@@ -106,7 +108,7 @@ export function CreateUpdateModuleLinkModal(props: Props) {
                     onChange={onChange}
                     ref={ref}
                     hasError={Boolean(errors.url)}
-                    placeholder="Digite ou cole uma URL"
+                    placeholder={t("common.type_or_paste_url")}
                     className="w-full"
                   />
                 )}
@@ -115,7 +117,7 @@ export function CreateUpdateModuleLinkModal(props: Props) {
             <div>
               <label htmlFor="title" className="mb-2 text-secondary">
                 Display title
-                <span className="block text-10">Opcional</span>
+                <span className="block text-10">{t("common.optional")}</span>
               </label>
               <Controller
                 control={control}
@@ -128,7 +130,7 @@ export function CreateUpdateModuleLinkModal(props: Props) {
                     onChange={onChange}
                     ref={ref}
                     hasError={Boolean(errors.title)}
-                    placeholder="Como você gostaria de exibir este link"
+                    placeholder="How would you like to display this link"
                     className="w-full"
                   />
                 )}
@@ -138,7 +140,7 @@ export function CreateUpdateModuleLinkModal(props: Props) {
         </div>
         <div className="flex items-center justify-end gap-2 border-t-[0.5px] border-subtle px-5 py-4">
           <Button variant="secondary" size="lg" onClick={onClose}>
-            Cancelar
+            {t("common.cancel")}
           </Button>
           <Button variant="primary" size="lg" type="submit" loading={isSubmitting}>
             {data ? (isSubmitting ? "Updating link" : "Update link") : isSubmitting ? "Adding link" : "Add link"}

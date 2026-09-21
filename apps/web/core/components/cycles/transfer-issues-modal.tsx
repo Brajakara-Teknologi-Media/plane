@@ -12,6 +12,7 @@ import { SearchIcon, CycleIcon, TransferIcon, CloseIcon } from "@plane/propel/ic
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { EIssuesStoreType } from "@plane/types";
 import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
+import { useTranslation } from "@plane/i18n";
 import { useCycle } from "@/hooks/store/use-cycle";
 import { useIssues } from "@/hooks/store/use-issues";
 
@@ -23,6 +24,7 @@ type Props = {
 
 export const TransferIssuesModal = observer(function TransferIssuesModal(props: Props) {
   const { isOpen, handleClose, cycleId } = props;
+  const { t } = useTranslation();
   // states
   const [query, setQuery] = useState("");
 
@@ -41,16 +43,16 @@ export const TransferIssuesModal = observer(function TransferIssuesModal(props: 
       .then(async () => {
         setToast({
           type: TOAST_TYPE.SUCCESS,
-          title: "Sucesso!",
-          message: "Chamados transferidos com sucesso",
+          title: t("common.success"),
+          message: t("work-item.transfer_issues.success_message"),
         });
         await getCycleDetails(payload.new_cycle_id);
       })
       .catch(() => {
         setToast({
           type: TOAST_TYPE.ERROR,
-          title: "Erro!",
-          message: "Não foi possível transferir os chamados. Tente novamente.",
+          title: t("toast.error"),
+          message: "Could not transfer work items. Please try again.",
         });
       });
   };
@@ -64,7 +66,7 @@ export const TransferIssuesModal = observer(function TransferIssuesModal(props: 
     await Promise.all(cyclesFetch).catch((error) => {
       setToast({
         type: TOAST_TYPE.ERROR,
-        title: "Erro",
+        title: t("toast.error"),
         message: error.error || "Unable to fetch cycle details",
       });
     });
@@ -82,7 +84,7 @@ export const TransferIssuesModal = observer(function TransferIssuesModal(props: 
         <div className="flex items-center justify-between px-5">
           <div className="flex items-center gap-1">
             <TransferIcon className="w-5 fill-primary" />
-            <h4 className="text-18 font-medium text-primary">Transferir chamados</h4>
+            <h4 className="text-18 font-medium text-primary">{t("work-item.transfer_issues.title")}</h4>
           </div>
           <button onClick={handleClose}>
             <CloseIcon className="h-4 w-4" />
@@ -92,7 +94,7 @@ export const TransferIssuesModal = observer(function TransferIssuesModal(props: 
           <SearchIcon className="h-4 w-4 text-secondary" />
           <input
             className="text-13 outline-none"
-            placeholder="Buscar um ciclo..."
+            placeholder="Search cycle..."
             onChange={(e) => setQuery(e.target.value)}
             value={query}
           />
@@ -131,13 +133,11 @@ export const TransferIssuesModal = observer(function TransferIssuesModal(props: 
             ) : (
               <div className="flex w-full items-center justify-center gap-4 p-5 text-13">
                 <AlertCircle className="h-3.5 w-3.5 text-secondary" />
-                <span className="text-center text-secondary">
-                  Você não possui um ciclo atual. Crie um para transferir os chamados.
-                </span>
+                <span className="text-center text-secondary">{t("work-item.transfer_issues.no_current_cycle")}</span>
               </div>
             )
           ) : (
-            <p className="text-center text-secondary">Carregando...</p>
+            <p className="text-center text-secondary">{t("loading")}...</p>
           )}
         </div>
       </div>

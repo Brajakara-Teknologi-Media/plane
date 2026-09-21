@@ -15,7 +15,7 @@ const PRIORITIES: Priority[] = ["urgent", "high", "medium", "low", "none"];
 const PRIORITY_LABELS: Record<Priority, string> = {
   urgent: "Urgente",
   high: "Alta",
-  medium: "Média",
+  medium: "Medium",
   low: "Baixa",
   none: "Nenhuma",
 };
@@ -68,7 +68,7 @@ export default function NewIntakeScreen() {
       router.back();
     } catch {
       await enqueue({ kind: "intake", slug, projectId, label: name.trim(), body });
-      Alert.alert("Salvo offline", "O intake será sincronizado quando a conexão voltar.");
+      Alert.alert("Saved offline", "The intake will be synced when the connection is restored.");
       router.back();
     } finally {
       setSaving(false);
@@ -102,7 +102,7 @@ export default function NewIntakeScreen() {
         <FieldButton label="Prioridade" value={PRIORITY_LABELS[priority]} onPress={() => setSheet("priority")} />
         <FieldButton label="Entidade" value={selectedEntity?.name ?? "—"} onPress={() => setSheet("entity")} />
         <FieldButton
-          label="Responsáveis"
+          label="Responsible"
           value={assigneeNames.length ? assigneeNames.join(", ") : "—"}
           onPress={() => setSheet("assignees")}
         />
@@ -133,7 +133,7 @@ export default function NewIntakeScreen() {
       />
       <MultiOptionSheet
         visible={sheet === "assignees"}
-        title="Responsáveis"
+        title="Responsible"
         selected={assigneeIds}
         onToggle={(v) => setAssigneeIds((prev) => toggle(prev, String(v)))}
         onClose={() => setSheet(null)}

@@ -62,9 +62,9 @@ export const IssueAttachmentUpload = observer(function IssueAttachmentUpload(pro
         ) : fileError ? (
           <p className="text-center text-danger-primary">{fileError}</p>
         ) : isLoading ? (
-          <p className="text-center">Enviando...</p>
+          <p className="text-center">Sending...</p>
         ) : (
-          <p className="text-center">Clique ou arraste um arquivo aqui</p>
+          <p className="text-center">Click or drag a file here</p>
         )}
       </span>
     </div>

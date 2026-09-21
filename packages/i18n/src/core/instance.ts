@@ -20,13 +20,18 @@ i18nInstance
   .use(initReactI18next)
   .use(resourcesToBackend((language: string, namespace: string) => import(`../locales/${language}/${namespace}.json`)));
 
-const initialLng =
-  typeof window !== "undefined" ? localStorage.getItem(LANGUAGE_STORAGE_KEY) || FALLBACK_LANGUAGE : FALLBACK_LANGUAGE;
+const initialLng = (() => {
+  if (typeof window === "undefined") return FALLBACK_LANGUAGE;
+  const stored = localStorage.getItem(LANGUAGE_STORAGE_KEY);
+  // If stored language is pt-BR (deprecated), force English
+  if (stored === "pt-BR") return FALLBACK_LANGUAGE;
+  return stored || FALLBACK_LANGUAGE;
+})();
 
 export const initPromise = i18nInstance
   .init({
     lng: initialLng,
-    fallbackLng: [FALLBACK_LANGUAGE, "en"],
+    fallbackLng: FALLBACK_LANGUAGE,
     supportedLngs: SUPPORTED_LANGUAGES.map((l) => l.value),
     ns: NAMESPACES,
     defaultNS: DEFAULT_NAMESPACE,
@@ -45,6 +50,7 @@ export const initPromise = i18nInstance
     // intent here so this isn't accidentally flipped.
     returnObjects: false,
     react: { useSuspense: false },
+    debug: false,
   })
   // Eagerly pre-load all namespaces for the initial language so they're cached
   // before any component renders. This prevents the re-render cascade that occurs

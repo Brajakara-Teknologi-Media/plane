@@ -7,6 +7,7 @@
 import type { SyntheticEvent } from "react";
 import React, { useRef } from "react";
 import { observer } from "mobx-react";
+import { useTranslation } from "@plane/i18n";
 import Link from "next/link";
 import { useParams, usePathname, useSearchParams } from "next/navigation";
 import { Info, SquareUser } from "lucide-react";
@@ -16,7 +17,9 @@ import {
   PROGRESS_STATE_GROUPS_DETAILS,
   EUserPermissions,
   EUserPermissionsLevel,
-  IS_FAVORITE_MENU_OPEN, PROJECT_WORK_ROLES} from "@plane/constants";
+  IS_FAVORITE_MENU_OPEN,
+  PROJECT_WORK_ROLES,
+} from "@plane/constants";
 import { useLocalStorage } from "@plane/hooks";
 import { WorkItemsIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setPromiseToast, setToast } from "@plane/propel/toast";
@@ -42,7 +45,7 @@ type Props = {
 
 export const ModuleCardItem = observer(function ModuleCardItem(props: Props) {
   const { moduleId } = props;
-  // refs
+  const { t } = useTranslation();
   const parentRef = useRef(null);
   // router
   const router = useAppRouter();
@@ -57,10 +60,7 @@ export const ModuleCardItem = observer(function ModuleCardItem(props: Props) {
   const { setValue: toggleFavoriteMenu, storedValue } = useLocalStorage<boolean>(IS_FAVORITE_MENU_OPEN, false);
   // derived values
   const moduleDetails = getModuleById(moduleId);
-  const isEditingAllowed = allowPermissions(
-    PROJECT_WORK_ROLES,
-    EUserPermissionsLevel.PROJECT
-  );
+  const isEditingAllowed = allowPermissions(PROJECT_WORK_ROLES, EUserPermissionsLevel.PROJECT);
   const isDisabled = !isEditingAllowed || !!moduleDetails?.archived_at;
   const renderIcon = Boolean(moduleDetails?.start_date) || Boolean(moduleDetails?.target_date);
 
@@ -79,12 +79,12 @@ export const ModuleCardItem = observer(function ModuleCardItem(props: Props) {
     setPromiseToast(addToFavoritePromise, {
       loading: "Adding module to favorites...",
       success: {
-        title: "Sucesso!",
+        title: t("common.toast.success"),
         message: () => "Module added to favorites.",
       },
       error: {
-        title: "Erro!",
-        message: () => "Não foi possível adicionar o módulo aos favoritos. Tente novamente.",
+        title: t("common.toast.error"),
+        message: () => "Could not add module to favorites. Please try again.",
       },
     });
   };
@@ -103,12 +103,12 @@ export const ModuleCardItem = observer(function ModuleCardItem(props: Props) {
     setPromiseToast(removeFromFavoritePromise, {
       loading: "Removing module from favorites...",
       success: {
-        title: "Sucesso!",
+        title: t("common.toast.success"),
         message: () => "Module removed from favorites.",
       },
       error: {
-        title: "Erro!",
-        message: () => "Não foi possível remover o módulo dos favoritos. Tente novamente.",
+        title: t("common.toast.error"),
+        message: () => "Could not remove module from favorites. Please try again.",
       },
     });
   };
@@ -125,15 +125,15 @@ export const ModuleCardItem = observer(function ModuleCardItem(props: Props) {
       .then(() => {
         setToast({
           type: TOAST_TYPE.SUCCESS,
-          title: "Sucesso!",
-          message: "Módulo atualizado com sucesso.",
+          title: t("common.toast.success"),
+          message: "Module updated successfully.",
         });
       })
       .catch((err) => {
         setToast({
           type: TOAST_TYPE.ERROR,
-          title: "Erro!",
-          message: err?.detail ?? "Não foi possível atualizar o módulo. Tente novamente.",
+          title: t("common.toast.error"),
+          message: err?.detail ?? "Could not update module. Please try again.",
         });
       });
   };
@@ -209,7 +209,7 @@ export const ModuleCardItem = observer(function ModuleCardItem(props: Props) {
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-1.5 text-secondary">
                 <WorkItemsIcon className="h-4 w-4 text-tertiary" />
-                <span className="text-11 text-tertiary">{issueCount ?? "0 chamado"}</span>
+                <span className="text-11 text-tertiary">{t("misc.work_item_label", { count: issueCount ?? 0 })}</span>
               </div>
               {moduleLeadDetails ? (
                 <span className="cursor-default">

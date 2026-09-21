@@ -11,6 +11,7 @@ import { useDropzone } from "react-dropzone";
 import { PlusIcon } from "@plane/propel/icons";
 // plane imports
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { useTranslation } from "@plane/i18n";
 import type { TIssueServiceType } from "@plane/types";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
@@ -36,6 +37,8 @@ export const IssueAttachmentActionButton = observer(function IssueAttachmentActi
   const { setLastWidgetAction, fetchActivities } = useIssueDetail(issueServiceType);
   // file size
   const { maxFileSize } = useFileSize();
+  // translation
+  const { t } = useTranslation();
   // operations
   const { operations: attachmentOperations } = useAttachmentOperations(
     workspaceSlug,
@@ -62,8 +65,8 @@ export const IssueAttachmentActionButton = observer(function IssueAttachmentActi
           .catch(() => {
             setToast({
               type: TOAST_TYPE.ERROR,
-              title: "Erro!",
-              message: "Não foi possível anexar o arquivo. Tente enviar novamente.",
+              title: t("common.toast.error"),
+              message: "Could not attach the file. Please try uploading again.",
             });
           })
           .finally(() => {
@@ -76,10 +79,10 @@ export const IssueAttachmentActionButton = observer(function IssueAttachmentActi
 
       setToast({
         type: TOAST_TYPE.ERROR,
-        title: "Erro!",
+        title: t("common.toast.error"),
         message:
           totalAttachedFiles > 1
-            ? "Apenas um arquivo pode ser enviado por vez."
+            ? t("common.attachment.only_one_file_allowed")
             : `File must be of ${maxFileSize / 1024 / 1024}MB or less in size.`,
       });
       return;

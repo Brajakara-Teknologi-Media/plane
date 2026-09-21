@@ -9,7 +9,8 @@ import React, { useState } from "react";
 import { useTheme } from "next-themes";
 import { ArrowRightLeft } from "lucide-react";
 import { Dialog, Transition } from "@headlessui/react";
-// ui
+// plane imports
+import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 // hooks
@@ -23,7 +24,8 @@ type Props = {
 
 export function SwitchAccountModal(props: Props) {
   const { isOpen, onClose } = props;
-  // states
+  // i18n
+  const { t } = useTranslation();
   const [switchingAccount, setSwitchingAccount] = useState(false);
   // router
   const router = useAppRouter();
@@ -49,8 +51,8 @@ export function SwitchAccountModal(props: Props) {
       .catch(() =>
         setToast({
           type: TOAST_TYPE.ERROR,
-          title: "Erro!",
-          message: "Falha ao sair. Tente novamente.",
+          title: t("common.error_bang"),
+          message: "Failed to sign out. Please try again.",
         })
       )
       .finally(() => setSwitchingAccount(false));
@@ -96,8 +98,9 @@ export function SwitchAccountModal(props: Props) {
                       </Dialog.Title>
                       {userData?.email && (
                         <div className="text-14 font-regular text-secondary">
-                          Se você se cadastrou por meio de <span className="text-accent-primary">{userData.email}</span>{" "}
-                          un-intentionally, you can switch your account to a different one from here.
+                          {t("onboarding.auth.switch_account_hint_prefix")}{" "}
+                          <span className="text-accent-primary">{userData.email}</span>{" "}
+                          {t("onboarding.auth.switch_account_hint_suffix")}
                         </div>
                       )}
                     </div>

@@ -15,44 +15,43 @@ export const generateWeeks = (startOfWeek: EStartOfTheWeek = EStartOfTheWeek.SUN
 ];
 
 export const weeks: WeekMonthDataType[] = [
-  { key: 0, shortTitle: "dom", title: "domingo", abbreviation: "D" },
-  { key: 1, shortTitle: "seg", title: "segunda-feira", abbreviation: "S" },
-  { key: 2, shortTitle: "ter", title: "terça-feira", abbreviation: "T" },
-  { key: 3, shortTitle: "qua", title: "quarta-feira", abbreviation: "Q" },
-  { key: 4, shortTitle: "qui", title: "quinta-feira", abbreviation: "Q" },
-  { key: 5, shortTitle: "sex", title: "sexta-feira", abbreviation: "S" },
-  { key: 6, shortTitle: "sáb", title: "sábado", abbreviation: "S" },
+  { key: 0, shortTitle: "Sun", title: "Sunday", abbreviation: "Sun" },
+  { key: 1, shortTitle: "Mon", title: "Monday", abbreviation: "Mon" },
+  { key: 2, shortTitle: "Tue", title: "Tuesday", abbreviation: "Tue" },
+  { key: 3, shortTitle: "Wed", title: "Wednesday", abbreviation: "Wed" },
+  { key: 4, shortTitle: "Thu", title: "Thursday", abbreviation: "Thu" },
+  { key: 5, shortTitle: "Fri", title: "Friday", abbreviation: "Fri" },
+  { key: 6, shortTitle: "Sat", title: "Saturday", abbreviation: "Sat" },
 ];
 
 export const months: WeekMonthDataType[] = [
-  { key: 0, shortTitle: "jan", title: "janeiro", abbreviation: "Jan" },
-  { key: 1, shortTitle: "fev", title: "fevereiro", abbreviation: "Fev" },
-  { key: 2, shortTitle: "mar", title: "março", abbreviation: "Mar" },
-  { key: 3, shortTitle: "abr", title: "abril", abbreviation: "Abr" },
-  { key: 4, shortTitle: "mai", title: "maio", abbreviation: "Mai" },
-  { key: 5, shortTitle: "jun", title: "junho", abbreviation: "Jun" },
-  { key: 6, shortTitle: "jul", title: "julho", abbreviation: "Jul" },
-  { key: 7, shortTitle: "ago", title: "agosto", abbreviation: "Ago" },
-  { key: 8, shortTitle: "set", title: "setembro", abbreviation: "Set" },
-  { key: 9, shortTitle: "out", title: "outubro", abbreviation: "Out" },
-  { key: 10, shortTitle: "nov", title: "novembro", abbreviation: "Nov" },
-  { key: 11, shortTitle: "dez", title: "dezembro", abbreviation: "Dez" },
+  { key: 0, shortTitle: "Jan", title: "January", abbreviation: "Jan" },
+  { key: 1, shortTitle: "Feb", title: "February", abbreviation: "Feb" },
+  { key: 2, shortTitle: "Mar", title: "March", abbreviation: "Mar" },
+  { key: 3, shortTitle: "Apr", title: "April", abbreviation: "Apr" },
+  { key: 4, shortTitle: "May", title: "May", abbreviation: "May" },
+  { key: 5, shortTitle: "Jun", title: "June", abbreviation: "Jun" },
+  { key: 6, shortTitle: "Jul", title: "July", abbreviation: "Jul" },
+  { key: 7, shortTitle: "Aug", title: "August", abbreviation: "Aug" },
+  { key: 8, shortTitle: "Sep", title: "September", abbreviation: "Sep" },
+  { key: 9, shortTitle: "Oct", title: "October", abbreviation: "Oct" },
+  { key: 10, shortTitle: "Nov", title: "November", abbreviation: "Nov" },
+  { key: 11, shortTitle: "Dec", title: "December", abbreviation: "Dec" },
 ];
 
 export const quarters: WeekMonthDataType[] = [
   { key: 0, shortTitle: "Q1", title: "Jan - Mar", abbreviation: "Q1" },
-  { key: 1, shortTitle: "Q2", title: "Abr - Jun", abbreviation: "Q2" },
-  { key: 2, shortTitle: "Q3", title: "Jul - Set", abbreviation: "Q3" },
-  { key: 3, shortTitle: "Q4", title: "Out - Dez", abbreviation: "Q4" },
+  { key: 1, shortTitle: "Q2", title: "Apr - Jun", abbreviation: "Q2" },
+  { key: 2, shortTitle: "Q3", title: "Jul - Sep", abbreviation: "Q3" },
+  { key: 3, shortTitle: "Q4", title: "Oct - Dec", abbreviation: "Q4" },
 ];
 
 export const charCapitalize = (word: string) => `${word.charAt(0).toUpperCase()}${word.substring(1)}`;
 
 export const bindZero = (value: number) => (value > 9 ? `${value}` : `0${value}`);
 
-/** Hora no formato brasileiro (24h) — AM/PM não é usado aqui. */
-export const timePreview = (date: Date) =>
-  `${bindZero(date.getHours())}:${bindZero(date.getMinutes())}`;
+/** Time in 24-hour format — AM/PM is not used here. */
+export const timePreview = (date: Date) => `${bindZero(date.getHours())}:${bindZero(date.getMinutes())}`;
 
 export const datePreview = (date: Date, includeTime: boolean = false) => {
   const day = date.getDate();

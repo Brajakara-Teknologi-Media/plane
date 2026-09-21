@@ -55,7 +55,7 @@ export function AuthConfirmPasswordInput({
 
   const getError = () => {
     if (error) return error;
-    if (showMatchError) return "As senhas não coincidem";
+    if (showMatchError) return "Passwords do not match";
     return "";
   };
 

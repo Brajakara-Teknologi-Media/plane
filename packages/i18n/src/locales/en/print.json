@@ -1,0 +1,65 @@
+{
+  "print": {
+    "table": {
+      "due_date": "Due date"
+    },
+    "counts": {
+      "tickets": "{count} ticket(s)",
+      "requests": "{count} request(s)",
+      "visits": "{count} visit(s)",
+      "messages": "{count} message(s)"
+    },
+    "labels": {
+      "channel": "Channel",
+      "status": "Status",
+      "phone": "Phone",
+      "opened_at": "Opened at",
+      "duplicate_of": "Duplicate of",
+      "city": "City",
+      "contacts": "Contacts",
+      "motivations": "Motivations",
+      "scheduled_for": "Scheduled for",
+      "situation": "Situation",
+      "lead": "Lead",
+      "total": "Total"
+    },
+    "chat": {
+      "sender_client": "Client",
+      "sender_attendant": "Attendant",
+      "sender_system": "System",
+      "attachment_prefix": "[attachment] {name}",
+      "deleted_message": "(message deleted)",
+      "data_section": "Service data",
+      "no_messages": "No messages recorded.",
+      "sender_bot": "Automated support"
+    },
+    "intake": {
+      "empty": "No requests found."
+    },
+    "visits": {
+      "mot_bug_fix": "Bug fix",
+      "mot_training": "Training",
+      "mot_improvement": "Improvement",
+      "mot_commercial": "Commercial",
+      "mot_other": "Other",
+      "empty": "No technical visits found.",
+      "data_section": "Visit data",
+      "summary_section": "Service summary",
+      "mot_update": "Update",
+      "no_summary": "No summary."
+    },
+    "module": {
+      "document_title": "Module — {name}",
+      "total_issues": "Total tickets"
+    },
+    "cycle": {
+      "document_title": "Cycle — {name}"
+    },
+    "work_item": {
+      "comments_title": "Comments ({count})",
+      "no_comments": "No comments.",
+      "no_attachments": "No attachments.",
+      "attachments_title": "Attachments ({count})"
+    }
+  }
+}

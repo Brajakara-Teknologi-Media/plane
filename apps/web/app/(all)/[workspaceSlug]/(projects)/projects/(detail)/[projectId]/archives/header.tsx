@@ -33,7 +33,7 @@ const PROJECT_ARCHIVES_BREADCRUMB_LIST: {
   };
 } = {
   issues: {
-    label: "Chamados",
+    label: "Work Items",
     href: "/issues",
     icon: WorkItemsIcon,
   },
@@ -43,7 +43,7 @@ const PROJECT_ARCHIVES_BREADCRUMB_LIST: {
     icon: CycleIcon,
   },
   modules: {
-    label: "Módulos",
+    label: "Modules",
     href: "/modules",
     icon: ModuleIcon,
   },
@@ -96,7 +96,7 @@ export const ProjectArchivesHeader = observer(function ProjectArchivesHeader(pro
           {activeTab === "issues" && issueCount && issueCount > 0 ? (
             <Tooltip
               isMobile={isMobile}
-              tooltipContent={`Existem ${issueCount} ${issueCount > 1 ? "chamados" : "chamado"} nos arquivados do projeto`}
+              tooltipContent={`There ${issueCount > 1 ? "are" : "is"} ${issueCount} ${issueCount > 1 ? "archived work items" : "archived work item"} in the project`}
               position="bottom"
             >
               <span className="flex flex-shrink-0 cursor-default items-center justify-center rounded-xl bg-accent-primary/20 px-2.5 py-0.5 text-center text-11 font-semibold text-accent-primary">

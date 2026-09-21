@@ -122,7 +122,7 @@ export function AuthForm({
 
   const getAlternateModeText = () => {
     if (alternateModeText) return alternateModeText;
-    return mode === "sign-in" ? "Ainda não tem uma conta?" : "Já tem uma conta?";
+    return mode === "sign-in" ? "Don't have an account yet?" : "Already have an account?";
   };
 
   const getAlternateModeButtonText = () => {
@@ -151,7 +151,7 @@ export function AuthForm({
       <AuthPasswordInput
         id="password"
         name="password"
-        label={mode === "sign-in" ? "Senha" : "Defina uma senha"}
+        label={mode === "sign-in" ? "Password" : "Set a password"}
         value={formData.password}
         onChange={handleInputChange("password")}
         onPasswordChange={handlePasswordChange}

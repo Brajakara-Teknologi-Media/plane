@@ -64,11 +64,11 @@ export const FilterDate = observer(function FilterDate(props: Props) {
           handleClose={() => setIsDateFilterModalOpen(false)}
           isOpen={isDateFilterModalOpen}
           onSelect={(val) => handleInboxIssueFilters(filterKey, val)}
-          title="Data de criação"
+          title="Created at"
         />
       )}
       <FilterHeader
-        title={`${label || "Data de criação"}${appliedFiltersCount > 0 ? ` (${appliedFiltersCount})` : ""}`}
+        title={`${label || "Created at"}${appliedFiltersCount > 0 ? ` (${appliedFiltersCount})` : ""}`}
         isPreviewEnabled={previewEnabled}
         handleIsPreviewEnabled={() => setPreviewEnabled(!previewEnabled)}
       />
@@ -93,7 +93,7 @@ export const FilterDate = observer(function FilterDate(props: Props) {
               />
             </>
           ) : (
-            <p className="text-11 text-placeholder italic">Nenhum resultado encontrado</p>
+            <p className="text-11 text-placeholder italic">No results found</p>
           )}
         </div>
       )}

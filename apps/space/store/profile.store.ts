@@ -100,7 +100,7 @@ export class ProfileStore implements IProfileStore {
         this.isLoading = false;
         this.error = {
           status: "user-profile-fetch-error",
-          message: "Falha ao buscar o perfil do usuário",
+          message: "Failed to fetch user profile",
         };
       });
     }
@@ -132,7 +132,7 @@ export class ProfileStore implements IProfileStore {
       runInAction(() => {
         this.error = {
           status: "user-profile-update-error",
-          message: "Falha ao atualizar o perfil do usuário",
+          message: "Failed to update user profile",
         };
       });
     }

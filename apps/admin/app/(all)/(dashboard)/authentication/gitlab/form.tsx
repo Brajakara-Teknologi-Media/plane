@@ -71,7 +71,7 @@ export function InstanceGitlabConfigForm(props: Props) {
     {
       key: "GITLAB_CLIENT_ID",
       type: "text",
-      label: "ID da aplicação",
+      label: "Application ID",
       description: (
         <>
           Get this from your{" "}
@@ -82,7 +82,7 @@ export function InstanceGitlabConfigForm(props: Props) {
             className="text-accent-primary hover:underline"
             rel="noreferrer"
           >
-            Configurações da aplicação OAuth do GitLab
+            Settings da aplicação OAuth do GitLab
           </a>
           .
         </>
@@ -105,7 +105,7 @@ export function InstanceGitlabConfigForm(props: Props) {
             className="text-accent-primary hover:underline"
             rel="noreferrer"
           >
-            Configurações da aplicação OAuth do GitLab
+            Settings da aplicação OAuth do GitLab
           </a>
           .
         </>
@@ -128,7 +128,7 @@ export function InstanceGitlabConfigForm(props: Props) {
       url: `${originURL}/auth/gitlab/callback/`,
       description: (
         <>
-          Geraremos isto automaticamente. Cole isto no <CodeBlock darkerShade>URI de redirecionamento</CodeBlock> field of your{" "}
+          Geraremos isto automaticamente. Cole isto no <CodeBlock darkerShade>Redirect URI</CodeBlock> field of your{" "}
           <a
             tabIndex={-1}
             href="https://docs.gitlab.com/ee/integration/oauth_provider.html"
@@ -151,8 +151,8 @@ export function InstanceGitlabConfigForm(props: Props) {
       const response = await updateInstanceConfigurations(payload);
       setToast({
         type: TOAST_TYPE.SUCCESS,
-        title: "Pronto!",
-        message: "Sua autenticação do GitLab está configurada. Teste-a agora.",
+        title: "Done!",
+        message: "Your GitLab authentication is configured. Test it now.",
       });
       reset({
         GITLAB_HOST: response.find((item) => item.key === "GITLAB_HOST")?.value,
@@ -206,10 +206,10 @@ export function InstanceGitlabConfigForm(props: Props) {
                   loading={isSubmitting}
                   disabled={!isDirty}
                 >
-                  {isSubmitting ? "Salvando…" : "Salvar alterações"}
+                  {isSubmitting ? "Saving…" : "Save changes"}
                 </Button>
                 <Link href="/authentication" className={getButtonStyling("secondary", "lg")} onClick={handleGoBack}>
-                  Voltar
+                  Back
                 </Link>
               </div>
             </div>

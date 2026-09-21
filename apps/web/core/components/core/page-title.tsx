@@ -5,6 +5,7 @@
  */
 
 import { useEffect } from "react";
+import { useTranslation } from "@plane/i18n";
 
 type PageHeadTitleProps = {
   title?: string;
@@ -13,12 +14,13 @@ type PageHeadTitleProps = {
 
 export function PageHead(props: PageHeadTitleProps) {
   const { title } = props;
+  const { t } = useTranslation();
 
   useEffect(() => {
     if (title) {
-      document.title = title ?? "Avião | Ferramenta de gestão de projetos simples, extensível e de código aberto.";
+      document.title = title ?? t("work-item.page_title_default");
     }
-  }, [title]);
+  }, [title, t]);
 
   return null;
 }

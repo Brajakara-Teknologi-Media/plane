@@ -59,7 +59,7 @@ export const ProjectSelect = observer(function ProjectSelect(props: Props) {
                   ?.filter((p) => value.includes(p))
                   .map((p) => getProjectById(p)?.name)
                   .join(", ")
-              : "Todos os sistemas"}
+              : "All systems"}
           <ChevronDownIcon className="h-3 w-3" aria-hidden="true" />
         </div>
       }

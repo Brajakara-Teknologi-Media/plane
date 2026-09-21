@@ -38,13 +38,13 @@ export function PageSyncingBadge({ syncStatus }: Props) {
     syncing: {
       label: "Sincronizando...",
       tooltipHeading: "Sincronizando...",
-      tooltipContent: "Suas alterações estão sendo sincronizadas com o servidor. Você pode continuar fazendo alterações.",
+      tooltipContent: "Your changes are being synced to the server. You can continue making changes.",
     },
     error: {
-      label: "Conexão perdida",
-      tooltipHeading: "Conexão perdida",
+      label: "Connection lost",
+      tooltipHeading: "Connection lost",
       tooltipContent:
-        "Estamos com dificuldade para conectar ao servidor. Suas alterações serão sincronizadas e salvas a cada 10 segundos.",
+        "We are having trouble connecting to the server. Your changes will be synced and saved every 10 seconds.",
     },
   };
 

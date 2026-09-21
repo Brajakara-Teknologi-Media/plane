@@ -81,7 +81,7 @@ export const WORK_ITEM_FILTER_TEMPLATES: TWorkItemFilterTemplate[] = [
     // "Em Desenvolvimento" entra apesar de ser etapa do TI: é para onde a
     // Qualidade DEVOLVE o chamado reprovado, e não se arrasta um cartão para
     // uma coluna que o filtro tirou da tela.
-    stateNames: ["Triagem", "Em Análise", "Em Teste", "Em Desenvolvimento"],
+    stateNames: ["Intake", "In Analysis", "In Testing", "In Development"],
     fallbackStateGroups: ["triage", "started"],
   },
   {
@@ -120,7 +120,7 @@ const STATE_NAME_ALIASES: Record<string, string[]> = {
   cancelado: ["cancelled", "canceled"],
 };
 
-/** Lowercases and strips accents so "Em Análise" matches "em analise". */
+/** Lowercases and strips accents so "In Analysis" matches "in analysis". */
 const normalizeStateName = (name: string): string =>
   name
     .trim()

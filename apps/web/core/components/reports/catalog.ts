@@ -1,10 +1,10 @@
 /**
- * Catálogo de relatórios gerenciais.
- * Cada item descreve um relatório disponível em /:workspaceSlug/reports/:reportId.
- * `id` casa com o segmento da rota e com o método do ReportsService / endpoint do backend.
+ * Management reports catalog.
+ * Each item describes a report available at /:workspaceSlug/reports/:reportId.
+ * `id` matches the route segment and the ReportsService method / backend endpoint.
  */
 
-export type ReportCategory = "chamados" | "pessoas" | "visitas" | "gerencial";
+export type ReportCategory = "tickets" | "people" | "visits" | "management";
 
 export type ReportMeta = {
   id: string;
@@ -13,119 +13,119 @@ export type ReportMeta = {
   category: ReportCategory;
   /** lucide icon name (resolvido no componente) */
   icon: string;
-  /** filtros aplicáveis a este relatório */
+  /** applicable filters for this report */
   filters: ("period" | "project" | "entity")[];
 };
 
 export const REPORT_CATEGORIES: { key: ReportCategory; label: string; description: string }[] = [
-  { key: "chamados", label: "Chamados", description: "Volume, distribuição e desempenho dos chamados" },
-  { key: "pessoas", label: "Produtividade & Pessoas", description: "Desempenho de técnicos, tempo gasto e interações" },
-  { key: "visitas", label: "Visitas Técnicas", description: "Visitas por status, motivo, técnico e entidade" },
-  { key: "gerencial", label: "Gerencial & Temporal", description: "Visões executivas, tendências e SLA" },
+  { key: "tickets", label: "reports.categories.tickets", description: "reports.categories.tickets_desc" },
+  { key: "people", label: "reports.categories.people", description: "reports.categories.people_desc" },
+  { key: "visits", label: "reports.categories.visits", description: "reports.categories.visits_desc" },
+  { key: "management", label: "reports.categories.management", description: "reports.categories.management_desc" },
 ];
 
 export const REPORTS: ReportMeta[] = [
   {
     id: "tickets-overview",
-    title: "Visão Geral de Chamados",
-    description: "KPIs gerais, taxa de conclusão, tempo médio de resolução e distribuição por prioridade e status.",
-    category: "chamados",
+    title: "reports.tickets_overview.title",
+    description: "reports.tickets_overview.description",
+    category: "tickets",
     icon: "LayoutDashboard",
     filters: ["period", "project", "entity"],
   },
   {
     id: "by-system",
-    title: "Chamados por Sistema",
-    description: "Ranking de sistemas com mais chamados, % do total, abertos vs concluídos e tempo médio.",
-    category: "chamados",
+    title: "reports.by_system.title",
+    description: "reports.by_system.description",
+    category: "tickets",
     icon: "MonitorSmartphone",
     filters: ["period", "entity"],
   },
   {
     id: "by-entity",
-    title: "Chamados por Entidade",
-    description: "Ranking de clientes/entidades, volume, prioridade e tempo médio de resolução.",
-    category: "chamados",
+    title: "reports.by_entity.title",
+    description: "reports.by_entity.description",
+    category: "tickets",
     icon: "Building2",
     filters: ["period", "project"],
   },
   {
     id: "by-priority",
-    title: "Chamados por Prioridade",
-    description: "Distribuição por urgência, tempo de resolução por prioridade e lista crítica de urgentes em aberto.",
-    category: "chamados",
+    title: "reports.by_priority.title",
+    description: "reports.by_priority.description",
+    category: "tickets",
     icon: "Flame",
     filters: ["period", "project", "entity"],
   },
   {
     id: "by-type",
-    title: "Chamados por Tipo de Atividade",
-    description: "Correção, melhoria, projeto e dúvida (via etiquetas): volume e tempo médio por tipo.",
-    category: "chamados",
+    title: "reports.by_type.title",
+    description: "reports.by_type.description",
+    category: "tickets",
     icon: "Tags",
     filters: ["period", "project", "entity"],
   },
   {
     id: "productivity",
-    title: "Produtividade por Técnico",
-    description: "Chamados atribuídos, resolvidos, taxa de resolução, tempo registrado e interações por responsável.",
-    category: "pessoas",
+    title: "reports.productivity.title",
+    description: "reports.productivity.description",
+    category: "people",
     icon: "Users",
     filters: ["period", "project", "entity"],
   },
   {
     id: "time-tracking",
-    title: "Tempo Gasto",
-    description: "Horas registradas por usuário, sistema e os chamados que mais consumiram tempo.",
-    category: "pessoas",
+    title: "reports.time_tracking.title",
+    description: "reports.time_tracking.description",
+    category: "people",
     icon: "Clock",
     filters: ["period", "project", "entity"],
   },
   {
     id: "interactions",
-    title: "Interações / Mensagens",
-    description: "Total de interações, média por chamado e chamados com mais mensagens (possíveis gargalos).",
-    category: "pessoas",
+    title: "reports.interactions.title",
+    description: "reports.interactions.description",
+    category: "people",
     icon: "MessagesSquare",
     filters: ["period", "project", "entity"],
   },
   {
     id: "visits-overview",
-    title: "Visão Geral de Visitas",
-    description: "Visitas por status, motivo, técnico, entidade e cidade, com duração média.",
-    category: "visitas",
+    title: "reports.visits_overview.title",
+    description: "reports.visits_overview.description",
+    category: "visits",
     icon: "Wrench",
     filters: ["period", "entity"],
   },
   {
     id: "trends",
-    title: "Tendência Temporal",
-    description: "Chamados criados vs concluídos por mês (últimos 12 meses) e evolução do backlog.",
-    category: "gerencial",
+    title: "reports.trends.title",
+    description: "reports.trends.description",
+    category: "management",
     icon: "TrendingUp",
     filters: ["project", "entity"],
   },
   {
     id: "backlog-aging",
-    title: "Backlog Aging",
-    description: "Chamados abertos por faixa de idade (0-7d, 8-30d, 31-90d, 90+) e os mais antigos.",
-    category: "gerencial",
+    title: "reports.backlog_aging.title",
+    description: "reports.backlog_aging.description",
+    category: "management",
     icon: "Hourglass",
     filters: ["project", "entity"],
   },
   {
     id: "sla",
-    title: "SLA / Tempo de Resolução",
-    description: "Distribuição dos tempos de resolução, % dentro de 24h/72h e tempo médio por prioridade.",
-    category: "gerencial",
+    title: "reports.sla.title",
+    description: "reports.sla.description",
+    category: "management",
     icon: "Timer",
     filters: ["period", "project", "entity"],
   },
   {
     id: "executive",
-    title: "Dashboard Executivo",
-    description: "Consolidação dos principais indicadores para a gerência: saúde geral, top sistemas e entidades.",
-    category: "gerencial",
+    title: "reports.executive.title",
+    description: "reports.executive.description",
+    category: "management",
     icon: "Gauge",
     filters: ["period", "project", "entity"],
   },

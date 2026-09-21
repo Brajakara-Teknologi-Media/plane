@@ -35,7 +35,7 @@ export async function notifyQualityOfIntake(opts: {
       issueId: opts.issueId,
       receiverId,
       actorId: opts.actorId,
-      title: "Novo intake aberto",
+      title: "New intake opened",
       message: opts.issueName,
       entity: "intake",
       entityId: opts.issueId,

@@ -154,7 +154,7 @@ export const useWorkItemCommentOperations = (
           });
           return res;
         } catch {
-          throw new Error("Falha ao duplicar o arquivo. Tente novamente mais tarde.");
+          throw new Error(t("common.failed_to_duplicate_file"));
         }
       },
       addCommentReaction: async (commentId, reaction) => {
@@ -162,15 +162,15 @@ export const useWorkItemCommentOperations = (
           if (!workspaceSlug || !projectId || !commentId) throw new Error("Missing fields");
           await createCommentReaction(workspaceSlug, projectId, commentId, reaction);
           setToast({
-            title: "Sucesso!",
+            title: t("common.toast.success"),
             type: TOAST_TYPE.SUCCESS,
-            message: "Reação criada com sucesso",
+            message: "Reaction added successfully",
           });
         } catch {
           setToast({
-            title: "Erro!",
+            title: t("common.toast.error"),
             type: TOAST_TYPE.ERROR,
-            message: "Falha ao criar reação",
+            message: "Failed to add reaction",
           });
         }
       },
@@ -179,15 +179,15 @@ export const useWorkItemCommentOperations = (
           if (!workspaceSlug || !projectId || !commentId || !currentUser?.id) throw new Error("Missing fields");
           removeCommentReaction(workspaceSlug, projectId, commentId, reaction, currentUser.id);
           setToast({
-            title: "Sucesso!",
+            title: t("common.toast.success"),
             type: TOAST_TYPE.SUCCESS,
-            message: "Reação removida com sucesso",
+            message: "Reaction removed successfully",
           });
         } catch {
           setToast({
-            title: "Erro!",
+            title: t("common.toast.error"),
             type: TOAST_TYPE.ERROR,
-            message: "Falha ao remover reação",
+            message: "Failed to remove reaction",
           });
         }
       },

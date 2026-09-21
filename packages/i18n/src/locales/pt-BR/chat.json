@@ -1,0 +1,229 @@
+{
+  "chat": {
+    "app": {
+      "status": {
+        "active": "Ativo",
+        "queued": "Na fila",
+        "bot": "Bot",
+        "closed": "Encerrado"
+      },
+      "connection": {
+        "connected_text": "Em tempo real",
+        "connected_help": "Conectado: mensagens chegam na hora.",
+        "connecting_text": "Conectando",
+        "connecting_help": "Estabelecendo conexão em tempo real.",
+        "reconnecting_text": "Reconectando",
+        "reconnecting_help": "Conexão perdida. Novas mensagens podem atrasar até a conexão retornar."
+      },
+      "end_modal": {
+        "system_label": "Sistema atendido",
+        "select_system_placeholder": "Selecione o sistema",
+        "already_classified": "Já classificado como <strong>{project}</strong>.",
+        "contact_registration": "Cadastro do contato",
+        "cancel": "Cancelar",
+        "end": "Encerrar",
+        "choose_system_title": "Escolha o sistema atendido"
+      },
+      "new_chat_modal": {
+        "search_hint": "Busque um contato ou informe o número",
+        "search_contact_label": "Buscar contato",
+        "whatsapp_number_label": "Número de WhatsApp",
+        "or": "ou",
+        "unnamed_contact": "Sem nome",
+        "initial_message_label": "Mensagem inicial (opcional)",
+        "start_whatsapp_btn": "Iniciar chat no WhatsApp"
+      },
+      "transfer_modal": {
+        "title": "Transferir atendimento",
+        "choose_attendant": "— escolha o atendente"
+      },
+      "message_preview": {
+        "image": "📷 Imagem",
+        "audio": "🎤 Áudio",
+        "file": "📎 Arquivo",
+        "file_fallback": "Arquivo"
+      },
+      "sidebar": {
+        "information_heading": "Informações",
+        "channel": "Canal",
+        "system": "Sistema",
+        "protocol": "Protocolo",
+        "status": "Status",
+        "rating_heading": "Avaliação",
+        "quick_actions_heading": "Ações rápidas",
+        "contact_channels": "Canais de contato"
+      },
+      "messages": {
+        "versions": "{count} versão(ões)",
+        "edited": "editado",
+        "empty_text": "(vazio)",
+        "cancel": "Cancelar",
+        "open_full_size": "Abrir em tamanho real"
+      },
+      "actions": {
+        "transfer": "Transferir",
+        "end": "Encerrar",
+        "copy_chat_link": "Copiar link do chat",
+        "end_service": "Encerrar atendimento",
+        "transfer_service_title": "Transferir atendimento",
+        "end_service_title": "Encerrar atendimento",
+        "claim": "Assumir",
+        "claim_now": "Assumir agora",
+        "claim_service": "Assumir atendimento",
+        "edit_message": "Editar mensagem",
+        "delete_message": "Apagar mensagem"
+      },
+      "tabs": {
+        "active": "Ativas",
+        "queued": "Na fila",
+        "bot": "Bot",
+        "closed": "Encerrados"
+      },
+      "contact": {
+        "email_optional": "E-mail (opcional)"
+      },
+      "workitem_description": {
+        "title": "Atendimento via chat",
+        "protocol_word": "protocolo"
+      }
+    },
+    "config": {
+      "loading": "Carregando…",
+      "tabs": {
+        "messages": "Mensagens",
+        "menu": "Menu",
+        "queues": "Filas",
+        "flows": "Fluxos",
+        "schedules": "Horários",
+        "attendants": "Atendentes",
+        "provider": "WhatsApp (Z-API)"
+      },
+      "fields": {
+        "welcome_message": "Mensagem inicial",
+        "menu_header": "Menu header",
+        "ask_name": "Pedir nome",
+        "confirm_contact": "Confirmar contato (use {name})",
+        "no_attendants": "Sem atendentes",
+        "idle_prompt": "Inatividade 10min",
+        "idle_close": "Encerramento por inatividade (use {protocol})",
+        "closed": "Encerramento (use {protocol})",
+        "routing_alpha": "Peso α (chats ativos)",
+        "routing_beta": "Peso β (atendimentos hoje)",
+        "outside_hours_message": "Mensagem fora do horário",
+        "key": "Tecla",
+        "queue": "Fila",
+        "flow": "Fluxo",
+        "message": "Mensagem"
+      },
+      "actions": {
+        "delete": "Excluir",
+        "add_option": "+ Adicionar opção",
+        "add_step": "+ Etapa",
+        "add_row": "+ Linha",
+        "add_attendant": "adicionar",
+        "save_flow": "Save fluxo",
+        "remove_named": "Remover {name}",
+        "remove_step": "Remover etapa"
+      },
+      "placeholders": {
+        "new_queue": "Nova fila",
+        "select_queue": "Selecione a fila…",
+        "close_message": "Mensagem de encerramento (opcional)",
+        "step_text": "Texto",
+        "save_as": "Save as (ex.: texto)"
+      },
+      "options": {
+        "queue": "Fila",
+        "flow": "Fluxo",
+        "message": "Mensagem"
+      },
+      "steps": {
+        "message": "Enviar mensagem",
+        "ask": "Perguntar e guardar resposta",
+        "queue": "Encaminhar para fila",
+        "close": "Agradecer e encerrar"
+      },
+      "flows_hint": "Monte o fluxo em etapas — ex.: Reclamação → \"Perguntar e guardar resposta\" (Descreva sua reclamação) → \"Agradecer e encerrar\".",
+      "attendant_invisible_hint": "Atendente invisível não recebe novos chats, mesmo conectado.",
+      "invisible_count": "{count} invisível(is)",
+      "provider": {
+        "active": "Ativo"
+      },
+      "messages": {
+        "messages_updated": "Mensagens atualizadas.",
+        "queue_members_updated": "Atendentes atualizados.",
+        "attendant_invisible": "Atendente invisível.",
+        "attendant_visible": "Atendente visível."
+      },
+      "selected_count": "{selected} de {total}"
+    },
+    "dashboard": {
+      "loading": "Carregando dashboard…",
+      "stats": {
+        "active": "Em atendimento",
+        "queued": "Na fila",
+        "bot": "No bot (sem atendente)",
+        "closed_today": "Encerrados hoje"
+      },
+      "attendants": {
+        "title": "Atendentes",
+        "online_count": "online",
+        "table": {
+          "attendant": "Atendente",
+          "status": "Status",
+          "active_chats": "Chats ativos",
+          "chats_today": "Chats hoje"
+        },
+        "status": {
+          "invisible": "Invisível",
+          "online": "Online",
+          "offline": "Offline"
+        },
+        "empty": "Nenhum atendente ativo no momento.",
+        "spy_tip": "Para dar \"spy\" em uma conversa, volte à lista e abra qualquer atendimento — você recebe as mensagens ao vivo sem assumir."
+      },
+      "ratings": {
+        "title": "Avaliações dos atendentes",
+        "overall_avg": "média geral",
+        "table": {
+          "rank": "#",
+          "attendant": "Atendente",
+          "average": "Média",
+          "ratings": "Avaliações",
+          "distribution": "Distribuição (1→5)"
+        },
+        "empty": "Nenhuma avaliação registrada ainda.",
+        "recent_comments": "Comentários recentes"
+      },
+      "sla": {
+        "title": "SLA de atendimento",
+        "last_days": "últimos",
+        "days": "dias",
+        "stats": {
+          "attendances": "Atendimentos",
+          "first_response_avg": "1ª resposta (média)",
+          "resolution_avg": "Resolução (média)",
+          "breached": "Fora do SLA"
+        },
+        "table": {
+          "attendant": "Atendente",
+          "attendances": "Atend.",
+          "first_response": "1ª resposta",
+          "resolution": "Resolução",
+          "breached": "Fora do SLA"
+        },
+        "empty": "Sem dados de SLA no período."
+      }
+    },
+    "readonly": {
+      "loading": "Carregando…",
+      "not_found": "Atendimento não encontrado.",
+      "service_title": "Atendimento",
+      "protocol": "Protocolo",
+      "document_title": "Atendimento #{protocol}",
+      "file": "Arquivo",
+      "deleted": "(apagada)",
+      "edited": "(editado)"
+    }
+  }
+}

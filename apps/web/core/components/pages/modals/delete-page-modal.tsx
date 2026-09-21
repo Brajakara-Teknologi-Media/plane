@@ -10,6 +10,7 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { AlertModalCore } from "@plane/ui";
+import { useTranslation } from "@plane/i18n";
 import { getPageName } from "@plane/utils";
 // constants
 // plane web hooks
@@ -30,6 +31,7 @@ export const DeletePageModal = observer(function DeletePageModal(props: TConfirm
   const { isOpen, onClose, page, storeType } = props;
   // states
   const [isDeleting, setIsDeleting] = useState(false);
+  const { t } = useTranslation();
   // store hooks
   const { removePage } = usePageStore(storeType);
 
@@ -52,8 +54,8 @@ export const DeletePageModal = observer(function DeletePageModal(props: TConfirm
         handleClose();
         setToast({
           type: TOAST_TYPE.SUCCESS,
-          title: "Sucesso!",
-          message: "Página excluída com sucesso.",
+          title: t("toast.success"),
+          message: "Page deleted successfully.",
         });
 
         if (routePageId) {
@@ -63,8 +65,8 @@ export const DeletePageModal = observer(function DeletePageModal(props: TConfirm
       .catch(() => {
         setToast({
           type: TOAST_TYPE.ERROR,
-          title: "Erro!",
-          message: "Não foi possível excluir a página. Tente novamente.",
+          title: t("toast.error"),
+          message: "Could not delete the page. Please try again.",
         });
       });
 
@@ -79,10 +81,10 @@ export const DeletePageModal = observer(function DeletePageModal(props: TConfirm
       handleSubmit={handleDelete}
       isSubmitting={isDeleting}
       isOpen={isOpen}
-      title="Excluir página"
+      title="Delete page"
       content={
         <>
-          Tem certeza de que deseja excluir a página-{" "}
+          {t("misc.pages.delete.confirmation_prefix")}{" "}
           <span className="font-medium break-words break-all text-primary">{getPageName(name)}</span> ? The Page will be
           deleted permanently. This action cannot be undone.
         </>

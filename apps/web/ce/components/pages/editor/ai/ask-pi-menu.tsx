@@ -8,6 +8,7 @@ import { useState } from "react";
 import { CircleArrowUp, CornerDownRight, RefreshCcw, Sparkles } from "lucide-react";
 // ui
 import { Tooltip } from "@plane/propel/tooltip";
+import { useTranslation } from "@plane/i18n";
 // components
 import { cn } from "@plane/utils";
 import { RichTextEditor } from "@/components/editor/rich-text";
@@ -26,6 +27,7 @@ type Props = {
 export function AskPiMenu(props: Props) {
   const { handleInsertText, handleRegenerate, isRegenerating, response, workspaceSlug } = props;
   // states
+  const { t } = useTranslation();
   const [query, setQuery] = useState("");
   // store hooks
   const { getWorkspaceBySlug } = useWorkspace();
@@ -64,7 +66,7 @@ export function AskPiMenu(props: Props) {
               >
                 Replace selection
               </button>
-              <Tooltip tooltipContent="Adicionar à próxima linha">
+              <Tooltip tooltipContent="Add to next line">
                 <button
                   type="button"
                   className="grid size-6 flex-shrink-0 place-items-center rounded-sm outline-none hover:bg-layer-1"
@@ -73,7 +75,7 @@ export function AskPiMenu(props: Props) {
                   <CornerDownRight className="size-4 text-tertiary" />
                 </button>
               </Tooltip>
-              <Tooltip tooltipContent="Gerar resposta novamente">
+              <Tooltip tooltipContent={t("misc.ai.regenerate")}>
                 <button
                   type="button"
                   className="grid size-6 flex-shrink-0 place-items-center rounded-sm outline-none hover:bg-layer-1"
@@ -94,7 +96,7 @@ export function AskPiMenu(props: Props) {
             </div>
           </div>
         ) : (
-          <p className="text-13 text-secondary">A IA está respondendo...</p>
+          <p className="text-13 text-secondary">{t("misc.ai.responding")}</p>
         )}
       </div>
       <div className="px-4 py-3">
@@ -107,7 +109,7 @@ export function AskPiMenu(props: Props) {
             className="w-full border-none bg-transparent text-13 outline-none placeholder:text-placeholder"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Diga à IA o que fazer..."
+            placeholder="Tell AI what to do..."
           />
           <span className="grid size-4 flex-shrink-0 place-items-center">
             <CircleArrowUp className="size-4 text-secondary" />

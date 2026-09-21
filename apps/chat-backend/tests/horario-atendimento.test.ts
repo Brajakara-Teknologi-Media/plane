@@ -71,7 +71,7 @@ describe("isWithinBusinessHours", () => {
     expect(await cenario("2026-08-09T14:00:00Z")).toBe(false);
   });
 
-  it("o fuso do espaço de trabalho é respeitado", async () => {
+  it("The time zone of the workspace is respected", async () => {
     // O mesmo instante: 09:21 em São Paulo (aberto) e 08:21 em Campo Grande.
     expect(await cenario("2026-08-11T12:21:00Z", "America/Sao_Paulo")).toBe(true);
     // 14:40 UTC = 11:40 em São Paulo (almoço) mas 10:40 em Campo Grande (aberto).

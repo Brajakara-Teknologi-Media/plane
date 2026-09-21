@@ -185,12 +185,12 @@ type MensagemArquivo = {
 };
 
 async function migrateMessageAttachments(conn: any, chamadoMap: Map<number, {id: string; projectId: string; workspaceId: string}>) {
-  log("\n📎  Anexos de mensagens → issue_attachments");
+  log("\n📎  Message attachments → issue_attachments");
   const [countRow] = await conn.query(
     `SELECT COUNT(*) AS total FROM mensagens
      WHERE mensagens_status = 1 AND mensagens_caminho_arquivo IS NOT NULL AND mensagens_caminho_arquivo <> ''`
   );
-  log(`  Total no legado: ${countRow[0].total}`);
+  log(`  Total in legacy: ${countRow[0].total}`);
 
   let lastId = 0;
   let processed = 0;
@@ -213,11 +213,11 @@ async function migrateMessageAttachments(conn: any, chamadoMap: Map<number, {id:
       if (LIMIT_RECORDS > 0 && processed >= LIMIT_RECORDS) break;
     }
 
-    if (processed % 1000 === 0 || rows.length < BATCH_SIZE) log(`  Processados ${processed}`);
+    if (processed % 1000 === 0 || rows.length < BATCH_SIZE) log(`  Processed ${processed}`);
     if (rows.length < BATCH_SIZE) break;
     if (LIMIT_RECORDS > 0 && processed >= LIMIT_RECORDS) break;
   }
-  log(`  ✅  ${processed} anexos de mensagens avaliados`);
+  log(`  ✅  ${processed} message attachments evaluated`);
 }
 
 async function importMessageAttachment(
@@ -331,12 +331,12 @@ async function upsertFileAsset(args: {
 // ── 2. Arquivo da visita ──────────────────────────────────────────────────────
 
 async function migrateVisitFiles(conn: any, workspaceId: string) {
-  log("\n🚗  Arquivos de visitas → file_assets");
+  log("\n🚗  Visit files → file_assets");
   const [rows] = (await conn.query(
     `SELECT visita_id, visita_arquivo FROM visita
      WHERE visita_status = 1 AND visita_arquivo IS NOT NULL AND visita_arquivo <> ''`
   )) as [Array<{visita_id: number; visita_arquivo: string}>, unknown];
-  log(`  Encontrados: ${rows.length}`);
+  log(`  Found: ${rows.length}`);
 
   for (const row of rows) {
     const visit = await prisma.technicalVisit.findFirst({
@@ -372,13 +372,13 @@ async function migrateVisitFiles(conn: any, workspaceId: string) {
     size === null ? stats.pending++ : stats.downloaded++;
     stats.registered++;
   }
-  log(`  ✅  ${rows.length} arquivos de visita avaliados`);
+  log(`  ✅  ${rows.length} visit files evaluated`);
 }
 
 // ── 3. Disco virtual ──────────────────────────────────────────────────────────
 
 async function migrateDiscoVirtual(conn: any, workspaceId: string) {
-  log("\n🗄️   Disco virtual → file_assets");
+  log("\n🗄️   Virtual disk → file_assets");
   const [rows] = (await conn.query(
     `SELECT a.arquivos_id, a.arquivo_nome, a.caminho, a.data_cadastro, a.data_ata,
             d.discovirtual_pasta AS pasta
@@ -386,7 +386,7 @@ async function migrateDiscoVirtual(conn: any, workspaceId: string) {
      LEFT JOIN discovirtual d ON d.discovirtual_id = a.arquivos_discovirtual_id
      WHERE a.status = 1`
   )) as [Array<any>, unknown];
-  log(`  Encontrados: ${rows.length}`);
+  log(`  Found: ${rows.length}`);
 
   for (const row of rows) {
     const assetKey = assetKeyFor("disco", workspaceId, row.arquivos_id, row.caminho);
@@ -417,24 +417,24 @@ async function migrateDiscoVirtual(conn: any, workspaceId: string) {
     size === null ? stats.pending++ : stats.downloaded++;
     stats.registered++;
   }
-  log(`  ✅  ${rows.length} arquivos do disco virtual avaliados`);
+  log(`  ✅  ${rows.length} virtual disk files evaluated`);
 }
 
 // ── Main ──────────────────────────────────────────────────────────────────────
 
 async function main() {
-  log(`Iniciando migração de arquivos${DRY_RUN ? " (DRY RUN)" : ""}`);
+  log(`Starting file migration${DRY_RUN ? " (DRY RUN)" : ""}`);
   log(`MySQL: ${MYSQL_CONFIG.database}@${MYSQL_CONFIG.host}`);
   log(
     HAS_SOURCE
-      ? `Fonte dos binários: ${FILES_DIR ? `diretório ${FILES_DIR}` : `HTTP ${FILES_BASE}`}`
-      : "⚠️  Nenhuma fonte de binários configurada (LEGACY_FILES_BASE / LEGACY_FILES_DIR): " +
-          "os anexos serão registrados como pendentes, com o caminho legado preservado."
+      ? `Binary source: ${FILES_DIR ? `directory ${FILES_DIR}` : `HTTP ${FILES_BASE}`}`
+      : "⚠️  No binary source configured (LEGACY_FILES_BASE / LEGACY_FILES_DIR): " +
+          "attachments will be registered as pending, with the legacy path preserved."
   );
 
   const workspace = await prisma.workspace.findFirst({where: {slug: WORKSPACE_SLUG, deletedAt: null}});
   if (!workspace) {
-    log(`❌  Workspace '${WORKSPACE_SLUG}' não encontrado.`);
+    log(`❌  Workspace '${WORKSPACE_SLUG}' not found.`);
     process.exit(1);
   }
 
@@ -442,7 +442,7 @@ async function main() {
   // `as any`: os overloads de ConnectionOptions do mysql2 não aceitam `ssl: false`
   // literal, embora o driver aceite (mesmo padrão de migrate-sac.ts).
   const conn = await mysql2.createConnection({...MYSQL_CONFIG} as any);
-  log("✅  MySQL conectado");
+  log("✅  MySQL connected");
 
   // chamado legado → issue migrada
   const issues = await prisma.issue.findMany({
@@ -453,8 +453,8 @@ async function main() {
   for (const issue of issues) {
     if (issue.externalId) chamadoMap.set(Number(issue.externalId), issue);
   }
-  log(`✅  ${chamadoMap.size} chamados migrados localizados`);
-  if (chamadoMap.size === 0) log("⚠️  Rode scripts/migrate-sac.ts antes: sem chamados não há onde anexar.");
+  log(`✅  ${chamadoMap.size} migrated work items located`);
+  if (chamadoMap.size === 0) log("⚠️  Run scripts/migrate-sac.ts first: without work items there is nothing to attach to.");
 
   if (!SKIP_MESSAGES) await migrateMessageAttachments(conn, chamadoMap);
   if (!SKIP_VISITS) await migrateVisitFiles(conn, workspace.id);
@@ -465,18 +465,18 @@ async function main() {
   await pgPool.end();
 
   log("\n══════════════════════════════════════════════════");
-  log("  Migração de arquivos concluída");
-  log(`  Registrados:        ${stats.registered}`);
-  log(`  Binários baixados:  ${stats.downloaded}`);
-  log(`  Pendentes:          ${stats.pending}`);
-  log(`  Ignorados:          ${stats.skipped}`);
-  log(`  Falhas:             ${stats.failed}`);
+  log("  File migration completed");
+  log(`  Registered:         ${stats.registered}`);
+  log(`  Binaries downloaded: ${stats.downloaded}`);
+  log(`  Pending:            ${stats.pending}`);
+  log(`  Skipped:            ${stats.skipped}`);
+  log(`  Failures:           ${stats.failed}`);
   if (!HAS_SOURCE && stats.pending > 0) {
     log("");
-    log("  Para baixar os binários depois, rode de novo com a fonte configurada:");
+    log("  To download the binaries later, run again with the source configured:");
     log("    LEGACY_FILES_BASE=http://<host-do-legado> PENDING_ONLY=true bun run scripts/migrate-sac-files.ts");
   }
-  if (DRY_RUN) log("  ⚠️  DRY RUN — nada foi escrito");
+  log("  ⚠️  DRY RUN — nothing was written");
   log("══════════════════════════════════════════════════");
 }
 

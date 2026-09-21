@@ -42,7 +42,7 @@ describe("validatePluginManifest", () => {
   });
 
   it("throws 400 for unknown permissions", () => {
-    expect(() => validatePluginManifest({ ...VALID, permissions: ["unknown.perm"] })).toThrow("permissões desconhecidas");
+    expect(() => validatePluginManifest({ ...VALID, permissions: ["unknown.perm"] })).toThrow("unknown permissions");
   });
 
   it("throws when a sidebar item points at an undeclared page", () => {
@@ -53,7 +53,7 @@ describe("validatePluginManifest", () => {
         sidebar: [{ id: "x", label: "X", page: "missing" }],
       },
     };
-    expect(() => validatePluginManifest(broken)).toThrow("não está declarada");
+    expect(() => validatePluginManifest(broken)).toThrow("not declared in contributions.pages");
   });
 
   it("accepts a manifest with no contributions", () => {
@@ -103,7 +103,7 @@ describe("contributions", () => {
     });
     expect(result.contributions.sidebar[0].id).toBe("sales-report");
     expect(result.contributions.sidebar[0].order).toBe(0);
-    // O `/` inicial é removido dos dois lados, senão o item nunca casa com a página.
+    // The leading `/` is stripped from both sides, otherwise the item never matches the page.
     expect(result.contributions.sidebar[0].page).toBe("dashboard");
     expect(result.contributions.pages[0].path).toBe("dashboard");
     expect(result.contributions.pages[0].title).toBe("/dashboard");
@@ -114,18 +114,18 @@ describe("contributions", () => {
     const base = { pages: [{ path: "dashboard" }] };
     expect(() =>
       validatePluginManifest({ ...VALID, contributions: { ...base, sidebar: ["nope"] } })
-    ).toThrow("deve ser um objeto");
+    ).toThrow("must be an object");
     expect(() =>
       validatePluginManifest({ ...VALID, contributions: { ...base, sidebar: [{ page: "dashboard" }] } })
-    ).toThrow(".label é obrigatório");
+    ).toThrow(".label is required");
     expect(() =>
       validatePluginManifest({ ...VALID, contributions: { ...base, sidebar: [{ label: "X" }] } })
-    ).toThrow(".page é obrigatório");
+    ).toThrow(".page is required");
     expect(() => validatePluginManifest({ ...VALID, contributions: { pages: [null] } })).toThrow(
-      "deve ser um objeto"
+      "must be an object"
     );
     expect(() => validatePluginManifest({ ...VALID, contributions: { pages: [{ title: "sem path" }] } })).toThrow(
-      ".path é obrigatório"
+      ".path is required"
     );
   });
 
@@ -147,11 +147,11 @@ describe("configSchema (G1)", () => {
     });
     expect(result.configSchema[0].type).toBe("string");
     expect(result.configSchema[0].required).toBe(true);
-    // secret implica secret=true mesmo sem o campo explícito
+    // secret implies secret=true even without the explicit field
     expect(result.configSchema[1].type).toBe("secret");
     expect(result.configSchema[1].secret).toBe(true);
     expect(result.configSchema[1].label).toBe("token");
-    // opções sem `value` string são descartadas
+    // options without a string `value` are discarded
     expect(result.configSchema[2].options).toEqual([
       { label: "a", value: "a" },
       { label: "B", value: "b" },
@@ -161,12 +161,12 @@ describe("configSchema (G1)", () => {
   it("defaults to an empty schema and rejects a non-array", () => {
     expect(validatePluginManifest(VALID).configSchema).toEqual([]);
     expect(validatePluginManifest({ ...VALID, configSchema: null }).configSchema).toEqual([]);
-    expect(() => validatePluginManifest({ ...VALID, configSchema: {} })).toThrow("deve ser um array");
+    expect(() => validatePluginManifest({ ...VALID, configSchema: {} })).toThrow("must be an array");
   });
 
   it("requires a key on every field", () => {
     expect(() => validatePluginManifest({ ...VALID, configSchema: [{ label: "sem key" }] })).toThrow(
-      "configSchema[0].key é obrigatório"
+      "configSchema[0].key is required"
     );
   });
 });
@@ -192,9 +192,9 @@ describe("definedPermissions (G2)", () => {
 
   it("defaults to empty and rejects malformed input", () => {
     expect(validatePluginManifest(VALID).definedPermissions).toEqual([]);
-    expect(() => validatePluginManifest({ ...VALID, definedPermissions: "x" })).toThrow("deve ser um array");
+    expect(() => validatePluginManifest({ ...VALID, definedPermissions: "x" })).toThrow("must be an array");
     expect(() => validatePluginManifest({ ...VALID, definedPermissions: [{ label: "sem key" }] })).toThrow(
-      "definedPermissions[0].key é obrigatório"
+      "definedPermissions[0].key is required"
     );
   });
 });
@@ -215,10 +215,10 @@ describe("backend (G3)", () => {
 
   it("defaults to null and validates the URL", () => {
     expect(validatePluginManifest(VALID).backend).toBeNull();
-    expect(() => validatePluginManifest({ ...VALID, backend: "https://x" })).toThrow("deve ser um objeto");
-    expect(() => validatePluginManifest({ ...VALID, backend: {} })).toThrow("baseUrl é obrigatório");
-    expect(() => validatePluginManifest({ ...VALID, backend: { baseUrl: "não-é-url" } })).toThrow(
-      "não é uma URL válida"
+    expect(() => validatePluginManifest({ ...VALID, backend: "https://x" })).toThrow("must be an object");
+    expect(() => validatePluginManifest({ ...VALID, backend: {} })).toThrow("baseUrl is required");
+    expect(() => validatePluginManifest({ ...VALID, backend: { baseUrl: "not-a-url" } })).toThrow(
+      "is not a valid URL"
     );
   });
 });

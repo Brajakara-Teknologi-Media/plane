@@ -1,0 +1,65 @@
+{
+  "print": {
+    "table": {
+      "due_date": "Tanggal jatuh tempo"
+    },
+    "counts": {
+      "tickets": "{count} tiket",
+      "requests": "{count} permintaan",
+      "visits": "{count} kunjungan",
+      "messages": "{count} pesan"
+    },
+    "labels": {
+      "channel": "Saluran",
+      "status": "Status",
+      "phone": "Telepon",
+      "opened_at": "Dibuka pada",
+      "duplicate_of": "Duplikat dari",
+      "city": "Kota",
+      "contacts": "Kontak",
+      "motivations": "Motivasi",
+      "scheduled_for": "Dijadwalkan untuk",
+      "situation": "Situasi",
+      "lead": "Ketua",
+      "total": "Total"
+    },
+    "chat": {
+      "sender_client": "Klien",
+      "sender_attendant": "Petugas",
+      "sender_system": "Sistem",
+      "attachment_prefix": "[lampiran] {name}",
+      "deleted_message": "(pesan dihapus)",
+      "data_section": "Data layanan",
+      "no_messages": "Tidak ada pesan tercatat.",
+      "sender_bot": "Dukungan otomatis"
+    },
+    "intake": {
+      "empty": "Tidak ada permintaan."
+    },
+    "visits": {
+      "mot_bug_fix": "Perbaikan bug",
+      "mot_training": "Pelatihan",
+      "mot_improvement": "Peningkatan",
+      "mot_commercial": "Komersial",
+      "mot_other": "Lainnya",
+      "empty": "Tidak ada kunjungan teknis.",
+      "data_section": "Data kunjungan",
+      "summary_section": "Ringkasan layanan",
+      "mot_update": "Pembaruan",
+      "no_summary": "Tidak ada ringkasan."
+    },
+    "module": {
+      "document_title": "Modul — {name}",
+      "total_issues": "Total tiket"
+    },
+    "cycle": {
+      "document_title": "Siklus — {name}"
+    },
+    "work_item": {
+      "comments_title": "Komentar ({count})",
+      "no_comments": "Tidak ada komentar.",
+      "no_attachments": "Tidak ada lampiran.",
+      "attachments_title": "Lampiran ({count})"
+    }
+  }
+}

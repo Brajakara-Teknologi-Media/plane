@@ -60,7 +60,7 @@ export const GeneralProjectSettingsControlSection = observer(function GeneralPro
         <SettingsBoxedControlItem
           className="rounded-b-none border-0 border-b"
           title={t("archive")}
-          description="Arquivar um projeto o removerá da navegação lateral, embora você ainda possa acessá-lo pela página de projetos. Você pode restaurar ou excluir o projeto quando quiser."
+          description="Archiving a project will remove it from the sidebar navigation, though you can still access it from the projects page. You can restore or delete the project at any time."
           control={
             <Button variant="secondary" onClick={() => setArchiveProject(true)}>
               {t("archive")}
@@ -71,7 +71,7 @@ export const GeneralProjectSettingsControlSection = observer(function GeneralPro
         <SettingsBoxedControlItem
           className="rounded-t-none border-0"
           title={t("delete")}
-          description="Ao excluir um projeto, todos os dados e recursos dentro dele serão removidos permanentemente e não poderão ser recuperados."
+          description="Deleting a project will permanently remove all data and resources within it and cannot be recovered."
           control={
             <Button
               variant="error-outline"

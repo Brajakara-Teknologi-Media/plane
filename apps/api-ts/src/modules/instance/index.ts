@@ -151,12 +151,12 @@ export const instanceModule = new Elysia({prefix: "/instances"})
     const caller = await resolveUser(headers as any);
     if (!caller?.isInstanceAdmin) {
       set.status = 403;
-      return {detail: "É necessário ser administrador da instância."};
+      return {detail: "You need to be an instance administrator."};
     }
     const instance = await prisma.instance.findFirst();
     if (!instance) {
       set.status = 400;
-      return {error: "Instância não encontrada"};
+      return {error: "Instance not found"};
     }
     const data = body as Record<string, any>;
     return prisma.instance.update({
@@ -175,7 +175,7 @@ export const instanceModule = new Elysia({prefix: "/instances"})
     const instance = await prisma.instance.findFirst();
     if (!instance) {
       set.status = 400;
-      return {error: "A instância não está configurada"};
+      return {error: "The instance is not configured"};
     }
     await prisma.instance.update({where: {id: instance.id}, data: {isSignupScreenVisited: true}});
     set.status = 204;
@@ -188,26 +188,26 @@ export const instanceModule = new Elysia({prefix: "/instances"})
     const instance = await prisma.instance.findFirst();
     if (!instance) {
       set.status = 400;
-      return {error: "A instância não está configurada."};
+      return {error: "The instance is not configured."};
     }
 
     const alreadyHasAdmin = await prisma.user.findFirst({where: {isInstanceAdmin: true}});
     if (alreadyHasAdmin) {
       set.status = 400;
-      return {error: "Já existe um administrador da instância."};
+      return {error: "An instance administrator already exists."};
     }
 
     const b = body as any;
     if (!b.email || !b.password || !b.first_name) {
       set.status = 400;
-      return {error: "email, password e first_name são obrigatórios."};
+      return {error: "email, password and first_name are required."};
     }
 
     const email = String(b.email).toLowerCase().trim();
     const exists = await prisma.user.findUnique({where: {email}});
     if (exists) {
       set.status = 400;
-      return {error: "Já existe um usuário com este e-mail."};
+      return {error: "A user with this email already exists."};
     }
 
     const hash = await Bun.password.hash(b.password, {algorithm: "bcrypt", cost: 12});
@@ -244,14 +244,14 @@ export const instanceModule = new Elysia({prefix: "/instances"})
   // ── Admin sign-in ─────────────────────────────────────────────────────────────
 
   /**
-   * Entrada do god-mode.
+   * God-mode sign-in.
    *
-   * O formulário é um POST de HTML puro (herança do Django, que respondia com
-   * redirecionamento). Devolver JSON para ele jogava o administrador numa
-   * página com o token cru na tela em vez de entrar no painel — a conta tinha
-   * acesso e mesmo assim parecia não funcionar. Quando quem chama é um
-   * navegador, a resposta volta a ser um redirecionamento; cliente de API que
-   * pede JSON continua recebendo JSON.
+   * The form is a plain-HTML POST (inherited from Django, which responded with
+   * a redirect). Returning JSON to it threw the administrator onto a page
+   * showing the raw token on screen instead of entering the panel — the
+   * account had access and yet seemed not to work. When the caller is a
+   * browser, the response goes back to being a redirect; API clients that
+   * ask for JSON keep receiving JSON.
    */
   .post("/admins/sign-in/", async ({body, set, headers}) => {
     const doNavegador = String(headers.accept ?? "").includes("text/html");
@@ -263,38 +263,38 @@ export const instanceModule = new Elysia({prefix: "/instances"})
     const instance = await prisma.instance.findFirst();
     if (!instance) {
       set.status = 400;
-      return {error: "A instância não está configurada."};
+      return {error: "The instance is not configured."};
     }
 
     const b = body as any;
     if (!b.email || !b.password) {
-      if (doNavegador) return paraOPainel("email e password são obrigatórios.");
+      if (doNavegador) return paraOPainel("email and password are required.");
       set.status = 400;
-      return {error: "email e password são obrigatórios."};
+      return {error: "email and password are required."};
     }
 
     const email = String(b.email).toLowerCase().trim();
     const user = await prisma.user.findUnique({where: {email}});
     if (!user || !user.password) {
-      if (doNavegador) return paraOPainel("Credenciais inválidas.");
+      if (doNavegador) return paraOPainel("Invalid credentials.");
       set.status = 403;
-      return {error: "Credenciais inválidas."};
+      return {error: "Invalid credentials."};
     }
     if (!user.isActive) {
-      if (doNavegador) return paraOPainel("Esta conta está desativada.");
+      if (doNavegador) return paraOPainel("This account is deactivated.");
       set.status = 403;
-      return {error: "Esta conta está desativada."};
+      return {error: "This account is deactivated."};
     }
     if (!user.isInstanceAdmin) {
-      if (doNavegador) return paraOPainel("É necessário ser administrador da instância.");
+      if (doNavegador) return paraOPainel("You need to be an instance administrator.");
       set.status = 403;
-      return {error: "É necessário ser administrador da instância."};
+      return {error: "You need to be an instance administrator."};
     }
 
     const valid = await Bun.password.verify(b.password, user.password);
     if (!valid) {
       set.status = 403;
-      return {error: "Credenciais inválidas."};
+      return {error: "Invalid credentials."};
     }
 
     const token = await signToken(user.id, user.email);
@@ -308,7 +308,7 @@ export const instanceModule = new Elysia({prefix: "/instances"})
   .post("/admins/sign-out/", async ({set}) => {
     set.headers["Set-Cookie"] = clearCookieHeader();
     set.status = 200;
-    return {detail: "Sessão encerrada."};
+    return {detail: "Session closed."};
   })
 
   // ── Admin session check ───────────────────────────────────────────────────────
@@ -325,11 +325,11 @@ export const instanceModule = new Elysia({prefix: "/instances"})
     const user = await resolveUser(headers as any);
     if (!user) {
       set.status = 401;
-      return {detail: "Não autenticado."};
+      return {detail: "Not authenticated."};
     }
     if (!user.isInstanceAdmin) {
       set.status = 403;
-      return {detail: "É necessário ser administrador da instância."};
+      return {detail: "You need to be an instance administrator."};
     }
     return userDto(user);
   })
@@ -340,7 +340,7 @@ export const instanceModule = new Elysia({prefix: "/instances"})
     const caller = await resolveUser(headers as any);
     if (!caller?.isInstanceAdmin) {
       set.status = 403;
-      return {detail: "É necessário ser administrador da instância."};
+      return {detail: "You need to be an instance administrator."};
     }
     const admins = await prisma.user.findMany({
       where: {isInstanceAdmin: true},
@@ -357,21 +357,21 @@ export const instanceModule = new Elysia({prefix: "/instances"})
     const caller = await resolveUser(headers as any);
     if (!caller?.isInstanceAdmin) {
       set.status = 403;
-      return {detail: "É necessário ser administrador da instância."};
+      return {detail: "You need to be an instance administrator."};
     }
     const b = body as any;
     if (!b.email) {
       set.status = 400;
-      return {detail: "email é obrigatório."};
+      return {detail: "Email is required."};
     }
     const user = await prisma.user.findUnique({where: {email: String(b.email).toLowerCase().trim()}});
     if (!user) {
       set.status = 404;
-      return {detail: "Usuário não encontrado."};
+      return {detail: "Username not found."};
     }
     if (user.isInstanceAdmin) {
       set.status = 400;
-      return {detail: "O usuário já é administrador da instância."};
+      return {detail: "User is already an instance administrator."};
     }
     const updated = await prisma.user.update({where: {id: user.id}, data: {isInstanceAdmin: true}});
     set.status = 201;
@@ -385,11 +385,11 @@ export const instanceModule = new Elysia({prefix: "/instances"})
     const caller = await resolveUser(headers as any);
     if (!caller?.isInstanceAdmin) {
       set.status = 403;
-      return {detail: "É necessário ser administrador da instância."};
+      return {detail: "You need to be an instance administrator."};
     }
     if (caller.id === params.pk) {
       set.status = 400;
-      return {detail: "Você não pode remover a si mesmo."};
+      return {detail: "You cannot remove yourself."};
     }
     await prisma.user.update({where: {id: params.pk}, data: {isInstanceAdmin: false}});
     set.status = 204;
@@ -402,7 +402,7 @@ export const instanceModule = new Elysia({prefix: "/instances"})
     const caller = await resolveUser(headers as any);
     if (!caller?.isInstanceAdmin) {
       set.status = 403;
-      return {detail: "É necessário ser administrador da instância."};
+      return {detail: "You need to be an instance administrator."};
     }
     const instance = await prisma.instance.findFirst();
     const saved = (instance?.configurations as Record<string, string>) ?? {};
@@ -413,10 +413,10 @@ export const instanceModule = new Elysia({prefix: "/instances"})
     const caller = await resolveUser(headers as any);
     if (!caller?.isInstanceAdmin) {
       set.status = 403;
-      return {detail: "É necessário ser administrador da instância."};
+      return {detail: "You need to be an instance administrator."};
     }
     const instance = await prisma.instance.findFirst();
-    if (!instance) { set.status = 400; return {detail: "Instância não encontrada."}; }
+    if (!instance) { set.status = 400; return {detail: "Instance not found."}; }
 
     const incoming = body as Record<string, unknown>;
     const existing = (instance.configurations as Record<string, string>) ?? {};
@@ -442,7 +442,7 @@ export const instanceModule = new Elysia({prefix: "/instances"})
     const caller = await resolveUser(headers as any);
     if (!caller?.isInstanceAdmin) {
       set.status = 403;
-      return {detail: "É necessário ser administrador da instância."};
+      return {detail: "You need to be an instance administrator."};
     }
     const instance = await prisma.instance.findFirst({select: {configurations: true}});
     const cfg = (instance?.configurations as any)?.priority_sla;
@@ -453,10 +453,10 @@ export const instanceModule = new Elysia({prefix: "/instances"})
     const caller = await resolveUser(headers as any);
     if (!caller?.isInstanceAdmin) {
       set.status = 403;
-      return {detail: "É necessário ser administrador da instância."};
+      return {detail: "You need to be an instance administrator."};
     }
     const instance = await prisma.instance.findFirst();
-    if (!instance) { set.status = 400; return {detail: "Instância não encontrada."}; }
+    if (!instance) { set.status = 400; return {detail: "Instance not found."}; }
     const incoming = (body as any)?.priority_sla ?? body;
     const existing = (instance.configurations as any) ?? {};
     const current = existing.priority_sla && typeof existing.priority_sla === "object" ? existing.priority_sla : DEFAULT_PRIORITY_SLA;
@@ -473,9 +473,9 @@ export const instanceModule = new Elysia({prefix: "/instances"})
     const caller = await resolveUser(headers as any);
     if (!caller?.isInstanceAdmin) {
       set.status = 403;
-      return {detail: "É necessário ser administrador da instância."};
+      return {detail: "You need to be an instance administrator."};
     }
-    return {detail: "Recurso de e-mail desativado."};
+    return {detail: "Email feature is disabled."};
   })
 
   // ── Email credential check ────────────────────────────────────────────────────
@@ -484,10 +484,10 @@ export const instanceModule = new Elysia({prefix: "/instances"})
     const caller = await resolveUser(headers as any);
     if (!caller?.isInstanceAdmin) {
       set.status = 403;
-      return {detail: "É necessário ser administrador da instância."};
+      return {detail: "You need to be an instance administrator."};
     }
     set.status = 400;
-    return {error: "O SMTP não está configurado nesta instalação."};
+    return {error: "SMTP is not configured in this installation."};
   })
 
   // ── Workspace slug availability ───────────────────────────────────────────────
@@ -496,12 +496,12 @@ export const instanceModule = new Elysia({prefix: "/instances"})
     const caller = await resolveUser(headers as any);
     if (!caller?.isInstanceAdmin) {
       set.status = 403;
-      return {detail: "É necessário ser administrador da instância."};
+      return {detail: "You need to be an instance administrator."};
     }
     const slug = query.slug as string | undefined;
     if (!slug) {
       set.status = 400;
-      return {error: "slug é obrigatório."};
+      return {error: "Slug is required."};
     }
     const RESTRICTED = ["admin", "api", "auth", "plane", "god-mode", "spaces", "home", "login", "signup", "settings"];
     const taken =
@@ -515,7 +515,7 @@ export const instanceModule = new Elysia({prefix: "/instances"})
     const caller = await resolveUser(headers as any);
     if (!caller?.isInstanceAdmin) {
       set.status = 403;
-      return {detail: "É necessário ser administrador da instância."};
+      return {detail: "You need to be an instance administrator."};
     }
     return paginate({
       query: async (skip, take) =>
@@ -582,17 +582,17 @@ export const instanceModule = new Elysia({prefix: "/instances"})
     const caller = await resolveUser(headers as any);
     if (!caller?.isInstanceAdmin) {
       set.status = 403;
-      return {detail: "É necessário ser administrador da instância."};
+      return {detail: "You need to be an instance administrator."};
     }
     const b = body as any;
     if (!b.name || !b.slug) {
       set.status = 400;
-      return {error: "name e slug são obrigatórios."};
+      return {error: "name and slug are required."};
     }
     const existing = await prisma.workspace.findFirst({where: {slug: b.slug}});
     if (existing) {
       set.status = 409;
-      return {error: "Já existe um workspace com este slug."};
+      return {error: "A workspace with this slug already exists."};
     }
     const workspace = await prisma.$transaction(async (tx) => {
       const w = await tx.workspace.create({

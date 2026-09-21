@@ -38,6 +38,7 @@ const projectService = new ProjectService();
 
 export function SelectDuplicateInboxIssueModal(props: Props) {
   const { isOpen, onClose, onSubmit, value } = props;
+  const { t } = useTranslation();
   // router
   const { workspaceSlug, projectId, issueId } = useParams();
   // states
@@ -48,7 +49,6 @@ export function SelectDuplicateInboxIssueModal(props: Props) {
   const { resolvedTheme } = useTheme();
   // hooks
   const { getProjectById } = useProject();
-  const { t } = useTranslation();
   // derived values
   const debouncedSearchTerm: string = useDebounce(query, 500);
   const searchResolvedPath = resolvedTheme === "light" ? lightSearchAsset : darkSearchAsset;
@@ -77,7 +77,7 @@ export function SelectDuplicateInboxIssueModal(props: Props) {
   const handleSubmit = (selectedItem: string) => {
     if (!selectedItem || selectedItem.length === 0)
       return setToast({
-        title: "Erro",
+        title: t("common.toast.error"),
         type: TOAST_TYPE.ERROR,
       });
     onSubmit(selectedItem);
@@ -87,7 +87,11 @@ export function SelectDuplicateInboxIssueModal(props: Props) {
   const issueList =
     filteredIssues.length > 0 ? (
       <li className="p-2">
-        {query === "" && <h2 className="mt-4 mb-2 px-3 text-11 font-semibold text-primary">Selecionar chamado</h2>}
+        {query === "" && (
+          <h2 className="mt-4 mb-2 px-3 text-11 font-semibold text-primary">
+            {t("intake_quick_create.select_work_item")}
+          </h2>
+        )}
         <ul className="text-13 text-primary">
           {filteredIssues.map((issue) => {
             const stateColor = issue.state__color || "";
@@ -141,7 +145,7 @@ export function SelectDuplicateInboxIssueModal(props: Props) {
           <input
             type="text"
             className="h-12 w-full border-0 bg-transparent pr-4 pl-11 text-primary outline-none focus:ring-0 sm:text-13"
-            placeholder="Pesquisar..."
+            placeholder="Search..."
             onChange={(e) => setQuery(e.target.value)}
           />
         </div>

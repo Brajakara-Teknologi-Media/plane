@@ -25,9 +25,9 @@ export const CalendarQuickAddIssueForm = observer(function CalendarQuickAddIssue
         <input
           type="text"
           autoComplete="off"
-          placeholder={isEpic ? "Título da épica" : "Título do chamado"}
+          placeholder={isEpic ? "Epic title" : "Work item title"}
           {...register("name", {
-            required: `Informe o título ${isEpic ? "da épica" : "do chamado"}.`,
+            required: `Enter the ${isEpic ? "epic" : "work item"} title.`,
           })}
           className="w-full rounded-md bg-transparent py-1.5 pr-2 text-13 leading-5 font-medium text-secondary outline-none md:text-11"
         />

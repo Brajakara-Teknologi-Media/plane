@@ -72,11 +72,11 @@ export const PLANS_LIST: TPlanePlans[] = ["free", "one", "pro", "business", "ent
 export const PLANS_COMPARISON_LIST: TPlansComparisonDetails[] = [
   {
     id: "project-work-tracking",
-    title: "Acompanhamento de projetos e trabalho",
+    title: "Project and Work Tracking",
     features: [
       {
-        title: "Projetos",
-        description: "Adicione projetos para abrigar chamados, ciclos e módulos.",
+        title: "Projects",
+        description: "Add projects to house tickets, cycles, and modules.",
         cloud: {
           free: true,
           one: true,
@@ -86,8 +86,8 @@ export const PLANS_COMPARISON_LIST: TPlansComparisonDetails[] = [
         },
       },
       {
-        title: "Chamados",
-        description: "Adicione trabalho por meio de chamados, defina propriedades para acompanhamento e adicione a\nciclos ou módulos.",
+        title: "Tickets",
+        description: "Add work via tickets, define properties for tracking, and add them to\ncycles or modules.",
         cloud: {
           free: true,
           one: true,
@@ -97,7 +97,7 @@ export const PLANS_COMPARISON_LIST: TPlansComparisonDetails[] = [
         },
       },
       {
-        title: "Comentários",
+        title: "Comments",
         description: "Respond to work items, @mention members, and brainstorm\ntogether without leaving Avião.",
         cloud: {
           free: true,
@@ -108,8 +108,8 @@ export const PLANS_COMPARISON_LIST: TPlansComparisonDetails[] = [
         },
       },
       {
-        title: "Ciclos",
-        description: "Acompanhe o trabalho em períodos definidos com frequências diferentes.",
+        title: "Cycles",
+        description: "Track work in defined periods with different frequencies.",
         cloud: {
           free: true,
           one: true,
@@ -119,8 +119,8 @@ export const PLANS_COMPARISON_LIST: TPlansComparisonDetails[] = [
         },
       },
       {
-        title: "Módulos",
-        description: "Agrupe trabalho replicável em módulos com seus próprios\nresponsáveis.",
+        title: "Modules",
+        description: "Group replicable work into modules with their own\nassignees.",
         cloud: {
           free: true,
           one: true,
@@ -130,9 +130,9 @@ export const PLANS_COMPARISON_LIST: TPlansComparisonDetails[] = [
         },
       },
       {
-        title: "Solicitações",
+        title: "Requests",
         description:
-          "Veja sugestões e feedback de visualizadores e\nconvidados antes de decidir adicioná-los ao seu\nprojeto.",
+          "See suggestions and feedback from viewers and\nguests before deciding to add them to your\nproject.",
         cloud: {
           free: true,
           one: true,
@@ -142,57 +142,57 @@ export const PLANS_COMPARISON_LIST: TPlansComparisonDetails[] = [
         },
       },
       {
-        title: "Estimativas",
-        description: "Meça o esforço em pontos em um sistema que funciona para\nvocê.",
+        title: "Estimates",
+        description: "Measure effort in points in a system that works for\nyou.",
         cloud: {
-          free: "Básico",
-          one: "Básico",
-          pro: "Avançado",
-          business: "Avançado",
-          enterprise: "Avançado",
+          free: "Basic",
+          one: "Basic",
+          pro: "Advanced",
+          business: "Advanced",
+          enterprise: "Advanced",
         },
       },
     ],
   },
   {
     id: "project-work-management",
-    title: "Gestão de projetos e trabalho",
+    title: "Project and Work Management",
     features: [
       {
-        title: "Operações em massa",
-        description: "Adicione vários chamados a ciclos ou módulos, transfira-os\nou edite suas propriedades.",
+        title: "Bulk operations",
+        description: "Add multiple tickets to cycles or modules, transfer them, or edit their properties.",
         cloud: {
           free: false,
-          one: "Propriedades limitadas",
-          pro: "Todas as propriedades",
+          one: "Limited properties",
+          pro: "All properties",
           business: (
             <span className="flex flex-col items-end gap-1 lg:items-center">
               <ComingSoonBadge />
-              Transferências e conversões de chamado
+              Work item transfers and conversions
             </span>
           ),
           enterprise: (
             <span className="flex flex-col items-end gap-1 lg:items-center">
               <ComingSoonBadge />
-              Transferências e conversões de chamado
+              Work item transfers and conversions
             </span>
           ),
         },
       },
       {
-        title: "Controle de tempo e registros de horas",
-        description: "Acompanhe o tempo por chamado, veja relatórios agregados e\nfiltre conforme a necessidade.",
+        title: "Time tracking and hours",
+        description: "Track time per ticket, see aggregated reports, and filter as needed.",
         cloud: {
           free: false,
-          one: "Básico",
-          pro: "Registros de horas históricos",
-          business: "Registros de horas históricos\ne aprovações",
-          enterprise: "Registros de horas históricos\ne aprovações",
+          one: "Basic",
+          pro: "Historical time records",
+          business: "Historical time records\nand approvals",
+          enterprise: "Historical time records\nand approvals",
         },
       },
       {
-        title: "Ciclos ativos",
-        description: "Veja todos os ciclos em andamento em todos os projetos ou, em breve, em\num único projeto.",
+        title: "Active cycles",
+        description: "See all ongoing cycles across all projects, or coming soon, in a single project.",
         cloud: {
           free: false,
           one: true,
@@ -202,8 +202,8 @@ export const PLANS_COMPARISON_LIST: TPlansComparisonDetails[] = [
         },
       },
       {
-        title: "Tipos de chamado",
-        description: "Crie seus próprios tipos de chamado com suas próprias\npropriedades.",
+        title: "Ticket types",
+        description: "Create your own ticket types with their own properties.",
         cloud: {
           free: false,
           one: false,
@@ -213,19 +213,19 @@ export const PLANS_COMPARISON_LIST: TPlansComparisonDetails[] = [
         },
       },
       {
-        title: "Propriedades personalizadas",
-        description: "Crie suas próprias propriedades e aplique-as ao seu\nespaço de trabalho ou projeto.",
+        title: "Custom properties",
+        description: "Create your own properties and apply them to your workspace or project.",
         cloud: {
           free: false,
           one: false,
           pro: "Propriedades personalizadas\npor projeto",
-          business: "Propriedades por workspace\ne consolidações",
-          enterprise: "Propriedades por workspace\ne consolidações",
+          business: "Workspace properties\nand rollups",
+          enterprise: "Workspace properties\nand rollups",
         },
       },
       {
-        title: "Dependências no Gantt",
-        description: "Ajuste os cronogramas de chamados dependentes visualmente no\nnosso layout de Gantt.",
+        title: "Gantt dependencies",
+        description: "Adjust dependent ticket schedules visually in our Gantt layout.",
         cloud: {
           free: false,
           one: false,
@@ -235,8 +235,8 @@ export const PLANS_COMPARISON_LIST: TPlansComparisonDetails[] = [
         },
       },
       {
-        title: "Transferências de chamado",
-        description: "Mova um chamado de um projeto ou ciclo para\noutro.",
+        title: "Ticket transfers",
+        description: "Move a ticket from one project or cycle to another.",
         cloud: {
           free: false,
           one: false,
@@ -246,9 +246,8 @@ export const PLANS_COMPARISON_LIST: TPlansComparisonDetails[] = [
         },
       },
       {
-        title: "Transferência automática de itens do ciclo",
-        description:
-          "Transfira chamados incompletos de um ciclo concluído\npara o próximo ciclo ou para o estado padrão do projeto. ",
+        title: "Auto-transfer cycle items",
+        description: "Transfer incomplete tickets from a completed cycle to the next cycle or project default state.",
         cloud: {
           free: false,
           one: false,
@@ -258,8 +257,8 @@ export const PLANS_COMPARISON_LIST: TPlansComparisonDetails[] = [
         },
       },
       {
-        title: "Épicos",
-        description: "Organize o trabalho de longo prazo em épicos que abrigam chamados,\nciclos e módulos.",
+        title: "Epics",
+        description: "Organize long-term work in epics that house tickets, cycles, and modules.",
         cloud: {
           free: false,
           one: false,
@@ -269,8 +268,8 @@ export const PLANS_COMPARISON_LIST: TPlansComparisonDetails[] = [
         },
       },
       {
-        title: "Iniciativas",
-        description: "Crie iniciativas para agrupar vários épicos.",
+        title: "Initiatives",
+        description: "Create initiatives to group multiple epics.",
         comingSoon: true,
         cloud: {
           free: false,
@@ -281,9 +280,8 @@ export const PLANS_COMPARISON_LIST: TPlansComparisonDetails[] = [
         },
       },
       {
-        title: "Marcos",
-        description:
-          "Adicione marcadores a Projetos, Épicos e Iniciativas para manter sua\nequipe no rumo e reportar o progresso.",
+        title: "Milestones",
+        description: "Add markers to Projects, Epics, and Initiatives to keep your team on track and report progress.",
         comingSoon: true,
         cloud: {
           free: false,
@@ -294,8 +292,8 @@ export const PLANS_COMPARISON_LIST: TPlansComparisonDetails[] = [
         },
       },
       {
-        title: "Visão geral do módulo",
-        description: "Assim como nas visões gerais de ciclo, veja detalhes relevantes e\ngráficos de progresso para cada módulo.",
+        title: "Module overview",
+        description: "Just like cycle overviews, see relevant details and progress charts for each module.",
         cloud: {
           free: false,
           one: false,
@@ -305,14 +303,15 @@ export const PLANS_COMPARISON_LIST: TPlansComparisonDetails[] = [
         },
       },
       {
-        title: "Atribuição automática em módulos",
-        description: "Escolha regras de atribuição para chamados em um\nmódulo, incluindo Linear, Rodízio ou Capacidade.",
+        title: "Auto-assignment in modules",
+        description:
+          "Choose assignment rules for tickets in a module, including Round-robin and Capacity, Round-robin, or Capacity.",
         cloud: {
           free: false,
           one: false,
-          pro: "Linear",
-          business: "Rodízio e Capacidade",
-          enterprise: "Rodízio e Capacidade",
+          pro: "Round-robin and Capacity",
+          business: "Round-robin and Capacity",
+          enterprise: "Round-robin and Capacity",
         },
       },
       // {
@@ -328,9 +327,9 @@ export const PLANS_COMPARISON_LIST: TPlansComparisonDetails[] = [
       //   },
       // },
       {
-        title: "Projetos públicos, privados e secretos",
+        title: "Public, private, and secret projects",
         description:
-          "Projetos públicos são visíveis e acessíveis a\ntodos. Os privados são visíveis, mas precisam de aprovação\npara participar. Projetos secretos não são visíveis nem acessíveis.",
+          "Public projects are visible and accessible to everyone. Private are visible but require approval to join. Secret projects are neither visible nor accessible.",
         cloud: {
           free: false,
           one: false,
@@ -340,9 +339,9 @@ export const PLANS_COMPARISON_LIST: TPlansComparisonDetails[] = [
         },
       },
       {
-        title: "Estado dos projetos",
+        title: "Project state",
         description:
-          "Veja todos os projetos distribuídos por estados que destacam\naqueles que precisam de atenção e os que estão no rumo.",
+          "See all projects distributed by states that highlight those needing attention and those on track.",
         cloud: {
           free: false,
           one: false,
@@ -365,9 +364,9 @@ export const PLANS_COMPARISON_LIST: TPlansComparisonDetails[] = [
       //   },
       // },
       {
-        title: "Modelos de chamado predefinidos",
+        title: "Predefined ticket templates",
         description:
-          "Escolha entre os modelos de chamado disponíveis que\npersonalizam tipos e propriedades de chamado para vários\ncasos de uso.",
+          "Choose from available ticket templates that customize ticket types and properties for various use cases.",
         comingSoon: true,
         cloud: {
           free: false,
@@ -378,8 +377,8 @@ export const PLANS_COMPARISON_LIST: TPlansComparisonDetails[] = [
         },
       },
       {
-        title: "Ciclos de equipe",
-        description: "Veja vários ciclos em vários projetos de uma só vez.",
+        title: "Team cycles",
+        description: "See multiple cycles across multiple projects at once.",
         cloud: {
           free: false,
           one: false,
@@ -389,8 +388,8 @@ export const PLANS_COMPARISON_LIST: TPlansComparisonDetails[] = [
         },
       },
       {
-        title: "Modelos de projeto",
-        description: "Salve estados, fluxos de trabalho, automações e outras\nconfigurações de projeto em modelos.",
+        title: "Project templates",
+        description: "Save states, workflows, automations, and other project settings as templates.",
         cloud: {
           free: false,
           one: false,
@@ -400,8 +399,8 @@ export const PLANS_COMPARISON_LIST: TPlansComparisonDetails[] = [
         },
       },
       {
-        title: "Linhas de base e desvios",
-        description: "Defina linhas de base para o progresso dos seus projetos\ne foque nos desvios.",
+        title: "Baselines and deviations",
+        description: "Set baselines for your projects progress and focus on deviations.",
         cloud: {
           free: false,
           one: false,
@@ -411,8 +410,8 @@ export const PLANS_COMPARISON_LIST: TPlansComparisonDetails[] = [
         },
       },
       {
-        title: "Comunicações agendadas",
-        description: "Agende relatórios, notificações e mensagens para\nferramentas de terceiros.",
+        title: "Scheduled communications",
+        description: "Schedule reports, notifications, and messages to third-party tools.",
         cloud: {
           free: false,
           one: false,
@@ -422,8 +421,8 @@ export const PLANS_COMPARISON_LIST: TPlansComparisonDetails[] = [
         },
       },
       {
-        title: "Responsáveis pelas solicitações",
-        description: "Atribua solicitações aprovadas a um membro por\npadrão.",
+        title: "Request assignees",
+        description: "Assign approved requests to a member by default.",
         cloud: {
           free: false,
           one: false,
@@ -433,8 +432,8 @@ export const PLANS_COMPARISON_LIST: TPlansComparisonDetails[] = [
         },
       },
       {
-        title: "SLAs personalizados",
-        description: "Defina matrizes de SLA para chamados sensíveis ao tempo.",
+        title: "Custom SLAs",
+        description: "Define SLA matrices for time-sensitive tickets.",
         cloud: {
           free: false,
           one: false,
@@ -444,8 +443,8 @@ export const PLANS_COMPARISON_LIST: TPlansComparisonDetails[] = [
         },
       },
       {
-        title: "Formulários de solicitação",
-        description: "Receba solicitações a partir de formulários web\nacessíveis externamente.",
+        title: "Request forms",
+        description: "Receive requests from externally accessible web forms.",
         cloud: {
           free: false,
           one: false,
@@ -455,8 +454,8 @@ export const PLANS_COMPARISON_LIST: TPlansComparisonDetails[] = [
         },
       },
       {
-        title: "E-mails para solicitações",
-        description: "Obtenha um endereço de e-mail para registrar solicitações\ndiretamente nas Solicitações de um projeto.",
+        title: "Emails for requests",
+        description: "Get an email address to log requests directly into a project requests.",
         comingSoon: true,
         cloud: {
           free: false,
@@ -470,12 +469,11 @@ export const PLANS_COMPARISON_LIST: TPlansComparisonDetails[] = [
   },
   {
     id: "visualization",
-    title: "Visualização",
+    title: "Visualization",
     features: [
       {
         title: "Layouts",
-        description:
-          "Escolha entre os layouts de Lista, Quadro, Calendário,\nGantt ou Planilha para seus chamados.",
+        description: "Choose between List, Board, Calendar, Gantt, or Spreadsheet layouts for your tickets.",
         cloud: {
           free: true,
           one: true,
@@ -485,8 +483,8 @@ export const PLANS_COMPARISON_LIST: TPlansComparisonDetails[] = [
         },
       },
       {
-        title: "Visualizações",
-        description: "Salve opções de ordenação, filtro e exibição de um layout em uma\nvisualização.",
+        title: "Views",
+        description: "Save sort, filter, and display options of a layout in a view.",
         cloud: {
           free: true,
           one: true,
@@ -496,8 +494,8 @@ export const PLANS_COMPARISON_LIST: TPlansComparisonDetails[] = [
         },
       },
       {
-        title: "Visualizações compartilhadas",
-        description: "Escolha alguns membros para compartilhar uma visualização.",
+        title: "Shared views",
+        description: "Choose some members to share a view.",
         cloud: {
           free: false,
           one: false,
@@ -507,8 +505,8 @@ export const PLANS_COMPARISON_LIST: TPlansComparisonDetails[] = [
         },
       },
       {
-        title: "Publicar visualizações",
-        description: "Publique uma visualização na Internet e deixe seus clientes\ninteragirem com ela.",
+        title: "Publish views",
+        description: "Publish a view on the internet and let your clients interact with it.",
         cloud: {
           free: false,
           one: false,
@@ -518,8 +516,8 @@ export const PLANS_COMPARISON_LIST: TPlansComparisonDetails[] = [
         },
       },
       {
-        title: "Painéis e widgets",
-        description: "Crie seus próprios painéis com widgets personalizados\ne tipos de dados.",
+        title: "Dashboards and widgets",
+        description: "Create your own dashboards with custom widgets and data types.",
         cloud: {
           free: false,
           one: false,
@@ -532,12 +530,12 @@ export const PLANS_COMPARISON_LIST: TPlansComparisonDetails[] = [
   },
   {
     id: "analytics-reports",
-    title: "Análises e relatórios",
+    title: "Analytics and Reports",
     features: [
       {
-        title: "Gráficos de progresso",
+        title: "Progress charts",
         description:
-          "Track progress in cycles, modules, and overviews\nthroughout Avião without switching to dashboards\nor Analytics.",
+          "Track progress in cycles, modules, and overviews throughout Avião without switching to dashboards or Analytics.",
         cloud: {
           free: false,
           one: false,
@@ -547,8 +545,9 @@ export const PLANS_COMPARISON_LIST: TPlansComparisonDetails[] = [
         },
       },
       {
-        title: "Relatórios de ciclo",
-        description: "Obtenha relatórios de ciclo sob demanda durante e após um\nciclo. Revisite os relatórios a qualquer momento por links permanentes.",
+        title: "Cycle reports",
+        description:
+          "Get cycle reports on demand during and after a\ncycle. Revisit reports at any time via permanent links.",
         cloud: {
           free: false,
           one: false,
@@ -559,7 +558,7 @@ export const PLANS_COMPARISON_LIST: TPlansComparisonDetails[] = [
       },
       {
         title: "Insights",
-        description: "Retrospectiva, insights sob demanda e previsões.",
+        description: "Retrospective, on-demand insights and forecasts.",
         comingSoon: true,
         cloud: {
           free: false,
@@ -582,8 +581,8 @@ export const PLANS_COMPARISON_LIST: TPlansComparisonDetails[] = [
       //   },
       // },
       {
-        title: "Análises avançadas de páginas",
-        description: "Veja quem está visualizando, compartilhando e comentando\nsuas páginas, além de outras informações úteis.",
+        title: "Advanced page analytics",
+        description: "See who is viewing, sharing, and commenting on your pages, plus other useful info.",
         comingSoon: true,
         cloud: {
           free: false,
@@ -594,8 +593,8 @@ export const PLANS_COMPARISON_LIST: TPlansComparisonDetails[] = [
         },
       },
       {
-        title: "Relatórios personalizados",
-        description: "Gere relatórios por qualquer dimensão e métrica\nem todo o seu projeto ou espaço de trabalho.",
+        title: "Custom reports",
+        description: "Generate reports by any dimension and metric across your project or workspace.",
         comingSoon: true,
         cloud: {
           free: false,
@@ -609,7 +608,7 @@ export const PLANS_COMPARISON_LIST: TPlansComparisonDetails[] = [
   },
   {
     id: "navigation",
-    title: "Navegação",
+    title: "Navigation",
     features: [
       {
         title: "Power K",
@@ -670,52 +669,53 @@ export const PLANS_COMPARISON_LIST: TPlansComparisonDetails[] = [
   },
   {
     id: "workspace-user-management",
-    title: "Gestão de espaço de trabalho e usuários",
+    title: "Workspace and User Management",
     features: [
       {
-        title: "Limite de membros",
-        description: "Número de assentos que podem usar os recursos de gestão de projetos e trabalho",
-        selfHostedDescription: "Número de usuários suportados pela nossa infraestrutura padrão\nAmplie a infraestrutura para ter mais usuários",
+        title: "Member limit",
+        description: "Number of seats that can use the project and work management features",
+        selfHostedDescription:
+          "Number of users supported by our default infrastructure. Expand infrastructure to have more users",
         cloud: {
           free: "12",
           one: "",
-          pro: "Ilimitado",
-          business: "Ilimitado",
-          enterprise: "Ilimitado",
+          pro: "Unlimited",
+          business: "Unlimited",
+          enterprise: "Unlimited",
         },
         "self-hosted": {
           free: "~50",
           one: "~50",
           pro: "~200",
           business: "~200",
-          enterprise: "Ilimitado",
+          enterprise: "Unlimited",
         },
       },
       {
-        title: "Cargos",
-        description: "Escolha um dos quatro cargos predefinidos ou crie\ncargos personalizados com RBAC.",
+        title: "Roles",
+        description: "Choose one of four predefined roles or create custom roles with RBAC.",
         cloud: {
-          free: "Básico",
-          one: "Básico",
-          pro: "Funções predefinidas",
+          free: "Basic",
+          one: "Basic",
+          pro: "Predefined functions",
           business: "RBAC",
           enterprise: "GAC",
         },
       },
       {
-        title: "Convidados",
-        description: "Permita que alguns usuários vejam tudo ou apenas seus chamados em\num projeto.",
+        title: "Guests",
+        description: "Allow some users to see everything or just their tickets in a project.",
         cloud: {
           free: false,
-          one: "5 por membro pago",
-          pro: "5 por membro pago",
-          business: "5 por membro pago",
-          enterprise: "5 por membro pago",
+          one: "5 per paid member",
+          pro: "5 per paid member",
+          business: "5 per paid member",
+          enterprise: "5 per paid member",
         },
       },
       {
-        title: "Aprovações",
-        description: "Defina aprovações de espaço de trabalho, projeto e tipo de chamado para\nadministradores designados.",
+        title: "Approvals",
+        description: "Define workspace, project, and ticket type approvals for designated admins.",
         comingSoon: true,
         cloud: {
           free: false,
@@ -726,8 +726,8 @@ export const PLANS_COMPARISON_LIST: TPlansComparisonDetails[] = [
         },
       },
       {
-        title: "Interface de administração",
-        description: "Obtenha uma visão geral administrativa para gerenciar as configurações\ndo espaço de trabalho e do projeto.",
+        title: "Admin interface",
+        description: "Get an admin overview to manage workspace and project settings.",
         cloud: {
           free: false,
           one: false,
@@ -737,8 +737,8 @@ export const PLANS_COMPARISON_LIST: TPlansComparisonDetails[] = [
         },
       },
       {
-        title: "Logs de atividade do espaço de trabalho",
-        description: "Veja logs de atividade filtráveis de todo o seu\nespaço de trabalho.",
+        title: "Workspace activity logs",
+        description: "See filterable activity logs from your entire workspace.",
         cloud: {
           free: false,
           one: false,
@@ -748,8 +748,8 @@ export const PLANS_COMPARISON_LIST: TPlansComparisonDetails[] = [
         },
       },
       {
-        title: "Logs de auditoria via API",
-        description: "See a full-workspace audit log and use APIs to flag\nAvião activity in compliance systems.",
+        title: "Audit logs via API",
+        description: "See a full-workspace audit log and use APIs to flag Avião activity in compliance systems.",
         comingSoon: true,
         cloud: {
           free: false,
@@ -763,11 +763,11 @@ export const PLANS_COMPARISON_LIST: TPlansComparisonDetails[] = [
   },
   {
     id: "automations-workflows",
-    title: "Automações e fluxos de trabalho",
+    title: "Automations and Workflows",
     features: [
       {
-        title: "Gatilho e ação",
-        description: "Escolha um gatilho e uma ação correspondente por\nfluxo de automação.",
+        title: "Trigger and action",
+        description: "Choose a trigger and corresponding action per automation flow.",
         cloud: {
           free: false,
           one: false,
@@ -777,8 +777,8 @@ export const PLANS_COMPARISON_LIST: TPlansComparisonDetails[] = [
         },
       },
       {
-        title: "Automação de decisões e laços",
-        description: "Use ações como gatilhos indefinidamente em um\nfluxo de automação.",
+        title: "Decision and loop automation",
+        description: "Use actions as triggers indefinitely in an automation flow.",
         comingSoon: true,
         cloud: {
           free: false,
@@ -789,25 +789,25 @@ export const PLANS_COMPARISON_LIST: TPlansComparisonDetails[] = [
         },
       },
       {
-        title: "Número de automações",
-        description: "Número total de fluxos de automação no seu\nespaço de trabalho",
+        title: "Number of automations",
+        description: "Total number of automation flows in your workspace",
         cloud: {
           free: false,
           one: false,
           pro: "5,000",
           business: "10,000",
-          enterprise: "Ilimitado",
+          enterprise: "Unlimited",
         },
       },
     ],
   },
   {
     id: "knowledge-management",
-    title: "Gestão de conhecimento",
+    title: "Knowledge Management",
     features: [
       {
-        title: "Páginas",
-        description: "Crie bases de conhecimento para suas equipes que sejam\nacessíveis e compartilháveis.",
+        title: "Pages",
+        description: "Create knowledge bases for your teams that are accessible and shareable.",
         cloud: {
           free: true,
           one: true,
@@ -817,8 +817,8 @@ export const PLANS_COMPARISON_LIST: TPlansComparisonDetails[] = [
         },
       },
       {
-        title: "Colaboração em tempo real",
-        description: "Edite uma página junto com membros do seu projeto,\nequipe ou espaço de trabalho.",
+        title: "Real-time collaboration",
+        description: "Edit a page together with members of your project, team, or workspace.",
         cloud: {
           free: false,
           one: true,
@@ -828,8 +828,8 @@ export const PLANS_COMPARISON_LIST: TPlansComparisonDetails[] = [
         },
       },
       {
-        title: "Incorporação de chamados",
-        description: "Incorpore chamados de qualquer projeto do qual você seja\nmembro.",
+        title: "Embed tickets",
+        description: "Embed tickets from any project you are a member of.",
         cloud: {
           free: false,
           one: true,
@@ -839,8 +839,8 @@ export const PLANS_COMPARISON_LIST: TPlansComparisonDetails[] = [
         },
       },
       {
-        title: "Vincular a chamados",
-        description: "Vincule páginas a chamados em uma seção separada nos detalhes\ndo chamado.",
+        title: "Link to tickets",
+        description: "Link pages to tickets in a separate section in the ticket details.",
         cloud: {
           free: false,
           one: true,
@@ -850,9 +850,9 @@ export const PLANS_COMPARISON_LIST: TPlansComparisonDetails[] = [
         },
       },
       {
-        title: "Publicar",
+        title: "Publish",
         description:
-          "Publique suas páginas na web para usuários externos e permita\nque comentem sem entrar no seu espaço de trabalho.",
+          "Publish your pages on the web for external users and let them comment without joining your workspace.",
         cloud: {
           free: false,
           one: true,
@@ -863,7 +863,7 @@ export const PLANS_COMPARISON_LIST: TPlansComparisonDetails[] = [
       },
       {
         title: "Wiki",
-        description: "Crie wikis ou bases de conhecimento para toda a empresa\nsem criar um projeto.",
+        description: "Create wikis or knowledge bases for the whole company without creating a project.",
         cloud: {
           free: false,
           one: true,
@@ -873,19 +873,19 @@ export const PLANS_COMPARISON_LIST: TPlansComparisonDetails[] = [
         },
       },
       {
-        title: "Exportações",
-        description: "Exporte o conteúdo da página para PDFs ou documentos compatíveis\ncom o Word.",
+        title: "Exports",
+        description: "Export page content to PDFs or Word-compatible documents.",
         cloud: {
           free: false,
           one: false,
-          pro: "Um download\npor vez",
-          business: "Downloads em fila",
-          enterprise: "Downloads em fila",
+          pro: "One download at a time",
+          business: "Queued downloads",
+          enterprise: "Queued downloads",
         },
       },
       {
-        title: "Modelos",
-        description: "Use páginas como modelos para seu projeto, equipe ou\nespaço de trabalho.",
+        title: "Templates",
+        description: "Use pages as templates for your project, team, or workspace.",
         cloud: {
           free: false,
           one: false,
@@ -895,20 +895,20 @@ export const PLANS_COMPARISON_LIST: TPlansComparisonDetails[] = [
         },
       },
       {
-        title: "Versões",
-        description: "Veja versões restauráveis das edições das suas páginas.",
+        title: "Versions",
+        description: "See restorable versions of your page edits.",
         cloud: {
           free: false,
           one: false,
-          pro: "2 dias",
-          business: "3 meses",
-          enterprise: "Ilimitado",
+          pro: "2 days",
+          business: "3 months",
+          enterprise: "Unlimited",
         },
       },
       {
-        title: "Bancos de dados e fórmulas",
+        title: "Databases and formulas",
         description:
-          "Insira bancos de dados e fórmulas em uma página sem\nse preocupar em perder texto, imagens ou outros tipos de\nconteúdo.",
+          "Insert databases and formulas in a page without worrying about losing text, images, or other content types.",
         comingSoon: true,
         cloud: {
           free: false,
@@ -919,50 +919,50 @@ export const PLANS_COMPARISON_LIST: TPlansComparisonDetails[] = [
         },
       },
       {
-        title: "Páginas aninhadas",
-        description: "Páginas dentro de uma página; organize suas páginas\ncomo achar melhor para a divulgação\nprogressiva.",
+        title: "Nested pages",
+        description: "Pages inside a page; organize your pages as you see fit for progressive disclosure.",
         comingSoon: true,
         cloud: {
           free: false,
           one: false,
           pro: false,
-          business: "Downloads compatíveis com Word e outros formatos",
-          enterprise: "Downloads compatíveis com Word e outros formatos",
+          business: "Word and other format compatible downloads",
+          enterprise: "Word and other format compatible downloads",
         },
       },
     ],
   },
   {
     id: "importers",
-    title: "Importadores",
+    title: "Importers",
     features: [
       {
         title: "Jira",
-        description: "Importe seus chamados e membros do Jira.",
+        description: "Import your tickets and members from Jira.",
         cloud: {
-          free: "Sem propriedades personalizadas",
-          one: "Sem propriedades personalizadas",
-          pro: "Com propriedades personalizadas",
-          business: "Com propriedades personalizadas",
-          enterprise: "Com propriedades personalizadas",
+          free: "Without custom properties",
+          one: "Without custom properties",
+          pro: "With custom properties",
+          business: "With custom properties",
+          enterprise: "With custom properties",
         },
       },
       {
         title: "GitHub",
-        description: "Importe seus chamados e membros do GitHub.",
+        description: "Import your tickets and members from GitHub.",
         cloud: {
-          free: "Sem propriedades personalizadas",
-          one: "Sem propriedades personalizadas",
-          pro: "Com propriedades personalizadas",
-          business: "Com propriedades personalizadas",
-          enterprise: "Com propriedades personalizadas",
+          free: "Without custom properties",
+          one: "Without custom properties",
+          pro: "With custom properties",
+          business: "With custom properties",
+          enterprise: "With custom properties",
         },
       },
     ],
   },
   {
     id: "integrations",
-    title: "Integrações",
+    title: "Integrations",
     comingSoon: true,
     features: [
       {
@@ -990,7 +990,7 @@ export const PLANS_COMPARISON_LIST: TPlansComparisonDetails[] = [
       },
       {
         title: "Zapier",
-        description: "Execute automações if-then-else usando o Zapier.",
+        description: "Execute if-then-else automations using Zapier.",
         cloud: {
           free: false,
           one: false,
@@ -1025,36 +1025,36 @@ export const PLANS_COMPARISON_LIST: TPlansComparisonDetails[] = [
   },
   {
     id: "storage",
-    title: "Armazenamento",
+    title: "Storage",
     cloudOnly: true,
     features: [
       {
-        title: "Espaço",
-        description: "Armazenamento total permitido por espaço de trabalho",
+        title: "Space",
+        description: "Total storage allowed per workspace",
         cloud: {
           free: "5GB",
           one: false,
           pro: "1 TB",
           business: "5 TB",
-          enterprise: "Personalizado",
+          enterprise: "Custom",
         },
       },
       {
-        title: "Tamanho máximo de arquivo",
-        description: "Limite para uploads no seu espaço de trabalho",
+        title: "Max file size",
+        description: "Upload limit in your workspace",
         cloud: {
           free: "5 MB",
           one: false,
           pro: "100 MB",
           business: "200 MB",
-          enterprise: "Personalizado",
+          enterprise: "Custom",
         },
       },
     ],
   },
   {
     id: "security",
-    title: "Segurança",
+    title: "Security",
     features: [
       {
         title: "SAML",
@@ -1080,9 +1080,9 @@ export const PLANS_COMPARISON_LIST: TPlansComparisonDetails[] = [
         },
       },
       {
-        title: "Segurança de domínio",
+        title: "Domain security",
         description:
-          "Choose other domains that can authenticate into\nyour Avião workspace or restrict all but one domain.",
+          "Choose other domains that can authenticate into your Avião workspace or restrict all but one domain.",
         cloud: {
           free: false,
           one: false,
@@ -1092,7 +1092,7 @@ export const PLANS_COMPARISON_LIST: TPlansComparisonDetails[] = [
         },
       },
       {
-        title: "Autenticação de dois fatores e chaves de acesso",
+        title: "Two-factor authentication and passkeys",
         description: "Secure your Avião workspace with device-\ndependent two-factor authentication and passkeys. ",
         cloud: {
           free: false,
@@ -1103,8 +1103,8 @@ export const PLANS_COMPARISON_LIST: TPlansComparisonDetails[] = [
         },
       },
       {
-        title: "Política de senhas",
-        description: "Defina políticas de senha personalizadas de acordo com seus\nrequisitos de conformidade.",
+        title: "Password policy",
+        description: "Set custom password policies to match your compliance requirements.",
         cloud: {
           free: false,
           one: false,
@@ -1115,7 +1115,7 @@ export const PLANS_COMPARISON_LIST: TPlansComparisonDetails[] = [
       },
       {
         title: "LDAP",
-        description: "Get our official LDAP implementation and secure\nyour Avião workspace with your LDAP server.",
+        description: "Get our official LDAP implementation and secure your Avião workspace with your LDAP server.",
         comingSoon: true,
         cloud: {
           free: false,
@@ -1129,12 +1129,12 @@ export const PLANS_COMPARISON_LIST: TPlansComparisonDetails[] = [
   },
   {
     id: "self-hosted",
-    title: "Auto-hospedado",
+    title: "Self-hosted",
     selfHostedOnly: true,
     features: [
       {
         title: "God Mode",
-        description: "Manage your self-hosted Avião instance better with\nan instance admin interface.",
+        description: "Manage your self-hosted Avião instance better with an instance admin interface.",
         cloud: {
           free: true,
           one: true,
@@ -1144,7 +1144,7 @@ export const PLANS_COMPARISON_LIST: TPlansComparisonDetails[] = [
         },
       },
       {
-        title: "Implantação com um clique",
+        title: "One-click deployment",
         description: "Install and deploy your self-hosted Avião to any\nprivate cloud with a single-line command.",
         cloud: {
           free: false,
@@ -1156,7 +1156,7 @@ export const PLANS_COMPARISON_LIST: TPlansComparisonDetails[] = [
       },
       {
         title: "App no Marketplace da Digital Ocean",
-        description: "Obtenha nosso app compatível com a Digital Ocean no\nmarketplace deles.",
+        description: "Get our Digital Ocean compatible app on their marketplace.",
         cloud: {
           free: false,
           one: true,
@@ -1167,7 +1167,7 @@ export const PLANS_COMPARISON_LIST: TPlansComparisonDetails[] = [
       },
       {
         title: "App da Plataforma Heroku",
-        description: "Obtenha nosso app compatível com a Plataforma Heroku e implante\nno Heroku facilmente.",
+        description: "Get our Heroku Platform compatible app and deploy on Heroku easily.",
         cloud: {
           free: false,
           one: true,
@@ -1178,7 +1178,7 @@ export const PLANS_COMPARISON_LIST: TPlansComparisonDetails[] = [
       },
       {
         title: "AWS AMI",
-        description: "Obtenha nosso app compatível com AMI no\nmarketplace da AWS.",
+        description: "Get our AMI compatible app on the AWS marketplace.",
         cloud: {
           free: false,
           one: true,
@@ -1188,8 +1188,8 @@ export const PLANS_COMPARISON_LIST: TPlansComparisonDetails[] = [
         },
       },
       {
-        title: "Implantações privadas",
-        description: "Obtenha nosso app Cloud hospedado em uma nuvem privada\ngerenciada por nós.",
+        title: "Private deployments",
+        description: "Get our Cloud app hosted on a private cloud managed by us.",
         comingSoon: true,
         cloud: {
           free: false,
@@ -1227,8 +1227,8 @@ export const PLANS_COMPARISON_LIST: TPlansComparisonDetails[] = [
               <MessageCircle className="size-4 flex-shrink-0" />
             </div>
           ),
-          business: "Suíte completa de\nserviços profissionais",
-          enterprise: "Suíte completa de\nserviços profissionais",
+          business: "Full suite of\nprofessional services",
+          enterprise: "Full suite of\nprofessional services",
         },
       },
       {
@@ -1301,11 +1301,11 @@ export const PLANE_PLANS: PlanePlans = {
     },
   },
   planHighlights: {
-    free: ["Até 12 usuários", "Páginas", "Projetos ilimitados", "Ciclos e módulos ilimitados"],
-    one: ["Até 50 usuários", "OIDC and SAML", "Ciclos ativos", "Controle de tempo limitado"],
-    pro: ["Usuários ilimitados", "Chamados e propriedades personalizados", "Modelos de chamado", "Controle de tempo completo"],
-    business: ["RBAC", "Modelos de projeto", "Linhas de base e desvios", "Relatórios personalizados"],
-    enterprise: ["Implantações privadas e gerenciadas", "GAC", "Suporte a LDAP", "Bancos de dados e fórmulas"],
+    free: ["Up to 12 users", "Pages", "Unlimited projects", "Unlimited cycles and modules"],
+    one: ["Up to 50 users", "OIDC and SAML", "Active cycles", "Limited time tracking"],
+    pro: ["Unlimited users", "Custom tickets and properties", "Ticket templates", "Full time tracking"],
+    business: ["RBAC", "Project templates", "Baselines and deviations", "Custom reports"],
+    enterprise: ["Private and managed deployments", "GAC", "LDAP support", "Databases and formulas"],
   },
   planComparison: PLANS_COMPARISON_LIST,
 };

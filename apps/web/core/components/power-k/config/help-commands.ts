@@ -4,8 +4,9 @@
  * See the LICENSE file for details.
  */
 
-import { Bug, FileText, Rocket } from "lucide-react";
+import { useTranslation } from "@plane/i18n";
 import { DOCS_URL, SUPPORT_EMAIL } from "@plane/constants";
+import { Bug, FileText, Rocket } from "lucide-react";
 // components
 import type { TPowerKCommandConfig } from "@/components/power-k/core/types";
 // hooks
@@ -15,9 +16,8 @@ import { usePowerK } from "@/hooks/store/use-power-k";
  * Help commands - Help related commands
  */
 export const usePowerKHelpCommands = (): TPowerKCommandConfig[] => {
-  // store
   const { toggleShortcutsListModal } = usePowerK();
-
+  const { t } = useTranslation();
   return [
     {
       id: "open_keyboard_shortcuts",
@@ -51,7 +51,10 @@ export const usePowerKHelpCommands = (): TPowerKCommandConfig[] => {
       i18n_title: "power_k.help_actions.report_bug",
       icon: Bug,
       action: () => {
-        window.open(`mailto:${SUPPORT_EMAIL}?subject=${encodeURIComponent("Avião — relato de problema")}`, "_blank");
+        window.open(
+          `mailto:${SUPPORT_EMAIL}?subject=${encodeURIComponent(t("common.report_bug_email_subject"))}`,
+          "_blank"
+        );
       },
       isEnabled: () => true,
       isVisible: () => true,

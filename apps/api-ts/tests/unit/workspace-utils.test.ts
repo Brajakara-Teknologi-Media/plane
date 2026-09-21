@@ -126,7 +126,7 @@ describe("guards de workspace", () => {
       expect(member.role).toBe(20);
     });
 
-    it("allowInstanceAdmin libera admin de instância sem associação", async () => {
+    it("allowInstanceAdmin grants admin privileges to instances without membership", async () => {
       const instanceAdmin = await prisma.user.create({
         data: {
           email: `ia-${Date.now()}@plane.test`,

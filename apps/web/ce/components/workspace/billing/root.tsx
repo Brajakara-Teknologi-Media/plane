@@ -53,12 +53,12 @@ export const BillingRoot = observer(function BillingRoot() {
         <div className="mt-6">
           <SettingsBoxedControlItem
             title="Comunidade"
-            description="Projetos, itens, ciclos, módulos, páginas e armazenamento ilimitados"
+            description="Projects, items, cycles, modules, pages, and unlimited storage"
           />
         </div>
       </div>
       <div className="mt-10 flex flex-col gap-y-3">
-        <h4 className="text-h6-semibold">Todos os planos</h4>
+        <h4 className="text-h6-semibold">All plans</h4>
         <PlansComparison
           isCompareAllFeaturesSectionOpen={isCompareAllFeaturesSectionOpen}
           getBillingFrequency={getBillingFrequency}

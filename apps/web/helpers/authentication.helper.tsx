@@ -114,261 +114,262 @@ const errorCodeMessages: {
 } = {
   // global
   [EAuthenticationErrorCodes.INSTANCE_NOT_CONFIGURED]: {
-    title: `Instância não configurada`,
-    message: () => `Instância não configurada. Entre em contato com o administrador.`,
+    title: `Instance not configured`,
+    message: () => `Instance is not configured. Contact your administrator.`,
   },
   [EAuthenticationErrorCodes.INVALID_EMAIL]: {
-    title: `E-mail inválido`,
-    message: () => `E-mail inválido. Tente novamente.`,
+    title: `Invalid email`,
+    message: () => `Invalid email. Please try again.`,
   },
   [EAuthenticationErrorCodes.EMAIL_REQUIRED]: {
-    title: `E-mail obrigatório`,
-    message: () => `E-mail obrigatório. Tente novamente.`,
+    title: `Email required`,
+    message: () => `Email is required. Please try again.`,
   },
   [EAuthenticationErrorCodes.SIGNUP_DISABLED]: {
-    title: `Cadastro desativado`,
-    message: () => `Cadastro desativado. Entre em contato com o administrador.`,
+    title: `Sign-up is disabled`,
+    message: () => `Sign-up is disabled. Contact your administrator.`,
   },
   [EAuthenticationErrorCodes.MAGIC_LINK_LOGIN_DISABLED]: {
-    title: `Login por link mágico desativado`,
-    message: () => `Login por link mágico desativado. Entre em contato com o administrador.`,
+    title: `Magic link login is disabled`,
+    message: () => `Magic link login is disabled. Contact your administrator.`,
   },
   [EAuthenticationErrorCodes.PASSWORD_LOGIN_DISABLED]: {
-    title: `Login por senha desativado`,
-    message: () => `Login por senha desativado. Entre em contato com o administrador.`,
+    title: `Password login is disabled`,
+    message: () => `Password login is disabled. Contact your administrator.`,
   },
   [EAuthenticationErrorCodes.USER_ACCOUNT_DEACTIVATED]: {
-    title: `Conta de usuário desativada`,
-    message: () => `Conta de usuário desativada. Entre em contato com ${SUPPORT_EMAIL ? SUPPORT_EMAIL : "o administrador"}.`,
+    title: `User account deactivated`,
+    message: () =>
+      `User account is deactivated. Contact ${SUPPORT_EMAIL ? SUPPORT_EMAIL : "your administrator"}.`,
   },
   [EAuthenticationErrorCodes.INVALID_PASSWORD]: {
-    title: `Senha inválida`,
-    message: () => `Senha inválida. Tente novamente.`,
+    title: `Invalid password`,
+    message: () => `Invalid password. Please try again.`,
   },
   [EAuthenticationErrorCodes.PASSWORD_TOO_WEAK]: {
-    title: `Senha muito fraca`,
-    message: () => `Use uma senha mais forte.`,
+    title: `Password too weak`,
+    message: () => `Use a stronger password.`,
   },
   [EAuthenticationErrorCodes.SMTP_NOT_CONFIGURED]: {
-    title: `SMTP não configurado`,
-    message: () => `SMTP não configurado. Entre em contato com o administrador.`,
+    title: `SMTP not configured`,
+    message: () => `SMTP is not configured. Contact your administrator.`,
   },
 
   // sign up
   [EAuthenticationErrorCodes.USER_ALREADY_EXIST]: {
-    title: `Usuário já cadastrado`,
+    title: `Username already exists`,
     message: (email = undefined) => (
       <div>
-        Sua conta já está cadastrada.&nbsp;
+        Your account already exists.&nbsp;
         <Link
           className="font-medium underline underline-offset-4 transition-all hover:font-bold"
           href={`/sign-in${email ? `?email=${encodeURIComponent(email)}` : ``}`}
         >
-          Entrar
+          Sign in
         </Link>
-        &nbsp;agora.
+        &nbsp;now.
       </div>
     ),
   },
   [EAuthenticationErrorCodes.REQUIRED_EMAIL_PASSWORD_SIGN_UP]: {
-    title: `E-mail e senha são obrigatórios`,
-    message: () => `E-mail e senha são obrigatórios. Tente novamente.`,
+    title: `Email and password are required`,
+    message: () => `Email and password are required. Please try again.`,
   },
   [EAuthenticationErrorCodes.AUTHENTICATION_FAILED_SIGN_UP]: {
-    title: `Falha na autenticação`,
-    message: () => `Falha na autenticação. Tente novamente.`,
+    title: `Authentication failed`,
+    message: () => `Authentication failed. Please try again.`,
   },
   [EAuthenticationErrorCodes.INVALID_EMAIL_SIGN_UP]: {
-    title: `E-mail inválido`,
-    message: () => `E-mail inválido. Tente novamente.`,
+    title: `Invalid email`,
+    message: () => `Invalid email. Please try again.`,
   },
   [EAuthenticationErrorCodes.MAGIC_SIGN_UP_EMAIL_CODE_REQUIRED]: {
-    title: `E-mail e código são obrigatórios`,
-    message: () => `E-mail e código são obrigatórios. Tente novamente.`,
+    title: `Email and code are required`,
+    message: () => `Email and code are required. Please try again.`,
   },
   [EAuthenticationErrorCodes.INVALID_EMAIL_MAGIC_SIGN_UP]: {
-    title: `E-mail inválido`,
-    message: () => `E-mail inválido. Tente novamente.`,
+    title: `Invalid email`,
+    message: () => `Invalid email. Please try again.`,
   },
 
   [EAuthenticationErrorCodes.USER_DOES_NOT_EXIST]: {
-    title: `Usuário não encontrado`,
+    title: `Username not found`,
     message: (email = undefined) => (
       <div>
-        Nenhuma conta encontrada.&nbsp;
+        No account found.&nbsp;
         <Link
           className="font-medium underline underline-offset-4 transition-all hover:font-bold"
           href={`/${email ? `?email=${encodeURIComponent(email)}` : ``}`}
         >
-          Crie uma
+          Create one
         </Link>
-        &nbsp;para começar.
+        &nbsp;to get started.
       </div>
     ),
   },
   [EAuthenticationErrorCodes.REQUIRED_EMAIL_PASSWORD_SIGN_IN]: {
-    title: `E-mail e senha são obrigatórios`,
-    message: () => `E-mail e senha são obrigatórios. Tente novamente.`,
+    title: `Email and password are required`,
+    message: () => `Email and password are required. Please try again.`,
   },
   [EAuthenticationErrorCodes.AUTHENTICATION_FAILED_SIGN_IN]: {
-    title: `Falha na autenticação`,
-    message: () => `Falha na autenticação. Tente novamente.`,
+    title: `Authentication failed`,
+    message: () => `Authentication failed. Please try again.`,
   },
   [EAuthenticationErrorCodes.INVALID_EMAIL_SIGN_IN]: {
-    title: `E-mail inválido`,
-    message: () => `E-mail inválido. Tente novamente.`,
+    title: `Invalid email`,
+    message: () => `Invalid email. Please try again.`,
   },
   [EAuthenticationErrorCodes.MAGIC_SIGN_IN_EMAIL_CODE_REQUIRED]: {
-    title: `E-mail e código são obrigatórios`,
-    message: () => `E-mail e código são obrigatórios. Tente novamente.`,
+    title: `Email and code are required`,
+    message: () => `Email and code are required. Please try again.`,
   },
   [EAuthenticationErrorCodes.INVALID_EMAIL_MAGIC_SIGN_IN]: {
-    title: `E-mail inválido`,
-    message: () => `E-mail inválido. Tente novamente.`,
+    title: `Invalid email`,
+    message: () => `Invalid email. Please try again.`,
   },
 
   // Both Sign in and Sign up
   [EAuthenticationErrorCodes.INVALID_MAGIC_CODE_SIGN_IN]: {
-    title: `Falha na autenticação`,
-    message: () => `Código mágico inválido. Tente novamente.`,
+    title: `Authentication failed`,
+    message: () => `Invalid magic code. Please try again.`,
   },
   [EAuthenticationErrorCodes.INVALID_MAGIC_CODE_SIGN_UP]: {
-    title: `Falha na autenticação`,
-    message: () => `Código mágico inválido. Tente novamente.`,
+    title: `Authentication failed`,
+    message: () => `Invalid magic code. Please try again.`,
   },
   [EAuthenticationErrorCodes.EXPIRED_MAGIC_CODE_SIGN_IN]: {
-    title: `Código mágico expirado`,
-    message: () => `Código mágico expirado. Tente novamente.`,
+    title: `Magic code expired`,
+    message: () => `Magic code has expired. Please try again.`,
   },
   [EAuthenticationErrorCodes.EXPIRED_MAGIC_CODE_SIGN_UP]: {
-    title: `Código mágico expirado`,
-    message: () => `Código mágico expirado. Tente novamente.`,
+    title: `Magic code expired`,
+    message: () => `Magic code has expired. Please try again.`,
   },
   [EAuthenticationErrorCodes.EMAIL_CODE_ATTEMPT_EXHAUSTED_SIGN_IN]: {
-    title: `Código mágico expirado`,
-    message: () => `Código mágico expirado. Tente novamente.`,
+    title: `Magic code expired`,
+    message: () => `Magic code has expired. Please try again.`,
   },
   [EAuthenticationErrorCodes.EMAIL_CODE_ATTEMPT_EXHAUSTED_SIGN_UP]: {
-    title: `Código mágico expirado`,
-    message: () => `Código mágico expirado. Tente novamente.`,
+    title: `Magic code expired`,
+    message: () => `Magic code has expired. Please try again.`,
   },
 
   // Oauth
   [EAuthenticationErrorCodes.OAUTH_NOT_CONFIGURED]: {
-    title: `OAuth não configurado`,
-    message: () => `OAuth não configurado. Entre em contato com o administrador.`,
+    title: `OAuth is not configured`,
+    message: () => `OAuth is not configured. Contact your administrator.`,
   },
   [EAuthenticationErrorCodes.GOOGLE_NOT_CONFIGURED]: {
-    title: `Google não configurado`,
-    message: () => `Google não configurado. Entre em contato com o administrador.`,
+    title: `Google is not configured`,
+    message: () => `Google sign-in is not configured. Contact your administrator.`,
   },
   [EAuthenticationErrorCodes.GITHUB_NOT_CONFIGURED]: {
-    title: `GitHub não configurado`,
-    message: () => `GitHub não configurado. Entre em contato com o administrador.`,
+    title: `GitHub is not configured`,
+    message: () => `GitHub sign-in is not configured. Contact your administrator.`,
   },
   [EAuthenticationErrorCodes.GITLAB_NOT_CONFIGURED]: {
-    title: `GitLab não configurado`,
-    message: () => `GitLab não configurado. Entre em contato com o administrador.`,
+    title: `GitLab is not configured`,
+    message: () => `GitLab sign-in is not configured. Contact your administrator.`,
   },
   [EAuthenticationErrorCodes.GOOGLE_OAUTH_PROVIDER_ERROR]: {
-    title: `Erro no provedor OAuth do Google`,
-    message: () => `Erro no provedor OAuth do Google. Tente novamente.`,
+    title: `Google OAuth provider error`,
+    message: () => `Google OAuth provider error. Please try again.`,
   },
   [EAuthenticationErrorCodes.GITHUB_OAUTH_PROVIDER_ERROR]: {
-    title: `Erro no provedor OAuth do GitHub`,
-    message: () => `Erro no provedor OAuth do GitHub. Tente novamente.`,
+    title: `GitHub OAuth provider error`,
+    message: () => `GitHub OAuth provider error. Please try again.`,
   },
   [EAuthenticationErrorCodes.GITLAB_OAUTH_PROVIDER_ERROR]: {
-    title: `Erro no provedor OAuth do GitLab`,
-    message: () => `Erro no provedor OAuth do GitLab. Tente novamente.`,
+    title: `GitLab OAuth provider error`,
+    message: () => `GitLab OAuth provider error. Please try again.`,
   },
 
   // Reset Password
   [EAuthenticationErrorCodes.INVALID_PASSWORD_TOKEN]: {
-    title: `Token de senha inválido`,
-    message: () => `Token de senha inválido.`,
+    title: `Invalid password token`,
+    message: () => `Invalid password token.`,
   },
   [EAuthenticationErrorCodes.EXPIRED_PASSWORD_TOKEN]: {
-    title: `Token de senha expirado`,
-    message: () => `Token de senha expirado. Tente novamente.`,
+    title: `Expired password token`,
+    message: () => `Password token has expired. Please try again.`,
   },
 
   // Change password
   [EAuthenticationErrorCodes.MISSING_PASSWORD]: {
-    title: `Senha obrigatória`,
-    message: () => `Senha obrigatória. Tente novamente.`,
+    title: `Password required`,
+    message: () => `Password is required. Please try again.`,
   },
   [EAuthenticationErrorCodes.INCORRECT_OLD_PASSWORD]: {
-    title: `Senha atual incorreta`,
-    message: () => `Senha atual incorreta. Tente novamente.`,
+    title: `Current password is incorrect`,
+    message: () => `Current password is incorrect. Please try again.`,
   },
   [EAuthenticationErrorCodes.INVALID_NEW_PASSWORD]: {
-    title: `Nova senha inválida`,
-    message: () => `Nova senha inválida. Tente novamente.`,
+    title: `New password is invalid`,
+    message: () => `New password is invalid. Please try again.`,
   },
 
   // set password
   [EAuthenticationErrorCodes.PASSWORD_ALREADY_SET]: {
-    title: `Senha já definida`,
-    message: () => `Senha já definida. Tente novamente.`,
+    title: `Password already set`,
+    message: () => `Password has already been set. Please try again.`,
   },
 
   // admin
   [EAuthenticationErrorCodes.ADMIN_ALREADY_EXIST]: {
-    title: `Administrador já existe`,
-    message: () => `Administrador já existe. Tente novamente.`,
+    title: `Administrator already exists`,
+    message: () => `Administrator already exists. Please try again.`,
   },
   [EAuthenticationErrorCodes.REQUIRED_ADMIN_EMAIL_PASSWORD_FIRST_NAME]: {
-    title: `E-mail, senha e nome são obrigatórios`,
-    message: () => `E-mail, senha e nome são obrigatórios. Tente novamente.`,
+    title: `Email, password and name are required`,
+    message: () => `Email, password and name are required. Please try again.`,
   },
   [EAuthenticationErrorCodes.INVALID_ADMIN_EMAIL]: {
-    title: `E-mail de administrador inválido`,
-    message: () => `E-mail de administrador inválido. Tente novamente.`,
+    title: `Invalid administrator email`,
+    message: () => `Administrator email is invalid. Please try again.`,
   },
   [EAuthenticationErrorCodes.INVALID_ADMIN_PASSWORD]: {
-    title: `Senha de administrador inválida`,
-    message: () => `Senha de administrador inválida. Tente novamente.`,
+    title: `Invalid administrator password`,
+    message: () => `Administrator password is invalid. Please try again.`,
   },
   [EAuthenticationErrorCodes.REQUIRED_ADMIN_EMAIL_PASSWORD]: {
-    title: `E-mail e senha são obrigatórios`,
-    message: () => `E-mail e senha são obrigatórios. Tente novamente.`,
+    title: `Email and password are required`,
+    message: () => `Email and password are required. Please try again.`,
   },
   [EAuthenticationErrorCodes.ADMIN_AUTHENTICATION_FAILED]: {
-    title: `Falha na autenticação`,
-    message: () => `Falha na autenticação. Tente novamente.`,
+    title: `Authentication failed`,
+    message: () => `Authentication failed. Please try again.`,
   },
   [EAuthenticationErrorCodes.ADMIN_USER_ALREADY_EXIST]: {
-    title: `Usuário administrador já existe`,
+    title: `Administrator username already exists`,
     message: () => (
       <div>
-        O usuário administrador já existe.&nbsp;
+        The administrator account already exists.&nbsp;
         <Link className="font-medium underline underline-offset-4 transition-all hover:font-bold" href={`/admin`}>
-          Entrar
+          Sign in
         </Link>
-        &nbsp;agora.
+        &nbsp;now.
       </div>
     ),
   },
   [EAuthenticationErrorCodes.ADMIN_USER_DOES_NOT_EXIST]: {
-    title: `Usuário administrador não encontrado`,
+    title: `Administrator username not found`,
     message: () => (
       <div>
-        O usuário administrador não existe.&nbsp;
+        The administrator account does not exist.&nbsp;
         <Link className="font-medium underline underline-offset-4 transition-all hover:font-bold" href={`/admin`}>
-          Entrar
+          Sign in
         </Link>
-        &nbsp;agora.
+        &nbsp;now.
       </div>
     ),
   },
   [EAuthenticationErrorCodes.ADMIN_USER_DEACTIVATED]: {
-    title: `Usuário administrador desativado`,
-    message: () => <div>Sua conta está desativada</div>,
+    title: `Administrator account deactivated`,
+    message: () => <div>Your account is deactivated</div>,
   },
   [EAuthenticationErrorCodes.RATE_LIMIT_EXCEEDED]: {
     title: "",
-    message: () => `Limite de requisições excedido. Tente novamente mais tarde.`,
+    message: () => `Rate limit exceeded. Please try again later.`,
   },
 };
 
@@ -431,8 +432,8 @@ export const authErrorHandler = (errorCode: EAuthenticationErrorCodes, email?: s
     return {
       type: EErrorAlertType.BANNER_ALERT,
       code: errorCode,
-      title: errorCodeMessages[errorCode]?.title || "Erro",
-      message: errorCodeMessages[errorCode]?.message(email) || "Algo deu errado. Tente novamente.",
+      title: errorCodeMessages[errorCode]?.title || "Error",
+      message: errorCodeMessages[errorCode]?.message(email) || "Something went wrong. Please try again.",
     };
 
   return undefined;

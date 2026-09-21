@@ -5,6 +5,7 @@
  */
 
 import { useMemo } from "react";
+import { useTranslation } from "@plane/i18n";
 import { setPromiseToast, TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TIssueServiceType } from "@plane/types";
 import { EIssueServiceType } from "@plane/types";
@@ -36,6 +37,7 @@ export const useAttachmentOperations = (
   const {
     attachment: { createAttachment, removeAttachment, getAttachmentsUploadStatusByIssueId },
   } = useIssueDetail(issueServiceType);
+  const { t } = useTranslation();
 
   const attachmentOperations: TAttachmentOperations = useMemo(
     () => ({
@@ -43,14 +45,14 @@ export const useAttachmentOperations = (
         if (!workspaceSlug || !projectId || !issueId) throw new Error("Missing required fields");
         const attachmentUploadPromise = createAttachment(workspaceSlug, projectId, issueId, file);
         setPromiseToast(attachmentUploadPromise, {
-          loading: "Uploading attachment...",
+          loading: t("common.uploading_attachment"),
           success: {
-            title: "Anexo enviado",
-            message: () => "O anexo foi enviado com sucesso",
+            title: t("common.attachment_uploaded_successfully"),
+            message: () => t("common.attachment_upload_success_message"),
           },
           error: {
-            title: "Falha ao enviar anexo",
-            message: () => "Não foi possível enviar o anexo",
+            title: t("common.failed_to_upload_attachment"),
+            message: () => t("common.attachment_upload_error_message"),
           },
         });
 
@@ -61,20 +63,20 @@ export const useAttachmentOperations = (
           if (!workspaceSlug || !projectId || !issueId) throw new Error("Missing required fields");
           await removeAttachment(workspaceSlug, projectId, issueId, attachmentId);
           setToast({
-            message: "O anexo foi removido com sucesso",
+            message: t("common.attachment_remove_success_message"),
             type: TOAST_TYPE.SUCCESS,
-            title: "Anexo removido",
+            title: t("common.attachment_removed_successfully"),
           });
         } catch (_error) {
           setToast({
-            message: "Não foi possível remover o anexo",
+            message: t("common.attachment_remove_error_message"),
             type: TOAST_TYPE.ERROR,
-            title: "Falha ao remover anexo",
+            title: t("common.failed_to_remove_attachment"),
           });
         }
       },
     }),
-    [workspaceSlug, projectId, issueId, createAttachment, removeAttachment]
+    [workspaceSlug, projectId, issueId, createAttachment, removeAttachment, t]
   );
   const attachmentsUploadStatus = getAttachmentsUploadStatusByIssueId(issueId);
 

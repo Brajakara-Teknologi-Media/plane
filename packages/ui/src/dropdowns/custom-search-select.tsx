@@ -40,7 +40,7 @@ export function CustomSearchSelect(props: ICustomSearchSelectProps) {
     optionsClassName = "",
     value,
     tabIndex,
-    noResultsMessage = "Nenhum resultado encontrado",
+    noResultsMessage = "No results found",
     defaultOpen = false,
   } = props;
   const [query, setQuery] = useState("");

@@ -55,13 +55,13 @@ export const WORKSPACE_SETTINGS: Record<TWorkspaceSettingsTabs, TWorkspaceSettin
     access: [EUserWorkspaceRoles.ADMIN],
     highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/sla/`,
   },
-  // "billing-and-plans": {
-  //   key: "billing-and-plans",
-  //   i18n_label: "workspace_settings.settings.billing_and_plans.title",
-  //   href: `/settings/billing`,
-  //   access: [EUserWorkspaceRoles.ADMIN],
-  //   highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/billing/`,
-  // },
+  "billing-and-plans": {
+    key: "billing-and-plans",
+    i18n_label: "workspace_settings.settings.billing_and_plans.title",
+    href: `/settings/billing`,
+    access: [EUserWorkspaceRoles.ADMIN],
+    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/billing/`,
+  },
   export: {
     key: "export",
     i18n_label: "workspace_settings.settings.exports.title",
@@ -118,12 +118,12 @@ export const WORKSPACE_SETTINGS: Record<TWorkspaceSettingsTabs, TWorkspaceSettin
     access: [EUserWorkspaceRoles.ADMIN],
     highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/print/`,
   },
-  auditoria: {
-    key: "auditoria",
+  "audit-logs": {
+    key: "audit-logs",
     i18n_label: "workspace_settings.settings.auditoria.title",
-    href: `/settings/auditoria`,
+    href: `/settings/audit-logs`,
     access: [EUserWorkspaceRoles.ADMIN],
-    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/auditoria/`,
+    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/audit-logs/`,
   },
 };
 
@@ -143,7 +143,7 @@ export const GROUPED_WORKSPACE_SETTINGS: Record<WORKSPACE_SETTINGS_CATEGORY, TWo
     WORKSPACE_SETTINGS["storage"],
     WORKSPACE_SETTINGS["chat"],
     WORKSPACE_SETTINGS["print"],
-    WORKSPACE_SETTINGS["auditoria"],
+    WORKSPACE_SETTINGS["audit-logs"],
   ].filter(Boolean) as TWorkspaceSettingsItem[],
   [WORKSPACE_SETTINGS_CATEGORY.FEATURES]: [],
   [WORKSPACE_SETTINGS_CATEGORY.DEVELOPER]: [

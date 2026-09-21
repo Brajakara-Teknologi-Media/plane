@@ -7,6 +7,7 @@
 import { observer } from "mobx-react";
 // hooks
 import { ModuleIcon } from "@plane/propel/icons";
+import { useTranslation } from "@plane/i18n";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // components
 import { IssueActivityBlockComponent } from "./";
@@ -20,6 +21,7 @@ export const IssueModuleActivity = observer(function IssueModuleActivity(props: 
   const {
     activity: { getActivityById },
   } = useIssueDetail();
+  const { t } = useTranslation();
 
   const activity = getActivityById(activityId);
 
@@ -33,7 +35,7 @@ export const IssueModuleActivity = observer(function IssueModuleActivity(props: 
       <>
         {activity.verb === "created" ? (
           <>
-            <span>adicionou este chamado ao módulo </span>
+            <span>{t("work-item.activity.added_to_module")}</span>
             <a
               href={`/${activity.workspace_detail?.slug}/projects/${activity.project}/modules/${activity.new_identifier}`}
               target="_blank"
@@ -45,7 +47,7 @@ export const IssueModuleActivity = observer(function IssueModuleActivity(props: 
           </>
         ) : activity.verb === "updated" ? (
           <>
-            <span>definiu o módulo como </span>
+            <span>{t("work-item.activity.set_module_to")}</span>
             <a
               href={`/${activity.workspace_detail?.slug}/projects/${activity.project}/modules/${activity.new_identifier}`}
               target="_blank"
@@ -57,7 +59,7 @@ export const IssueModuleActivity = observer(function IssueModuleActivity(props: 
           </>
         ) : (
           <>
-            <span>removeu o chamado do módulo </span>
+            <span>{t("work-item.activity.removed_from_module")}</span>
             <a
               href={`/${activity.workspace_detail?.slug}/projects/${activity.project}/modules/${activity.old_identifier}`}
               target="_blank"

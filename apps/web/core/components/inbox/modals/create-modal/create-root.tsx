@@ -110,8 +110,8 @@ export const InboxIssueCreateRoot = observer(function InboxIssueCreateRoot(props
     } else {
       setToast({
         type: TOAST_TYPE.ERROR,
-        title: "Erro!",
-        message: "O editor ainda está processando alterações. Aguarde antes de continuar.",
+        title: t("common.toast.error"),
+        message: "The editor is still processing changes. Please wait before continuing.",
       });
       event.preventDefault(); // Prevent default action if editor is not ready to discard
     }
@@ -142,8 +142,8 @@ export const InboxIssueCreateRoot = observer(function InboxIssueCreateRoot(props
     if (!descriptionEditorRef.current?.isEditorReadyToDiscard()) {
       setToast({
         type: TOAST_TYPE.ERROR,
-        title: "Erro!",
-        message: "O editor ainda está processando alterações. Aguarde antes de continuar.",
+        title: t("common.toast.error"),
+        message: "The editor is still processing changes. Please wait before continuing.",
       });
       return;
     }
@@ -177,16 +177,16 @@ export const InboxIssueCreateRoot = observer(function InboxIssueCreateRoot(props
         }
         setToast({
           type: TOAST_TYPE.SUCCESS,
-          title: `Sucesso!`,
-          message: "Solicitação criada com sucesso.",
+          title: t("common.toast.success"),
+          message: t("inbox_issue.toasts.created"),
         });
       })
       .catch((error) => {
         console.error(error);
         setToast({
           type: TOAST_TYPE.ERROR,
-          title: `Erro!`,
-          message: "Ocorreu um erro. Tente novamente.",
+          title: t("common.toast.error"),
+          message: t("common.something_went_wrong_please_try_again"),
         });
       });
     setFormSubmitting(false);
@@ -230,7 +230,12 @@ export const InboxIssueCreateRoot = observer(function InboxIssueCreateRoot(props
                 onEnterKeyPress={() => submitBtnRef?.current?.click()}
                 onAssetUpload={(assetId) => setUploadedAssetIds((prev) => [...prev, assetId])}
               />
-              <InboxIssueProperties projectId={projectId} workspaceSlug={workspaceSlug} data={formData} handleData={handleFormData} />
+              <InboxIssueProperties
+                projectId={projectId}
+                workspaceSlug={workspaceSlug}
+                data={formData}
+                handleData={handleFormData}
+              />
             </div>
           </div>
           <div className="flex items-center justify-between gap-2 rounded-b-lg border-t-[0.5px] border-subtle bg-surface-1 px-5 py-4">
@@ -254,8 +259,8 @@ export const InboxIssueCreateRoot = observer(function InboxIssueCreateRoot(props
                   } else {
                     setToast({
                       type: TOAST_TYPE.ERROR,
-                      title: "Erro!",
-                      message: "O editor ainda está processando alterações. Aguarde antes de continuar.",
+                      title: t("common.toast.error"),
+                      message: "The editor is still processing changes. Please wait before continuing.",
                     });
                   }
                 }}

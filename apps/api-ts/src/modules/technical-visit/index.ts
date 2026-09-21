@@ -17,12 +17,12 @@ function normalizeUuid(value: unknown) {
 
 const VISIT_STATUS = {AGENDADA: 0, EM_ANDAMENTO: 1, RELATORIO: 2, AGUARDANDO_ASSINATURA: 3, CONCLUIDA: 4, CANCELADA: 5};
 const STATUS_LABELS: Record<number, string> = {
-  0: "Agendada",
-  1: "Em Andamento",
-  2: "Relatório em Elaboração",
-  3: "Aguardando Assinatura",
-  4: "Concluída",
-  5: "Cancelada",
+  0: "Scheduled",
+  1: "In Progress",
+  2: "Report in Preparation",
+  3: "Awaiting Signature",
+  4: "Completed",
+  5: "Cancelled",
 };
 
 function serializeVisit(v: any) {
@@ -39,7 +39,7 @@ function serializeVisit(v: any) {
     started_at: isoDate(v.startedAt),
     finished_at: isoDate(v.finishedAt),
     status: v.status,
-    status_label: STATUS_LABELS[v.status] ?? "Desconhecido",
+    status_label: STATUS_LABELS[v.status] ?? "Unknown",
     period: v.period ?? null,
     mot_update: v.motUpdate,
     mot_bug_fix: v.motBugFix,
@@ -205,7 +205,7 @@ export const technicalVisitModule = new Elysia({prefix: "/workspaces/:slug/techn
     });
     if (!visit) {
       set.status = 404;
-      return {detail: "Não encontrado."};
+      return {detail: "Not found."};
     }
     return serializeVisit(visit);
   })
@@ -269,7 +269,7 @@ export const technicalVisitModule = new Elysia({prefix: "/workspaces/:slug/techn
       return {id: link.id, visit_id: link.visitId, issue_id: link.issueId};
     } catch {
       set.status = 409;
-      return {detail: "Work item já vinculado a esta visita."};
+      return {detail: "Work item already linked to this visit."};
     }
   })
 
@@ -281,7 +281,7 @@ export const technicalVisitModule = new Elysia({prefix: "/workspaces/:slug/techn
     });
     if (!link) {
       set.status = 404;
-      return {detail: "Não encontrado."};
+      return {detail: "Not found."};
     }
     await prisma.technicalVisitIssue.update({where: {id: link.id}, data: {deletedAt: new Date()}});
     set.status = 204;

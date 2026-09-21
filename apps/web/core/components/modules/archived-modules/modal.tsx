@@ -9,6 +9,7 @@ import { useState } from "react";
 import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
+import { useTranslation } from "@plane/i18n";
 // hooks
 import { useModule } from "@/hooks/store/use-module";
 import { useAppRouter } from "@/hooks/use-app-router";
@@ -26,6 +27,7 @@ export function ArchiveModuleModal(props: Props) {
   const { workspaceSlug, projectId, moduleId, isOpen, handleClose } = props;
   // router
   const router = useAppRouter();
+  const { t } = useTranslation();
   // states
   const [isArchiving, setIsArchiving] = useState(false);
   // store hooks
@@ -54,8 +56,8 @@ export function ArchiveModuleModal(props: Props) {
       .catch(() =>
         setToast({
           type: TOAST_TYPE.ERROR,
-          title: "Erro!",
-          message: "Não foi possível arquivar o módulo. Tente novamente.",
+          title: t("common.toast.error"),
+          message: "Could not archive the module. Please try again.",
         })
       )
       .finally(() => setIsArchiving(false));
@@ -66,11 +68,11 @@ export function ArchiveModuleModal(props: Props) {
       <div className="px-5 py-4">
         <h3 className="text-18 font-medium 2xl:text-20">Archive module {moduleName}</h3>
         <p className="mt-3 text-13 text-secondary">
-          Tem certeza de que deseja arquivar o módulo? Todos os seus arquivos podem ser restaurados depois.
+          Are you sure you want to archive the module? All your files can be restored later.
         </p>
         <div className="mt-3 flex justify-end gap-2">
           <Button variant="secondary" size="lg" onClick={onClose}>
-            Cancelar
+            {t("common.cancel")}
           </Button>
           <Button variant="primary" size="lg" tabIndex={1} onClick={handleArchiveModule} loading={isArchiving}>
             {isArchiving ? "Archiving" : "Archive"}

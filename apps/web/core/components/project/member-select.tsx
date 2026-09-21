@@ -9,6 +9,8 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Ban } from "lucide-react";
 import { EUserProjectRoles } from "@plane/types";
+// plane i18n
+import { useTranslation } from "@plane/i18n";
 // plane ui
 import { Avatar, CustomSearchSelect } from "@plane/ui";
 // helpers
@@ -24,6 +26,8 @@ type Props = {
 
 export const MemberSelect = observer(function MemberSelect(props: Props) {
   const { value, onChange, isDisabled = false } = props;
+  // plane hooks
+  const { t } = useTranslation();
   // router
   const { projectId } = useParams();
   // store hooks
@@ -72,7 +76,7 @@ export const MemberSelect = observer(function MemberSelect(props: Props) {
           ) : (
             <div className="flex items-center gap-2">
               <Ban className="h-3.5 w-3.5 rotate-90 text-placeholder" />
-              <span className="text-13 text-placeholder">Nenhum</span>
+              <span className="text-13 text-placeholder">{t("common.none")}</span>
             </div>
           )}
         </div>
@@ -88,7 +92,7 @@ export const MemberSelect = observer(function MemberSelect(props: Props) {
             content: (
               <div className="flex items-center gap-2">
                 <Ban className="h-3.5 w-3.5 rotate-90 text-placeholder" />
-                <span className="py-0.5 text-13 text-placeholder">Nenhum</span>
+                <span className="py-0.5 text-13 text-placeholder">{t("common.none")}</span>
               </div>
             ),
           },

@@ -29,6 +29,7 @@ export enum EServerGroupByToFilterOptions {
   "target_date" = "target_date",
   "project_id" = "project",
   "created_by" = "created_by",
+  "entity_id" = "entity",
 }
 
 export enum EIssueFilterType {
@@ -156,7 +157,7 @@ export const ISSUE_DISPLAY_FILTERS_BY_PAGE: TIssueFiltersToDisplayByPageType = {
       list: {
         display_properties: ISSUE_DISPLAY_PROPERTIES_KEYS,
         display_filters: {
-          group_by: ["state", "cycle", "module", "priority", "labels", "assignees", "created_by", null],
+          group_by: ["state", "cycle", "module", "priority", "labels", "assignees", "created_by", "entity", null],
           order_by: ["sort_order", "-created_at", "-updated_at", "start_date", "-priority"],
           type: ["active", "backlog"],
         },
@@ -197,7 +198,7 @@ export const ISSUE_DISPLAY_FILTERS_BY_PAGE: TIssueFiltersToDisplayByPageType = {
         display_properties: ISSUE_DISPLAY_PROPERTIES_KEYS,
         display_filters: {
           // Cross-project view: group by state GROUP (not per-project state_id).
-          group_by: ["state_detail.group", "priority", "project", "labels", "assignees", "created_by", null],
+          group_by: ["state_detail.group", "priority", "project", "labels", "assignees", "created_by", "entity", null],
           order_by: ["sort_order", "-created_at", "-updated_at", "start_date", "-priority", "target_date"],
           type: ["active", "backlog"],
         },
@@ -209,8 +210,8 @@ export const ISSUE_DISPLAY_FILTERS_BY_PAGE: TIssueFiltersToDisplayByPageType = {
       kanban: {
         display_properties: ISSUE_DISPLAY_PROPERTIES_KEYS,
         display_filters: {
-          group_by: ["state_detail.group", "priority", "project", "labels", "assignees", "created_by"],
-          sub_group_by: ["state_detail.group", "priority", "project", "labels", "assignees", "created_by", null],
+          group_by: ["state_detail.group", "priority", "project", "labels", "assignees", "created_by", "entity"],
+          sub_group_by: ["state_detail.group", "priority", "project", "labels", "assignees", "created_by", "entity", null],
           order_by: ["sort_order", "-created_at", "-updated_at", "start_date", "-priority", "target_date"],
           type: ["active", "backlog"],
         },
@@ -261,7 +262,7 @@ export const ISSUE_DISPLAY_FILTERS_BY_PAGE: TIssueFiltersToDisplayByPageType = {
       list: {
         display_properties: ISSUE_DISPLAY_PROPERTIES_KEYS,
         display_filters: {
-          group_by: ["state", "priority", "cycle", "module", "labels", "assignees", "created_by", null],
+          group_by: ["state", "priority", "cycle", "module", "labels", "assignees", "created_by", "entity", null],
           order_by: ["sort_order", "-created_at", "-updated_at", "start_date", "-priority", "target_date"],
           type: ["active", "backlog"],
         },
@@ -273,8 +274,8 @@ export const ISSUE_DISPLAY_FILTERS_BY_PAGE: TIssueFiltersToDisplayByPageType = {
       kanban: {
         display_properties: ISSUE_DISPLAY_PROPERTIES_KEYS,
         display_filters: {
-          group_by: ["state", "priority", "cycle", "module", "labels", "assignees", "created_by"],
-          sub_group_by: ["state", "priority", "cycle", "module", "labels", "assignees", "created_by", null],
+          group_by: ["state", "priority", "cycle", "module", "labels", "assignees", "created_by", "entity"],
+          sub_group_by: ["state", "priority", "cycle", "module", "labels", "assignees", "created_by", "entity", null],
           order_by: ["sort_order", "-created_at", "-updated_at", "start_date", "-priority", "target_date"],
           type: ["active", "backlog"],
         },
@@ -324,7 +325,7 @@ export const ISSUE_DISPLAY_FILTERS_BY_PAGE: TIssueFiltersToDisplayByPageType = {
         display_properties: SUB_ISSUES_DISPLAY_PROPERTIES_KEYS,
         display_filters: {
           order_by: ["-created_at", "-updated_at", "start_date", "-priority"],
-          group_by: ["state", "priority", "assignees", null],
+          group_by: ["state", "priority", "assignees", "entity", null],
         },
         extra_options: {
           access: true,

@@ -79,11 +79,11 @@ export type DefaultRole = {
 
 // 7 system roles — keys/levels match the legacy role integers.
 export const DEFAULT_ROLES: DefaultRole[] = [
-  {key: "guest", name: "Visualizador", level: 5, permissions: [...VIEWER]},
-  {key: "atendimento", name: "Atendimento", level: 6, permissions: [...INTAKE_OPERATOR]},
+  {key: "guest", name: "Viewer", level: 5, permissions: [...VIEWER]},
+  {key: "atendimento", name: "Service Desk", level: 6, permissions: [...INTAKE_OPERATOR]},
   {
     key: "qualidade",
-    name: "Qualidade",
+    name: "Quality",
     level: 8,
     permissions: [...CONTRIBUTOR, EProjectAction.ISSUE_EDIT_ALL, EProjectAction.INTAKE_REVIEW, EProjectAction.VIEW_CREATE],
   },
@@ -93,7 +93,7 @@ export const DEFAULT_ROLES: DefaultRole[] = [
     // packages/types. With level 10 no WorkflowRole matched a role=15 membership,
     // so resolveRole() fell through to the TI defaults and canTransition() went
     // permissive (members bypassed the whole workflow).
-    name: "Membro",
+    name: "Member",
     level: 15,
     permissions: [
       ...CONTRIBUTOR,
@@ -110,7 +110,7 @@ export const DEFAULT_ROLES: DefaultRole[] = [
   },
   {
     key: "ti",
-    name: "TI",
+    name: "IT",
     level: 12,
     permissions: [
       ...CONTRIBUTOR,
@@ -123,7 +123,7 @@ export const DEFAULT_ROLES: DefaultRole[] = [
   },
   {
     key: "gestor_projeto",
-    name: "Gestor de Projeto",
+    name: "Project Manager",
     level: 18,
     permissions: [
       ...CONTRIBUTOR,
@@ -144,19 +144,19 @@ export const DEFAULT_ROLES: DefaultRole[] = [
       EProjectAction.STATE_MANAGE,
     ],
   },
-  {key: "admin", name: "Administrador", level: 20, permissions: [...ALL_ACTIONS]},
+  {key: "admin", name: "Administrator", level: 20, permissions: [...ALL_ACTIONS]},
 ];
 
-// Default state names (must match DEFAULT_STATES in scripts/migrate-sac.ts).
+// Default state names (must match DEFAULT_STATES in modules/project/index.ts).
 export const STATE = {
-  TRIAGEM: "Triagem",
-  PENDENCIAS: "Pendências",
-  A_FAZER: "A Fazer",
-  EM_ANALISE: "Em Análise",
-  EM_DESENVOLVIMENTO: "Em Desenvolvimento",
-  EM_TESTE: "Em Teste",
-  CONCLUIDO: "Concluído",
-  CANCELADO: "Cancelado",
+  TRIAGEM: "Triage",
+  PENDENCIAS: "Backlog",
+  A_FAZER: "Todo",
+  EM_ANALISE: "In Review",
+  EM_DESENVOLVIMENTO: "In Progress",
+  EM_TESTE: "In Testing",
+  CONCLUIDO: "Completed",
+  CANCELADO: "Cancelled",
 } as const;
 
 export type TransitionRule = {fromGroup: string; fromStateName?: string | null; toGroup: string; toStateName?: string | null};

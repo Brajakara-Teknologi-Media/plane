@@ -37,9 +37,9 @@ describe("registry-access", () => {
   });
 
   describe("isUploader", () => {
-    it("libera admin de instância e superuser sem consultar o banco", async () => {
-      expect(await isUploader(asUser("qualquer", {isInstanceAdmin: true}))).toBe(true);
-      expect(await isUploader(asUser("qualquer", {isSuperuser: true}))).toBe(true);
+    it("Release instance admin and superuser privileges without querying the database", async () => {
+      expect(await isUploader(asUser("any", {isInstanceAdmin: true}))).toBe(true);
+      expect(await isUploader(asUser("any", {isSuperuser: true}))).toBe(true);
     });
 
     it("libera quem tem papel TI em algum workspace", async () => {

@@ -86,7 +86,7 @@ export const getNodeOptions = (editor: Editor): BlockMenuOption[] => [
   {
     icon: MoveHorizontal,
     key: "table-full-width",
-    label: "Ajustar à largura",
+    label: "Fit to width",
     isDisabled: !editor.isActive(CORE_EXTENSIONS.TABLE),
     onClick: () => setTableToFullWidth(editor),
   },

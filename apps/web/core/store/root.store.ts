@@ -41,6 +41,8 @@ import type { IInstanceStore } from "./instance.store";
 import { InstanceStore } from "./instance.store";
 import type { IIssueRootStore } from "./issue/root.store";
 import { IssueRootStore } from "./issue/root.store";
+import type { IEntityStore } from "./entity.store";
+import { EntityStore } from "./entity.store";
 import type { ILabelStore } from "./label.store";
 import { LabelStore } from "./label.store";
 import type { IMemberRootStore } from "./member";
@@ -100,6 +102,7 @@ export class CoreRootStore {
   stickyStore: IStickyStore;
   editorAssetStore: IEditorAssetStore;
   workItemFilters: IWorkItemFilterStore;
+  entity: IEntityStore;
   powerK: IPowerKStore;
 
   constructor() {
@@ -131,6 +134,7 @@ export class CoreRootStore {
     this.editorAssetStore = new EditorAssetStore();
     this.analytics = new AnalyticsStore();
     this.workItemFilters = new WorkItemFilterStore();
+    this.entity = new EntityStore(this);
     this.powerK = new PowerKStore();
   }
 
@@ -164,6 +168,7 @@ export class CoreRootStore {
     this.stickyStore = new StickyStore();
     this.editorAssetStore = new EditorAssetStore();
     this.workItemFilters = new WorkItemFilterStore();
+    this.entity = new EntityStore(this);
     this.powerK = new PowerKStore();
   }
 }

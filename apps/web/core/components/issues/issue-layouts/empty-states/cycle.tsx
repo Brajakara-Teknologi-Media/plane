@@ -43,10 +43,7 @@ export const CycleEmptyState = observer(function CycleEmptyState() {
   const cycleDetails = cycleId ? getCycleById(cycleId) : undefined;
   const isCompletedCycleSnapshotAvailable = !isEmpty(cycleDetails?.progress_snapshot ?? {});
   const isCompletedAndEmpty = isCompletedCycleSnapshotAvailable || cycleDetails?.status?.toLowerCase() === "completed";
-  const canPerformEmptyStateActions = allowPermissions(
-    PROJECT_WORK_ROLES,
-    EUserPermissionsLevel.PROJECT
-  );
+  const canPerformEmptyStateActions = allowPermissions(PROJECT_WORK_ROLES, EUserPermissionsLevel.PROJECT);
 
   const handleAddIssuesToCycle = async (data: ISearchIssueResponse[]) => {
     if (!workspaceSlug || !projectId || !cycleId) return;
@@ -58,15 +55,15 @@ export const CycleEmptyState = observer(function CycleEmptyState() {
       .then(() =>
         setToast({
           type: TOAST_TYPE.SUCCESS,
-          title: "Sucesso!",
-          message: "Chamados adicionados ao ciclo com sucesso.",
+          title: t("common.toast.success"),
+          message: "Work Items adicionados ao ciclo com sucesso.",
         })
       )
       .catch(() =>
         setToast({
           type: TOAST_TYPE.ERROR,
-          title: "Erro!",
-          message: "Não foi possível adicionar os itens selecionados ao ciclo. Tente novamente.",
+          title: t("common.toast.error"),
+          message: "Could not add selected items to cycle. Please try again.",
         })
       );
   };

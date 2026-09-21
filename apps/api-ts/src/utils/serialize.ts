@@ -113,6 +113,69 @@ export function serializeComment(c: any): Record<string, unknown> {
   };
 }
 
+// Include shape for the profile activity feed: IssueActivity only declares the
+// `issue` relation — actor/project/workspace are plain id columns, so those
+// details are fetched in batch by the endpoint and passed to the serializer.
+export const ACTIVITY_INCLUDE = {
+  issue: { select: { id: true, name: true, sequenceId: true, priority: true, descriptionHtml: true } },
+} as const;
+
+export function serializeIssueActivity(
+  a: any,
+  actorsById: Record<string, any> = {},
+  projectsById: Record<string, any> = {},
+  workspaceDetail: { id: string; name: string; slug: string } | null = null
+): Record<string, unknown> {
+  const actor = a.actorId ? actorsById[a.actorId] : undefined;
+  const issue = a.issue;
+  const project = a.projectId ? projectsById[a.projectId] : undefined;
+  return {
+    id:              a.id,
+    access:          a.access ?? "INTERNAL",
+    actor:           a.actorId ?? null,
+    actor_detail:    {
+      id:           actor?.id ?? a.actorId ?? "",
+      display_name: actor?.displayName ?? "",
+      first_name:   actor?.firstName ?? "",
+      last_name:    actor?.lastName ?? "",
+      email:        actor?.email ?? "",
+      avatar_url:   actor?.avatarUrl ?? "",
+      is_bot:       actor?.isBotUser ?? false,
+    },
+    attachments:     [],
+    comment:         a.comment ?? "",
+    created_at:      isoDate(a.createdAt),
+    created_by:      a.actorId ?? null,
+    field:           a.field ?? null,
+    issue:           a.issueId ?? null,
+    issue_comment:   a.issueCommentId ?? null,
+    issue_detail:    issue
+      ? {
+          id:               issue.id,
+          name:             issue.name ?? "",
+          description_html: issue.descriptionHtml ?? "",
+          priority:         issue.priority ?? null,
+          sequence_id:      issue.sequenceId != null ? String(issue.sequenceId) : "",
+          type_id:          "",
+        }
+      : null,
+    new_identifier:  null,
+    new_value:       a.newValue ?? null,
+    old_identifier:  null,
+    old_value:       a.oldValue ?? null,
+    project:         a.projectId ?? null,
+    project_detail:  project
+      ? { id: project.id, name: project.name ?? "", identifier: project.identifier ?? "", logo_props: project.iconProp ?? null }
+      : null,
+    updated_at:      isoDate(a.updatedAt),
+    updated_by:      a.actorId ?? null,
+    verb:            a.verb,
+    workspace:       a.workspaceId ?? null,
+    workspace_detail: workspaceDetail,
+    epoch:           a.epoch ?? null,
+  };
+}
+
 export function serializeState(s: any): Record<string, unknown> {
   return {
     id:           s.id,

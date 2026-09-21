@@ -72,10 +72,10 @@ function makePrismaExecutor(workspaceId: string) {
     };
   }): Promise<any> {
     if (!ALLOWED_TABLES.has(table)) {
-      throw new Error(`A tabela "${table}" não é permitida.`);
+      throw new Error(`Table "${table}" is not allowed.`);
     }
     const accessor = (prisma as any)[table];
-    if (!accessor) throw new Error(`Tabela "${table}" não encontrada no cliente Prisma.`);
+    if (!accessor) throw new Error(`Table "${table}" not found in Prisma client.`);
 
     switch (operation) {
       case "retrieve":
@@ -87,13 +87,13 @@ function makePrismaExecutor(workspaceId: string) {
         });
 
       case "insert":
-        if (!data) throw new Error("data é obrigatório para inserção");
+        if (!data) throw new Error("data is required for insertion");
         return accessor.create({
           data: { ...sanitizeData(data), workspaceId },
         });
 
       case "update": {
-        if (!data) throw new Error("data é obrigatório para atualização");
+        if (!data) throw new Error("data is required for update");
         const safeData = sanitizeData(data);
         if (options?.id) {
           return accessor.update({ where: { id: options.id }, data: safeData });
@@ -119,7 +119,7 @@ function makePrismaExecutor(workspaceId: string) {
       }
 
       default:
-        throw new Error(`Operação desconhecida: ${operation}`);
+        throw new Error(`Unknown operation: ${operation}`);
     }
   };
 }
@@ -164,7 +164,7 @@ async function runWebhookCode(
       "node:util", "util", "node:querystring", "querystring",
     ]);
     if (!SAFE_BUILTINS.has(specifier)) {
-      throw new Error(`A importação de "${specifier}" não é permitida. Apenas módulos nativos do Node.js são permitidos.`);
+      throw new Error(`Import of "${specifier}" is not allowed. Only built-in Node.js modules are permitted.`);
     }
     return import(specifier);
   }
@@ -221,7 +221,7 @@ export const customWebhookModule = new Elysia()
     const member = await prisma.workspaceMember.findFirst({
       where: { workspaceId: ws.id, memberId: user.id, deletedAt: null },
     });
-    if (!member || member.role < 20) { set.status = 403; return { detail: "Apenas administradores podem gerenciar integrações customizadas." }; }
+    if (!member || member.role < 20) { set.status = 403; return { detail: "Only workspace admins can manage custom integrations." }; }
 
     const hooks = await prisma.customWebhook.findMany({
       where: { workspaceId: ws.id, deletedAt: null },
@@ -236,10 +236,10 @@ export const customWebhookModule = new Elysia()
     const member = await prisma.workspaceMember.findFirst({
       where: { workspaceId: ws.id, memberId: user.id, deletedAt: null },
     });
-    if (!member || member.role < 20) { set.status = 403; return { detail: "Apenas administradores podem criar integrações customizadas." }; }
+    if (!member || member.role < 20) { set.status = 403; return { detail: "Only workspace admins can create custom integrations." }; }
 
     const b = body as any;
-    if (!b.name || !b.js_code) { set.status = 400; return { detail: "name e js_code são obrigatórios." }; }
+    if (!b.name || !b.js_code) { set.status = 400; return { detail: "name and js_code are required." }; }
 
     const secret = crypto.randomBytes(24).toString("hex");
     const hook = await prisma.customWebhook.create({
@@ -264,12 +264,12 @@ export const customWebhookModule = new Elysia()
     const member = await prisma.workspaceMember.findFirst({
       where: { workspaceId: ws.id, memberId: user.id, deletedAt: null },
     });
-    if (!member || member.role < 20) { set.status = 403; return { detail: "Apenas administradores." }; }
+    if (!member || member.role < 20) { set.status = 403; return { detail: "Only workspace admins." }; }
 
     const hook = await prisma.customWebhook.findFirst({
       where: { id: hook_id, workspaceId: ws.id, deletedAt: null },
     });
-    if (!hook) { set.status = 404; return { detail: "Não encontrado." }; }
+    if (!hook) { set.status = 404; return { detail: "Not found." }; }
 
     return {
       id: hook.id, name: hook.name, description: hook.description,
@@ -285,7 +285,7 @@ export const customWebhookModule = new Elysia()
     const member = await prisma.workspaceMember.findFirst({
       where: { workspaceId: ws.id, memberId: user.id, deletedAt: null },
     });
-    if (!member || member.role < 20) { set.status = 403; return { detail: "Apenas administradores." }; }
+    if (!member || member.role < 20) { set.status = 403; return { detail: "Only workspace admins." }; }
 
     const b = body as any;
     const data: any = {};
@@ -306,7 +306,7 @@ export const customWebhookModule = new Elysia()
     const member = await prisma.workspaceMember.findFirst({
       where: { workspaceId: ws.id, memberId: user.id, deletedAt: null },
     });
-    if (!member || member.role < 20) { set.status = 403; return { detail: "Apenas administradores." }; }
+    if (!member || member.role < 20) { set.status = 403; return { detail: "Only workspace admins." }; }
 
     await prisma.customWebhook.update({ where: { id: hook_id }, data: { deletedAt: new Date() } });
     set.status = 204;
@@ -320,7 +320,7 @@ export const customWebhookModule = new Elysia()
     const member = await prisma.workspaceMember.findFirst({
       where: { workspaceId: ws.id, memberId: user.id, deletedAt: null },
     });
-    if (!member || member.role < 20) { set.status = 403; return { detail: "Apenas administradores." }; }
+    if (!member || member.role < 20) { set.status = 403; return { detail: "Only workspace admins." }; }
 
     const logs = await prisma.customWebhookAuditLog.findMany({
       where: { webhookId: hook_id, workspaceId: ws.id },
@@ -339,12 +339,12 @@ export const customWebhookModule = new Elysia()
   .post("/webhooks/receive/:slug/:hook_id/", async ({ params: { slug, hook_id }, body, request, set }) => {
     // Find workspace and hook
     const ws = await prisma.workspace.findFirst({ where: { slug, deletedAt: null } });
-    if (!ws) { set.status = 404; return { detail: "Workspace não encontrado." }; }
+    if (!ws) { set.status = 404; return { detail: "Workspace not found." }; }
 
     const hook = await prisma.customWebhook.findFirst({
       where: { id: hook_id, workspaceId: ws.id, deletedAt: null, isActive: true },
     });
-    if (!hook) { set.status = 404; return { detail: "Webhook não encontrado ou inativo." }; }
+    if (!hook) { set.status = 404; return { detail: "Webhook not found or inactive." }; }
 
     // Optional signature verification (HMAC-SHA256)
     const sig = request.headers.get("x-webhook-signature") ?? request.headers.get("x-hub-signature-256");
@@ -353,7 +353,7 @@ export const customWebhookModule = new Elysia()
       const expected = "sha256=" + crypto.createHmac("sha256", hook.secret).update(payload).digest("hex");
       if (sig !== expected) {
         set.status = 401;
-        return { detail: "Assinatura do webhook inválida." };
+        return { detail: "Invalid webhook signature." };
       }
     }
 

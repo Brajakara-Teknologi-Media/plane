@@ -20,7 +20,7 @@ import { getWorkspaceOrFail, requireWorkspaceMember } from "@utils/workspace";
 type Consulta = Record<string, unknown>;
 
 /** Filtro base compartilhado por todos os endpoints desta tela. */
-function filtroChamados(workspaceId: string, query: Consulta, projectId?: string) {
+function filtroWorkItems(workspaceId: string, query: Consulta, projectId?: string) {
   const projetos = String(query.project_ids ?? "")
     .split(",")
     .filter(Boolean);
@@ -73,7 +73,7 @@ function contadores(valores: Record<string, number>) {
   return Object.fromEntries(Object.entries(valores).map(([k, v]) => [k, { count: v, filter_count: v }]));
 }
 
-/** Contadores da aba "Chamados", por grupo de etapa. */
+/** Contadores da aba "Work Items", por grupo de etapa. */
 async function porGrupoDeEtapa(where: any) {
   const contar = (group?: string | string[]) =>
     prisma.issue.count({
@@ -103,13 +103,13 @@ type Agrupador = (where: any) => Promise<Array<{ key: string; name: string; coun
 
 const semRotulo = (valor: string | null) => valor ?? "none";
 
-/** A prioridade é guardada em inglês no banco; os gráficos mostram em português. */
+/** The priority is stored in English in the DB; charts show in English. */
 const PRIORIDADES = new Map([
-  ["urgent", "Urgente"],
-  ["high", "Alta"],
-  ["medium", "Média"],
-  ["low", "Baixa"],
-  ["none", "Sem prioridade"],
+  ["urgent", "Urgent"],
+  ["high", "High"],
+  ["medium", "Medium"],
+  ["low", "Low"],
+  ["none", "No priority"],
 ]);
 
 async function agruparPorColuna(
@@ -219,7 +219,7 @@ async function criadosVersusResolvidos(where: any) {
 }
 
 /** Uma linha por projeto (ou por responsável, na visão de um projeto só). */
-async function tabelaDeChamados(where: any, porResponsavel: boolean) {
+async function tabelaDeWorkItems(where: any, porResponsavel: boolean) {
   const grupos = porResponsavel ? await AGRUPADORES.ASSIGNEES(where) : await AGRUPADORES.PROJECTS(where);
 
   return Promise.all(
@@ -262,14 +262,14 @@ function rotas(prefix: string, comProjeto: boolean) {
     .get("/advance-analytics", async ({ params, user, query }) => {
       const ws = await getWorkspaceOrFail((params as any).slug);
       await requireWorkspaceMember(ws.id, user.id);
-      const where = filtroChamados(ws.id, query as Consulta, comProjeto ? (params as any).project_id : undefined);
+      const where = filtroWorkItems(ws.id, query as Consulta, comProjeto ? (params as any).project_id : undefined);
       return query.tab === "work-items" ? porGrupoDeEtapa(where) : visaoGeral(ws.id, where);
     })
 
     .get("/advance-analytics-charts", async ({ params, user, query }) => {
       const ws = await getWorkspaceOrFail((params as any).slug);
       await requireWorkspaceMember(ws.id, user.id);
-      const where = filtroChamados(ws.id, query as Consulta, comProjeto ? (params as any).project_id : undefined);
+      const where = filtroWorkItems(ws.id, query as Consulta, comProjeto ? (params as any).project_id : undefined);
 
       // O radar fica ilegível com uma centena de eixos: mostramos os sistemas
       // com mais chamados (a tela rotula a lista de acordo).
@@ -289,8 +289,8 @@ function rotas(prefix: string, comProjeto: boolean) {
     .get("/advance-analytics-stats", async ({ params, user, query }) => {
       const ws = await getWorkspaceOrFail((params as any).slug);
       await requireWorkspaceMember(ws.id, user.id);
-      const where = filtroChamados(ws.id, query as Consulta, comProjeto ? (params as any).project_id : undefined);
-      return tabelaDeChamados(where, comProjeto);
+      const where = filtroWorkItems(ws.id, query as Consulta, comProjeto ? (params as any).project_id : undefined);
+      return tabelaDeWorkItems(where, comProjeto);
     });
 }
 

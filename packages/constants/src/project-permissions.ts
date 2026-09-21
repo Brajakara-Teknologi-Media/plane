@@ -58,7 +58,7 @@ export enum EProjectAction {
   ATTACHMENT_DELETE_ALL = "attachment.delete.all",
 
   // ── Intake ─────────────────────────────────────────────────────────────────
-  /** Submit an intake / open a chamado */
+  /** Submit an intake / open a work item */
   INTAKE_CREATE        = "intake.create",
   /** Accept, decline, duplicate or snooze intake issues */
   INTAKE_REVIEW        = "intake.review",
@@ -90,7 +90,7 @@ const _viewer: EProjectAction[] = [
 ];
 
 /**
- * D2 — Atendimento is a service-desk operator: it opens *chamados* (intake) and
+ * D2 — Atendimento is a service-desk operator: it opens *intakes* (work items) and
  * talks on them, but never creates, edits or moves a work item. Mirrors
  * INTAKE_OPERATOR in apps/api-ts/src/utils/permissions.ts.
  */
@@ -115,7 +115,7 @@ export const ROLE_PERMISSIONS: Record<EUserProjectRoles, EProjectAction[]> = {
   // ── GUEST (5): read-only ───────────────────────────────────────────────────
   [EUserProjectRoles.GUEST]: [..._viewer],
 
-  // ── ATENDIMENTO (6): service-desk operator, creates chamados only ──────────
+  // ── ATENDIMENTO (6): service-desk operator, creates intakes only ──────────
   [EUserProjectRoles.ATENDIMENTO]: [..._intakeOperator],
 
   // ── QUALIDADE (8): quality team — reviews intake, approves/returns work ────
@@ -233,13 +233,13 @@ export const ROLES_CAN_CONFIGURE_PROJECT = Object.values(EUserProjectRoles).filt
 // ── Role metadata ──────────────────────────────────────────────────────────────
 
 export const PROJECT_ROLE_LABELS: Record<EUserProjectRoles, string> = {
-  [EUserProjectRoles.ADMIN]:          "Administrador",
-  [EUserProjectRoles.GESTOR_PROJETO]: "Gestor de Projeto",
-  [EUserProjectRoles.MEMBER]:         "Membro",
-  [EUserProjectRoles.TI]:             "TI",
-  [EUserProjectRoles.QUALIDADE]:      "Qualidade",
-  [EUserProjectRoles.ATENDIMENTO]:    "Atendimento",
-  [EUserProjectRoles.GUEST]:          "Visualizador",
+  [EUserProjectRoles.ADMIN]:          "Administrator",
+  [EUserProjectRoles.GESTOR_PROJETO]: "Project Manager",
+  [EUserProjectRoles.MEMBER]:         "Member",
+  [EUserProjectRoles.TI]:             "IT",
+  [EUserProjectRoles.QUALIDADE]:      "Quality",
+  [EUserProjectRoles.ATENDIMENTO]:    "Support",
+  [EUserProjectRoles.GUEST]:          "Viewer",
 };
 
 export const ALL_PROJECT_ROLES = [
@@ -252,50 +252,46 @@ export const ALL_PROJECT_ROLES = [
   EUserProjectRoles.GUEST,
 ];
 
-/** Rótulo de cada EProjectAction na tela de Funções. Vocabulário do produto:
- *  "chamado" (work item) e "pedido de chamado" (intake). */
+/** Display label for each EProjectAction on the Roles screen. */
+
 export const PROJECT_ACTION_LABELS: Record<EProjectAction, string> = {
-  [EProjectAction.ISSUE_VIEW]:                  "Visualizar chamados",
-  [EProjectAction.COMMENT_READ]:                "Ler comentários",
-  [EProjectAction.ATTACHMENT_VIEW]:             "Visualizar anexos",
-  [EProjectAction.ISSUE_CREATE]:                "Criar chamados",
-  [EProjectAction.ISSUE_EDIT_OWN]:              "Editar os próprios chamados",
-  [EProjectAction.ISSUE_EDIT_ALL]:              "Editar qualquer chamado",
-  [EProjectAction.ISSUE_DELETE_OWN]:            "Excluir os próprios chamados",
-  [EProjectAction.ISSUE_DELETE_ALL]:            "Excluir qualquer chamado",
-  [EProjectAction.ISSUE_ASSIGN_SELF]:           "Atribuir-se a um chamado",
-  [EProjectAction.ISSUE_ASSIGN_OTHERS]:         "Atribuir outros usuários",
-  [EProjectAction.STATE_MOVE_UNRESTRICTED]:     "Mover para qualquer etapa",
-  [EProjectAction.COMMENT_CREATE]:              "Comentar",
-  [EProjectAction.COMMENT_EDIT_OWN]:            "Editar os próprios comentários",
-  [EProjectAction.COMMENT_DELETE_OWN]:          "Excluir os próprios comentários",
-  [EProjectAction.COMMENT_DELETE_ALL]:          "Excluir comentários de outros",
-  [EProjectAction.ATTACHMENT_UPLOAD]:           "Enviar anexos",
-  [EProjectAction.ATTACHMENT_DELETE_OWN]:       "Remover os próprios anexos",
-  [EProjectAction.ATTACHMENT_DELETE_ALL]:       "Remover qualquer anexo",
-  [EProjectAction.INTAKE_CREATE]:               "Abrir pedido de chamado",
-  [EProjectAction.INTAKE_REVIEW]:               "Triar pedidos (aceitar/recusar)",
-  [EProjectAction.CYCLE_MANAGE]:                "Gerenciar ciclos",
-  [EProjectAction.MODULE_MANAGE]:               "Gerenciar módulos",
-  [EProjectAction.LABEL_MANAGE]:                "Gerenciar etiquetas",
-  [EProjectAction.VIEW_CREATE]:                 "Criar visualizações salvas",
-  [EProjectAction.PAGE_CREATE]:                 "Criar páginas",
-  [EProjectAction.MEMBER_MANAGE]:               "Gerenciar membros do sistema",
-  [EProjectAction.STATE_MANAGE]:                "Gerenciar etapas do sistema",
-  [EProjectAction.PROJECT_SETTINGS]:            "Configurações do sistema",
+  [EProjectAction.ISSUE_VIEW]:                  "View work items",
+  [EProjectAction.COMMENT_READ]:                "Read comments",
+  [EProjectAction.ATTACHMENT_VIEW]:             "View attachments",
+  [EProjectAction.ISSUE_CREATE]:                "Create work items",
+  [EProjectAction.ISSUE_EDIT_OWN]:              "Edit own work items",
+  [EProjectAction.ISSUE_EDIT_ALL]:              "Edit any work item",
+  [EProjectAction.ISSUE_DELETE_OWN]:            "Delete own work items",
+  [EProjectAction.ISSUE_DELETE_ALL]:            "Delete any work item",
+  [EProjectAction.ISSUE_ASSIGN_SELF]:           "Assign self to a work item",
+  [EProjectAction.ISSUE_ASSIGN_OTHERS]:         "Assign other users",
+  [EProjectAction.STATE_MOVE_UNRESTRICTED]:     "Move to any stage",
+  [EProjectAction.COMMENT_CREATE]:              "Comment",
+  [EProjectAction.COMMENT_EDIT_OWN]:            "Edit own comments",
+  [EProjectAction.COMMENT_DELETE_OWN]:          "Delete own comments",
+  [EProjectAction.COMMENT_DELETE_ALL]:          "Delete others' comments",
+  [EProjectAction.ATTACHMENT_UPLOAD]:           "Upload attachments",
+  [EProjectAction.ATTACHMENT_DELETE_OWN]:       "Remove own attachments",
+  [EProjectAction.ATTACHMENT_DELETE_ALL]:       "Remove any attachment",
+  [EProjectAction.INTAKE_CREATE]:               "Open intake request",
+  [EProjectAction.INTAKE_REVIEW]:               "Triage requests (accept/reject)",
+  [EProjectAction.CYCLE_MANAGE]:                "Manage cycles",
+  [EProjectAction.MODULE_MANAGE]:               "Manage modules",
+  [EProjectAction.LABEL_MANAGE]:                "Manage labels",
+  [EProjectAction.VIEW_CREATE]:                 "Create saved views",
+  [EProjectAction.PAGE_CREATE]:                 "Create pages",
+  [EProjectAction.MEMBER_MANAGE]:               "Manage system members",
+  [EProjectAction.STATE_MANAGE]:                "Manage system stages",
+  [EProjectAction.PROJECT_SETTINGS]:            "System settings",
 };
 
 /**
- * Permissões agrupadas por assunto, para a tela de Funções.
- *
- * Sem agrupamento a tela mostrava 28 caixas de seleção numa grade corrida de
- * três colunas: nada indicava que "Excluir qualquer chamado" e "Excluir
- * comentários de outros" são coisas diferentes, e a leitura virava uma
- * varredura. A ordem aqui é a ordem em que a tela desenha.
+ * Permissions grouped by subject, for the Roles screen.
+ * Order here is the order the screen renders.
  */
 export const PROJECT_ACTION_GROUPS: { label: string; actions: EProjectAction[] }[] = [
   {
-    label: "Chamados",
+    label: "Work Items",
     actions: [
       EProjectAction.ISSUE_VIEW,
       EProjectAction.ISSUE_CREATE,
@@ -306,7 +302,7 @@ export const PROJECT_ACTION_GROUPS: { label: string; actions: EProjectAction[] }
     ],
   },
   {
-    label: "Responsáveis e etapas",
+    label: "Assignees & Stages",
     actions: [
       EProjectAction.ISSUE_ASSIGN_SELF,
       EProjectAction.ISSUE_ASSIGN_OTHERS,
@@ -314,7 +310,7 @@ export const PROJECT_ACTION_GROUPS: { label: string; actions: EProjectAction[] }
     ],
   },
   {
-    label: "Comentários",
+    label: "Comments",
     actions: [
       EProjectAction.COMMENT_READ,
       EProjectAction.COMMENT_CREATE,
@@ -324,7 +320,7 @@ export const PROJECT_ACTION_GROUPS: { label: string; actions: EProjectAction[] }
     ],
   },
   {
-    label: "Anexos",
+    label: "Attachments",
     actions: [
       EProjectAction.ATTACHMENT_VIEW,
       EProjectAction.ATTACHMENT_UPLOAD,
@@ -333,11 +329,11 @@ export const PROJECT_ACTION_GROUPS: { label: string; actions: EProjectAction[] }
     ],
   },
   {
-    label: "Solicitações",
+    label: "Intake Requests",
     actions: [EProjectAction.INTAKE_CREATE, EProjectAction.INTAKE_REVIEW],
   },
   {
-    label: "Organização do trabalho",
+    label: "Work Organization",
     actions: [
       EProjectAction.CYCLE_MANAGE,
       EProjectAction.MODULE_MANAGE,
@@ -347,7 +343,7 @@ export const PROJECT_ACTION_GROUPS: { label: string; actions: EProjectAction[] }
     ],
   },
   {
-    label: "Administração do sistema",
+    label: "System Administration",
     actions: [EProjectAction.MEMBER_MANAGE, EProjectAction.STATE_MANAGE, EProjectAction.PROJECT_SETTINGS],
   },
 ];

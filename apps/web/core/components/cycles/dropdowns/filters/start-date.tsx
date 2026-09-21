@@ -10,6 +10,7 @@ import { observer } from "mobx-react";
 import { DATE_AFTER_FILTER_OPTIONS } from "@plane/constants";
 // components
 import { isInDateFormat } from "@plane/utils";
+import { useTranslation } from "@plane/i18n";
 import { DateFilterModal } from "@/components/core/filters/date-filter-modal";
 import { FilterHeader, FilterOption } from "@/components/issues/issue-layouts/filters";
 
@@ -23,6 +24,7 @@ type Props = {
 
 export const FilterStartDate = observer(function FilterStartDate(props: Props) {
   const { appliedFilters, handleUpdate, searchQuery } = props;
+  const { t } = useTranslation();
   const [previewEnabled, setPreviewEnabled] = useState(true);
   const [isDateFilterModalOpen, setIsDateFilterModalOpen] = useState(false);
 
@@ -50,7 +52,7 @@ export const FilterStartDate = observer(function FilterStartDate(props: Props) {
           handleClose={() => setIsDateFilterModalOpen(false)}
           isOpen={isDateFilterModalOpen}
           onSelect={(val) => handleUpdate(val)}
-          title="Data de início"
+          title="Start date"
         />
       )}
       <FilterHeader
@@ -71,10 +73,15 @@ export const FilterStartDate = observer(function FilterStartDate(props: Props) {
                   multiple
                 />
               ))}
-              <FilterOption isChecked={isCustomDateSelected()} onClick={handleCustomDate} title="Personalizado" multiple />
+              <FilterOption
+                isChecked={isCustomDateSelected()}
+                onClick={handleCustomDate}
+                title="Personalizado"
+                multiple
+              />
             </>
           ) : (
-            <p className="text-11 text-placeholder italic">Nenhum resultado encontrado</p>
+            <p className="text-11 text-placeholder italic">{t("common.no_results_found")}</p>
           )}
         </div>
       )}

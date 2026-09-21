@@ -7,6 +7,7 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { SearchIcon, CloseIcon } from "@plane/propel/icons";
+import { useTranslation } from "@plane/i18n";
 // hooks
 import { useLabel } from "@/hooks/store/use-label";
 import { useMember } from "@/hooks/store/use-member";
@@ -21,6 +22,7 @@ import { FilterStatus } from "./status";
 export const InboxIssueFilterSelection = observer(function InboxIssueFilterSelection() {
   // hooks
   const { isMobile } = usePlatformOS();
+  const { t } = useTranslation();
   const {
     project: { projectMemberIds },
   } = useMember();
@@ -36,7 +38,7 @@ export const InboxIssueFilterSelection = observer(function InboxIssueFilterSelec
           <input
             type="text"
             className="w-full bg-surface-2 outline-none placeholder:text-placeholder"
-            placeholder="Pesquisar"
+            placeholder="Search"
             value={filtersSearchQuery}
             onChange={(e) => setFiltersSearchQuery(e.target.value)}
             autoFocus={!isMobile}
@@ -62,7 +64,7 @@ export const InboxIssueFilterSelection = observer(function InboxIssueFilterSelec
         <div className="py-2">
           <FilterMember
             filterKey="assignees"
-            label="Responsáveis"
+            label="Responsible"
             searchQuery={filtersSearchQuery}
             memberIds={projectMemberIds ?? []}
           />
@@ -71,7 +73,7 @@ export const InboxIssueFilterSelection = observer(function InboxIssueFilterSelec
         <div className="py-2">
           <FilterMember
             filterKey="created_by"
-            label="Criado por"
+            label={t("common.created_by")}
             searchQuery={filtersSearchQuery}
             memberIds={projectMemberIds ?? []}
           />
@@ -82,11 +84,11 @@ export const InboxIssueFilterSelection = observer(function InboxIssueFilterSelec
         </div>
         {/* Created at */}
         <div className="py-2">
-          <FilterDate filterKey="created_at" label="Data de criação" searchQuery={filtersSearchQuery} />
+          <FilterDate filterKey="created_at" label="Created at" searchQuery={filtersSearchQuery} />
         </div>
         {/* Updated at */}
         <div className="py-2">
-          <FilterDate filterKey="updated_at" label="Data da última atualização" searchQuery={filtersSearchQuery} />
+          <FilterDate filterKey="updated_at" label="Last updated at" searchQuery={filtersSearchQuery} />
         </div>
       </div>
     </div>

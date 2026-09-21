@@ -14,24 +14,24 @@ import { isCurrentUserSelected, resolvePessoaFilterAction, toPessoaList } from "
 import { useUser } from "@/hooks/store/user";
 
 export type TPessoaFilter = {
-  /** `false` quando não há filtro montado ou o usuário ainda não carregou. */
+  /** `false` when there is no filter set up or the user hasn't loaded yet. */
   isAvailable: boolean;
   isActive: boolean;
   toggle: () => void;
 };
 
 /**
- * Liga/desliga o usuário atual numa condição de pessoa **sem apagar o resto do
+ * Toggles the current user on a person condition **without erasing the rest of the
  * filtro**. Serve aos dois atalhos da barra: "Meus chamados" (`assignee_id`) e
  * "Abertos por mim" (`created_by_id`).
  *
- * A diferença para os modelos do menu é essa: o modelo substitui tudo o que
- * estiver aplicado, enquanto estes botões só acrescentam (ou tiram) você da
- * condição. Dá para combinar o recorte do setor com "só os meus", que é
+ * The difference from the menu models is this: the model replaces everything that
+ * is applied, while these buttons only add (or remove) you from the
+ * condition. You can combine the sector filter with "just mine", which is
  * justamente o caso de quem quer parar de olhar o trabalho dos outros.
  *
- * A decisão em si vive em `@plane/utils` (`resolvePessoaFilterAction`), onde é
- * testada; aqui só aplicamos o resultado no store.
+ * The decision itself lives in `@plane/utils` (`resolvePessoaFilterAction`), where it is
+ * tested; here we just apply the result to the store.
  */
 export const usePessoaFilter = (
   filter: IWorkItemFilterInstance | undefined,
@@ -52,7 +52,11 @@ export const usePessoaFilter = (
     const acao = resolvePessoaFilterAction(values, currentUserId, !!condition);
 
     if (acao.type === "add") {
-      filter.addCondition(LOGICAL_OPERATOR.AND, { property, operator: COLLECTION_OPERATOR.IN, value: acao.values }, false);
+      filter.addCondition(
+        LOGICAL_OPERATOR.AND,
+        { property, operator: COLLECTION_OPERATOR.IN, value: acao.values },
+        false
+      );
       filter.toggleVisibility(true);
       return;
     }

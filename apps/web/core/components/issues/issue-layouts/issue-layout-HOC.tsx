@@ -55,7 +55,7 @@ export const IssueLayoutHOC = observer(function IssueLayoutHOC(props: Props) {
   }
 
   // Kanban and Calendar render their own structure (state columns / day cells) even
-  // when there are no work items, so the board's sections (Triagem, Em Análise, …)
+  // when there are no work items, so the board's sections (Intake, In Analysis, …)
   // stay visible on an empty board instead of collapsing to a single empty state.
   const keepsLayoutWhenEmpty = layout === EIssueLayoutTypes.CALENDAR || layout === EIssueLayoutTypes.KANBAN;
   if (issues.getGroupIssueCount(undefined, undefined, false) === 0 && !keepsLayoutWhenEmpty) {

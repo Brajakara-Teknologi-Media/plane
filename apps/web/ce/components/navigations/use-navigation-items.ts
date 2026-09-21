@@ -4,12 +4,12 @@
  * See the LICENSE file for details.
  */
 
-import {useCallback, useMemo} from "react";
+import { useCallback, useMemo } from "react";
 // plane imports
-import type {TNavigationItem} from "@/components/navigation/tab-navigation-root";
-import {EUserPermissions, EUserPermissionsLevel} from "@plane/constants";
-import {CycleIcon, IntakeIcon, ModuleIcon, PageIcon, ViewsIcon, WorkItemsIcon} from "@plane/propel/icons";
-import type {EUserProjectRoles, IPartialProject} from "@plane/types";
+import type { TNavigationItem } from "@/components/navigation/tab-navigation-root";
+import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import { CycleIcon, IntakeIcon, ModuleIcon, PageIcon, ViewsIcon, WorkItemsIcon } from "@plane/propel/icons";
+import type { EUserProjectRoles, IPartialProject } from "@plane/types";
 
 type UseNavigationItemsProps = {
   workspaceSlug: string;
@@ -19,18 +19,23 @@ type UseNavigationItemsProps = {
     access: EUserPermissions[] | EUserProjectRoles[],
     level: EUserPermissionsLevel,
     workspaceSlug: string,
-    projectId: string,
+    projectId: string
   ) => boolean;
 };
 
-export const useNavigationItems = ({workspaceSlug, projectId, project, allowPermissions}: UseNavigationItemsProps): TNavigationItem[] => {
+export const useNavigationItems = ({
+  workspaceSlug,
+  projectId,
+  project,
+  allowPermissions,
+}: UseNavigationItemsProps): TNavigationItem[] => {
   // Base navigation items
   const baseNavigation = useCallback(
     (workspaceSlug: string, projectId: string): TNavigationItem[] => [
       {
         i18n_key: "sidebar.work_items",
         key: "work_items",
-        name: "Chamados",
+        name: "Work Items",
         href: `/${workspaceSlug}/projects/${projectId}/issues`,
         icon: WorkItemsIcon,
         access: [
@@ -134,7 +139,7 @@ export const useNavigationItems = ({workspaceSlug, projectId, project, allowPerm
         sortOrder: 6,
       },
     ],
-    [project],
+    [project]
   );
 
   // Combine, filter, and sort navigation items

@@ -17,12 +17,12 @@ import DefaultLayout from "@/layouts/default-layout";
 const linkMap = [
   {
     key: "mail_to",
-    label: "Falar com o suporte",
+    label: "Contact Support",
     value: `mailto:${SUPPORT_EMAIL}`,
   },
   {
     key: "site",
-    label: "Quality Sistemas",
+    label: "Support Site",
     value: SUPPORT_SITE,
   },
 ];
@@ -47,16 +47,16 @@ export function ProdErrorComponent({ onGoHome }: ProdErrorComponentProps) {
             src={maintenanceModeImage}
             height="176"
             width="288"
-            alt="Modo de manutenção"
+            alt="Maintenance mode"
             className="h-full w-full object-fill object-center"
           />
         </div>
         <div className="relative mt-4 flex w-full flex-col gap-4">
           <div className="flex flex-col gap-2.5">
-            <h1 className="text-left text-18 font-semibold text-primary">&#x1F6A7; Parece que algo deu errado!</h1>
+            <h1 className="text-left text-18 font-semibold text-primary">&#x1F6A7; Something went wrong!</h1>
             <span className="text-left text-14 font-medium text-secondary">
-              Registramos esses erros automaticamente e já estamos trabalhando para normalizar tudo. Se o problema
-              persistir, entre em contato conosco. Enquanto isso, tente atualizar a página.
+              We've automatically logged these errors and are working to fix them. If the problem persists, please
+              contact us. In the meantime, try refreshing the page.
             </span>
           </div>
 
@@ -77,7 +77,7 @@ export function ProdErrorComponent({ onGoHome }: ProdErrorComponentProps) {
 
           <div className="flex items-center justify-start gap-6">
             <Button variant="primary" size="lg" onClick={onGoHome}>
-              Ir para o início
+              Go Home
             </Button>
           </div>
         </div>

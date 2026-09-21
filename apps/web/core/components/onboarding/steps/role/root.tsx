@@ -13,7 +13,7 @@ import { CheckIcon, ViewsIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TUserProfile } from "@plane/types";
 import { EOnboardingSteps } from "@plane/types";
-// hooks
+import { useTranslation } from "@plane/i18n";
 import { useUserProfile } from "@/hooks/store/user";
 // local components
 import { CommonOnboardingHeader } from "../common";
@@ -24,13 +24,13 @@ type Props = {
 };
 
 const ROLES = [
-  { id: "product-manager", label: "Gerente de Produto", icon: Box },
-  { id: "engineering-manager", label: "Gerente de Engenharia", icon: ViewsIcon },
-  { id: "designer", label: "Designer", icon: PenTool },
-  { id: "developer", label: "Desenvolvedor", icon: Monitor },
-  { id: "founder-executive", label: "Fundador/Executivo", icon: Rocket },
-  { id: "operations-manager", label: "Gerente de Operações", icon: RefreshCw },
-  { id: "others", label: "Outros", icon: Box },
+  { id: "product-manager", labelKey: "onboarding.role.product_manager", icon: Box },
+  { id: "engineering-manager", labelKey: "onboarding.role.engineering_manager", icon: ViewsIcon },
+  { id: "designer", labelKey: "onboarding.role.designer", icon: PenTool },
+  { id: "developer", labelKey: "onboarding.role.developer", icon: Monitor },
+  { id: "founder-executive", labelKey: "onboarding.role.founder_executive", icon: Rocket },
+  { id: "operations-manager", labelKey: "onboarding.role.operations_manager", icon: RefreshCw },
+  { id: "others", labelKey: "onboarding.role.others", icon: Box },
 ];
 
 const defaultValues = {
@@ -38,6 +38,8 @@ const defaultValues = {
 };
 
 export const RoleSetupStep = observer(function RoleSetupStep({ handleStepChange }: Props) {
+  // i18n
+  const { t } = useTranslation();
   // store hooks
   const { data: profile, updateUserProfile } = useUserProfile();
   // form info
@@ -65,14 +67,14 @@ export const RoleSetupStep = observer(function RoleSetupStep({ handleStepChange 
       ]);
       setToast({
         type: TOAST_TYPE.SUCCESS,
-        title: "Sucesso",
-        message: "Configuração do perfil concluída!",
+        title: t("common.success"),
+        message: "Profile setup complete!",
       });
     } catch {
       setToast({
         type: TOAST_TYPE.ERROR,
-        title: "Erro",
-        message: "Falha na configuração do perfil. Tente novamente!",
+        title: t("common.error_bang"),
+        message: "Failed to set up profile. Please try again!",
       });
     }
   };
@@ -95,12 +97,12 @@ export const RoleSetupStep = observer(function RoleSetupStep({ handleStepChange 
       <CommonOnboardingHeader title="What's your role?" description="Let's set up Avião for how you work." />
       {/* Role Selection */}
       <div className="flex flex-col gap-3">
-        <p className="text-body-sm-semibold text-placeholder">Selecione um</p>
+        <p className="text-body-sm-semibold text-placeholder">{t("onboarding.role.select_one")}</p>
         <Controller
           control={control}
           name="role"
           rules={{
-            required: "Este campo é obrigatório",
+            required: "This field is required",
           }}
           render={({ field: { value, onChange } }) => (
             <div className="flex flex-col gap-3">
@@ -124,7 +126,7 @@ export const RoleSetupStep = observer(function RoleSetupStep({ handleStepChange 
                   >
                     <div className="flex items-center space-x-3">
                       <Icon className="size-3.5" />
-                      <span className="text-body-sm-semibold">{role.label}</span>
+                      <span className="text-body-sm-semibold">{t(role.labelKey)}</span>
                     </div>
                     {isSelected && (
                       <>

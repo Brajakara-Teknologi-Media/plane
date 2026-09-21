@@ -9,6 +9,7 @@
 import { observer } from "mobx-react";
 import { useEffect, useState } from "react";
 import { Star } from "lucide-react";
+import { useTranslation } from "@plane/i18n";
 import { useMember } from "@/hooks/store/use-member";
 import { chatApi, type RatingsReport, type SlaReport } from "@/services/chat.service";
 
@@ -17,7 +18,7 @@ type Stats = Awaited<ReturnType<ReturnType<typeof chatApi>["dashboard"]>>;
 function Stat({ label, value, tone }: { label: string; value: number; tone?: string }) {
   return (
     <div className={`flex flex-col gap-1 rounded-xl border border-subtle p-4 ${tone ?? ""}`}>
-      <span className="text-28 font-semibold leading-none">{value}</span>
+      <span className="text-28 leading-none font-semibold">{value}</span>
       <span className="text-12 text-secondary">{label}</span>
     </div>
   );
@@ -27,7 +28,10 @@ function Stars({ score }: { score: number }) {
   return (
     <span className="inline-flex items-center gap-0.5">
       {[1, 2, 3, 4, 5].map((n) => (
-        <Star key={n} className={`h-3.5 w-3.5 ${n <= Math.round(score) ? "fill-current text-amber-400" : "text-tertiary"}`} />
+        <Star
+          key={n}
+          className={`h-3.5 w-3.5 ${n <= Math.round(score) ? "text-amber-400 fill-current" : "text-tertiary"}`}
+        />
       ))}
     </span>
   );
@@ -45,6 +49,7 @@ function fmtDuration(sec: number | null) {
 
 export const ChatDashboard = observer(function ChatDashboard({ slug, apiUrl }: { slug: string; apiUrl: string }) {
   const api = chatApi(apiUrl);
+  const { t } = useTranslation();
   const [stats, setStats] = useState<Stats | null>(null);
   const [ratings, setRatings] = useState<RatingsReport | null>(null);
   const [sla, setSla] = useState<SlaReport | null>(null);
@@ -54,12 +59,16 @@ export const ChatDashboard = observer(function ChatDashboard({ slug, apiUrl }: {
 
   useEffect(() => {
     let alive = true;
-    const load = () => api.dashboard(slug).then((d) => alive && setStats(d)).catch(() => {});
+    const load = () =>
+      api
+        .dashboard(slug)
+        .then((d) => alive && setStats(d))
+        .catch(() => {});
     load();
-    const t = setInterval(load, 5000); // live-ish refresh
+    const timer = setInterval(load, 5000); // live-ish refresh
     return () => {
       alive = false;
-      clearInterval(t);
+      clearInterval(timer);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [slug]);
@@ -67,8 +76,14 @@ export const ChatDashboard = observer(function ChatDashboard({ slug, apiUrl }: {
   // Reports are heavier + don't change second-to-second → fetch once.
   useEffect(() => {
     let alive = true;
-    api.ratingsReport(slug).then((d) => alive && setRatings(d)).catch(() => {});
-    api.slaReport(slug, 30).then((d) => alive && setSla(d)).catch(() => {});
+    api
+      .ratingsReport(slug)
+      .then((d) => alive && setRatings(d))
+      .catch(() => {});
+    api
+      .slaReport(slug, 30)
+      .then((d) => alive && setSla(d))
+      .catch(() => {});
     return () => {
       alive = false;
     };
@@ -77,31 +92,34 @@ export const ChatDashboard = observer(function ChatDashboard({ slug, apiUrl }: {
 
   const nameFor = (id: string) => (getWorkspaceMemberDetails(id) as any)?.member?.display_name ?? id;
 
-  if (!stats) return <div className="p-6 text-sm text-secondary">Carregando dashboard…</div>;
+  if (!stats) return <div className="text-sm p-6 text-secondary">{t("chat.dashboard.loading")}</div>;
 
   const attendants = [...stats.attendants].sort((a, b) => b.active_chats - a.active_chats);
 
   return (
     <div className="flex h-full flex-col gap-5 overflow-y-auto p-5">
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-        <Stat label="Em atendimento" value={stats.totals.active} tone="bg-success-subtle/40" />
-        <Stat label="Na fila" value={stats.totals.queued} tone="bg-warning-subtle/40" />
-        <Stat label="No bot (sem atendente)" value={stats.totals.bot} tone="bg-layer-2" />
-        <Stat label="Encerrados hoje" value={stats.totals.closed_today} />
+        <Stat label={t("chat.dashboard.stats.active")} value={stats.totals.active} tone="bg-success-subtle/40" />
+        <Stat label={t("chat.dashboard.stats.queued")} value={stats.totals.queued} tone="bg-warning-subtle/40" />
+        <Stat label={t("chat.dashboard.stats.bot")} value={stats.totals.bot} tone="bg-layer-2" />
+        <Stat label={t("chat.dashboard.stats.closed_today")} value={stats.totals.closed_today} />
       </div>
 
       <div>
-        <h3 className="mb-2 text-sm font-semibold">
-          Atendentes <span className="text-12 font-normal text-secondary">({stats.online.length} online)</span>
+        <h3 className="text-sm mb-2 font-semibold">
+          {t("chat.dashboard.attendants.title")}{" "}
+          <span className="font-normal text-12 text-secondary">
+            ({stats.online.length} {t("chat.dashboard.attendants.online_count")})
+          </span>
         </h3>
         <div className="overflow-hidden rounded-xl border border-subtle">
-          <table className="w-full text-sm">
+          <table className="text-sm w-full">
             <thead className="bg-layer-2 text-12 text-secondary">
               <tr>
-                <th className="p-2 text-left font-medium">Atendente</th>
-                <th className="p-2 text-left font-medium">Status</th>
-                <th className="p-2 text-right font-medium">Chats ativos</th>
-                <th className="p-2 text-right font-medium">Chats hoje</th>
+                <th className="p-2 text-left font-medium">{t("chat.dashboard.attendants.table.attendant")}</th>
+                <th className="p-2 text-left font-medium">{t("chat.dashboard.attendants.table.status")}</th>
+                <th className="p-2 text-right font-medium">{t("chat.dashboard.attendants.table.active_chats")}</th>
+                <th className="p-2 text-right font-medium">{t("chat.dashboard.attendants.table.chats_today")}</th>
               </tr>
             </thead>
             <tbody>
@@ -110,13 +128,16 @@ export const ChatDashboard = observer(function ChatDashboard({ slug, apiUrl }: {
                   <td className="p-2">{nameFor(a.user_id)}</td>
                   <td className="p-2">
                     {a.invisible ? (
-                      <span className="rounded-full bg-layer-2 px-2 py-0.5 text-11 text-secondary">Invisível</span>
+                      <span className="rounded-full bg-layer-2 px-2 py-0.5 text-11 text-secondary">
+                        {t("chat.dashboard.attendants.status.invisible")}
+                      </span>
                     ) : a.online ? (
                       <span className="inline-flex items-center gap-1 text-11 text-success-primary">
-                        <span className="size-2 rounded-full bg-success-primary" /> Online
+                        <span className="size-2 rounded-full bg-success-primary" />{" "}
+                        {t("chat.dashboard.attendants.status.online")}
                       </span>
                     ) : (
-                      <span className="text-11 text-tertiary">Offline</span>
+                      <span className="text-11 text-tertiary">{t("chat.dashboard.attendants.status.offline")}</span>
                     )}
                   </td>
                   <td className="p-2 text-right font-medium">{a.active_chats}</td>
@@ -126,38 +147,37 @@ export const ChatDashboard = observer(function ChatDashboard({ slug, apiUrl }: {
               {attendants.length === 0 && (
                 <tr>
                   <td colSpan={4} className="p-4 text-center text-13 text-secondary">
-                    Nenhum atendente ativo no momento.
+                    {t("chat.dashboard.attendants.empty")}
                   </td>
                 </tr>
               )}
             </tbody>
           </table>
         </div>
-        <p className="mt-2 text-12 text-secondary">
-          Para dar “spy” em uma conversa, volte à lista e abra qualquer atendimento — você recebe as mensagens ao vivo sem assumir.
-        </p>
+        <p className="mt-2 text-12 text-secondary">{t("chat.dashboard.attendants.spy_tip")}</p>
       </div>
 
-      {/* ── Avaliações + ranking ─────────────────────────────────────── */}
+      {/* ── Ratings + ranking ────────────────────────────────────────── */}
       {ratings && (
         <div>
-          <h3 className="mb-2 flex items-center gap-2 text-sm font-semibold">
-            Avaliações dos atendentes
+          <h3 className="text-sm mb-2 flex items-center gap-2 font-semibold">
+            {t("chat.dashboard.ratings.title")}
             {ratings.overall.count > 0 && (
-              <span className="inline-flex items-center gap-1 text-12 font-normal text-secondary">
-                · média geral <Stars score={ratings.overall.avg} /> {ratings.overall.avg.toFixed(2)} ({ratings.overall.count})
+              <span className="font-normal inline-flex items-center gap-1 text-12 text-secondary">
+                · {t("chat.dashboard.ratings.overall_avg")} <Stars score={ratings.overall.avg} />{" "}
+                {ratings.overall.avg.toFixed(2)} ({ratings.overall.count})
               </span>
             )}
           </h3>
           <div className="overflow-hidden rounded-xl border border-subtle">
-            <table className="w-full text-sm">
+            <table className="text-sm w-full">
               <thead className="bg-layer-2 text-12 text-secondary">
                 <tr>
-                  <th className="p-2 text-left font-medium">#</th>
-                  <th className="p-2 text-left font-medium">Atendente</th>
-                  <th className="p-2 text-left font-medium">Média</th>
-                  <th className="p-2 text-right font-medium">Avaliações</th>
-                  <th className="p-2 text-left font-medium">Distribuição (1→5)</th>
+                  <th className="p-2 text-left font-medium">{t("chat.dashboard.ratings.table.rank")}</th>
+                  <th className="p-2 text-left font-medium">{t("chat.dashboard.ratings.table.attendant")}</th>
+                  <th className="p-2 text-left font-medium">{t("chat.dashboard.ratings.table.average")}</th>
+                  <th className="p-2 text-right font-medium">{t("chat.dashboard.ratings.table.ratings")}</th>
+                  <th className="p-2 text-left font-medium">{t("chat.dashboard.ratings.table.distribution")}</th>
                 </tr>
               </thead>
               <tbody>
@@ -178,7 +198,7 @@ export const ChatDashboard = observer(function ChatDashboard({ slug, apiUrl }: {
                 {ratings.ranking.length === 0 && (
                   <tr>
                     <td colSpan={5} className="p-4 text-center text-13 text-secondary">
-                      Nenhuma avaliação registrada ainda.
+                      {t("chat.dashboard.ratings.empty")}
                     </td>
                   </tr>
                 )}
@@ -188,13 +208,15 @@ export const ChatDashboard = observer(function ChatDashboard({ slug, apiUrl }: {
 
           {ratings.comments.length > 0 && (
             <div className="mt-3">
-              <h4 className="mb-1.5 text-12 font-semibold text-secondary">Comentários recentes</h4>
+              <h4 className="mb-1.5 text-12 font-semibold text-secondary">
+                {t("chat.dashboard.ratings.recent_comments")}
+              </h4>
               <div className="flex flex-col gap-2">
                 {ratings.comments.slice(0, 10).map((c, i) => (
                   <div key={i} className="rounded-lg border border-subtle p-3">
                     <div className="mb-1 flex items-center gap-2 text-12 text-secondary">
                       {c.score != null && <Stars score={c.score} />}
-                      <span className="font-medium text-primary">{c.client_name || "Cliente"}</span>
+                      <span className="font-medium text-primary">{c.client_name || "Client"}</span>
                       <span>·</span>
                       <span>#{c.protocol}</span>
                       {c.attendant && (
@@ -216,36 +238,45 @@ export const ChatDashboard = observer(function ChatDashboard({ slug, apiUrl }: {
       {/* ── SLA ──────────────────────────────────────────────────────── */}
       {sla && (
         <div>
-          <h3 className="mb-2 text-sm font-semibold">
-            SLA de atendimento <span className="text-12 font-normal text-secondary">(últimos {sla.days} dias)</span>
+          <h3 className="text-sm mb-2 font-semibold">
+            {t("chat.dashboard.sla.title")}{" "}
+            <span className="font-normal text-12 text-secondary">
+              ({t("chat.dashboard.sla.last_days")} {sla.days} {t("chat.dashboard.sla.days")})
+            </span>
           </h3>
           <div className="mb-3 grid grid-cols-2 gap-3 sm:grid-cols-4">
-            <Stat label="Atendimentos" value={sla.overall.count} />
+            <Stat label={t("chat.dashboard.sla.stats.attendances")} value={sla.overall.count} />
             <div className="flex flex-col gap-1 rounded-xl border border-subtle p-4">
-              <span className="text-20 font-semibold leading-none">{fmtDuration(sla.overall.avg_first_response_sec)}</span>
-              <span className="text-12 text-secondary">1ª resposta (média)</span>
-            </div>
-            <div className="flex flex-col gap-1 rounded-xl border border-subtle p-4">
-              <span className="text-20 font-semibold leading-none">{fmtDuration(sla.overall.avg_resolution_sec)}</span>
-              <span className="text-12 text-secondary">Resolução (média)</span>
-            </div>
-            <div className="flex flex-col gap-1 rounded-xl border border-subtle p-4">
-              <span className="text-20 font-semibold leading-none">
-                {sla.overall.breaches}{" "}
-                <span className="text-13 font-normal text-secondary">({Math.round(sla.overall.breach_rate * 100)}%)</span>
+              <span className="text-20 leading-none font-semibold">
+                {fmtDuration(sla.overall.avg_first_response_sec)}
               </span>
-              <span className="text-12 text-secondary">Fora do SLA ({fmtDuration(sla.threshold_sec)})</span>
+              <span className="text-12 text-secondary">{t("chat.dashboard.sla.stats.first_response_avg")}</span>
+            </div>
+            <div className="flex flex-col gap-1 rounded-xl border border-subtle p-4">
+              <span className="text-20 leading-none font-semibold">{fmtDuration(sla.overall.avg_resolution_sec)}</span>
+              <span className="text-12 text-secondary">{t("chat.dashboard.sla.stats.resolution_avg")}</span>
+            </div>
+            <div className="flex flex-col gap-1 rounded-xl border border-subtle p-4">
+              <span className="text-20 leading-none font-semibold">
+                {sla.overall.breaches}{" "}
+                <span className="font-normal text-13 text-secondary">
+                  ({Math.round(sla.overall.breach_rate * 100)}%)
+                </span>
+              </span>
+              <span className="text-12 text-secondary">
+                {t("chat.dashboard.sla.stats.breached")} ({fmtDuration(sla.threshold_sec)})
+              </span>
             </div>
           </div>
           <div className="overflow-hidden rounded-xl border border-subtle">
-            <table className="w-full text-sm">
+            <table className="text-sm w-full">
               <thead className="bg-layer-2 text-12 text-secondary">
                 <tr>
-                  <th className="p-2 text-left font-medium">Atendente</th>
-                  <th className="p-2 text-right font-medium">Atend.</th>
-                  <th className="p-2 text-right font-medium">1ª resposta</th>
-                  <th className="p-2 text-right font-medium">Resolução</th>
-                  <th className="p-2 text-right font-medium">Fora do SLA</th>
+                  <th className="p-2 text-left font-medium">{t("chat.dashboard.sla.table.attendant")}</th>
+                  <th className="p-2 text-right font-medium">{t("chat.dashboard.sla.table.attendances")}</th>
+                  <th className="p-2 text-right font-medium">{t("chat.dashboard.sla.table.first_response")}</th>
+                  <th className="p-2 text-right font-medium">{t("chat.dashboard.sla.table.resolution")}</th>
+                  <th className="p-2 text-right font-medium">{t("chat.dashboard.sla.table.breached")}</th>
                 </tr>
               </thead>
               <tbody>
@@ -265,7 +296,7 @@ export const ChatDashboard = observer(function ChatDashboard({ slug, apiUrl }: {
                 {sla.ranking.length === 0 && (
                   <tr>
                     <td colSpan={5} className="p-4 text-center text-13 text-secondary">
-                      Sem dados de SLA no período.
+                      {t("chat.dashboard.sla.empty")}
                     </td>
                   </tr>
                 )}

@@ -21,9 +21,9 @@ import interVariableWoff2 from "@fontsource-variable/inter/files/inter-latin-wgh
 import "@fontsource/material-symbols-rounded";
 import "@fontsource/ibm-plex-mono";
 
-const APP_TITLE = "Avião | Ferramenta de gestão de projetos simples, extensível e de código aberto.";
+const APP_TITLE = "Avião | Simple, extensible, and open-source project management tool.";
 const APP_DESCRIPTION =
-  "Ferramenta de gestão de projetos de código aberto para gerenciar chamados, sprints e roadmaps de produto com tranquilidade.";
+  "Open-source project management tool to manage work items, sprints and product roadmaps with ease.";
 
 export const links: LinksFunction = () => [
   { rel: "apple-touch-icon", sizes: "180x180", href: appleTouchIcon },
@@ -66,7 +66,7 @@ export const meta: Route.MetaFunction = () => [
   {
     name: "keywords",
     content:
-      "administração, instância, chamados, service desk, quality sistemas",
+      "administration, instance, work items, service desk, quality systems",
   },
 ];
 
@@ -89,7 +89,7 @@ export function HydrateFallback() {
 export function ErrorBoundary({ error: _error }: Route.ErrorBoundaryProps) {
   return (
     <div>
-      <p>Algo deu errado.</p>
+      <p>Something went wrong.</p>
     </div>
   );
 }

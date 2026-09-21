@@ -10,6 +10,7 @@ import { stringToEmoji } from "@plane/propel/emoji-icon-picker";
 import { EmojiReactionGroup, EmojiReactionPicker } from "@plane/propel/emoji-reaction";
 import type { EmojiReactionType } from "@plane/propel/emoji-reaction";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { useTranslation } from "@plane/i18n";
 import type { IUser } from "@plane/types";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
@@ -34,6 +35,8 @@ export const IssueCommentReaction = observer(function IssueCommentReaction(props
     removeCommentReaction,
   } = useIssueDetail();
   const { getUserDetails } = useMember();
+  // translation
+  const { t } = useTranslation();
 
   const reactionIds = getCommentReactionsByCommentId(commentId);
   const userReactions = commentReactionsByUser(commentId, currentUser.id).map((r) => r.reaction);
@@ -45,15 +48,15 @@ export const IssueCommentReaction = observer(function IssueCommentReaction(props
           if (!workspaceSlug || !projectId || !commentId) throw new Error("Missing fields");
           await createCommentReaction(workspaceSlug, projectId, commentId, reaction);
           setToast({
-            title: "Sucesso!",
+            title: t("common.toast.success"),
             type: TOAST_TYPE.SUCCESS,
-            message: "Reação criada com sucesso",
+            message: "Reaction added successfully",
           });
         } catch (_error) {
           setToast({
-            title: "Erro!",
+            title: t("common.toast.error"),
             type: TOAST_TYPE.ERROR,
-            message: "Falha ao criar reação",
+            message: "Failed to add reaction",
           });
         }
       },
@@ -62,15 +65,15 @@ export const IssueCommentReaction = observer(function IssueCommentReaction(props
           if (!workspaceSlug || !projectId || !commentId || !currentUser?.id) throw new Error("Missing fields");
           removeCommentReaction(workspaceSlug, projectId, commentId, reaction, currentUser.id);
           setToast({
-            title: "Sucesso!",
+            title: t("common.toast.success"),
             type: TOAST_TYPE.SUCCESS,
-            message: "Reação removida com sucesso",
+            message: "Reaction removed successfully",
           });
         } catch (_error) {
           setToast({
-            title: "Erro!",
+            title: t("common.toast.error"),
             type: TOAST_TYPE.ERROR,
-            message: "Falha ao remover reação",
+            message: "Failed to remove reaction",
           });
         }
       },

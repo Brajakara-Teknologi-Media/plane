@@ -65,7 +65,7 @@ const CreatedVsResolved = observer(function CreatedVsResolved() {
     () => [
       {
         key: "completed_issues",
-        label: "Resolvidos",
+        label: "Resolved",
         fill: "#19803833",
         fillOpacity: 1,
         stackId: "bar-one",
@@ -76,7 +76,7 @@ const CreatedVsResolved = observer(function CreatedVsResolved() {
       },
       {
         key: "created_issues",
-        label: "Criados",
+        label: "Created",
         fill: "#1192E833",
         fillOpacity: 1,
         stackId: "bar-one",

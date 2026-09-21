@@ -29,8 +29,8 @@ export const FilterStateGroup = observer(function FilterStateGroup(props: Props)
 
   const appliedFiltersCount = appliedFilters?.length ?? 0;
 
-  // A busca é feita pelo rótulo traduzido: numa interface em português ninguém
-  // digita "unstarted" para achar "Não iniciado".
+  // Search is done by translated label: in an English interface no one
+  // types "unstarted" to find "Unstarted".
   const busca = searchQuery.toLowerCase();
   const filteredOptions = Object.values(STATE_GROUPS).filter((s) => s.label.toLowerCase().includes(busca));
 
@@ -72,7 +72,7 @@ export const FilterStateGroup = observer(function FilterStateGroup(props: Props)
               )}
             </>
           ) : (
-            <p className="text-11 text-placeholder italic">Nenhum resultado encontrado</p>
+            <p className="text-11 text-placeholder italic">No results found</p>
           )}
         </div>
       )}

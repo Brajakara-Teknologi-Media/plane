@@ -59,7 +59,7 @@ export const notificationModule = new Elysia({ prefix: "/workspaces/:slug/users/
       where: { id: notification_id, receiverId: user.id },
       data: { isRead: true, readAt: new Date() },
     });
-    if (!count) { set.status = 404; return { detail: "Notificação não encontrada." }; }
+    if (!count) { set.status = 404; return { detail: "Notification not found." }; }
     return prisma.notification.findUnique({ where: { id: notification_id } });
   })
 
@@ -81,7 +81,7 @@ export const notificationModule = new Elysia({ prefix: "/workspaces/:slug/users/
       where: { id: notification_id, receiverId: user.id },
       data: { isArchived: true, archivedAt: new Date() },
     });
-    if (!count) { set.status = 404; return { detail: "Notificação não encontrada." }; }
+    if (!count) { set.status = 404; return { detail: "Notification not found." }; }
     return prisma.notification.findUnique({ where: { id: notification_id } });
   })
 
@@ -100,7 +100,7 @@ export const notificationModule = new Elysia({ prefix: "/workspaces/:slug/users/
     const ws = await getWorkspaceOrFail(slug);
     await requireWorkspaceMember(ws.id, user.id);
     const notif = await prisma.notification.findFirst({ where: { id: notification_id, receiverId: user.id, workspaceId: ws.id } });
-    if (!notif) { set.status = 404; return { detail: "Notificação não encontrada." }; }
+    if (!notif) { set.status = 404; return { detail: "Notification not found." }; }
     return notif;
   })
 
@@ -118,7 +118,7 @@ export const notificationModule = new Elysia({ prefix: "/workspaces/:slug/users/
     const ws = await getWorkspaceOrFail(slug);
     await requireWorkspaceMember(ws.id, user.id);
     const notif = await prisma.notification.findFirst({ where: { id: notification_id, receiverId: user.id } });
-    if (!notif) { set.status = 404; return { detail: "Notificação não encontrada." }; }
+    if (!notif) { set.status = 404; return { detail: "Notification not found." }; }
 
     const b = body as any;
     const data: any = {};

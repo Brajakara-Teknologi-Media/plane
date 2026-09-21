@@ -24,9 +24,9 @@ type Props = {
   issueId: string;
 };
 
-const formatDateTime = (value?: string | null) => (value ? new Date(value).toLocaleString("pt-BR") : "—");
+const formatDateTime = (value?: string | null) => (value ? new Date(value).toLocaleString("en-US") : "—");
 
-/** Documento de impressão do detalhe de um chamado. */
+/** Print document for a single work item's detail. */
 export const WorkItemPrintDocument = observer(function WorkItemPrintDocument(props: Props) {
   const { issueId } = props;
   const { t } = useTranslation();
@@ -64,33 +64,36 @@ export const WorkItemPrintDocument = observer(function WorkItemPrintDocument(pro
       title={`${identifier} — ${issue.name}`}
       subtitle={getProjectById(issue.project_id)?.name}
       meta={[
-        { label: "Estado", value: getStateById(issue.state_id)?.name },
-        { label: "Prioridade", value: priority ? t(priority.titleTranslationKey) : undefined },
+        { label: t("common.state"), value: getStateById(issue.state_id)?.name },
+        { label: t("common.priority"), value: priority ? t(priority.titleTranslationKey) : undefined },
       ]}
     >
-      <PrintSection title="Propriedades">
+      <PrintSection title={t("common.properties")}>
         <PrintFields
           items={[
-            { label: "Estado", value: getStateById(issue.state_id)?.name ?? "—" },
-            { label: "Prioridade", value: priority ? t(priority.titleTranslationKey) : "—" },
-            { label: "Responsáveis", value: memberNames(issue.assignee_ids) },
-            { label: "Etiquetas", value: labelNames },
-            { label: "Data de início", value: issue.start_date ? renderFormattedDate(issue.start_date) : "—" },
-            { label: "Prazo", value: issue.target_date ? renderFormattedDate(issue.target_date) : "—" },
-            { label: "Criado em", value: formatDateTime(issue.created_at) },
-            { label: "Atualizado em", value: formatDateTime(issue.updated_at) },
-            { label: "Criado por", value: getUserDetails(issue.created_by)?.display_name ?? "—" },
+            { label: t("common.state"), value: getStateById(issue.state_id)?.name ?? "—" },
+            { label: t("common.priority"), value: priority ? t(priority.titleTranslationKey) : "—" },
+            { label: t("common.assignee"), value: memberNames(issue.assignee_ids) },
+            { label: t("common.labels"), value: labelNames },
+            { label: t("common.start_date"), value: issue.start_date ? renderFormattedDate(issue.start_date) : "—" },
+            {
+              label: t("print.table.due_date"),
+              value: issue.target_date ? renderFormattedDate(issue.target_date) : "—",
+            },
+            { label: t("common.created_at"), value: formatDateTime(issue.created_at) },
+            { label: t("common.updated_at"), value: formatDateTime(issue.updated_at) },
+            { label: t("common.created_by"), value: getUserDetails(issue.created_by)?.display_name ?? "—" },
           ]}
         />
       </PrintSection>
 
-      <PrintSection title="Descrição">
-        <PrintHtml html={issue.description_html} fallback="Sem descrição." />
+      <PrintSection title="Description">
+        <PrintHtml html={issue.description_html} fallback="No description." />
       </PrintSection>
 
-      <PrintSection title={`Anexos (${attachmentIds.length})`}>
+      <PrintSection title={t("print.work_item.attachments_title", { count: attachmentIds.length })}>
         {attachmentIds.length === 0 ? (
-          <p>Nenhum anexo.</p>
+          <p>{t("print.work_item.no_attachments")}</p>
         ) : (
           <ul className="list-disc pl-4">
             {attachmentIds.map((attachmentId) => {
@@ -107,19 +110,19 @@ export const WorkItemPrintDocument = observer(function WorkItemPrintDocument(pro
         )}
       </PrintSection>
 
-      <PrintSection title={`Comentários (${commentIds.length})`}>
+      <PrintSection title={t("print.work_item.comments_title", { count: commentIds.length })}>
         {commentIds.length === 0 ? (
-          <p>Nenhum comentário.</p>
+          <p>{t("print.work_item.no_comments")}</p>
         ) : (
           <div className="flex flex-col gap-3">
             {commentIds.map((commentId) => {
               const comment = getCommentById(commentId);
               if (!comment) return null;
               return (
-                <article key={commentId} className="print-avoid-break border-b border-neutral-200 pb-2 last:border-0">
+                <article key={commentId} className="print-avoid-break border-neutral-200 border-b pb-2 last:border-0">
                   <p className="text-[10px] font-semibold">
                     {comment.actor_detail?.display_name ?? getUserDetails(comment.actor)?.display_name ?? "—"}
-                    <span className="ml-2 font-normal text-neutral-500">{formatDateTime(comment.created_at)}</span>
+                    <span className="font-normal text-neutral-500 ml-2">{formatDateTime(comment.created_at)}</span>
                   </p>
                   <PrintHtml html={comment.comment_html} fallback={comment.comment_stripped} />
                 </article>

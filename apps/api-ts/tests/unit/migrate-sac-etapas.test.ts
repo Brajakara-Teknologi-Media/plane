@@ -32,7 +32,7 @@ describe("stateNameForChamado", () => {
       expect(stateNameForChamado("encerrado parcialmente", "gestao de qualidade", SEM_DONO)).toBe("Concluído");
     });
 
-    it("ignora espaços e caixa da situação", () => {
+    it("ignores spaces and situation box", () => {
       expect(stateNameForChamado("  ENCERRADO  ", "gestao de qualidade", COM_DONO)).toBe("Concluído");
     });
   });
@@ -109,7 +109,7 @@ describe("RESPONSAVEL_POR_SETOR", () => {
 
 describe("COLUNAS_RESPONSAVEL_SQL", () => {
   /**
-   * O SELECT dos chamados é montado a partir do mapa de setores. Listar as
+   * O SELECT dos chamados é montado a partir do mapa de setores. Listr as
    * colunas à mão fez a primeira versão trazer só `chamados_gdq`: os demais
    * setores chegavam `undefined` e o importador gravou 9.432 responsáveis em
    * vez de ~37.000, sem erro nenhum.

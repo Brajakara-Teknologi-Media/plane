@@ -109,10 +109,7 @@ export const CycleIssuesHeader = observer(function CycleIssuesHeader() {
   // derived values
   const cycleDetails = cycleId ? getCycleById(cycleId.toString()) : undefined;
   const isCompletedCycle = cycleDetails?.status?.toLocaleLowerCase() === "completed";
-  const canUserCreateIssue = allowPermissions(
-    PROJECT_WORK_ROLES,
-    EUserPermissionsLevel.PROJECT
-  );
+  const canUserCreateIssue = allowPermissions(PROJECT_WORK_ROLES, EUserPermissionsLevel.PROJECT);
 
   const switcherOptions = currentProjectCycleIds
     ?.map((id) => {
@@ -174,7 +171,7 @@ export const CycleIssuesHeader = observer(function CycleIssuesHeader() {
               <Tooltip
                 isMobile={isMobile}
                 tooltipContent={`There are ${workItemsCount} ${
-                  workItemsCount > 1 ? "chamados" : "chamado"
+                  workItemsCount > 1 ? "work items" : "work item"
                 } in this cycle`}
                 position="bottom"
               >
@@ -189,7 +186,7 @@ export const CycleIssuesHeader = observer(function CycleIssuesHeader() {
           {/* Antes escondida no celular (`hidden md:flex`): sem ela não havia como
               filtrar nem trocar de layout fora do desktop. Os controles se
               compactam para ícone e o excedente rola na horizontal. */}
-          <div className="flex min-w-0 items-center gap-2 overflow-x-auto scrollbar-hide">
+          <div className="scrollbar-hide flex min-w-0 items-center gap-2 overflow-x-auto">
             <div className="hidden @4xl:flex">
               <LayoutSelection
                 layouts={[

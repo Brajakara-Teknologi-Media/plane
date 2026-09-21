@@ -7,6 +7,7 @@
 import { useEffect, useState } from "react";
 import { mutate } from "swr";
 // types
+import { useTranslation } from "@plane/i18n";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { CycleDateCheckData, ICycle, TCycleTabOptions } from "@plane/types";
 // ui
@@ -36,6 +37,8 @@ const cycleService = new CycleService();
 
 export function CycleCreateUpdateModal(props: CycleModalProps) {
   const { isOpen, handleClose, data, workspaceSlug, projectId } = props;
+  // plane hooks
+  const { t } = useTranslation();
   // states
   const [activeProject, setActiveProject] = useState<string | null>(null);
   // store hooks
@@ -63,15 +66,15 @@ export function CycleCreateUpdateModal(props: CycleModalProps) {
 
         setToast({
           type: TOAST_TYPE.SUCCESS,
-          title: "Sucesso!",
-          message: "Ciclo criado com sucesso.",
+          title: t("common.toast.success"),
+          message: "Cycle created successfully.",
         });
       })
       .catch((err) => {
         setToast({
           type: TOAST_TYPE.ERROR,
-          title: "Erro!",
-          message: err?.detail ?? "Erro ao criar o ciclo. Tente novamente.",
+          title: t("common.toast.error"),
+          message: err?.detail ?? "Could not create the cycle. Please try again.",
         });
       });
   };
@@ -84,15 +87,15 @@ export function CycleCreateUpdateModal(props: CycleModalProps) {
       .then((_res) => {
         setToast({
           type: TOAST_TYPE.SUCCESS,
-          title: "Sucesso!",
-          message: "Ciclo atualizado com sucesso.",
+          title: t("common.toast.success"),
+          message: "Cycle updated successfully.",
         });
       })
       .catch((err) => {
         setToast({
           type: TOAST_TYPE.ERROR,
-          title: "Erro!",
-          message: err?.detail ?? "Erro ao atualizar o ciclo. Tente novamente.",
+          title: t("common.toast.error"),
+          message: err?.detail ?? "Could not update the cycle. Please try again.",
         });
       });
   };
@@ -152,8 +155,9 @@ export function CycleCreateUpdateModal(props: CycleModalProps) {
     } else
       setToast({
         type: TOAST_TYPE.ERROR,
-        title: "Erro!",
-        message: "Você já tem um ciclo nas datas informadas; se quiser criar um ciclo de rascunho, remova as datas.",
+        title: t("common.toast.error"),
+        message:
+          "You already have a cycle on the selected dates; if you want to create a draft cycle, remove the dates.",
       });
   };
 

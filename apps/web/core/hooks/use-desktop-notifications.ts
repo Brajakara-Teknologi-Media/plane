@@ -7,7 +7,9 @@ import { API_BASE_URL } from "@plane/constants";
 // ── Service helpers ─────────────────────────────────────────────────────────
 
 class NotifService extends APIService {
-  constructor() { super(API_BASE_URL); }
+  constructor() {
+    super(API_BASE_URL);
+  }
   unreadCount(slug: string) {
     return this.get(`/api/workspaces/${slug}/users/notifications/unread/`)
       .then((r) => r?.data?.total_unread_notifications ?? 0)
@@ -86,8 +88,8 @@ export function useDesktopNotifications({
       if (lastUnreadCount.current >= 0 && count > lastUnreadCount.current) {
         const delta = count - lastUnreadCount.current;
         showNotification(
-          `${delta} nova${delta > 1 ? "s" : ""} notificação${delta > 1 ? "ões" : ""}`,
-          "Você tem atualizações em chamados que você segue.",
+          `${delta} new notification${delta > 1 ? "s" : ""}`,
+          "You have updates on work items you follow.",
           "ws-notifications"
         );
       }
@@ -96,7 +98,10 @@ export function useDesktopNotifications({
 
     check();
     const interval = setInterval(check, pollIntervalMs);
-    return () => { active = false; clearInterval(interval); };
+    return () => {
+      active = false;
+      clearInterval(interval);
+    };
   }, [workspaceSlug, pollIntervalMs]);
 
   // Recurring alarm for urgent issues
@@ -131,9 +136,12 @@ export function useDesktopNotifications({
 
       // If no state changes since last alarm, fire recurring alarm
       if (!anyChanged) {
-        const names = issues.slice(0, 3).map((i) => i.name).join(", ");
+        const names = issues
+          .slice(0, 3)
+          .map((i) => i.name)
+          .join(", ");
         showNotification(
-          `⚠️ ${issues.length} chamado${issues.length > 1 ? "s" : ""} URGENTE${issues.length > 1 ? "S" : ""} sem resolução`,
+          `⚠️ ${issues.length} URGENT work item${issues.length > 1 ? "S" : ""} unresolved`,
           names + (issues.length > 3 ? ` e mais ${issues.length - 3}…` : ""),
           "urgent-alarm"
         );
@@ -147,7 +155,10 @@ export function useDesktopNotifications({
       return () => clearInterval(interval);
     }, 5_000);
 
-    return () => { active = false; clearTimeout(timeout); };
+    return () => {
+      active = false;
+      clearTimeout(timeout);
+    };
   }, [workspaceSlug, urgentAlarmIntervalMs]);
 
   const notify = useCallback((title: string, body: string, tag?: string) => {

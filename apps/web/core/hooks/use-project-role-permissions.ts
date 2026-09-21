@@ -7,10 +7,10 @@
  *   if (perms.isPermissionsLoading) return <Disabled />;
  *   if (!perms.canMoveToState("triage", "unstarted")) return null;
  *
- * Transição de etapa é a única regra por papel que existe no produto, e a sua
- * fonte única da verdade é a configuração de funções do workspace
+ * Stage transition is the only role-based rule that exists in the product, and its
+ * single source of truth is the workspace's role configuration
  * (`GET /roles/` → `role.transitions`), a mesma tabela `role_state_transitions`
- * que o backend aplica em `canTransition()`. Não há matriz estática de fallback.
+ * that the backend applies in `canTransition()`. There is no static fallback matrix.
  *
  * Visibilidade por papel foi removida: quem participa do projeto enxerga todos
  * os chamados, em qualquer etapa.
@@ -33,8 +33,8 @@ export function useProjectRolePermissions(projectId?: string) {
       ? (getProjectRoleByWorkspaceSlugAndProjectId(slug, resolvedProjectId) as EUserProjectRoles | undefined)
       : undefined;
 
-  // Role configurável do workspace (tela "Funções e permissões"). Espelha o
-  // resolveRole do backend: match por nível do papel legado.
+  // Configurable role of the workspace ("Roles and permissions" screen). Mirrors the
+  // backend's resolveRole: match by legacy role level.
   const { workflowRole, isLoading: isPermissionsLoading } = useWorkflowRole(slug, role);
 
   const can = (action: EProjectAction): boolean => {
@@ -44,39 +44,39 @@ export function useProjectRolePermissions(projectId?: string) {
   };
 
   // ── Viewing ──────────────────────────────────────────────────────────────
-  const canViewIssues    = can(EProjectAction.ISSUE_VIEW);
-  const canReadComments  = can(EProjectAction.COMMENT_READ);
+  const canViewIssues = can(EProjectAction.ISSUE_VIEW);
+  const canReadComments = can(EProjectAction.COMMENT_READ);
   const canViewAttachments = can(EProjectAction.ATTACHMENT_VIEW);
 
   // ── Work-item mutations ──────────────────────────────────────────────────
-  const canCreateIssue    = can(EProjectAction.ISSUE_CREATE);
-  const canEditOwnIssue   = can(EProjectAction.ISSUE_EDIT_OWN);
-  const canEditAllIssues  = can(EProjectAction.ISSUE_EDIT_ALL);
+  const canCreateIssue = can(EProjectAction.ISSUE_CREATE);
+  const canEditOwnIssue = can(EProjectAction.ISSUE_EDIT_OWN);
+  const canEditAllIssues = can(EProjectAction.ISSUE_EDIT_ALL);
   /** true if user can edit AT LEAST their own issues */
-  const canEditIssue      = canEditOwnIssue;
-  const canDeleteOwnIssue  = can(EProjectAction.ISSUE_DELETE_OWN);
+  const canEditIssue = canEditOwnIssue;
+  const canDeleteOwnIssue = can(EProjectAction.ISSUE_DELETE_OWN);
   const canDeleteAllIssues = can(EProjectAction.ISSUE_DELETE_ALL);
   /** @deprecated use canDeleteAllIssues */
-  const canDeleteIssue    = canDeleteAllIssues;
-  const canAssignSelf     = can(EProjectAction.ISSUE_ASSIGN_SELF);
-  const canAssignOthers   = can(EProjectAction.ISSUE_ASSIGN_OTHERS);
+  const canDeleteIssue = canDeleteAllIssues;
+  const canAssignSelf = can(EProjectAction.ISSUE_ASSIGN_SELF);
+  const canAssignOthers = can(EProjectAction.ISSUE_ASSIGN_OTHERS);
 
   // ── State transitions ────────────────────────────────────────────────────
-  const canMoveUnrestricted         = can(EProjectAction.STATE_MOVE_UNRESTRICTED);
+  const canMoveUnrestricted = can(EProjectAction.STATE_MOVE_UNRESTRICTED);
 
   /**
-   * Verifica uma transição de etapa contra `role.transitions` — exatamente as
+   * Checks a stage transition against `role.transitions` — exactly the
    * linhas que o backend consulta em `canTransition()`.
    *
-   * Enquanto a configuração de funções não chegou devolve `false`: quem chama
+   * While the roles configuration hasn't arrived, returns `false`: whoever calls
    * deve usar `isPermissionsLoading` para desabilitar o controle em vez de
    * receber uma resposta inventada.
    */
   const canMoveToState = (fromGroup: string, toGroup: string, fromName?: string, toName?: string): boolean => {
     if (!role || isPermissionsLoading) return false;
     if (fromName && toName && fromName === toName) return true; // no-op move
-    // Papel sem função configurada no workspace: o backend resolve para um papel
-    // sem `id` e libera a transição — o frontend acompanha, em vez de divergir.
+    // Role without function configured in the workspace: the backend resolves to a role
+    // without `id` and allows the transition — the frontend follows along instead of diverging.
     if (!workflowRole) return true;
     if (canMoveUnrestricted) return true;
     return workflowRole.transitions.some(
@@ -90,39 +90,39 @@ export function useProjectRolePermissions(projectId?: string) {
   };
 
   // ── Comments ──────────────────────────────────────────────────────────────
-  const canWriteComments        = can(EProjectAction.COMMENT_CREATE);
+  const canWriteComments = can(EProjectAction.COMMENT_CREATE);
   /** @deprecated use canWriteComments */
-  const canComment              = canWriteComments;
-  const canEditOwnComment       = can(EProjectAction.COMMENT_EDIT_OWN);
-  const canDeleteOwnComment     = can(EProjectAction.COMMENT_DELETE_OWN);
-  const canDeleteOthersComment  = can(EProjectAction.COMMENT_DELETE_ALL);
+  const canComment = canWriteComments;
+  const canEditOwnComment = can(EProjectAction.COMMENT_EDIT_OWN);
+  const canDeleteOwnComment = can(EProjectAction.COMMENT_DELETE_OWN);
+  const canDeleteOthersComment = can(EProjectAction.COMMENT_DELETE_ALL);
 
   // ── Attachments ───────────────────────────────────────────────────────────
-  const canUploadAttachments    = can(EProjectAction.ATTACHMENT_UPLOAD);
-  const canDeleteOwnAttachment  = can(EProjectAction.ATTACHMENT_DELETE_OWN);
+  const canUploadAttachments = can(EProjectAction.ATTACHMENT_UPLOAD);
+  const canDeleteOwnAttachment = can(EProjectAction.ATTACHMENT_DELETE_OWN);
   const canDeleteAllAttachments = can(EProjectAction.ATTACHMENT_DELETE_ALL);
 
   // ── Intake ────────────────────────────────────────────────────────────────
-  const canCreateIntake  = can(EProjectAction.INTAKE_CREATE);
-  const canReviewIntake  = can(EProjectAction.INTAKE_REVIEW);
+  const canCreateIntake = can(EProjectAction.INTAKE_CREATE);
+  const canReviewIntake = can(EProjectAction.INTAKE_REVIEW);
   /** Accept / decline / snooze / duplicate intake issues */
-  const canManageIntake  = canReviewIntake;
+  const canManageIntake = canReviewIntake;
 
   // ── Project structure ─────────────────────────────────────────────────────
-  const canManageCycles   = can(EProjectAction.CYCLE_MANAGE);
-  const canManageModules  = can(EProjectAction.MODULE_MANAGE);
-  const canManageLabels   = can(EProjectAction.LABEL_MANAGE);
-  const canCreateViews    = can(EProjectAction.VIEW_CREATE);
-  const canCreatePages    = can(EProjectAction.PAGE_CREATE);
+  const canManageCycles = can(EProjectAction.CYCLE_MANAGE);
+  const canManageModules = can(EProjectAction.MODULE_MANAGE);
+  const canManageLabels = can(EProjectAction.LABEL_MANAGE);
+  const canCreateViews = can(EProjectAction.VIEW_CREATE);
+  const canCreatePages = can(EProjectAction.PAGE_CREATE);
 
   // ── Administration ────────────────────────────────────────────────────────
-  const canManageMembers  = can(EProjectAction.MEMBER_MANAGE);
-  const canManageStates   = can(EProjectAction.STATE_MANAGE);
+  const canManageMembers = can(EProjectAction.MEMBER_MANAGE);
+  const canManageStates = can(EProjectAction.STATE_MANAGE);
   const canConfigureProject = can(EProjectAction.PROJECT_SETTINGS);
 
   return {
     role,
-    /** true enquanto a configuração de funções do workspace não chegou. */
+    /** true while the workspace's role configuration hasn't arrived. */
     isPermissionsLoading,
 
     // ── Viewing ──────────────────────────────────────────────────────────
@@ -134,10 +134,10 @@ export function useProjectRolePermissions(projectId?: string) {
     canCreateIssue,
     canEditOwnIssue,
     canEditAllIssues,
-    canEditIssue,           // alias: canEditOwnIssue
+    canEditIssue, // alias: canEditOwnIssue
     canDeleteOwnIssue,
     canDeleteAllIssues,
-    canDeleteIssue,         // alias: canDeleteAllIssues (deprecated)
+    canDeleteIssue, // alias: canDeleteAllIssues (deprecated)
     canAssignSelf,
     canAssignOthers,
 
@@ -150,7 +150,7 @@ export function useProjectRolePermissions(projectId?: string) {
 
     // ── Comments ─────────────────────────────────────────────────────────
     canWriteComments,
-    canComment,             // alias (deprecated)
+    canComment, // alias (deprecated)
     canEditOwnComment,
     canDeleteOwnComment,
     canDeleteOthersComment,
@@ -178,12 +178,12 @@ export function useProjectRolePermissions(projectId?: string) {
     canConfigureProject,
 
     // ── Role identity helpers ─────────────────────────────────────────────
-    isAtendimento:   role === EUserProjectRoles.ATENDIMENTO,
-    isQualidade:     role === EUserProjectRoles.QUALIDADE,
-    isTI:            role === EUserProjectRoles.TI,
+    isAtendimento: role === EUserProjectRoles.ATENDIMENTO,
+    isQualidade: role === EUserProjectRoles.QUALIDADE,
+    isTI: role === EUserProjectRoles.TI,
     isGestorProjeto: role === EUserProjectRoles.GESTOR_PROJETO,
-    isMember:        role === EUserProjectRoles.MEMBER,
-    isAdmin:         role === EUserProjectRoles.ADMIN,
-    isGuest:         role === EUserProjectRoles.GUEST,
+    isMember: role === EUserProjectRoles.MEMBER,
+    isAdmin: role === EUserProjectRoles.ADMIN,
+    isGuest: role === EUserProjectRoles.GUEST,
   };
 }

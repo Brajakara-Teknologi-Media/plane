@@ -7,7 +7,8 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { KeyRound } from "lucide-react";
-// ui
+// plane imports
+import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { EModalPosition, EModalWidth, Input, ModalCore } from "@plane/ui";
@@ -33,6 +34,8 @@ export const ResetMemberPasswordModal = observer(function ResetMemberPasswordMod
   // states
   const [password, setPassword] = useState(DEFAULT_PASSWORD);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  // plane hooks
+  const { t } = useTranslation();
 
   const handleClose = () => {
     onClose();
@@ -43,7 +46,7 @@ export const ResetMemberPasswordModal = observer(function ResetMemberPasswordMod
   const handleSubmit = async () => {
     if (!workspaceSlug || !userDetails.id) return;
     if (password.trim().length < 4) {
-      setToast({ type: TOAST_TYPE.ERROR, title: "Erro", message: "A senha precisa ter ao menos 4 caracteres." });
+      setToast({ type: TOAST_TYPE.ERROR, title: t("common.toast.error"), message: "Password must be at least 4 characters." });
       return;
     }
     setIsSubmitting(true);
@@ -51,16 +54,16 @@ export const ResetMemberPasswordModal = observer(function ResetMemberPasswordMod
       const res = await workspaceService.resetWorkspaceMemberPassword(workspaceSlug, userDetails.id, password.trim());
       setToast({
         type: TOAST_TYPE.SUCCESS,
-        title: "Senha redefinida",
-        message: `Nova senha de ${userDetails.display_name}: ${res.password}`,
+        title: t("common.password_reset"),
+        message: t("common.new_password_for", { user: userDetails.display_name, password: res.password }),
       });
       handleClose();
     } catch (err: unknown) {
       const error = err as { detail?: string };
       setToast({
         type: TOAST_TYPE.ERROR,
-        title: "Erro",
-        message: error?.detail || "Não foi possível redefinir a senha. Tente novamente.",
+        title: t("common.toast.error"),
+        message: error?.detail || "Could not reset password. Please try again.",
       });
       setIsSubmitting(false);
     }
@@ -74,21 +77,21 @@ export const ResetMemberPasswordModal = observer(function ResetMemberPasswordMod
             <KeyRound className="size-5 text-secondary" aria-hidden="true" />
           </div>
           <div className="flex-1">
-            <h3 className="text-h5-medium text-primary">Redefinir senha</h3>
-            <p className="mt-1 text-sm text-secondary">
-              Defina uma nova senha para <span className="font-medium">{userDetails.display_name}</span>. Informe-a ao
-              usuário; ele poderá alterá-la depois nas configurações de conta.
+            <h3 className="text-h5-medium text-primary">{t("common.reset_password")}</h3>
+            <p className="text-sm mt-1 text-secondary">
+              Set a new password for <span className="font-medium">{userDetails.display_name}</span>. Inform the user;
+              they can change it later in their account settings.
             </p>
             <div className="mt-4">
-              <label className="mb-1 block text-sm font-medium text-secondary" htmlFor="reset-password-input">
-                Nova senha
+              <label className="text-sm mb-1 block font-medium text-secondary" htmlFor="reset-password-input">
+                {t("common.new_password")}
               </label>
               <Input
                 id="reset-password-input"
                 type="text"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder="Nova senha"
+                placeholder={t("common.new_password")}
                 className="w-full"
                 autoFocus
               />
@@ -97,7 +100,7 @@ export const ResetMemberPasswordModal = observer(function ResetMemberPasswordMod
         </div>
         <div className="mt-5 flex items-center justify-end gap-2">
           <Button variant="secondary" size="sm" onClick={handleClose} disabled={isSubmitting}>
-            Cancelar
+            {t("common.cancel")}
           </Button>
           <Button variant="primary" size="sm" onClick={handleSubmit} loading={isSubmitting}>
             {isSubmitting ? "Redefinindo..." : "Redefinir senha"}

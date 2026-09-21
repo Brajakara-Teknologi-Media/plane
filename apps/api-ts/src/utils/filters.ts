@@ -258,8 +258,46 @@ export async function applyIssueFilters(
     }
     if (soltas.length === 1) where[field] = soltas[0];
   };
-  if (filters.target_date?.length) applyDate("targetDate", filters.target_date);
-  if (filters.start_date?.length) applyDate("startDate", filters.start_date);
+  // When only target_date range is given (e.g. calendar view), apply it as OR with startDate
+  // so items with only a start_date still appear in the calendar.
+  if (filters.target_date?.length && !filters.start_date?.length) {
+    // Apply target_date normally to a temp object, then rewrap as OR.
+    const tmp: any = {};
+    const origWhere = where;
+    const tmpProxy = new Proxy(tmp, {});
+    // We need the parsed range — reuse applyDate by passing tmp.
+    const applyDateTo = (obj: any, field: string, raw: string[]) => {
+      const range: Record<string, Date> = {};
+      const soltas: Date[] = [];
+      for (const entrada of raw) {
+        const [primeira, segunda] = entrada.split(";").map((p) => p.trim());
+        const d1 = valid(primeira);
+        const d2 = segunda ? valid(segunda) : null;
+        if (d1 && d2) { range.gte = d1; range.lte = d2; continue; }
+        if (d2) { range.lte = d2; continue; }
+        if (!d1) continue;
+        const borda = segunda ? BORDA[segunda.toLowerCase()] : undefined;
+        if (borda) range[borda] = d1;
+        else soltas.push(d1);
+      }
+      if (soltas.length >= 2) {
+        const s = [...soltas].sort((a, b) => a.getTime() - b.getTime());
+        range.gte ??= s[0]; range.lte ??= s[s.length - 1];
+      }
+      if (Object.keys(range).length) obj[field] = range;
+      else if (soltas.length === 1) obj[field] = soltas[0];
+    };
+    applyDateTo(tmp, "targetDate", filters.target_date);
+    if (tmp.targetDate) {
+      where.OR = [
+        {targetDate: tmp.targetDate},
+        {targetDate: null, startDate: tmp.targetDate},
+      ];
+    }
+  } else {
+    if (filters.target_date?.length) applyDate("targetDate", filters.target_date);
+    if (filters.start_date?.length) applyDate("startDate", filters.start_date);
+  }
 
   return where;
 }

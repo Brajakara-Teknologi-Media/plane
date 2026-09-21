@@ -13,7 +13,8 @@ import { ReportRenderer } from "@/components/reports/renderers";
 import { useProject } from "@/hooks/store/use-project";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import reportsService, { type ReportFilters } from "@/services/reports.service";
-import {SelectPesquisavel} from "@/components/common/select-pesquisavel";
+import { SelectPesquisavel } from "@/components/common/select-pesquisavel";
+import { useTranslation } from "@plane/i18n";
 
 function ReportDetailPage() {
   const { workspaceSlug, reportId } = useParams() as { workspaceSlug: string; reportId: string };
@@ -22,6 +23,7 @@ function ReportDetailPage() {
   const { workspaceProjectIds, getProjectById } = useProject();
 
   const meta = useMemo(() => getReportMeta(reportId), [reportId]);
+  const { t } = useTranslation();
 
   const [dateFrom, setDateFrom] = useState("");
   const [dateTo, setDateTo] = useState("");
@@ -32,7 +34,7 @@ function ReportDetailPage() {
   const [loading, setLoading] = useState(true);
   const [generatedAt, setGeneratedAt] = useState<Date | null>(null);
 
-  const pageTitle = meta ? `${currentWorkspace?.name ?? ""} - ${meta.title}` : "Relatório";
+  const pageTitle = meta ? `${currentWorkspace?.name ?? ""} - ${t(meta.title)}` : t("reports.label");
 
   const load = async () => {
     if (!meta) return;
@@ -56,9 +58,12 @@ function ReportDetailPage() {
   if (!meta) {
     return (
       <div className="flex h-full flex-col items-center justify-center gap-3 text-secondary">
-        <p className="text-sm">Relatório não encontrado.</p>
-        <button onClick={() => router.push(`/${workspaceSlug}/reports`)} className="text-sm text-accent-primary hover:underline">
-          Voltar aos relatórios
+        <p className="text-sm">{t("reports.not_found")}</p>
+        <button
+          onClick={() => router.push(`/${workspaceSlug}/reports`)}
+          className="text-sm text-accent-primary hover:underline"
+        >
+          {t("reports.back_to_reports")}
         </button>
       </div>
     );
@@ -68,7 +73,7 @@ function ReportDetailPage() {
   const showProject = meta.filters.includes("project");
   const showEntity = meta.filters.includes("entity");
 
-  const periodLabel = dateFrom || dateTo ? `${dateFrom || "início"} → ${dateTo || "hoje"}` : "Todo o período";
+  const periodLabel = dateFrom || dateTo ? `${dateFrom || "start"} → ${dateTo || "today"}` : "All time";
   const projectName = projectId ? getProjectById(projectId)?.name : null;
 
   return (
@@ -81,13 +86,13 @@ function ReportDetailPage() {
           <button
             onClick={() => router.push(`/${workspaceSlug}/reports`)}
             className="flex h-7 w-7 items-center justify-center rounded hover:bg-surface-2"
-            title="Voltar"
+            title={t("common.back")}
           >
             <ArrowLeft className="h-4 w-4" />
           </button>
           <div>
-            <h1 className="text-lg font-semibold">{meta.title}</h1>
-            <p className="text-12 text-secondary">{meta.description}</p>
+            <h1 className="text-lg font-semibold">{t(meta.title)}</h1>
+            <p className="text-12 text-secondary">{t(meta.description)}</p>
           </div>
         </div>
         <div className="flex items-center gap-2">
@@ -96,13 +101,13 @@ function ReportDetailPage() {
             className="inline-flex items-center gap-1.5 rounded border border-subtle px-3 py-2 text-13 text-secondary hover:text-primary"
           >
             <RotateCw className={cn("h-4 w-4", loading && "animate-spin")} />
-            Atualizar
+            {t("common.refresh")}
           </button>
           {/* LGPD: relatórios agregam dados de pessoas — a impressão vai para a trilha. */}
           <PrintButton
             mode="area"
             appearance="label"
-            documentTitle={meta.title}
+            documentTitle={t(meta.title)}
             auditEntity="report"
             auditEntityId={reportId}
             auditMetadata={{ periodo: periodLabel, projeto: projectName ?? null }}
@@ -116,33 +121,33 @@ function ReportDetailPage() {
           {showPeriod && (
             <>
               <div>
-                <label className="mb-1 block text-11 text-secondary">De</label>
+                <label className="mb-1 block text-11 text-secondary">{t("reports.filter_from")}</label>
                 <input
                   type="date"
                   value={dateFrom}
                   onChange={(e) => setDateFrom(e.target.value)}
-                  className="rounded border border-subtle bg-surface-2 px-2 py-1.5 text-12 outline-none focus:border-accent-primary"
+                  className="focus:border-accent-primary rounded border border-subtle bg-surface-2 px-2 py-1.5 text-12 outline-none"
                 />
               </div>
               <div>
-                <label className="mb-1 block text-11 text-secondary">Até</label>
+                <label className="mb-1 block text-11 text-secondary">{t("reports.filter_to")}</label>
                 <input
                   type="date"
                   value={dateTo}
                   onChange={(e) => setDateTo(e.target.value)}
-                  className="rounded border border-subtle bg-surface-2 px-2 py-1.5 text-12 outline-none focus:border-accent-primary"
+                  className="focus:border-accent-primary rounded border border-subtle bg-surface-2 px-2 py-1.5 text-12 outline-none"
                 />
               </div>
             </>
           )}
           {showProject && (
             <div>
-              <label className="mb-1 block text-11 text-secondary">Sistema</label>
+              <label className="mb-1 block text-11 text-secondary">{t("reports.filter_system")}</label>
               <SelectPesquisavel
                 value={projectId}
                 onChange={setProjectId}
-                opcoes={(workspaceProjectIds ?? []).map((id) => ({value: id, label: getProjectById(id)?.name ?? id}))}
-                opcaoVazia={{value: "", label: "Todos os sistemas"}}
+                opcoes={(workspaceProjectIds ?? []).map((id) => ({ value: id, label: getProjectById(id)?.name ?? id }))}
+                opcaoVazia={{ value: "", label: t("reports.filter_all_systems") }}
                 className="min-w-[180px]"
                 buttonClassName="h-8 text-12"
               />
@@ -150,22 +155,27 @@ function ReportDetailPage() {
           )}
           {showEntity && (
             <div>
-              <label className="mb-1 block text-11 text-secondary">Entidade</label>
+              <label className="mb-1 block text-11 text-secondary">{t("reports.filter_entity")}</label>
               <EntityDropdown
                 workspaceSlug={workspaceSlug}
                 value={entityId}
                 onChange={(id) => setEntityId(id)}
-                placeholder="Todas as entidades"
+                placeholder={t("reports.filter_all_entities")}
                 className="min-w-[180px]"
               />
             </div>
           )}
           {(dateFrom || dateTo || projectId || entityId) && (
             <button
-              onClick={() => { setDateFrom(""); setDateTo(""); setProjectId(""); setEntityId(null); }}
+              onClick={() => {
+                setDateFrom("");
+                setDateTo("");
+                setProjectId("");
+                setEntityId(null);
+              }}
               className="text-12 text-accent-primary hover:underline"
             >
-              Limpar filtros
+              {t("reports.clear_filters")}
             </button>
           )}
         </div>
@@ -177,17 +187,17 @@ function ReportDetailPage() {
           {/* Cabeçalho de impressão (visível apenas no PDF/impressão) */}
           <div data-print-only>
             <PrintHeader
-              title={meta.title}
-              subtitle={meta.description}
+              title={t(meta.title)}
+              subtitle={t(meta.description)}
               meta={[
-                { label: "Período", value: periodLabel },
-                { label: "Sistema", value: projectName },
+                { label: t("reports.filter_period"), value: periodLabel },
+                { label: t("reports.filter_system"), value: projectName },
               ]}
             />
           </div>
 
-          {loading && <p className="py-10 text-center text-13 text-secondary">Carregando relatório...</p>}
-          {!loading && !data && <p className="py-10 text-center text-13 text-tertiary">Não foi possível carregar o relatório.</p>}
+          {loading && <p className="py-10 text-center text-13 text-secondary">{t("reports.loading")}</p>}
+          {!loading && !data && <p className="py-10 text-center text-13 text-tertiary">{t("reports.load_error")}</p>}
           {!loading && data && <ReportRenderer reportId={reportId} data={data} />}
 
           <div data-print-only>

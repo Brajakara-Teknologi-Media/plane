@@ -61,7 +61,7 @@ export const commandGroups: TCommandGroups = {
         projectIdentifier: issue.project__identifier,
         sequenceId: issue?.sequence_id,
       }),
-    title: "Chamados",
+    title: "Work Items",
   },
   issue_view: {
     icon: <ViewsIcon className="h-3 w-3" />,
@@ -72,7 +72,7 @@ export const commandGroups: TCommandGroups = {
     ),
     path: (view: IWorkspaceDefaultSearchResult) =>
       `/${view?.workspace__slug}/projects/${view?.project_id}/views/${view?.id}`,
-    title: "Visualizações",
+    title: "Views",
   },
   module: {
     icon: <ModuleIcon className="h-3 w-3" />,
@@ -83,7 +83,7 @@ export const commandGroups: TCommandGroups = {
     ),
     path: (module: IWorkspaceDefaultSearchResult) =>
       `/${module?.workspace__slug}/projects/${module?.project_id}/modules/${module?.id}`,
-    title: "Módulos",
+    title: "Modules",
   },
   page: {
     icon: <PageIcon className="h-3 w-3" />,
@@ -99,18 +99,18 @@ export const commandGroups: TCommandGroups = {
         ? `/${page?.workspace__slug}/projects/${redirectProjectId}/pages/${page?.id}`
         : `/${page?.workspace__slug}/wiki/${page?.id}`;
     },
-    title: "Páginas",
+    title: "Pages",
   },
   project: {
     icon: <ProjectIcon className="h-3 w-3" />,
     itemName: (project: IWorkspaceProjectSearchResult) => project?.name,
     path: (project: IWorkspaceProjectSearchResult) => `/${project?.workspace__slug}/projects/${project?.id}/issues/`,
-    title: "Projetos",
+    title: "Projects",
   },
   workspace: {
     icon: <LayoutGrid className="h-3 w-3" />,
     itemName: (workspace: IWorkspaceSearchResult) => workspace?.name,
     path: (workspace: IWorkspaceSearchResult) => `/${workspace?.slug}/`,
-    title: "Espaços de trabalho",
+    title: "Workspaces",
   },
 };

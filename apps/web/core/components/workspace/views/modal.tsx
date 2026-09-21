@@ -7,6 +7,7 @@
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
+import { useTranslation } from "@plane/i18n";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IWorkspaceView } from "@plane/types";
 import { EIssuesStoreType } from "@plane/types";
@@ -34,6 +35,8 @@ export const CreateUpdateWorkspaceViewModal = observer(function CreateUpdateWork
   // store hooks
   const { createGlobalView, updateGlobalView } = useGlobalView();
   const { resetExpression } = useWorkItemFilters();
+  // plane hooks
+  const { t } = useTranslation();
 
   const handleClose = () => {
     onClose();
@@ -52,16 +55,16 @@ export const CreateUpdateWorkspaceViewModal = observer(function CreateUpdateWork
       const res = await createGlobalView(workspaceSlug, payloadData);
       setToast({
         type: TOAST_TYPE.SUCCESS,
-        title: "Sucesso!",
-        message: "Visualização criada com sucesso.",
+        title: t("common.toast.success"),
+        message: "View created successfully.",
       });
       router.push(`/${workspaceSlug}/workspace-views/${res.id}`);
       handleClose();
     } catch (_error) {
       setToast({
         type: TOAST_TYPE.ERROR,
-        title: "Erro!",
-        message: "Não foi possível criar a visualização. Tente novamente.",
+        title: t("common.toast.error"),
+        message: "Could not create view. Please try again.",
       });
     }
   };
@@ -81,16 +84,16 @@ export const CreateUpdateWorkspaceViewModal = observer(function CreateUpdateWork
         resetExpression(EIssuesStoreType.GLOBAL, data.id, res.rich_filters);
         setToast({
           type: TOAST_TYPE.SUCCESS,
-          title: "Sucesso!",
-          message: "Visualização atualizada com sucesso.",
+          title: t("common.toast.success"),
+          message: "View updated successfully.",
         });
         handleClose();
       }
     } catch (_error) {
       setToast({
         type: TOAST_TYPE.ERROR,
-        title: "Erro!",
-        message: "Não foi possível atualizar a visualização. Tente novamente.",
+        title: t("common.toast.error"),
+        message: "Could not update view. Please try again.",
       });
     }
   };

@@ -17,22 +17,22 @@ import { useProjectState } from "@/hooks/store/use-project-state";
 
 type Props = {
   issues: TIssue[];
-  /** Oculta a coluna de projeto em telas já contextualizadas em um projeto. */
+  /** Hides the project column on screens already scoped to a project. */
   showProject?: boolean;
   emptyMessage?: string;
 };
 
 const CELL = "border border-neutral-300 px-2 py-1 align-top";
 
-/** Tabela compacta de chamados usada por todos os documentos de impressão. */
+/** Compact work item table used by all print documents. */
 export const PrintIssuesTable = observer(function PrintIssuesTable(props: Props) {
-  const { issues, showProject = true, emptyMessage = "Nenhum chamado encontrado." } = props;
+  const { issues, showProject = true, emptyMessage = "No tickets found." } = props;
   const { t } = useTranslation();
   const { getStateById } = useProjectState();
   const { getProjectById, getProjectIdentifierById } = useProject();
   const { getUserDetails } = useMember();
 
-  if (issues.length === 0) return <p className="py-4 text-xs">{emptyMessage}</p>;
+  if (issues.length === 0) return <p className="text-xs py-4">{emptyMessage}</p>;
 
   const priorityLabel = (priority: TIssue["priority"]) => {
     const entry = ISSUE_PRIORITIES.find((item) => item.key === priority);
@@ -50,12 +50,12 @@ export const PrintIssuesTable = observer(function PrintIssuesTable(props: Props)
       <thead>
         <tr className="bg-neutral-100 text-left">
           <th className={CELL}>ID</th>
-          <th className={CELL}>Título</th>
-          {showProject && <th className={CELL}>Projeto</th>}
-          <th className={CELL}>Estado</th>
-          <th className={CELL}>Prioridade</th>
-          <th className={CELL}>Responsáveis</th>
-          <th className={CELL}>Prazo</th>
+          <th className={CELL}>{t("common.title")}</th>
+          {showProject && <th className={CELL}>{t("common.project")}</th>}
+          <th className={CELL}>{t("common.state")}</th>
+          <th className={CELL}>{t("common.priority")}</th>
+          <th className={CELL}>{t("common.assignee")}</th>
+          <th className={CELL}>{t("print.table.due_date")}</th>
         </tr>
       </thead>
       <tbody>

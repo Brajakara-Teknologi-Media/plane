@@ -7,6 +7,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useTranslation } from "@plane/i18n";
 import { ChatTranscriptPrintDocument, PrintButton } from "@/components/print";
 import type { ChatMessage, ChatSession } from "@/services/chat.service";
 
@@ -14,6 +15,7 @@ import type { ChatMessage, ChatSession } from "@/services/chat.service";
 // Talks to the chat backend through the proxy (/chat-api) — the by-protocol
 // endpoint is public read-only.
 export function ChatReadOnlyView({ protocol }: { protocol: string }) {
+  const { t } = useTranslation();
   const [session, setSession] = useState<ChatSession | null>(null);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [error, setError] = useState<string | null>(null);
@@ -21,36 +23,45 @@ export function ChatReadOnlyView({ protocol }: { protocol: string }) {
   useEffect(() => {
     (async () => {
       try {
-        const res = await fetch(`/chat-api/sessions/by-protocol/${encodeURIComponent(protocol)}/`, { credentials: "include" });
+        const res = await fetch(`/chat-api/sessions/by-protocol/${encodeURIComponent(protocol)}/`, {
+          credentials: "include",
+        });
         if (!res.ok) throw new Error("not found");
         const data = await res.json();
         setSession(data.session);
         setMessages(data.results ?? []);
       } catch {
-        setError("Chat não encontrado.");
+        setError(t("chat.readonly.not_found"));
       }
     })();
   }, [protocol]);
 
   const mediaUrl = (key: string | null, mime?: string | null) =>
-    key ? (key.startsWith("ext:") ? key.slice(4) : `/chat-api/media/${key}${mime ? `?mime=${encodeURIComponent(mime)}` : ""}`) : null;
+    key
+      ? key.startsWith("ext:")
+        ? key.slice(4)
+        : `/chat-api/media/${key}${mime ? `?mime=${encodeURIComponent(mime)}` : ""}`
+      : null;
 
-  if (error) return <div className="p-6 text-sm text-danger-primary">{error}</div>;
-  if (!session) return <div className="p-6 text-sm text-secondary">Carregando…</div>;
+  if (error) return <div className="text-sm p-6 text-danger-primary">{error}</div>;
+  if (!session) return <div className="text-sm p-6 text-secondary">{t("chat.readonly.loading")}</div>;
 
   return (
     <div className="mx-auto flex h-full max-w-2xl flex-col">
-      {/* LGPD: a transcrição contém dados do cliente — a impressão vai para a trilha. */}
+      {/* LGPD: the transcript contains client data — printing is written to the audit trail. */}
       <ChatTranscriptPrintDocument session={session} messages={messages} />
       <header className="flex items-start justify-between gap-3 border-b border-subtle p-4">
         <div>
-          <h1 className="text-base font-semibold">{session.client_name || session.client_phone || "Atendimento"}</h1>
+          <h1 className="text-base font-semibold">
+            {session.client_name || session.client_phone || t("chat.readonly.service_title")}
+          </h1>
           <p className="text-12 text-secondary">
-            Protocolo #{session.protocol} · {session.channel === "whatsapp" ? "WhatsApp" : "Chat"} · {session.status}
+            {t("chat.readonly.protocol")} #{session.protocol} · {session.channel === "whatsapp" ? "WhatsApp" : "Chat"} ·{" "}
+            {session.status}
           </p>
         </div>
         <PrintButton
-          documentTitle={`Atendimento #${session.protocol}`}
+          documentTitle={t("chat.readonly.document_title", { protocol: session.protocol })}
           auditEntity="chat_session"
           auditEntityId={session.id}
           auditMetadata={{ protocolo: session.protocol }}
@@ -64,11 +75,11 @@ export function ChatReadOnlyView({ protocol }: { protocol: string }) {
           return (
             <div
               key={m.id}
-              className={`max-w-[75%] rounded-lg px-3 py-2 text-sm ${
+              className={`text-sm max-w-[75%] rounded-lg px-3 py-2 ${
                 deleted
-                  ? "self-start border border-dashed border-subtle bg-transparent italic text-tertiary"
+                  ? "self-start border border-dashed border-subtle bg-transparent text-tertiary italic"
                   : mine
-                    ? "self-end bg-primary text-on-color"
+                    ? "bg-primary self-end text-on-color"
                     : m.sender === "system"
                       ? "self-center bg-transparent text-11 text-secondary"
                       : "self-start bg-surface-2"
@@ -77,17 +88,21 @@ export function ChatReadOnlyView({ protocol }: { protocol: string }) {
               {(m.sender_name || m.sender) && m.sender !== "system" && (
                 <div className="mb-0.5 text-10 opacity-60">{m.sender_name || m.sender}</div>
               )}
-              {!deleted && url && m.type === "image" && <img src={url} className="max-w-full rounded" alt={m.media_name ?? ""} />}
+              {!deleted && url && m.type === "image" && (
+                <img src={url} className="max-w-full rounded" alt={m.media_name ?? ""} />
+              )}
               {!deleted && url && m.type === "video" && <video src={url} controls className="max-w-full rounded" />}
               {!deleted && url && m.type === "audio" && <audio src={url} controls />}
               {!deleted && url && m.type === "file" && (
                 <a href={url} target="_blank" rel="noreferrer" className="underline">
-                  {m.media_name || "Arquivo"}
+                  {m.media_name || t("chat.readonly.file")}
                 </a>
               )}
-              {m.text && <span className={`whitespace-pre-wrap wrap-break-word ${deleted ? "line-through" : ""}`}>{m.text}</span>}
-              {deleted && <span className="ml-2 text-10 not-italic">(apagada)</span>}
-              {!deleted && m.edited_at && <span className="ml-1 text-10 opacity-60">(editado)</span>}
+              {m.text && (
+                <span className={`wrap-break-word whitespace-pre-wrap ${deleted ? "line-through" : ""}`}>{m.text}</span>
+              )}
+              {deleted && <span className="ml-2 text-10 not-italic">{t("chat.readonly.deleted")}</span>}
+              {!deleted && m.edited_at && <span className="ml-1 text-10 opacity-60">{t("chat.readonly.edited")}</span>}
             </div>
           );
         })}

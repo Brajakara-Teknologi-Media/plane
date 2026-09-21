@@ -148,7 +148,7 @@ export const AccountTypeColumn = observer(function AccountTypeColumn(props: Acco
         <Controller
           name="role"
           control={control}
-          rules={{ required: "O cargo é obrigatório." }}
+          rules={{ required: "Role is required." }}
           render={() => (
             <CustomSelect
               value={rowData.original_role}
@@ -162,8 +162,8 @@ export const AccountTypeColumn = observer(function AccountTypeColumn(props: Acco
 
                     setToast({
                       type: TOAST_TYPE.ERROR,
-                      title: "Você ainda não pode alterar este cargo.",
-                      message: errorString ?? "Ocorreu um erro ao atualizar a função do membro. Tente novamente.",
+                      title: "You cannot change this role yet.",
+                      message: errorString ?? "An error occurred while updating the member role. Please try again.",
                     });
                   }
                 );

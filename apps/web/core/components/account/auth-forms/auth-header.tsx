@@ -27,30 +27,30 @@ type TAuthHeader = {
 const Titles = {
   [EAuthModes.SIGN_IN]: {
     [EAuthSteps.EMAIL]: {
-      header: "Seus chamados, do pedido à entrega.",
-      subHeader: "Bem-vindo de volta ao Avião.",
+      header: "Your work items, from request to delivery.",
+      subHeader: "Welcome back to Avião.",
     },
     [EAuthSteps.PASSWORD]: {
-      header: "Seus chamados, do pedido à entrega.",
-      subHeader: "Bem-vindo de volta ao Avião.",
+      header: "Your work items, from request to delivery.",
+      subHeader: "Welcome back to Avião.",
     },
     [EAuthSteps.UNIQUE_CODE]: {
-      header: "Seus chamados, do pedido à entrega.",
-      subHeader: "Bem-vindo de volta ao Avião.",
+      header: "Your work items, from request to delivery.",
+      subHeader: "Welcome back to Avião.",
     },
   },
   [EAuthModes.SIGN_UP]: {
     [EAuthSteps.EMAIL]: {
-      header: "Seus chamados, do pedido à entrega.",
-      subHeader: "Crie sua conta Avião.",
+      header: "Your work items, from request to delivery.",
+      subHeader: "Create your Avião account.",
     },
     [EAuthSteps.PASSWORD]: {
-      header: "Seus chamados, do pedido à entrega.",
-      subHeader: "Crie sua conta Avião.",
+      header: "Your work items, from request to delivery.",
+      subHeader: "Create your Avião account.",
     },
     [EAuthSteps.UNIQUE_CODE]: {
-      header: "Seus chamados, do pedido à entrega.",
-      subHeader: "Crie sua conta Avião.",
+      header: "Your work items, from request to delivery.",
+      subHeader: "Create your Avião account.",
     },
   },
 };
@@ -89,8 +89,8 @@ export const AuthHeader = observer(function AuthHeader(props: TAuthHeader) {
         ),
         subHeader:
           mode == EAuthModes.SIGN_UP
-            ? "Crie uma conta para começar a gerenciar o trabalho com a sua equipe."
-            : "Entre para começar a gerenciar o trabalho com a sua equipe.",
+            ? "Create an account to start managing work with your team."
+            : "Sign in to start managing work with your team.",
       };
     }
 

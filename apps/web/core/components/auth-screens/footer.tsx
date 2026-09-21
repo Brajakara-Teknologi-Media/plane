@@ -5,16 +5,16 @@
  */
 
 /**
- * Rodapé das telas de autenticação.
+ * Authentication screens footer.
  *
- * A versão original trazia a prova social da Plane (Zerodha, Sony, Dolby,
- * Accenture) e "mais de 10.000 equipes" — clientes e números que não são nossos.
- * Ficou só a assinatura do produto.
+ * The original version featured social proof from Plane (Zerodha, Sony, Dolby,
+ * Accenture) and "over 10,000 teams" — clients and numbers that are not ours.
+ * Only the product signature remains.
  */
 export function AuthFooter() {
   return (
     <div className="flex flex-col items-center gap-2">
-      <span className="text-13 text-tertiary">Avião · Gestão de chamados e atendimento</span>
+      <span className="text-13 text-tertiary">Avião · Ticket management and support</span>
     </div>
   );
 }

@@ -169,7 +169,7 @@ export const ExportForm = observer(function ExportForm(props: Props) {
                             return projectDetails?.identifier;
                           })
                           .join(", ")
-                      : "Todos os sistemas"
+                      : "All systems"
                   }
                   optionsClassName="max-w-48 sm:max-w-[532px]"
                   placement="bottom-end"

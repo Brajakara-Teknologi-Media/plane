@@ -42,7 +42,7 @@ function buildWhere(workspaceId: string, query: Record<string, unknown>) {
 }
 
 function toCsv(rows: any[]): string {
-  const header = ["data", "ator_id", "ator_email", "ip", "entidade", "entidade_id", "acao", "alteracoes", "metadados"];
+  const header = ["date", "actor_id", "actor_email", "ip", "entity", "entity_id", "action", "changes", "metadata"];
   const escape = (v: unknown) => `"${String(v ?? "").replace(/"/g, '""')}"`;
   const lines = rows.map((r) =>
     [
@@ -70,7 +70,7 @@ export const auditModule = new Elysia({ prefix: "/workspaces/:slug" })
     const member = await requireWorkspaceMember(ws.id, user.id);
     if (member.role < 20 && !user.isInstanceAdmin) {
       set.status = 403;
-      return { detail: "Apenas administradores podem ver os registros de auditoria." };
+      return { detail: "Only administrators can view audit logs." };
     }
     const where = buildWhere(ws.id, query as Record<string, unknown>);
     return paginate({
@@ -99,7 +99,7 @@ export const auditModule = new Elysia({ prefix: "/workspaces/:slug" })
     const member = await requireWorkspaceMember(ws.id, user.id);
     if (member.role < 20 && !user.isInstanceAdmin) {
       set.status = 403;
-      return { detail: "Apenas administradores podem exportar os registros de auditoria." };
+      return { detail: "Only administrators can export audit logs." };
     }
     const where = buildWhere(ws.id, query as Record<string, unknown>);
     const limit = Math.min(Number(query.limit ?? 10000), 50000);
@@ -113,11 +113,11 @@ export const auditModule = new Elysia({ prefix: "/workspaces/:slug" })
       action: AUDIT_ACTIONS.EXPORT,
       actor: user,
       headers,
-      metadata: { total: rows.length, filtros: where },
+      metadata: { total: rows.length, filters: where },
     });
 
     set.headers["Content-Type"] = "text/csv; charset=utf-8";
-    set.headers["Content-Disposition"] = `attachment; filename="auditoria-${slug}-${new Date().toISOString().slice(0, 10)}.csv"`;
+    set.headers["Content-Disposition"] = `attachment; filename="audit-trail-${slug}-${new Date().toISOString().slice(0, 10)}.csv"`;
     return toCsv(rows);
   })
 
@@ -132,15 +132,15 @@ export const auditModule = new Elysia({ prefix: "/workspaces/:slug" })
 
     if (!CLIENT_REPORTABLE_ACTIONS.has(action)) {
       set.status = 400;
-      return { detail: `Ação inválida. Aceitas: ${[...CLIENT_REPORTABLE_ACTIONS].join(", ")}.` };
+      return { detail: `Invalid action. Accepted: ${[...CLIENT_REPORTABLE_ACTIONS].join(", ")}.` };
     }
     if (!KNOWN_ENTITIES.has(entity)) {
       set.status = 400;
-      return { detail: "Entidade inválida." };
+      return { detail: "Invalid entity." };
     }
     if (!entityId) {
       set.status = 400;
-      return { detail: "entity_id é obrigatório." };
+      return { detail: "entity_id is required." };
     }
 
     await recordAudit({

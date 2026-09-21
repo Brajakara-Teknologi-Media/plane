@@ -78,8 +78,8 @@ describe("TestAuditTrail", () => {
     expect(log!.actorEmail).toBe("audit-membro@plane.test");
   });
 
-  it("comentar gera registro de interação vinculado ao chamado", async () => {
-    const res = await membro.post(`${issuesUrl()}${issueId}/comments/`, { comment_html: "<p>Retorno ao cliente</p>" });
+  it("Commenting generates an interaction record linked to the ticket", async () => {
+    const res = await membro.post(`${issuesUrl()}${issueId}/comments/`, { comment_html: "<p>Customer feedback</p>" });
     expect(res.status).toBe(201);
     const commentId = ((await res.json()) as any).id;
 
@@ -133,7 +133,7 @@ describe("TestAuditTrail", () => {
       expect((log!.metadata as any).tela).toBe("detalhe-do-chamado");
     });
 
-    it("recusa ação fora do vocabulário permitido ao cliente", async () => {
+    it("I refuse to take action outside the vocabulary permitted to the client", async () => {
       const res = await membro.post(auditUrl(), { action: "delete", entity: "issue", entity_id: issueId });
       expect(res.status).toBe(400);
     });

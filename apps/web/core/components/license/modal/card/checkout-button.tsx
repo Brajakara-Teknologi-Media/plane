@@ -6,6 +6,7 @@
 
 import { observer } from "mobx-react";
 // plane imports
+import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import type { EProductSubscriptionEnum, IPaymentProduct, TSubscriptionPrice } from "@plane/types";
 import { Loader } from "@plane/ui";
@@ -47,6 +48,8 @@ export const PlanCheckoutButton = observer(function PlanCheckoutButton(props: Pr
     isTrialAllowed,
   } = props;
 
+  const { t } = useTranslation();
+
   return (
     <>
       <div className="pb-4 text-center">
@@ -65,7 +68,7 @@ export const PlanCheckoutButton = observer(function PlanCheckoutButton(props: Pr
             />
           )}
         </div>
-        <div className="text-caption-md-medium text-tertiary">por usuário por mês</div>
+        <div className="text-caption-md-medium text-tertiary">{t("common.per_user_per_month")}</div>
       </div>
       {isLoading ? (
         <Loader className="flex flex-col items-center justify-center">

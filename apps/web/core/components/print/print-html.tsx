@@ -14,8 +14,8 @@ type Props = {
 };
 
 /**
- * Renderiza HTML do editor dentro de um documento de impressão, mantendo apenas
- * a formatação que faz sentido no papel.
+ * Renders editor HTML inside a print document, keeping only the formatting
+ * that makes sense on paper.
  */
 export const PrintHtml = function PrintHtml(props: Props) {
   const { html, fallback = "—", className } = props;

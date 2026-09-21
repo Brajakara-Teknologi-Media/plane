@@ -8,6 +8,7 @@
 import { CloseIcon, ModuleIcon, ChevronDownIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 import { cn } from "@plane/utils";
+import { useTranslation } from "@plane/i18n";
 // hooks
 import { useModule } from "@/hooks/store/use-module";
 import { usePlatformOS } from "@/hooks/use-platform-os";
@@ -41,6 +42,7 @@ export function ModuleButtonContent(props: ModuleButtonContentProps) {
     className,
   } = props;
   // store hooks
+  const { t } = useTranslation();
   const { getModuleById } = useModule();
   const { isMobile } = usePlatformOS();
 
@@ -75,7 +77,7 @@ export function ModuleButtonContent(props: ModuleButtonContentProps) {
                   {!hideIcon && <ModuleIcon className="h-2.5 w-2.5 flex-shrink-0" />}
                   {!hideText && (
                     <Tooltip
-                      tooltipHeading="Título"
+                      tooltipHeading="Title"
                       tooltipContent={moduleDetails?.name}
                       disabled={!showTooltip}
                       isMobile={isMobile}
@@ -86,7 +88,7 @@ export function ModuleButtonContent(props: ModuleButtonContentProps) {
                   )}
                   {!disabled && (
                     <Tooltip
-                      tooltipContent="Remover"
+                      tooltipContent={t("common.remove")}
                       disabled={!showTooltip}
                       isMobile={isMobile}
                       renderByDefault={false}

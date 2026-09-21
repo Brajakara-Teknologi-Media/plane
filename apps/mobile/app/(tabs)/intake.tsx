@@ -29,7 +29,7 @@ export default function IntakeScreen() {
   if (!current) {
     return (
       <Screen>
-        {projects.length === 0 ? <Loading label="Carregando…" /> : <ProjectPicker projects={projects} current={current} onSelect={setCurrent} />}
+        {projects.length === 0 ? <Loading label="Loading…" /> : <ProjectPicker projects={projects} current={current} onSelect={setCurrent} />}
       </Screen>
     );
   }
@@ -48,7 +48,7 @@ export default function IntakeScreen() {
           contentContainerStyle={{ paddingHorizontal: spacing.lg, paddingBottom: 80 }}
           ItemSeparatorComponent={() => <View style={{ height: spacing.sm }} />}
           refreshControl={<RefreshControl refreshing={items.loading} onRefresh={items.refetch} tintColor={colors.primary} />}
-          ListEmptyComponent={<EmptyState title="Nenhuma solicitação" description="Nenhuma solicitação aguardando triagem." />}
+          ListEmptyComponent={<EmptyState title="No requests" description="No requests awaiting triage." />}
           renderItem={({ item }) => (
             <WorkItemRow
               item={{
@@ -58,7 +58,7 @@ export default function IntakeScreen() {
                 legacy_ticket_number: item.legacy_ticket_number,
                 sequence_id: item.sequence_id,
                 projectIdentifier: current.identifier,
-                state: { name: "Triagem", group: "triage" },
+                state: { name: "Triage", group: "triage" },
               }}
               onPress={() => router.push(`/intake/${item.id}?projectId=${current.id}`)}
             />

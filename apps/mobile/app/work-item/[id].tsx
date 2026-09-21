@@ -68,7 +68,7 @@ export default function WorkItemDetailScreen() {
         await endpoints.issues.update(slug, projectId, id, body);
         item.refetch();
       } catch (e) {
-        Alert.alert("Erro", "Não foi possível salvar a alteração.");
+        Alert.alert("Error", "Could not save the change.");
       } finally {
         setSaving(false);
       }
@@ -84,9 +84,9 @@ export default function WorkItemDetailScreen() {
       form.append("asset", { uri, name, type: mime });
       try {
         await endpoints.issues.uploadAttachment(slug, projectId, id, form);
-        Alert.alert("Pronto", "Arquivo anexado.");
+        Alert.alert("Done", "Arquivo anexado.");
       } catch {
-        Alert.alert("Erro", "Falha ao enviar o arquivo.");
+        Alert.alert("Error", "Falha ao enviar o arquivo.");
       }
     },
     [slug, projectId, id],
@@ -142,7 +142,7 @@ export default function WorkItemDetailScreen() {
         />
         <Divider />
         <ActionRow
-          label="Responsável"
+          label="Responsible"
           value={<Text>{assignees.length ? assignees.map((a) => displayName(a)).join(", ") : "—"}</Text>}
           onPress={() => setSheet("assignee")}
           disabled={!isAdmin}
@@ -199,7 +199,7 @@ export default function WorkItemDetailScreen() {
       />
       <OptionSheet
         visible={sheet === "assignee"}
-        title="Alterar responsável"
+        title="Change responsible"
         selected={wi.assignee_ids?.[0]}
         onSelect={(v) => patch({ assignee_ids: [String(v)] })}
         onClose={() => setSheet(null)}

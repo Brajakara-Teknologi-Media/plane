@@ -1,5 +1,6 @@
 import Elysia from "elysia";
 import { authPlugin } from "@middleware/auth";
+import type { Prisma } from "@prisma/client";
 import prisma from "@db";
 import { paginate } from "@utils/pagination";
 
@@ -64,7 +65,7 @@ async function formatWorkspace(ws: any, memberRole: number) {
     slug: ws.slug,
     url: `/${ws.slug}`,
     logo: ws.logo ?? null,
-    logo_url: ws.logoUrl ?? null,
+    logo_url: ws.logoUrl ?? (ws.logo ? `/api/assets/v2/workspaces/${ws.slug}/${ws.logo}/` : null),
     organization_size: ws.orgSize ?? "",
     timezone: ws.timezone ?? "UTC",
     created_at: ws.createdAt instanceof Date ? ws.createdAt.toISOString() : ws.createdAt,
@@ -178,12 +179,12 @@ export const userModule = new Elysia({ prefix: "/users" })
 
   .post("/me/email/generate-code/", async ({ set }) => {
     set.status = 400;
-    return { error: "O e-mail não está configurado." };
+    return { error: "Email is not configured." };
   })
 
   .patch("/me/email/", async ({ set }) => {
     set.status = 400;
-    return { error: "A atualização de e-mail por código não está configurada." };
+    return { error: "Email update by code is not configured." };
   })
 
   // ── Profile (TUserProfile contract) ──────────────────────────────────────────
@@ -293,9 +294,9 @@ export const userModule = new Elysia({ prefix: "/users" })
 
   .get("/me/accounts/", async () => [])
 
-  .get("/me/accounts/:pk/", async ({ set }) => { set.status = 404; return { detail: "Não encontrado." }; })
+  .get("/me/accounts/:pk/", async ({ set }) => { set.status = 404; return { detail: "Not found." }; })
 
-  .delete("/me/accounts/:pk/", async ({ set }) => { set.status = 404; return { detail: "Não encontrado." }; })
+  .delete("/me/accounts/:pk/", async ({ set }) => { set.status = 404; return { detail: "Not found." }; })
 
   // ── Instance admin check ──────────────────────────────────────────────────────
 
@@ -313,11 +314,11 @@ export const userModule = new Elysia({ prefix: "/users" })
     if (b.first_name !== undefined) data.firstName = b.first_name;
     if (b.last_name !== undefined) data.lastName = b.last_name;
     await prisma.user.update({ where: { id: user.id }, data });
-    return { detail: "Onboarding concluído com sucesso." };
+    return { detail: "Onboarding completed successfully." };
   })
 
-  // O frontend usa PATCH nestes dois (user.service.ts); só o POST tinha sido
-  // migrado, então concluir o onboarding e fechar o tour davam 404.
+  // The frontend uses PATCH for these two (user.service.ts); only the POST had
+  // been migrated, so completing onboarding and closing the tour returned 404.
   .patch("/me/onboard/", async ({ user, body }) => {
     const b = body as any;
     const data: any = {};
@@ -326,12 +327,12 @@ export const userModule = new Elysia({ prefix: "/users" })
     if (b.last_name !== undefined) data.lastName = b.last_name;
     if (b.is_onboarded !== undefined) data.isOnboarded = b.is_onboarded;
     await prisma.user.update({ where: { id: user.id }, data });
-    return { detail: "Onboarding concluído com sucesso." };
+    return { detail: "Onboarding completed successfully." };
   })
 
-  .post("/me/tour-completed/", async ({ user }) => ({ detail: "Tour marcado como concluído." }))
+  .post("/me/tour-completed/", async ({ user }) => ({ detail: "Tour marked as completed." }))
 
-  .patch("/me/tour-completed/", async ({ user }) => ({ detail: "Tour marcado como concluído." }))
+  .patch("/me/tour-completed/", async ({ user }) => ({ detail: "Tour marked as completed." }))
 
   // ── Update onboarding step ────────────────────────────────────────────────────
 
@@ -374,7 +375,7 @@ export const userModule = new Elysia({ prefix: "/users" })
 
   .get("/me/workspaces/invitations/", async ({ user }) => {
     const invites = await prisma.workspaceMemberInvite.findMany({
-      where: { email: user.email, accepted: false },
+      where: { email: { equals: user.email, mode: "insensitive" }, accepted: false },
       include: { workspace: { select: { id: true, name: true, slug: true, logo: true } } },
       orderBy: { createdAt: "desc" },
     });
@@ -393,15 +394,13 @@ export const userModule = new Elysia({ prefix: "/users" })
   })
 
   .post("/me/workspaces/invitations/", async ({ user, body, set }) => {
-    const b = body as any;
-    const invite = await prisma.workspaceMemberInvite.findFirst({
-      where: { token: b.token },
-      include: { workspace: true },
-    });
-    if (!invite) { set.status = 400; return { detail: "Token de convite inválido." }; }
-    if (invite.email !== user.email) { set.status = 400; return { detail: "O convite não é para este e-mail." }; }
+    // The invitations page sends { invitations: [inviteId, ...] }. The old
+    // implementation read body.token, which the frontend never sends — the
+    // undefined filter made findFirst return an arbitrary row (often someone
+    // else's invite), so accept failed with "not for this email".
+    const b = body as { invitations?: string[]; token?: string };
 
-    await prisma.$transaction(async tx => {
+    const joinOne = async (tx: Prisma.TransactionClient, invite: { id: string; workspaceId: string; role: number }) => {
       await tx.workspaceMemberInvite.update({ where: { id: invite.id }, data: { accepted: true } });
       const existing = await tx.workspaceMember.findFirst({
         where: { workspaceId: invite.workspaceId, memberId: user.id, deletedAt: null },
@@ -411,8 +410,34 @@ export const userModule = new Elysia({ prefix: "/users" })
           data: { workspaceId: invite.workspaceId, memberId: user.id, role: invite.role, isActive: true },
         });
       }
+    };
+
+    // Batch path: ids from the invitations list.
+    if (Array.isArray(b.invitations) && b.invitations.length > 0) {
+      const invites = await prisma.workspaceMemberInvite.findMany({
+        where: { id: { in: b.invitations } },
+      });
+      const mine = invites.filter(
+        (i) => !i.accepted && i.email.toLowerCase().trim() === user.email.toLowerCase().trim(),
+      );
+      if (mine.length === 0) {
+        set.status = 400;
+        return { detail: "The invite is not for this email." };
+      }
+      await prisma.$transaction((tx) => Promise.all(mine.map((invite) => joinOne(tx, invite))));
+      return { detail: "Invite accepted.", joined: mine.length };
+    }
+
+    // Legacy single-token path.
+    const invite = await prisma.workspaceMemberInvite.findFirst({
+      where: { token: b.token },
+      include: { workspace: true },
     });
-    return { detail: "Convite aceito." };
+    if (!invite) { set.status = 400; return { detail: "Invalid invite token." }; }
+    if (invite.email.toLowerCase().trim() !== user.email.toLowerCase().trim()) { set.status = 400; return { detail: "The invite is not for this email." }; }
+
+    await prisma.$transaction((tx) => joinOne(tx, invite));
+    return { detail: "Invite accepted." };
   })
 
   // ── Dashboard ─────────────────────────────────────────────────────────────────

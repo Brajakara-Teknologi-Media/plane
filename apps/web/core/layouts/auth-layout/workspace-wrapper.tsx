@@ -4,23 +4,24 @@
  * See the LICENSE file for details.
  */
 
-import {observer} from "mobx-react";
+import { observer } from "mobx-react";
 import Link from "next/link";
-import {useParams} from "next/navigation";
-import type {ReactNode} from "react";
+import { useParams } from "next/navigation";
+import type { ReactNode } from "react";
 import useSWR from "swr";
 // ui
-import {EUserPermissions, EUserPermissionsLevel, PROJECT_VIEW_ROLES} from "@plane/constants";
-import {Button, getButtonStyling} from "@plane/propel/button";
-import {PlaneLogo} from "@plane/propel/icons";
-import {TOAST_TYPE, setToast} from "@plane/propel/toast";
-import {Tooltip} from "@plane/propel/tooltip";
-import {cn} from "@plane/utils";
-import {LogOut} from "lucide-react";
+import { EUserPermissions, EUserPermissionsLevel, PROJECT_VIEW_ROLES } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
+import { Button, getButtonStyling } from "@plane/propel/button";
+import { PlaneLogo } from "@plane/propel/icons";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { Tooltip } from "@plane/propel/tooltip";
+import { cn } from "@plane/utils";
+import { LogOut } from "lucide-react";
 // assets
 import WorkSpaceNotAvailable from "@/app/assets/workspace/workspace-not-available.png?url";
 // components
-import {LogoSpinner} from "@/components/common/logo-spinner";
+import { LogoSpinner } from "@/components/common/logo-spinner";
 // constants
 import {
   WORKSPACE_FAVORITE,
@@ -33,15 +34,15 @@ import {
   WORKSPACE_STATES,
 } from "@/constants/fetch-keys";
 // hooks
-import {useFavorite} from "@/hooks/store/use-favorite";
-import {useMember} from "@/hooks/store/use-member";
-import {useProject} from "@/hooks/store/use-project";
-import {useProjectState} from "@/hooks/store/use-project-state";
-import {useWorkspace} from "@/hooks/store/use-workspace";
-import {useUser, useUserPermissions} from "@/hooks/store/user";
-import {usePlatformOS} from "@/hooks/use-platform-os";
-import {useRealtimeChannel} from "@/hooks/use-realtime";
-import {useAvisoDeChamado} from "@/hooks/use-aviso-de-chamado";
+import { useFavorite } from "@/hooks/store/use-favorite";
+import { useMember } from "@/hooks/store/use-member";
+import { useProject } from "@/hooks/store/use-project";
+import { useProjectState } from "@/hooks/store/use-project-state";
+import { useWorkspace } from "@/hooks/store/use-workspace";
+import { useUser, useUserPermissions } from "@/hooks/store/user";
+import { usePlatformOS } from "@/hooks/use-platform-os";
+import { useRealtimeChannel } from "@/hooks/use-realtime";
+import { useAvisoDeChamado } from "@/hooks/use-aviso-de-chamado";
 
 interface IWorkspaceAuthWrapper {
   children: ReactNode;
@@ -49,90 +50,94 @@ interface IWorkspaceAuthWrapper {
 }
 
 export const WorkspaceAuthWrapper = observer(function WorkspaceAuthWrapper(props: IWorkspaceAuthWrapper) {
-  const {children, isLoading: isParentLoading = false} = props;
+  const { children, isLoading: isParentLoading = false } = props;
+  const { t } = useTranslation();
   // router params
-  const {workspaceSlug} = useParams();
+  const { workspaceSlug } = useParams();
   // open the realtime (SSE) channel for this workspace so views can live-update
   useRealtimeChannel(workspaceSlug?.toString());
   useAvisoDeChamado(workspaceSlug?.toString());
   // store hooks
-  const {signOut, data: currentUser} = useUser();
-  const {fetchPartialProjects} = useProject();
-  const {fetchFavorite} = useFavorite();
+  const { signOut, data: currentUser } = useUser();
+  const { fetchPartialProjects } = useProject();
+  const { fetchFavorite } = useFavorite();
   const {
-    workspace: {fetchWorkspaceMembers},
+    workspace: { fetchWorkspaceMembers },
   } = useMember();
-  const {workspaces, fetchSidebarNavigationPreferences, fetchProjectNavigationPreferences} = useWorkspace();
-  const {isMobile} = usePlatformOS();
-  const {loader, workspaceInfoBySlug, fetchUserWorkspaceInfo, fetchUserProjectPermissions, allowPermissions} = useUserPermissions();
-  const {fetchWorkspaceStates} = useProjectState();
+  const { workspaces, fetchSidebarNavigationPreferences, fetchProjectNavigationPreferences } = useWorkspace();
+  const { isMobile } = usePlatformOS();
+  const { loader, workspaceInfoBySlug, fetchUserWorkspaceInfo, fetchUserProjectPermissions, allowPermissions } =
+    useUserPermissions();
+  const { fetchWorkspaceStates } = useProjectState();
   // derived values
-  const canPerformWorkspaceMemberActions = allowPermissions(
-    PROJECT_VIEW_ROLES,
-    EUserPermissionsLevel.WORKSPACE,
-  );
+  const canPerformWorkspaceMemberActions = allowPermissions(PROJECT_VIEW_ROLES, EUserPermissionsLevel.WORKSPACE);
   const allWorkspaces = workspaces ? Object.values(workspaces) : undefined;
-  const currentWorkspace = (allWorkspaces && allWorkspaces.find((workspace) => workspace?.slug === workspaceSlug)) || undefined;
+  const currentWorkspace =
+    (allWorkspaces && allWorkspaces.find((workspace) => workspace?.slug === workspaceSlug)) || undefined;
   const currentWorkspaceInfo = workspaceSlug && workspaceInfoBySlug(workspaceSlug.toString());
 
   // fetching user workspace information
   useSWR(
     workspaceSlug && currentWorkspace ? WORKSPACE_MEMBER_ME_INFORMATION(workspaceSlug.toString()) : null,
     workspaceSlug && currentWorkspace ? () => fetchUserWorkspaceInfo(workspaceSlug.toString()) : null,
-    {revalidateIfStale: false, revalidateOnFocus: false},
+    { revalidateIfStale: false, revalidateOnFocus: false }
   );
   useSWR(
     workspaceSlug && currentWorkspace ? WORKSPACE_PROJECTS_ROLES_INFORMATION(workspaceSlug.toString()) : null,
     workspaceSlug && currentWorkspace ? () => fetchUserProjectPermissions(workspaceSlug.toString()) : null,
-    {revalidateIfStale: false, revalidateOnFocus: false},
+    { revalidateIfStale: false, revalidateOnFocus: false }
   );
 
   // fetching workspace projects
   useSWR(
     workspaceSlug && currentWorkspace ? WORKSPACE_PARTIAL_PROJECTS(workspaceSlug.toString()) : null,
     workspaceSlug && currentWorkspace ? () => fetchPartialProjects(workspaceSlug.toString()) : null,
-    {revalidateIfStale: false, revalidateOnFocus: false},
+    { revalidateIfStale: false, revalidateOnFocus: false }
   );
   // fetch workspace members
   useSWR(
     workspaceSlug && currentWorkspace ? WORKSPACE_MEMBERS(workspaceSlug.toString()) : null,
     workspaceSlug && currentWorkspace ? () => fetchWorkspaceMembers(workspaceSlug.toString()) : null,
-    {revalidateIfStale: false, revalidateOnFocus: false},
+    { revalidateIfStale: false, revalidateOnFocus: false }
   );
   // fetch workspace favorite
   useSWR(
-    workspaceSlug && currentWorkspace && canPerformWorkspaceMemberActions ? WORKSPACE_FAVORITE(workspaceSlug.toString()) : null,
-    workspaceSlug && currentWorkspace && canPerformWorkspaceMemberActions ? () => fetchFavorite(workspaceSlug.toString()) : null,
-    {revalidateIfStale: false, revalidateOnFocus: false},
+    workspaceSlug && currentWorkspace && canPerformWorkspaceMemberActions
+      ? WORKSPACE_FAVORITE(workspaceSlug.toString())
+      : null,
+    workspaceSlug && currentWorkspace && canPerformWorkspaceMemberActions
+      ? () => fetchFavorite(workspaceSlug.toString())
+      : null,
+    { revalidateIfStale: false, revalidateOnFocus: false }
   );
   // fetch workspace states
   useSWR(
     workspaceSlug ? WORKSPACE_STATES(workspaceSlug.toString()) : null,
     workspaceSlug ? () => fetchWorkspaceStates(workspaceSlug.toString()) : null,
-    {revalidateIfStale: false, revalidateOnFocus: false},
+    { revalidateIfStale: false, revalidateOnFocus: false }
   );
 
   // fetch workspace sidebar preferences
   useSWR(
     workspaceSlug ? WORKSPACE_SIDEBAR_PREFERENCES(workspaceSlug.toString()) : null,
     workspaceSlug ? () => fetchSidebarNavigationPreferences(workspaceSlug.toString()) : null,
-    {revalidateIfStale: false, revalidateOnFocus: false},
+    { revalidateIfStale: false, revalidateOnFocus: false }
   );
 
   // fetch workspace project navigation preferences
   useSWR(
     workspaceSlug ? WORKSPACE_PROJECT_NAVIGATION_PREFERENCES(workspaceSlug.toString()) : null,
     workspaceSlug ? () => fetchProjectNavigationPreferences(workspaceSlug.toString()) : null,
-    {revalidateIfStale: false, revalidateOnFocus: false},
+    { revalidateIfStale: false, revalidateOnFocus: false }
   );
 
   const handleSignOut = async () => {
     await signOut().catch(() =>
       setToast({
         type: TOAST_TYPE.ERROR,
-        title: "Erro!",
-        message: "Falha ao sair. Tente novamente.",
-      }),
+        title: "Error!",
+        message: "Failed to sign out. Please try again.",
+      })
     );
   };
 
@@ -162,12 +167,7 @@ export const WorkspaceAuthWrapper = observer(function WorkspaceAuthWrapper(props
                 className="relative flex h-6 w-6 flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-sm hover:bg-layer-1"
                 onClick={handleSignOut}
               >
-                <Tooltip
-                  tooltipContent={"Sair"}
-                  position="top"
-                  className="ml-2"
-                  isMobile={isMobile}
-                >
+                <Tooltip tooltipContent={t("common.sign_out")} position="top" className="ml-2" isMobile={isMobile}>
                   <LogOut size={14} />
                 </Tooltip>
               </div>
@@ -175,39 +175,26 @@ export const WorkspaceAuthWrapper = observer(function WorkspaceAuthWrapper(props
           </div>
           <div className="relative flex h-full w-full flex-grow flex-col items-center justify-center space-y-3">
             <div className="relative flex-shrink-0">
-              <img
-                src={WorkSpaceNotAvailable}
-                className="h-[220px] object-contain object-center"
-                alt="Avião logo"
-              />
+              <img src={WorkSpaceNotAvailable} className="h-[220px] object-contain object-center" alt="Avião logo" />
             </div>
-            <h3 className="text-center text-16 font-semibold">Espaço de trabalho não encontrado</h3>
+            <h3 className="text-center text-16 font-semibold">Workspace not found</h3>
             <p className="text-center text-13 text-secondary">
-              Nenhum espaço de trabalho encontrado com a URL. Ele pode não existir ou você não tem autorização para visualizá-lo.
+              No workspace found with the URL. It may not exist or you may not have permission to view it.
             </p>
             <div className="flex items-center justify-center gap-2 pt-4">
               {allWorkspaces && allWorkspaces.length > 0 && (
-                <Link
-                  href="/"
-                  className={cn(getButtonStyling("primary", "base"))}
-                >
+                <Link href="/" className={cn(getButtonStyling("primary", "base"))}>
                   Go Home
                 </Link>
               )}
               {allWorkspaces?.length > 0 && (
-                <Link
-                  href="/settings/profile/general/"
-                  className={cn(getButtonStyling("secondary", "base"))}
-                >
+                <Link href="/settings/profile/general/" className={cn(getButtonStyling("secondary", "base"))}>
                   Visit Profile
                 </Link>
               )}
               {allWorkspaces && allWorkspaces.length === 0 && (
-                <Link
-                  href="/create-workspace/"
-                  className={cn(getButtonStyling("secondary", "base"))}
-                >
-                  Criar novo espaço de trabalho
+                <Link href="/create-workspace/" className={cn(getButtonStyling("secondary", "base"))}>
+                  Create new workspace
                 </Link>
               )}
             </div>
@@ -226,21 +213,21 @@ export const WorkspaceAuthWrapper = observer(function WorkspaceAuthWrapper(props
         <div className="grid h-full place-items-center p-4">
           <div className="space-y-8 text-center">
             <div className="space-y-2">
-              <h3 className="text-16 font-semibold">Não autorizado!</h3>
+              <h3 className="text-16 font-semibold">Unauthorized!</h3>
               <p className="mx-auto w-1/2 text-13 text-secondary">
-                You{"'"}re not a member of this workspace. Please contact the workspace admin to get an invitation or check your pending
-                invitations.
+                You{"'"}re not a member of this workspace. Please contact the workspace admin to get an invitation or
+                check your pending invitations.
               </p>
             </div>
             <div className="flex items-center justify-center gap-2">
               <Link href="/invitations">
                 <span>
-                  <Button variant="secondary">Verificar convites pendentes</Button>
+                  <Button variant="secondary">{t("common.check_pending_invites")}</Button>
                 </span>
               </Link>
               <Link href="/create-workspace">
                 <span>
-                  <Button variant="primary">Criar novo espaço de trabalho</Button>
+                  <Button variant="primary">Create new workspace</Button>
                 </span>
               </Link>
             </div>

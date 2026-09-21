@@ -151,7 +151,7 @@ describe("applyIssueFilters", () => {
   });
 
   it("no escopo de projeto usa exatamente os ids de label informados", async () => {
-    const label = await createLabel(projectId, workspaceId, {name: "Correção"});
+    const label = await createLabel(projectId, workspaceId, {name: "Fix"});
     const where = await applyIssueFilters({}, normalizeFilters({labels: label.id}), scopeProject());
     expect(where.labels.some.labelId.in).toEqual([label.id]);
   });

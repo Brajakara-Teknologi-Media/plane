@@ -57,7 +57,7 @@ export const ProfileSettingsSidebarWorkspaceOptions = observer(function ProfileS
         {/* Extensões (admin de instância ou grupo TI) */}
         {canManageExtensions && (
           <div className="mt-1.5">
-            <div className="p-2 text-caption-md-medium text-tertiary capitalize">Extensões</div>
+            <div className="p-2 text-caption-md-medium text-tertiary capitalize">{t("common.extensions")}</div>
             <SettingsSidebarItem as="link" href="/settings/plugins/" icon={Puzzle} label="Plugins" isActive={false} />
             <SettingsSidebarItem as="link" href="/settings/widgets/" icon={Blocks} label="Widgets" isActive={false} />
           </div>

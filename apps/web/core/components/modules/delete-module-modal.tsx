@@ -52,8 +52,8 @@ export const DeleteModuleModal = observer(function DeleteModuleModal(props: Prop
         handleClose();
         setToast({
           type: TOAST_TYPE.SUCCESS,
-          title: "Sucesso!",
-          message: "Módulo excluído com sucesso.",
+          title: t("common.success"),
+          message: "Module deleted successfully.",
         });
       })
       .catch((errors) => {
@@ -76,14 +76,8 @@ export const DeleteModuleModal = observer(function DeleteModuleModal(props: Prop
       handleSubmit={handleDeletion}
       isSubmitting={isDeleteLoading}
       isOpen={isOpen}
-      title="Excluir módulo"
-      content={
-        <>
-          Tem certeza de que deseja excluir o módulo-{" "}
-          <span className="font-medium break-all text-primary">{data?.name}</span>? All of the data related to the
-          module will be permanently removed. This action cannot be undone.
-        </>
-      }
+      title={t("project_module.delete_module")}
+      content={<>{t("work-item.delete_module_confirm", { module: data?.name })}</>}
     />
   );
 });

@@ -5,6 +5,7 @@
  */
 
 import { observer } from "mobx-react";
+import { useTranslation } from "@plane/i18n";
 import { Paperclip } from "lucide-react";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
@@ -15,6 +16,7 @@ type TIssueAttachmentActivity = { activityId: string; showIssue?: boolean; ends:
 
 export const IssueAttachmentActivity = observer(function IssueAttachmentActivity(props: TIssueAttachmentActivity) {
   const { activityId, showIssue = true, ends } = props;
+  const { t } = useTranslation();
   // hooks
   const {
     activity: { getActivityById },
@@ -30,8 +32,10 @@ export const IssueAttachmentActivity = observer(function IssueAttachmentActivity
       ends={ends}
     >
       <>
-        {activity.verb === "created" ? `enviou um novo anexo` : `removeu um anexo`}
-        {showIssue && (activity.verb === "created" ? ` em ` : ` de `)}
+        {activity.verb === "created"
+          ? t("work-item.activity.sent_new_attachment")
+          : t("work-item.activity.removed_attachment")}
+        {showIssue && (activity.verb === "created" ? ` ${t("activity.for")} ` : ` ${t("activity.from")} `)}
         {showIssue && <IssueLink activityId={activityId} />}.
       </>
     </IssueActivityBlockComponent>

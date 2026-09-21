@@ -188,10 +188,10 @@ describe("texto legado", () => {
     expect(sanitizeLegacyText('<a href="data:application/pdf;base64,JVBERi0=">Baixar</a>')).toBe("Baixar");
   });
 
-  test("preserva o destino do link de arquivo da intranet", () => {
-    const html = 'O cliente enviou um arquivo: <a href="../intranet/arquivos_chat/2026/02/ERRO.png">Clique aqui.</a>';
+  test("preserves the intranet file link destination", () => {
+    const html = 'The client sent a file: <a href="../intranet/arquivos_chat/2026/02/ERRO.png">Click here.</a>';
     expect(sanitizeLegacyText(html)).toBe(
-      "O cliente enviou um arquivo: Clique aqui. (../intranet/arquivos_chat/2026/02/ERRO.png)"
+      "The client sent a file: Click here. (../intranet/arquivos_chat/2026/02/ERRO.png)"
     );
   });
 

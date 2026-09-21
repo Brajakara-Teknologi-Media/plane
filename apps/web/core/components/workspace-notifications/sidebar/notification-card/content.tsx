@@ -6,6 +6,7 @@
 
 import type { ReactNode } from "react";
 // plane imports
+import { useTranslation } from "@plane/i18n";
 import type { TNotification } from "@plane/types";
 import {
   convertMinutesToHoursMinutesString,
@@ -45,62 +46,59 @@ export type TNotificationContentMap = {
 // Base notification content map for core fields
 export const BASE_NOTIFICATION_CONTENT_MAP: TNotificationContentMap = {
   duplicate: ({ verb }) => ({
-    action:
-      verb === "created"
-        ? "marcou que este chamado é duplicado de"
-        : "marcou que este chamado não é duplicado",
+    action: verb === "created" ? "marked this work item as duplicate of" : "marked this work item as not duplicate",
     value: null,
     showConnector: false,
   }),
   assignees: ({ newValue, oldValue }) => ({
-    action: newValue !== "" ? "adicionou o responsável" : "removeu o responsável",
+    action: newValue !== "" ? "added the assignee" : "removed the assignee",
     value: newValue !== "" ? newValue : oldValue,
     showConnector: false,
   }),
   start_date: ({ newValue }) => ({
-    action: newValue !== "" ? "definiu a data de início" : "removeu a data de início",
+    action: newValue !== "" ? "set the start date" : "removed the start date",
     value: renderFormattedDate(newValue),
     showConnector: false,
   }),
   target_date: ({ newValue }) => ({
-    action: newValue !== "" ? "definiu a data de entrega" : "removeu a data de entrega",
+    action: newValue !== "" ? "misc.set_target_date" : "misc.removed_target_date",
     value: renderFormattedDate(newValue),
     showConnector: false,
   }),
   labels: ({ newValue, oldValue }) => ({
-    action: newValue !== "" ? "adicionou a etiqueta" : "removeu a etiqueta",
+    action: newValue !== "" ? "misc.added_label" : "misc.removed_label",
     value: newValue !== "" ? newValue : oldValue,
     showConnector: false,
   }),
   parent: ({ newValue, oldValue }) => ({
-    action: newValue !== "" ? "adicionou o item pai" : "removeu o item pai",
+    action: newValue !== "" ? "misc.added_parent" : "misc.removed_parent",
     value: newValue !== "" ? newValue : oldValue,
     showConnector: false,
   }),
   relates_to: () => ({
-    action: "marcou que este chamado está relacionado a",
+    action: "marked this work item as related to",
     value: null,
     showConnector: true,
   }),
   comment: ({ newValue }, renderCommentBox?: boolean) => ({
-    action: "comentou",
+    action: "misc.commented",
     value: renderCommentBox ? null : sanitizeCommentForNotification(newValue),
     showConnector: false,
   }),
   archived_at: ({ newValue }) => ({
-    action: newValue === "restore" ? "restaurou o chamado" : "arquivou o chamado",
+    action: newValue === "restore" ? "misc.restored" : "misc.archived",
     value: null,
     showConnector: false,
   }),
   None: () => ({
     action: null,
-    value: "o chamado e atribuiu a você.",
+    value: "the work item and assigned it to you.",
     showConnector: false,
   }),
   // Fields below only define value - action falls through to default handler
   attachment: () => ({
     action: null,
-    value: "o chamado",
+    value: "misc.the_work_item",
     showConnector: true,
   }),
   description: ({ newValue }) => ({
@@ -119,7 +117,8 @@ export const BASE_NOTIFICATION_CONTENT_MAP: TNotificationContentMap = {
 // Helper to get content details from maps
 const getNotificationContentDetails = (
   fieldData: TNotificationFieldData,
-  renderCommentBox?: boolean
+  renderCommentBox?: boolean,
+  t?: (key: string) => string
 ): TNotificationContentDetails | null => {
   const { field } = fieldData;
   if (!field) return null;
@@ -127,14 +126,23 @@ const getNotificationContentDetails = (
   // Check base map first
   const baseHandler = BASE_NOTIFICATION_CONTENT_MAP[field];
   if (baseHandler) {
+    const resolve = (details: TNotificationContentDetails): TNotificationContentDetails => ({
+      ...details,
+      action: details.action && t && typeof details.action === "string" ? t(details.action) : details.action,
+      value:
+        details.value && t && typeof details.value === "string" && details.value.startsWith("misc.")
+          ? t(details.value)
+          : details.value,
+    });
     // Special case for comment field that needs renderCommentBox
     if (field === "comment") {
-      return (baseHandler as (data: TNotificationFieldData, renderCommentBox?: boolean) => TNotificationContentDetails)(
-        fieldData,
-        renderCommentBox
-      );
+      const details = (
+        baseHandler as (data: TNotificationFieldData, renderCommentBox?: boolean) => TNotificationContentDetails
+      )(fieldData, renderCommentBox);
+      return details ? resolve(details) : null;
     }
-    return baseHandler(fieldData);
+    const result = baseHandler(fieldData);
+    return result ? resolve(result) : null;
   }
 
   // Check additional map from plane-web (EE extensions)
@@ -160,6 +168,7 @@ export function NotificationContent({
   renderCommentBox?: boolean;
 }) {
   const { data, triggered_by_details: triggeredBy } = notification;
+  const { t } = useTranslation();
   const notificationField = data?.issue_activity.field;
   const newValue = data?.issue_activity.new_value;
   const oldValue = data?.issue_activity.old_value;
@@ -179,7 +188,7 @@ export function NotificationContent({
   );
 
   // Get content details from map
-  const contentDetails = getNotificationContentDetails(fieldData, renderCommentBox);
+  const contentDetails = getNotificationContentDetails(fieldData, renderCommentBox, t);
 
   // Render action - use map value if defined, otherwise fall through to default handler
   // Note: undefined = fall through to default, null = explicitly no action text

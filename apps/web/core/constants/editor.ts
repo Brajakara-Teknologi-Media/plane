@@ -54,19 +54,19 @@ export type ToolbarMenuItem<T extends TEditorCommands = TEditorCommands> = {
 
 export const TYPOGRAPHY_ITEMS: ToolbarMenuItem<"text" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6">[] = [
   { itemKey: "text", renderKey: "text", name: "Texto", icon: CaseSensitive, editors: ["document"] },
-  { itemKey: "h1", renderKey: "h1", name: "Título 1", icon: Heading1, editors: ["document"] },
-  { itemKey: "h2", renderKey: "h2", name: "Título 2", icon: Heading2, editors: ["document"] },
-  { itemKey: "h3", renderKey: "h3", name: "Título 3", icon: Heading3, editors: ["document"] },
-  { itemKey: "h4", renderKey: "h4", name: "Título 4", icon: Heading4, editors: ["document"] },
-  { itemKey: "h5", renderKey: "h5", name: "Título 5", icon: Heading5, editors: ["document"] },
-  { itemKey: "h6", renderKey: "h6", name: "Título 6", icon: Heading6, editors: ["document"] },
+  { itemKey: "h1", renderKey: "h1", name: "Heading 1", icon: Heading1, editors: ["document"] },
+  { itemKey: "h2", renderKey: "h2", name: "Heading 2", icon: Heading2, editors: ["document"] },
+  { itemKey: "h3", renderKey: "h3", name: "Heading 3", icon: Heading3, editors: ["document"] },
+  { itemKey: "h4", renderKey: "h4", name: "Heading 4", icon: Heading4, editors: ["document"] },
+  { itemKey: "h5", renderKey: "h5", name: "Heading 5", icon: Heading5, editors: ["document"] },
+  { itemKey: "h6", renderKey: "h6", name: "Heading 6", icon: Heading6, editors: ["document"] },
 ];
 
 export const TEXT_ALIGNMENT_ITEMS: ToolbarMenuItem<"text-align">[] = [
   {
     itemKey: "text-align",
     renderKey: "text-align-left",
-    name: "Alinhar à esquerda",
+    name: "Align left",
     icon: AlignLeft,
     shortcut: ["Cmd", "Shift", "L"],
     editors: ["lite", "document"],
@@ -88,7 +88,7 @@ export const TEXT_ALIGNMENT_ITEMS: ToolbarMenuItem<"text-align">[] = [
   {
     itemKey: "text-align",
     renderKey: "text-align-right",
-    name: "Alinhar à direita",
+    name: "Align right",
     icon: AlignRight,
     shortcut: ["Cmd", "Shift", "R"],
     editors: ["lite", "document"],
@@ -110,7 +110,7 @@ const BASIC_MARK_ITEMS: ToolbarMenuItem<"bold" | "italic" | "underline" | "strik
   {
     itemKey: "italic",
     renderKey: "italic",
-    name: "Itálico",
+    name: "Italic",
     icon: Italic,
     shortcut: ["Cmd", "I"],
     editors: ["lite", "document"],
@@ -137,7 +137,7 @@ const LIST_ITEMS: ToolbarMenuItem<"bulleted-list" | "numbered-list" | "to-do-lis
   {
     itemKey: "numbered-list",
     renderKey: "numbered-list",
-    name: "Lista numerada",
+    name: "List numerada",
     icon: ListOrdered,
     shortcut: ["Cmd", "Shift", "7"],
     editors: ["lite", "document"],
@@ -145,7 +145,7 @@ const LIST_ITEMS: ToolbarMenuItem<"bulleted-list" | "numbered-list" | "to-do-lis
   {
     itemKey: "bulleted-list",
     renderKey: "bulleted-list",
-    name: "Lista com marcadores",
+    name: "List com marcadores",
     icon: List,
     shortcut: ["Cmd", "Shift", "8"],
     editors: ["lite", "document"],
@@ -153,7 +153,7 @@ const LIST_ITEMS: ToolbarMenuItem<"bulleted-list" | "numbered-list" | "to-do-lis
   {
     itemKey: "to-do-list",
     renderKey: "to-do-list",
-    name: "Lista de tarefas",
+    name: "List de tarefas",
     icon: ListTodo,
     shortcut: ["Cmd", "Shift", "9"],
     editors: ["lite", "document"],
@@ -161,8 +161,8 @@ const LIST_ITEMS: ToolbarMenuItem<"bulleted-list" | "numbered-list" | "to-do-lis
 ];
 
 const USER_ACTION_ITEMS: ToolbarMenuItem<"quote" | "code">[] = [
-  { itemKey: "quote", renderKey: "quote", name: "Citação", icon: TextQuote, editors: ["lite", "document"] },
-  { itemKey: "code", renderKey: "code", name: "Código", icon: Code2, editors: ["lite", "document"] },
+  { itemKey: "quote", renderKey: "quote", name: "Quote", icon: TextQuote, editors: ["lite", "document"] },
+  { itemKey: "code", renderKey: "code", name: "Code", icon: Code2, editors: ["lite", "document"] },
 ];
 
 export const IMAGE_ITEM = {
@@ -200,7 +200,7 @@ export const TOOLBAR_ITEMS: {
   },
   sticky: {
     basic: BASIC_MARK_ITEMS.filter((item) => ["Bold", "Italic"].includes(item.name)),
-    list: LIST_ITEMS.filter((item) => ["Lista de tarefas"].includes(item.name)),
+    list: LIST_ITEMS.filter((item) => ["List de tarefas"].includes(item.name)),
   },
 };
 
@@ -221,7 +221,7 @@ export const EDITOR_FONT_STYLES: {
   },
   {
     key: "monospace",
-    label: "Monoespaçada",
+    label: "Monospace",
     icon: MonospaceIcon,
   },
 ];

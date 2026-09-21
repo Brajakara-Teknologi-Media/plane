@@ -106,16 +106,10 @@ export const coreRoutes: RouteConfigEntry[] = [
         ]),
 
         // Developer docs — widgets & custom integrations
-        route(
-          ":workspaceSlug/developers/widgets",
-          "./(all)/[workspaceSlug]/(projects)/developers/widgets/page.tsx"
-        ),
+        route(":workspaceSlug/developers/widgets", "./(all)/[workspaceSlug]/(projects)/developers/widgets/page.tsx"),
 
         // Plugin pages — dynamically rendered from active plugins' contributions
-        route(
-          ":workspaceSlug/plugins/:pluginSlug",
-          "./(all)/[workspaceSlug]/(projects)/plugins/[pluginSlug]/page.tsx"
-        ),
+        route(":workspaceSlug/plugins/:pluginSlug", "./(all)/[workspaceSlug]/(projects)/plugins/[pluginSlug]/page.tsx"),
 
         // Workspace Views
         layout("./(all)/[workspaceSlug]/(projects)/workspace-views/layout.tsx", [
@@ -322,14 +316,8 @@ export const coreRoutes: RouteConfigEntry[] = [
             ":workspaceSlug/settings/roles",
             "./(all)/[workspaceSlug]/(settings)/settings/(workspace)/roles/page.tsx"
           ),
-          route(
-            ":workspaceSlug/settings/sla",
-            "./(all)/[workspaceSlug]/(settings)/settings/(workspace)/sla/page.tsx"
-          ),
-          route(
-            ":workspaceSlug/settings/ai",
-            "./(all)/[workspaceSlug]/(settings)/settings/(workspace)/ai/page.tsx"
-          ),
+          route(":workspaceSlug/settings/sla", "./(all)/[workspaceSlug]/(settings)/settings/(workspace)/sla/page.tsx"),
+          route(":workspaceSlug/settings/ai", "./(all)/[workspaceSlug]/(settings)/settings/(workspace)/ai/page.tsx"),
           route(
             ":workspaceSlug/settings/integrations",
             "./(all)/[workspaceSlug]/(settings)/settings/(workspace)/integrations/page.tsx"
@@ -342,14 +330,17 @@ export const coreRoutes: RouteConfigEntry[] = [
             ":workspaceSlug/settings/storage",
             "./(all)/[workspaceSlug]/(settings)/settings/(workspace)/storage/page.tsx"
           ),
-          route(":workspaceSlug/settings/chat", "./(all)/[workspaceSlug]/(settings)/settings/(workspace)/chat/page.tsx"),
+          route(
+            ":workspaceSlug/settings/chat",
+            "./(all)/[workspaceSlug]/(settings)/settings/(workspace)/chat/page.tsx"
+          ),
           route(
             ":workspaceSlug/settings/print",
             "./(all)/[workspaceSlug]/(settings)/settings/(workspace)/print/page.tsx"
           ),
           route(
-            ":workspaceSlug/settings/auditoria",
-            "./(all)/[workspaceSlug]/(settings)/settings/(workspace)/auditoria/page.tsx"
+            ":workspaceSlug/settings/audit-logs",
+            "./(all)/[workspaceSlug]/(settings)/settings/(workspace)/audit-logs/page.tsx"
           ),
         ]),
 

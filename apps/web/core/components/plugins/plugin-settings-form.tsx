@@ -11,8 +11,9 @@
 // any plugin that declares a schema gets an admin settings UI for free.
 
 import React, { useCallback, useEffect, useState } from "react";
+import { useTranslation } from "@plane/i18n";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
-import {SelectPesquisavel} from "@/components/common/select-pesquisavel";
+import { SelectPesquisavel } from "@/components/common/select-pesquisavel";
 
 type FieldType = "string" | "number" | "boolean" | "select" | "headers" | "secret";
 type ConfigField = {
@@ -44,20 +45,18 @@ export const PluginSettingsForm: React.FC<{ pluginId: string }> = ({ pluginId })
   const [values, setValues] = useState<Record<string, unknown>>({});
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const { t } = useTranslation();
   const [error, setError] = useState<string | null>(null);
 
   const load = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
-      const [s, v] = await Promise.all([
-        gw(pluginId, "/config/schema"),
-        gw(pluginId, "/config?scope=instance"),
-      ]);
+      const [s, v] = await Promise.all([gw(pluginId, "/config/schema"), gw(pluginId, "/config?scope=instance")]);
       setSchema(Array.isArray(s) ? s : []);
       setValues((v ?? {}) as Record<string, unknown>);
     } catch (e: any) {
-      setError(e?.detail ?? "Não foi possível carregar a configuração (o plugin precisa estar ativo).");
+      setError(e?.detail ?? "Could not load configuration (the plugin must be active).");
     } finally {
       setLoading(false);
     }
@@ -73,19 +72,23 @@ export const PluginSettingsForm: React.FC<{ pluginId: string }> = ({ pluginId })
     setSaving(true);
     try {
       await gw(pluginId, "/config", { method: "PUT", body: JSON.stringify({ scope: "instance", values }) });
-      setToast({ type: TOAST_TYPE.SUCCESS, title: "Configuração salva" });
+      setToast({ type: TOAST_TYPE.SUCCESS, title: "Configuration saved" });
       void load();
     } catch (e: any) {
-      setToast({ type: TOAST_TYPE.ERROR, title: "Erro", message: e?.detail ?? "Falha ao salvar." });
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: t("toast.error"),
+        message: e?.detail ?? t("common.failed_to_save_settings"),
+      });
     } finally {
       setSaving(false);
     }
   };
 
-  if (loading) return <p className="text-sm text-neutral-500">Carregando configuração…</p>;
+  if (loading) return <p className="text-sm text-neutral-500">{t("plugins.plugin.loading_config")}</p>;
   if (error) return <p className="text-sm text-amber-600">{error}</p>;
   if (!schema || schema.length === 0)
-    return <p className="text-sm text-neutral-500">Este plugin não declara configurações.</p>;
+    return <p className="text-sm text-neutral-500">{t("plugins.plugin.no_config_declared")}</p>;
 
   // Group fields by `group`.
   const groups = schema.reduce<Record<string, ConfigField[]>>((acc, f) => {
@@ -98,7 +101,7 @@ export const PluginSettingsForm: React.FC<{ pluginId: string }> = ({ pluginId })
     <div className="space-y-5">
       {Object.entries(groups).map(([group, fields]) => (
         <div key={group} className="space-y-3">
-          <h4 className="text-xs font-semibold uppercase tracking-wider text-neutral-500">{group}</h4>
+          <h4 className="text-xs tracking-wider text-neutral-500 font-semibold uppercase">{group}</h4>
           {fields.map((f) => (
             <Field key={f.key} field={f} value={values[f.key]} onChange={(v) => setField(f.key, v)} />
           ))}
@@ -108,9 +111,9 @@ export const PluginSettingsForm: React.FC<{ pluginId: string }> = ({ pluginId })
         <button
           onClick={save}
           disabled={saving}
-          className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50"
+          className="bg-blue-600 text-sm hover:bg-blue-700 rounded-md px-4 py-2 font-medium text-white disabled:opacity-50"
         >
-          {saving ? "Salvando…" : "Salvar configuração"}
+          {saving ? "Saving…" : "Save configuration"}
         </button>
       </div>
     </div>
@@ -120,9 +123,14 @@ export const PluginSettingsForm: React.FC<{ pluginId: string }> = ({ pluginId })
 const inputCls =
   "w-full rounded-md border border-neutral-300 bg-white px-3 py-1.5 text-sm text-neutral-900 outline-none focus:border-blue-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-white";
 
-const Field: React.FC<{ field: ConfigField; value: unknown; onChange: (v: unknown) => void }> = ({ field, value, onChange }) => {
+const Field: React.FC<{ field: ConfigField; value: unknown; onChange: (v: unknown) => void }> = ({
+  field,
+  value,
+  onChange,
+}) => {
+  const { t } = useTranslation();
   const label = (
-    <label className="mb-1 block text-sm font-medium text-neutral-700 dark:text-neutral-200">
+    <label className="text-sm text-neutral-700 dark:text-neutral-200 mb-1 block font-medium">
       {field.label}
       {field.required && <span className="text-red-500"> *</span>}
     </label>
@@ -145,10 +153,10 @@ const Field: React.FC<{ field: ConfigField; value: unknown; onChange: (v: unknow
         <SelectPesquisavel
           value={String(value ?? "")}
           onChange={onChange}
-          opcoes={(field.options ?? []).map((o) => ({value: o.value, label: o.label}))}
-          opcaoVazia={{value: "", label: "—"}}
+          opcoes={(field.options ?? []).map((o) => ({ value: o.value, label: o.label }))}
+          opcaoVazia={{ value: "", label: "—" }}
         />
-        {field.description && <p className="mt-1 text-xs text-neutral-400">{field.description}</p>}
+        {field.description && <p className="text-xs text-neutral-400 mt-1">{field.description}</p>}
       </div>
     );
   }
@@ -176,7 +184,7 @@ const Field: React.FC<{ field: ConfigField; value: unknown; onChange: (v: unknow
               />
               <button
                 onClick={() => update(rows.filter((_, j) => j !== i))}
-                className="shrink-0 rounded-md border border-neutral-300 px-2 text-sm text-neutral-500 hover:bg-neutral-100 dark:border-neutral-700"
+                className="border-neutral-300 text-sm text-neutral-500 hover:bg-neutral-100 dark:border-neutral-700 shrink-0 rounded-md border px-2"
               >
                 ✕
               </button>
@@ -184,12 +192,12 @@ const Field: React.FC<{ field: ConfigField; value: unknown; onChange: (v: unknow
           ))}
           <button
             onClick={() => update([...rows, { key: "", value: "" }])}
-            className="rounded-md border border-dashed border-neutral-300 px-3 py-1 text-xs text-neutral-500 hover:bg-neutral-50 dark:border-neutral-700"
+            className="border-neutral-300 text-xs text-neutral-500 hover:bg-neutral-50 dark:border-neutral-700 rounded-md border border-dashed px-3 py-1"
           >
-            + Adicionar header
+            {`+ ${t("common.add_header")}`}
           </button>
         </div>
-        {field.description && <p className="mt-1 text-xs text-neutral-400">{field.description}</p>}
+        {field.description && <p className="text-xs text-neutral-400 mt-1">{field.description}</p>}
       </div>
     );
   }
@@ -205,7 +213,7 @@ const Field: React.FC<{ field: ConfigField; value: unknown; onChange: (v: unknow
         placeholder={isSecret && value === "***" ? "•••• (preenchido — deixe vazio para manter)" : undefined}
         onChange={(e) => onChange(field.type === "number" ? Number(e.target.value) : e.target.value)}
       />
-      {field.description && <p className="mt-1 text-xs text-neutral-400">{field.description}</p>}
+      {field.description && <p className="text-xs text-neutral-400 mt-1">{field.description}</p>}
     </div>
   );
 };

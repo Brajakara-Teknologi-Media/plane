@@ -49,7 +49,7 @@ export const issueModule = new Elysia({prefix: "/workspaces/:slug/projects/:proj
     });
     if (!issue) {
       set.status = 404;
-      return {detail: "Chamado não encontrado."};
+      return {detail: "Work item not found."};
     }
     return {project_identifier: issue.project?.identifier ?? "", sequence_id: String(issue.sequenceId)};
   })
@@ -105,6 +105,9 @@ export const issueModule = new Elysia({prefix: "/workspaces/:slug/projects/:proj
         state__group: "stateGroup", // handled specially
         created_by: "createdById",
         project_id: "projectId",
+        target_date: "targetDate",
+        start_date: "startDate",
+        entity_id: "entityId",
       };
 
       const prismaField = groupByMap[groupBy];
@@ -123,6 +126,39 @@ export const issueModule = new Elysia({prefix: "/workspaces/:slug/projects/:proj
         groupValues = ["urgent", "high", "medium", "low", "none"];
       } else if (groupBy === "state__group") {
         groupValues = ["backlog", "unstarted", "started", "completed", "cancelled", "triage"];
+      } else if (groupBy === "target_date") {
+        // Calendar: items group by targetDate; items with no targetDate fall back to startDate.
+        // `where.OR` already handles date range (targetDate OR startDate in range).
+        // So plain distinct on `where` gives all items in range.
+        const allItems = await prisma.issue.findMany({
+          where,
+          select: {targetDate: true, startDate: true},
+        });
+        const dateSet = new Set<string>();
+        for (const d of allItems as {targetDate: Date | null; startDate: Date | null}[]) {
+          const dateKey = d.targetDate
+            ? d.targetDate.toISOString().split("T")[0]
+            : d.startDate
+            ? d.startDate.toISOString().split("T")[0]
+            : null;
+          if (dateKey) dateSet.add(dateKey);
+        }
+        groupValues = Array.from(dateSet).sort();
+      } else if (groupBy === "entity_id") {
+        const distinct = await prisma.issue.findMany({
+          where,
+          select: {entityId: true},
+          distinct: ["entityId"],
+        });
+        // Preserve null bucket so work items without an entity land in "None".
+        groupValues = distinct.map((d) => d.entityId);
+      } else if (groupBy === "start_date") {
+        const distinct = await prisma.issue.findMany({
+          where,
+          select: {startDate: true},
+          distinct: ["startDate"] as any,
+        });
+        groupValues = distinct.map((d: any) => d.startDate).filter(Boolean);
       } else {
         const distinct = await prisma.issue.findMany({
           where,
@@ -146,6 +182,26 @@ export const issueModule = new Elysia({prefix: "/workspaces/:slug/projects/:proj
             select: {id: true},
           });
           groupWhere.stateId = restringirAoGrupo(where.stateId, stateIds.map((s: any) => s.id));
+        } else if (groupBy === "target_date") {
+          // Items with target_date go in their target bucket.
+          // Items with only start_date (no target_date) fall back to start_date bucket.
+          const gvDate = gv ? new Date(gv) : null;
+          // Preserve any existing OR clause from date range filtering (both conditions must match).
+          const groupOrClause = [
+            {targetDate: gvDate},
+            {targetDate: null, startDate: gvDate},
+          ];
+          if (groupWhere.OR) {
+            groupWhere.AND = [{ OR: groupOrClause }, { OR: groupWhere.OR }];
+            delete groupWhere.OR;
+          } else {
+            groupWhere.OR = groupOrClause;
+          }
+          delete groupWhere.targetDate;
+        } else if (groupBy === "entity_id") {
+          groupWhere.entityId = gv === null ? null : restringirAoGrupo(where.entityId, gv);
+        } else if (groupBy === "start_date") {
+          groupWhere.startDate = gv === "None" ? null : gv;
         }
 
         const [groupIssues, groupCount] = await Promise.all([
@@ -153,7 +209,7 @@ export const issueModule = new Elysia({prefix: "/workspaces/:slug/projects/:proj
           prisma.issue.count({where: groupWhere}),
         ]);
 
-        results[gv ?? "none"] = {
+        results[gv ?? "None"] = {
           results: groupIssues.map(serializeIssue),
           total_results: groupCount,
           next_cursor: `${perPage}:1:0`,
@@ -184,7 +240,7 @@ export const issueModule = new Elysia({prefix: "/workspaces/:slug/projects/:proj
     const b = body as any;
     if (!b.name) {
       set.status = 400;
-      return {detail: "O nome é obrigatório."};
+      return {detail: "Name is required."};
     }
 
     const defaultState = await prisma.state.findFirst({
@@ -282,7 +338,7 @@ export const issueModule = new Elysia({prefix: "/workspaces/:slug/projects/:proj
     return serializeIssue(createdIssue);
   })
 
-  .get("/:issue_id", async ({params: {slug, project_id, issue_id}, user, headers}) => {
+  .get("/:issue_id/", async ({params: {slug, project_id, issue_id}, user, headers}) => {
     const ws = await getWorkspaceOrFail(slug);
     await getProjectOrFail(ws.id, project_id, user.id);
     const issue = await prisma.issue.findFirstOrThrow({
@@ -302,7 +358,7 @@ export const issueModule = new Elysia({prefix: "/workspaces/:slug/projects/:proj
     return serializeIssue(issue);
   })
 
-  .patch("/:issue_id", async ({params: {slug, project_id, issue_id}, body, user, set, headers}) => {
+  .patch("/:issue_id/", async ({params: {slug, project_id, issue_id}, body, user, set, headers}) => {
     const ws = await getWorkspaceOrFail(slug);
 
     // Snapshot the issue before mutation so we can log activity diffs afterwards
@@ -349,7 +405,7 @@ export const issueModule = new Elysia({prefix: "/workspaces/:slug/projects/:proj
         );
         if (!allowed) {
           set.status = 403;
-          return {detail: "Sua função não permite esta transição de estado."};
+          return {detail: "Your role does not allow this state transition."};
         }
       }
       data.stateId = newStateId;
@@ -500,7 +556,7 @@ export const issueModule = new Elysia({prefix: "/workspaces/:slug/projects/:proj
     return serializeIssue(await prisma.issue.findFirstOrThrow({where: {id: issue_id}, include: ISSUE_INCLUDE}));
   })
 
-  .delete("/:issue_id", async ({params: {slug, project_id, issue_id}, user, set, headers}) => {
+  .delete("/:issue_id/", async ({params: {slug, project_id, issue_id}, user, set, headers}) => {
     const ws = await getWorkspaceOrFail(slug);
     const target = await prisma.issue.findFirst({
       where: {id: issue_id, projectId: project_id, workspaceId: ws.id, deletedAt: null},
@@ -508,7 +564,7 @@ export const issueModule = new Elysia({prefix: "/workspaces/:slug/projects/:proj
     });
     if (!target) {
       set.status = 404;
-      return {detail: "Chamado não encontrado."};
+      return {detail: "Work item not found."};
     }
     await requireOwnOrAll(
       ws.id,
@@ -544,7 +600,7 @@ export const issueModule = new Elysia({prefix: "/workspaces/:slug/projects/:proj
     const issue = await prisma.issue.findFirst({where: {id: issue_id, projectId: project_id, deletedAt: null}});
     if (!issue) {
       set.status = 404;
-      return {detail: "Chamado não encontrado."};
+      return {detail: "Work item not found."};
     }
     // Arquivar tira o chamado da listagem: exige o mesmo poder de editar.
     await requireOwnOrAll(
@@ -561,11 +617,11 @@ export const issueModule = new Elysia({prefix: "/workspaces/:slug/projects/:proj
       action: AUDIT_ACTIONS.UPDATE,
       entity: AUDIT_ENTITIES.ISSUE,
       entityId: issue_id,
-      actorId: user.id,
       workspaceId: ws.id,
-      projectId: project_id,
-      ip: clientIp(headers),
-      changes: {archived: {de: false, para: true}},
+      actor: user,
+      headers,
+      changes: {archived: {from: false, to: true}},
+      metadata: {project_id},
     });
     return {archived_at: archivedAt.toISOString()};
   })
@@ -575,7 +631,7 @@ export const issueModule = new Elysia({prefix: "/workspaces/:slug/projects/:proj
     const issue = await prisma.issue.findFirst({where: {id: issue_id, projectId: project_id, deletedAt: null}});
     if (!issue) {
       set.status = 404;
-      return {detail: "Chamado não encontrado."};
+      return {detail: "Work item not found."};
     }
     await requireOwnOrAll(
       ws.id,
@@ -590,11 +646,11 @@ export const issueModule = new Elysia({prefix: "/workspaces/:slug/projects/:proj
       action: AUDIT_ACTIONS.UPDATE,
       entity: AUDIT_ENTITIES.ISSUE,
       entityId: issue_id,
-      actorId: user.id,
       workspaceId: ws.id,
-      projectId: project_id,
-      ip: clientIp(headers),
-      changes: {archived: {de: true, para: false}},
+      actor: user,
+      headers,
+      changes: {archived: {from: true, to: false}},
+      metadata: {project_id},
     });
     set.status = 204;
     return null;
@@ -609,7 +665,7 @@ export const issueModule = new Elysia({prefix: "/workspaces/:slug/projects/:proj
     });
     if (!issue) {
       set.status = 404;
-      return {detail: "Chamado arquivado não encontrado."};
+      return {detail: "Archived work item not found."};
     }
     return serializeIssue(issue);
   })
@@ -640,7 +696,7 @@ export const issueModule = new Elysia({prefix: "/workspaces/:slug/projects/:proj
     const b = body as any;
     if (!b.comment_html && !b.comment) {
       set.status = 400;
-      return {detail: "O conteúdo do comentário é obrigatório."};
+      return {detail: "Comment content is required."};
     }
 
     const comment = await prisma.issueComment.create({
@@ -680,12 +736,12 @@ export const issueModule = new Elysia({prefix: "/workspaces/:slug/projects/:proj
     });
     if (!comment) {
       set.status = 404;
-      return {detail: "Comentário não encontrado."};
+      return {detail: "Comment not found."};
     }
     // Only the author may rewrite a comment (no role grants "edit anyone's comment").
     if (comment.actorId !== user.id) {
       set.status = 403;
-      return {detail: "Somente o autor pode editar o comentário."};
+      return {detail: "Only the author can edit the comment."};
     }
     await requireProjectAction(ws.id, project_id, user.id, EProjectAction.COMMENT_EDIT_OWN);
 
@@ -750,7 +806,7 @@ export const issueModule = new Elysia({prefix: "/workspaces/:slug/projects/:proj
     });
     if (!comment) {
       set.status = 404;
-      return {detail: "Comentário não encontrado."};
+      return {detail: "Comment not found."};
     }
     await requireOwnOrAll(
       ws.id,
@@ -827,7 +883,7 @@ export const issueModule = new Elysia({prefix: "/workspaces/:slug/projects/:proj
     const b = body as any;
     if (!b.url) {
       set.status = 400;
-      return {detail: "A URL é obrigatória."};
+      return {detail: "The URL is required."};
     }
     const link = await prisma.issueLink.create({
       data: {issueId: issue_id, workspaceId: ws.id, projectId: project_id, url: b.url, title: b.title ?? "", metadata: b.metadata ?? {}},
@@ -844,7 +900,7 @@ export const issueModule = new Elysia({prefix: "/workspaces/:slug/projects/:proj
     });
     if (!link) {
       set.status = 404;
-      return {detail: "Link não encontrado."};
+      return {detail: "Link not found."};
     }
     await prisma.issueLink.update({where: {id: link_id}, data: {deletedAt: new Date()}});
     set.status = 204;
@@ -876,11 +932,11 @@ export const issueModule = new Elysia({prefix: "/workspaces/:slug/projects/:proj
     const b = body as any;
     if (!b.related_issue) {
       set.status = 400;
-      return {detail: "related_issue é obrigatório."};
+      return {detail: "related_issue is required."};
     }
     if (!b.relation_type) {
       set.status = 400;
-      return {detail: "relation_type é obrigatório."};
+      return {detail: "relation_type is required."};
     }
     const relation = await prisma.issueRelation.create({
       data: {issueId: issue_id, relatedIssueId: b.related_issue, workspaceId: ws.id, projectId: project_id, relationType: b.relation_type},
@@ -897,7 +953,7 @@ export const issueModule = new Elysia({prefix: "/workspaces/:slug/projects/:proj
     });
     if (!relation) {
       set.status = 404;
-      return {detail: "Relação não encontrada."};
+      return {detail: "Relation not found."};
     }
     await prisma.issueRelation.update({where: {id: relation_id}, data: {deletedAt: new Date()}});
     set.status = 204;
@@ -934,7 +990,7 @@ export const issueModule = new Elysia({prefix: "/workspaces/:slug/projects/:proj
     const v = await prisma.issueVersion.findFirst({where: {id: version_id, issueId: issue_id}});
     if (!v) {
       set.status = 404;
-      return {detail: "Não encontrado."};
+      return {detail: "Not found."};
     }
     return {
       id: v.id,
@@ -1065,7 +1121,7 @@ export const issueModule = new Elysia({prefix: "/workspaces/:slug/projects/:proj
     const ids: string[] = b.issues ?? (b.related_issue ? [b.related_issue] : []);
     if (!relationType || !ids.length) {
       set.status = 400;
-      return {detail: "relation_type e issues são obrigatórios."};
+      return {detail: "relation_type and issues are required."};
     }
     const created: any[] = [];
     for (const rid of ids) {
@@ -1095,7 +1151,7 @@ export const issueModule = new Elysia({prefix: "/workspaces/:slug/projects/:proj
     const related: string = b.related_issue;
     if (!relationType || !related) {
       set.status = 400;
-      return {detail: "relation_type e related_issue são obrigatórios."};
+      return {detail: "relation_type and related_issue are required."};
     }
     const rev = RELATION_REVERSE[relationType] ?? relationType;
     await prisma.issueRelation.updateMany({
@@ -1118,7 +1174,7 @@ export const issueModule = new Elysia({prefix: "/workspaces/:slug/projects/:proj
     });
     if (!relation) {
       set.status = 404;
-      return {detail: "Relação não encontrada."};
+      return {detail: "Relation not found."};
     }
     await prisma.issueRelation.update({where: {id: relation_id}, data: {deletedAt: new Date()}});
     set.status = 204;
@@ -1126,7 +1182,7 @@ export const issueModule = new Elysia({prefix: "/workspaces/:slug/projects/:proj
   });
 
 /**
- * Listagem de chamados arquivados.
+ * Listgem de chamados arquivados.
  *
  * Prefixo próprio porque a rota é `/projects/:id/archived-issues/`, fora do
  * `/issues` do módulo acima. Sem ela a tela "Arquivados" quebrava com NOT_FOUND.

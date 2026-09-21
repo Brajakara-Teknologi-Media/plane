@@ -6,6 +6,7 @@
 
 import { Disclosure, Transition } from "@headlessui/react";
 import { WORKSPACE_SETTINGS_TRACKER_ELEMENTS } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { ChevronDownIcon, ChevronUpIcon } from "@plane/propel/icons";
 
@@ -15,6 +16,7 @@ type Props = {
 
 export function WebhookDeleteSection(props: Props) {
   const { openDeleteModal } = props;
+  const { t } = useTranslation();
 
   return (
     <Disclosure as="div" className="border-t border-subtle">
@@ -47,7 +49,7 @@ export function WebhookDeleteSection(props: Props) {
                     onClick={openDeleteModal}
                     data-ph-element={WORKSPACE_SETTINGS_TRACKER_ELEMENTS.WEBHOOK_DELETE_BUTTON}
                   >
-                    Excluir webhook
+                    {t("common.delete_webhook_title")}
                   </Button>
                 </div>
               </div>

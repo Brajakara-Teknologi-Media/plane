@@ -61,10 +61,7 @@ export const IssuesHeader = observer(function IssuesHeader() {
   const publishedURL = `${SPACE_APP_URL}/issues/${currentProjectDetails?.anchor}`;
 
   const issuesCount = getGroupIssueCount(undefined, undefined, false);
-  const canUserCreateIssue = allowPermissions(
-    PROJECT_WORK_ROLES,
-    EUserPermissionsLevel.PROJECT
-  );
+  const canUserCreateIssue = allowPermissions(PROJECT_WORK_ROLES, EUserPermissionsLevel.PROJECT);
 
   return (
     <Header>
@@ -75,7 +72,7 @@ export const IssuesHeader = observer(function IssuesHeader() {
             <Breadcrumbs.Item
               component={
                 <BreadcrumbLink
-                  label="Chamados"
+                  label="Work Items"
                   href={`/${workspaceSlug}/projects/${projectId}/issues/`}
                   icon={<WorkItemsIcon className="h-4 w-4 text-tertiary" />}
                   isLast
@@ -87,7 +84,7 @@ export const IssuesHeader = observer(function IssuesHeader() {
           {issuesCount && issuesCount > 0 ? (
             <Tooltip
               isMobile={isMobile}
-              tooltipContent={`Existem ${issuesCount} ${issuesCount > 1 ? "chamados" : "chamado"} neste projeto`}
+              tooltipContent={t("misc.work_item_count_tooltip", { count: issuesCount ?? 0 })}
               position="bottom"
             >
               <CountChip count={issuesCount} />
@@ -110,11 +107,11 @@ export const IssuesHeader = observer(function IssuesHeader() {
         )}
       </Header.LeftItem>
       <Header.RightItem>
-        {/* No celular a barra inteira era escondida (`hidden md:flex`) e não
+        {/* On mobile the entire bar was hidden (`hidden md:flex`) and was not
             sobrava jeito de filtrar nem de trocar de layout. Agora ela aparece
-            em qualquer largura: os controles já se compactam para ícone, e o
-            que ainda não couber rola na horizontal. */}
-        <div className="flex min-w-0 gap-2 overflow-x-auto scrollbar-hide">
+            at any width: controls already compact to icon, and
+            what doesn't fit scrolls horizontally. */}
+        <div className="scrollbar-hide flex min-w-0 gap-2 overflow-x-auto">
           <HeaderFilters
             projectId={projectId}
             currentProjectDetails={currentProjectDetails}
@@ -124,7 +121,7 @@ export const IssuesHeader = observer(function IssuesHeader() {
         </div>
         <WorkItemsPrintAction
           storeType={EIssuesStoreType.PROJECT}
-          title={`Chamados — ${currentProjectDetails?.name ?? ""}`}
+          title={`Work Items — ${currentProjectDetails?.name ?? ""}`}
           subtitle={currentProjectDetails?.name}
           showProject={false}
         />

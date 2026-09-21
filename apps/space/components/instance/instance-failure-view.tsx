@@ -24,10 +24,10 @@ export function InstanceFailureView() {
       <div className="relative w-auto max-w-2xl space-y-8 py-10">
         <div className="relative flex flex-col items-center justify-center space-y-4">
           <img src={instanceImage} alt="Avião instance failure image" />
-          <h3 className="text-20 font-medium text-on-color">Não foi possível buscar os detalhes da instância.</h3>
+          <h3 className="text-20 font-medium text-on-color">It was not possible to retrieve the instance details.</h3>
           <p className="text-center text-14 font-medium">
-            Não conseguimos buscar os detalhes da instância. <br />
-            Não se preocupe, pode ser apenas um problema de conexão.
+            We were unable to retrieve the instance details. <br />
+            Don't worry, it might just be a connection problem.
           </p>
         </div>
         <div className="flex justify-center">

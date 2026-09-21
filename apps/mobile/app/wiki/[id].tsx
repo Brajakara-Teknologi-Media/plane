@@ -34,7 +34,7 @@ export default function WikiPageScreen() {
       setEditing(false);
       page.refetch();
     } catch {
-      Alert.alert("Erro", "Não foi possível salvar a página.");
+      Alert.alert("Error", "Could not save the page.");
     } finally {
       setSaving(false);
     }
@@ -42,12 +42,12 @@ export default function WikiPageScreen() {
 
   if (page.loading && !page.data) return <Loading />;
   const p = page.data;
-  if (!p) return <Screen><Text>Página não encontrada.</Text></Screen>;
+  if (!p) return <Screen><Text>Page não encontrada.</Text></Screen>;
 
   return (
     <Screen scroll refreshControl={<RefreshControl refreshing={page.loading} onRefresh={page.refetch} tintColor={colors.primary} />}>
       <Row align="space-between">
-        <Text variant="title" style={{ flex: 1 }}>{p.name || "Sem título"}</Text>
+        <Text variant="title" style={{ flex: 1 }}>{p.name || "Untitled"}</Text>
         {can("editWiki") && !p.is_locked ? (
           <Button title={editing ? "Cancelar" : "Editar"} variant="ghost" onPress={() => setEditing((e) => !e)} />
         ) : null}
@@ -55,13 +55,13 @@ export default function WikiPageScreen() {
 
       <Card style={{ padding: 0, overflow: "hidden" }}>
         {editing ? (
-          <RichTextEditor value={html} onChange={setHtml} minHeight={300} placeholder="Conteúdo da página…" />
+          <RichTextEditor value={html} onChange={setHtml} minHeight={300} placeholder="Page content…" />
         ) : (
           <RichTextViewer html={p.description_html ?? ""} minHeight={200} />
         )}
       </Card>
 
-      {editing ? <Button title="Salvar" onPress={save} loading={saving} /> : null}
+      {editing ? <Button title="Save" onPress={save} loading={saving} /> : null}
     </Screen>
   );
 }

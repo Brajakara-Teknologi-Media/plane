@@ -26,15 +26,12 @@ export const AppSidebar = observer(function AppSidebar() {
   const { groupedFavorites } = useFavorite();
 
   // derived values
-  const canPerformWorkspaceMemberActions = allowPermissions(
-    PROJECT_VIEW_ROLES,
-    EUserPermissionsLevel.WORKSPACE
-  );
+  const canPerformWorkspaceMemberActions = allowPermissions(PROJECT_VIEW_ROLES, EUserPermissionsLevel.WORKSPACE);
 
   const isFavoriteEmpty = isEmpty(groupedFavorites);
 
   return (
-    <SidebarWrapper title="Projetos" quickActions={<SidebarQuickActions />}>
+    <SidebarWrapper title="Projects" quickActions={<SidebarQuickActions />}>
       <SidebarMenuItems />
       {/* Favorites Menu */}
       {canPerformWorkspaceMemberActions && !isFavoriteEmpty && <SidebarFavoritesMenu />}

@@ -6,6 +6,7 @@
 
 import { observer } from "mobx-react";
 // types
+import { useTranslation } from "@plane/i18n";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IProjectView } from "@plane/types";
 import { EIssuesStoreType } from "@plane/types";
@@ -43,6 +44,8 @@ export const CreateUpdateProjectViewModal = observer(function CreateUpdateProjec
   const handleClose = () => {
     onClose();
   };
+  // i18n
+  const { t } = useTranslation();
 
   const handleCreateView = async (payload: IProjectView) => {
     try {
@@ -51,14 +54,14 @@ export const CreateUpdateProjectViewModal = observer(function CreateUpdateProjec
       router.push(`/${workspaceSlug}/projects/${projectId}/views/${res.id}`);
       setToast({
         type: TOAST_TYPE.SUCCESS,
-        title: "Sucesso!",
-        message: "Visualização criada com sucesso.",
+        title: t("common.success_bang"),
+        message: "View created successfully.",
       });
     } catch (_error) {
       setToast({
         type: TOAST_TYPE.ERROR,
-        title: "Erro!",
-        message: "Falha ao criar a visualização. Tente novamente.",
+        title: t("common.error_bang"),
+        message: "Failed to create view. Please try again.",
       });
     }
   };
@@ -72,8 +75,8 @@ export const CreateUpdateProjectViewModal = observer(function CreateUpdateProjec
     } catch (_error) {
       setToast({
         type: TOAST_TYPE.ERROR,
-        title: "Erro!",
-        message: "Falha ao atualizar a visualização. Tente novamente.",
+        title: t("common.error_bang"),
+        message: "Failed to update view. Please try again.",
       });
     }
   };

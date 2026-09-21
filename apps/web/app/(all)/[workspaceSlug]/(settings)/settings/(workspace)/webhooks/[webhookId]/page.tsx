@@ -10,6 +10,7 @@ import useSWR from "swr";
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IWebhook } from "@plane/types";
+import { useTranslation } from "@plane/i18n";
 // ui
 // components
 import { LogoSpinner } from "@/components/common/logo-spinner";
@@ -33,6 +34,7 @@ function WebhookDetailsPage({ params }: Route.ComponentProps) {
   const { currentWebhook, fetchWebhookById, updateWebhook } = useWebhook();
   const { currentWorkspace } = useWorkspace();
   const { allowPermissions } = useUserPermissions();
+  const { t } = useTranslation();
 
   // TODO: fix this error
   // useEffect(() => {
@@ -64,15 +66,15 @@ function WebhookDetailsPage({ params }: Route.ComponentProps) {
       await updateWebhook(workspaceSlug, formData.id, payload);
       setToast({
         type: TOAST_TYPE.SUCCESS,
-        title: "Sucesso!",
-        message: "Webhook atualizado com sucesso.",
+        title: t("common.toast.success"),
+        message: "Webhook updated successfully.",
       });
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       setToast({
         type: TOAST_TYPE.ERROR,
-        title: "Erro!",
-        message: error?.error ?? "Algo deu errado. Tente novamente.",
+        title: t("common.toast.error"),
+        message: error?.error ?? t("common.something_went_wrong_please_try_again"),
       });
     }
   };
@@ -82,7 +84,7 @@ function WebhookDetailsPage({ params }: Route.ComponentProps) {
       <>
         <PageHead title={pageTitle} />
         <div className="mt-10 flex h-full w-full justify-center p-4">
-          <p className="text-13 text-tertiary">Você não tem autorização para acessar esta página.</p>
+          <p className="text-13 text-tertiary">{t("common.unauthorized_page")}</p>
         </div>
       </>
     );

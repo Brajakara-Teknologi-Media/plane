@@ -875,5 +875,12 @@
       "description": "Ekspor item kerja ke file JSON.",
       "short_description": "Ekspor sebagai json"
     }
+  },
+  "misc": {
+    "critical_banner": "{count, plural, other {# item kerja URGENT terbuka}}",
+    "critical_banner_expand": "Perluas",
+    "critical_banner_collapse": "Ciutkan",
+    "critical_banner_dismiss_hint": "Tutup (muncul lagi setelah pembaruan berikutnya)",
+    "critical_banner_and_more": "+{count} lagi"
   }
 }

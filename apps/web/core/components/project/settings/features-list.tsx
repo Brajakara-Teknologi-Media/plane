@@ -31,8 +31,9 @@ const PROJECT_FEATURES_LIST = {
   cycles: {
     key: "cycles",
     property: "cycle_view",
-    title: "Ciclos",
-    description: "Defina períodos de trabalho como achar melhor por projeto e altere a frequência de um período para o outro.",
+    title: "Cycles",
+    description:
+      "Define work periods as you see fit for each project and adjust the frequency from one period to another.",
     icon: <CycleIcon className="h-5 w-5 flex-shrink-0 rotate-180 text-tertiary" />,
     isPro: false,
     isEnabled: true,
@@ -40,8 +41,9 @@ const PROJECT_FEATURES_LIST = {
   modules: {
     key: "modules",
     property: "module_view",
-    title: "Módulos",
-    description: "Agrupe o trabalho em configurações semelhantes a subprojetos, com seus próprios responsáveis e encarregados.",
+    title: "Modules",
+    description:
+      "Group the work into subproject-like configurations, each with its own assigned managers and supervisors.",
     icon: <ModuleIcon width={20} height={20} className="flex-shrink-0 text-tertiary" />,
     isPro: false,
     isEnabled: true,
@@ -49,8 +51,8 @@ const PROJECT_FEATURES_LIST = {
   views: {
     key: "views",
     property: "issue_views_view",
-    title: "Visualizações",
-    description: "Salve ordenações, filtros e opções de exibição para depois ou compartilhe-os.",
+    title: "Views",
+    description: "Save sorting, filters and display options for later or share them.",
     icon: <ViewsIcon className="h-5 w-5 flex-shrink-0 text-tertiary" />,
     isPro: false,
     isEnabled: true,
@@ -58,8 +60,8 @@ const PROJECT_FEATURES_LIST = {
   pages: {
     key: "pages",
     property: "page_view",
-    title: "Páginas",
-    description: "Escreva qualquer coisa como você escreve qualquer coisa.",
+    title: "Pages",
+    description: "Write anything as you write anything.",
     icon: <PageIcon className="h-5 w-5 flex-shrink-0 text-tertiary" />,
     isPro: false,
     isEnabled: true,
@@ -67,8 +69,8 @@ const PROJECT_FEATURES_LIST = {
   inbox: {
     key: "intake",
     property: "inbox_view",
-    title: "Solicitações",
-    description: "Analise e discuta as solicitações antes de adicioná-las ao seu projeto.",
+    title: "Requests",
+    description: "Analyze and discuss requests before adding them to your project.",
     icon: <IntakeIcon className="h-5 w-5 flex-shrink-0 text-tertiary" />,
     isPro: false,
     isEnabled: true,
@@ -93,14 +95,14 @@ export const ProjectFeaturesList = observer(function ProjectFeaturesList(props: 
     const updateProjectPromise = updateProject(workspaceSlug, projectId, settingsPayload);
 
     setPromiseToast(updateProjectPromise, {
-      loading: "Atualizando recurso do projeto...",
+      loading: "Updating project feature...",
       success: {
-        title: "Sucesso!",
+        title: t("common.toast.success"),
         message: () => "Project feature updated successfully.",
       },
       error: {
-        title: "Erro!",
-        message: () => "Algo deu errado ao atualizar o recurso do projeto. Tente novamente.",
+        title: t("common.toast.error"),
+        message: () => "Could not update the project feature. Please try again.",
       },
     });
     void updateProjectPromise.then(() => {

@@ -47,9 +47,9 @@ export default function MoreScreen() {
     setReindexing(true);
     try {
       await endpoints.search.reindex(activeWorkspace.slug);
-      Alert.alert("Pronto", "Índices de busca atualizados.");
+      Alert.alert("Done", "Search indexes updated.");
     } catch {
-      Alert.alert("Erro", "Não foi possível reindexar.");
+      Alert.alert("Error", "Could not reindex.");
     } finally {
       setReindexing(false);
     }
@@ -84,7 +84,7 @@ export default function MoreScreen() {
       <Card style={{ paddingVertical: 0 }}>
         <NavRow icon={Search} label="Buscar" onPress={() => router.push("/search")} />
         <Divider />
-        <NavRow icon={Bell} label="Notificações" onPress={() => router.push("/notifications")} />
+        <NavRow icon={Bell} label="Notifications" onPress={() => router.push("/notifications")} />
         <Divider />
         <NavRow icon={Building2} label="Entidades" onPress={() => router.push("/entities")} />
         <Divider />

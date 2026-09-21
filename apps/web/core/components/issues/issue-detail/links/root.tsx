@@ -59,9 +59,9 @@ export function IssueLinkRoot(props: TIssueLinkRoot) {
           toggleIssueLinkModal(false);
         } catch (error: any) {
           setToast({
-            message: error?.data?.error ?? "Não foi possível criar o link",
+            message: error?.data?.error ?? "Could not create link",
             type: TOAST_TYPE.ERROR,
-            title: "Link não criado",
+            title: "Link not created",
           });
           throw error;
         }
@@ -78,9 +78,9 @@ export function IssueLinkRoot(props: TIssueLinkRoot) {
           toggleIssueLinkModal(false);
         } catch (error) {
           setToast({
-            message: "Não foi possível atualizar o link",
+            message: "Could not update link",
             type: TOAST_TYPE.ERROR,
-            title: "Link não atualizado",
+            title: "Link not updated",
           });
           throw error;
         }
@@ -97,9 +97,9 @@ export function IssueLinkRoot(props: TIssueLinkRoot) {
           toggleIssueLinkModal(false);
         } catch {
           setToast({
-            message: "Não foi possível remover o link",
+            message: "Could not remove link",
             type: TOAST_TYPE.ERROR,
-            title: "Link não removido",
+            title: "Link not removed",
           });
         }
       },

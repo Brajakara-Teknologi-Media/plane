@@ -1,0 +1,38 @@
+{
+  "plugins": {
+    "author": "Author",
+    "sections": {
+      "metadata": "Metadata",
+      "entry_file": "Entry file",
+      "sidebar_items": "Sidebar items",
+      "manifest_raw": "Manifest (raw)",
+      "dates": "Dates"
+    },
+    "plugin": {
+      "loading_config": "Loading configuration…",
+      "no_config_declared": "This plugin declares no settings.",
+      "loading": "Loading plugins…",
+      "empty": "No plugins found. Send your first plugin to get started."
+    },
+    "widget": {
+      "loading": "Loading widgets…",
+      "empty": "No widgets found. Send your first widget to get started."
+    },
+    "status": {
+      "active": "Active",
+      "inactive": "Inactive",
+      "pending": "Pending",
+      "archived": "Archived"
+    },
+    "table": {
+      "version": "Version",
+      "surfaces": "Surfaces",
+      "permissions": "Permissions",
+      "actions": "Actions",
+      "status": "Status"
+    },
+    "actions": {
+      "remove": "Remove"
+    }
+  }
+}

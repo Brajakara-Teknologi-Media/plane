@@ -5,6 +5,7 @@
  */
 
 import { observer } from "mobx-react";
+import { useTranslation } from "@plane/i18n";
 import { Controller, useForm } from "react-hook-form";
 // plane imports
 import { USE_CASES } from "@plane/constants";
@@ -29,6 +30,8 @@ const defaultValues = {
 };
 
 export const UseCaseSetupStep = observer(function UseCaseSetupStep({ handleStepChange }: Props) {
+  // i18n
+  const { t } = useTranslation();
   // store hooks
   const { data: profile, updateUserProfile } = useUserProfile();
   // form info
@@ -56,14 +59,14 @@ export const UseCaseSetupStep = observer(function UseCaseSetupStep({ handleStepC
       ]);
       setToast({
         type: TOAST_TYPE.SUCCESS,
-        title: "Sucesso",
-        message: "Configuração do perfil concluída!",
+        title: t("common.success"),
+        message: "Profile setup complete!",
       });
     } catch {
       setToast({
         type: TOAST_TYPE.ERROR,
-        title: "Erro",
-        message: "Falha na configuração do perfil. Tente novamente!",
+        title: t("common.error_bang"),
+        message: "Failed to set up profile. Please try again!",
       });
     }
   };
@@ -86,18 +89,21 @@ export const UseCaseSetupStep = observer(function UseCaseSetupStep({ handleStepC
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-10">
       {/* Header */}
-      <CommonOnboardingHeader title="What brings you to Avião?" description="Conte-nos seus objetivos e o tamanho da equipe." />
+      <CommonOnboardingHeader
+        title={t("onboarding.usecase.header_title")}
+        description={t("onboarding.usecase.header_description")}
+      />
 
       {/* Use Case Selection */}
       <div className="flex flex-col gap-3">
-        <p className="text-body-sm-semibold text-placeholder">Selecione um ou mais</p>
+        <p className="text-body-sm-semibold text-placeholder">{t("onboarding.usecase.select_one_or_more")}</p>
 
         <Controller
           control={control}
           name="use_case"
           rules={{
-            required: "Selecione pelo menos uma opção",
-            validate: (value) => (value && value.length > 0) || "Selecione pelo menos uma opção",
+            required: "Select at least one option",
+            validate: (value) => (value && value.length > 0) || "Select at least one option",
           }}
           render={({ field: { value, onChange } }) => (
             <div className="flex flex-col gap-3">

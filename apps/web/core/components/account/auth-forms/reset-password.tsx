@@ -99,7 +99,7 @@ export const ResetPasswordForm = observer(function ResetPasswordForm() {
 
   return (
     <FormContainer>
-      <AuthFormHeader title="Redefinir senha" description="Crie uma nova senha." />
+      <AuthFormHeader title={t("common.reset_password")} description="Crie uma nova senha." />
 
       {errorInfo && errorInfo?.type === EErrorAlertType.BANNER_ALERT && (
         <AuthBanner message={errorInfo.message} handleBannerData={(value) => setErrorInfo(value)} />

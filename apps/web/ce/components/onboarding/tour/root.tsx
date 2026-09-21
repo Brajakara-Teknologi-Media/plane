@@ -8,8 +8,10 @@ import AviaoLockup from "@/app/assets/logos/aviao-horizontal.svg?url";
 import { useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
+import { useTranslation } from "@plane/i18n";
+import type { TTranslationStore } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
-import { CloseIcon,  } from "@plane/propel/icons";
+import { CloseIcon } from "@plane/propel/icons";
 // assets
 import CyclesTour from "@/app/assets/onboarding/cycles.webp?url";
 import IssuesTour from "@/app/assets/onboarding/issues.webp?url";
@@ -28,52 +30,54 @@ export type TOnboardingTourProps = {
 
 export type TTourSteps = "welcome" | "work-items" | "cycles" | "modules" | "views" | "pages";
 
-const TOUR_STEPS: {
+const getTourSteps = (
+  t: TTranslationStore["t"]
+): {
   key: TTourSteps;
   title: string;
   description: string;
   image: string;
   prevStep?: TTourSteps;
   nextStep?: TTourSteps;
-}[] = [
+}[] => [
   {
     key: "work-items",
-    title: "Planeje com chamados",
+    title: t("onboarding.tour.work_items_title"),
     description:
-      "O chamado é o bloco de construção do Avião. A maioria dos conceitos no Avião está associada a chamados e suas propriedades.",
+      "The work item is the building block of Avião. Most concepts in Avião are associated with work items and their properties.",
     image: IssuesTour,
     nextStep: "cycles",
   },
   {
     key: "cycles",
-    title: "Avance com ciclos",
+    title: "Move forward with cycles",
     description:
-      "Os ciclos ajudam você e sua equipe a progredir mais rápido, de forma semelhante aos sprints comumente usados no desenvolvimento ágil.",
+      "Cycles help you and your team progress faster, similar to sprints commonly used in agile development.",
     image: CyclesTour,
     prevStep: "work-items",
     nextStep: "modules",
   },
   {
     key: "modules",
-    title: "Divida em módulos",
-    description: "Os módulos dividem sua grande entrega em Projetos ou Recursos, para ajudar você a se organizar melhor.",
+    title: "Divide into modules",
+    description: "Modules break your large delivery into Projects or Resources to help you organize better.",
     image: ModulesTour,
     prevStep: "cycles",
     nextStep: "views",
   },
   {
     key: "views",
-    title: "Visualizações",
+    title: "Views",
     description:
-      "Crie filtros personalizados para exibir apenas os chamados que importam para você. Salve e compartilhe seus filtros com apenas alguns cliques.",
+      "Create custom filters to display only the work items that matter to you. Save and share your filters with just a few clicks.",
     image: ViewsTour,
     prevStep: "modules",
     nextStep: "pages",
   },
   {
     key: "pages",
-    title: "Documente com páginas",
-    description: "Use as Páginas para anotar rapidamente chamados quando estiver em uma reunião ou começando o dia.",
+    title: "Document with pages",
+    description: "Use Pages to quickly annotate work items when you're in a meeting or starting the day.",
     image: PagesTour,
     prevStep: "views",
   },
@@ -81,14 +85,18 @@ const TOUR_STEPS: {
 
 export const TourRoot = observer(function TourRoot(props: TOnboardingTourProps) {
   const { onComplete } = props;
+  // i18n
+  const { t } = useTranslation();
   // states
   const [step, setStep] = useState<TTourSteps>("welcome");
   // store hooks
   const { toggleCreateProjectModal } = useCommandPalette();
   const { data: currentUser } = useUser();
 
-  const currentStepIndex = TOUR_STEPS.findIndex((tourStep) => tourStep.key === step);
-  const currentStep = TOUR_STEPS[currentStepIndex];
+  const tourSteps = getTourSteps(t);
+
+  const currentStepIndex = tourSteps.findIndex((tourStep) => tourStep.key === step);
+  const currentStep = tourSteps[currentStepIndex];
 
   return (
     <>
@@ -100,12 +108,12 @@ export const TourRoot = observer(function TourRoot(props: TOnboardingTourProps) 
             </div>
             <div className="flex flex-col overflow-y-auto p-6">
               <h3 className="font-semibold sm:text-18">
-                Bem-vindo ao Avião, {currentUser?.first_name} {currentUser?.last_name}
+                {t("onboarding.tour.welcome_title", {
+                  first_name: currentUser?.first_name,
+                  last_name: currentUser?.last_name,
+                })}
               </h3>
-              <p className="mt-3 text-13 text-secondary">
-                Estamos felizes que você decidiu experimentar o Avião. Agora você pode gerenciar seus projetos com
-                facilidade. Comece criando um projeto.
-              </p>
+              <p className="mt-3 text-13 text-secondary">{t("onboarding.tour.welcome_description")}</p>
               <div className="flex h-full items-end">
                 <div className="mt-12 flex items-center gap-6">
                   <Button
@@ -114,7 +122,7 @@ export const TourRoot = observer(function TourRoot(props: TOnboardingTourProps) 
                       setStep("work-items");
                     }}
                   >
-                    Fazer um tour do produto
+                    {t("product_tour.actions.take_a_tour")}
                   </Button>
                   <button
                     type="button"
@@ -123,7 +131,7 @@ export const TourRoot = observer(function TourRoot(props: TOnboardingTourProps) 
                       onComplete();
                     }}
                   >
-                    Não, obrigado. Vou explorar sozinho
+                    {t("onboarding.tour.skip_tour")}
                   </button>
                 </div>
               </div>
@@ -155,16 +163,16 @@ export const TourRoot = observer(function TourRoot(props: TOnboardingTourProps) 
                 <div className="flex items-center gap-4">
                   {currentStep?.prevStep && (
                     <Button variant="secondary" onClick={() => setStep(currentStep.prevStep ?? "welcome")}>
-                      Voltar
+                      {t("common.back")}
                     </Button>
                   )}
                   {currentStep?.nextStep && (
                     <Button variant="primary" onClick={() => setStep(currentStep.nextStep ?? "work-items")}>
-                      Próximo
+                      {t("common.next")}
                     </Button>
                   )}
                 </div>
-                {currentStepIndex === TOUR_STEPS.length - 1 && (
+                {currentStepIndex === tourSteps.length - 1 && (
                   <Button
                     variant="primary"
                     onClick={() => {
@@ -172,7 +180,7 @@ export const TourRoot = observer(function TourRoot(props: TOnboardingTourProps) 
                       toggleCreateProjectModal(true);
                     }}
                   >
-                    Crie seu primeiro projeto
+                    {t("onboarding.tour.create_first_project")}
                   </Button>
                 )}
               </div>

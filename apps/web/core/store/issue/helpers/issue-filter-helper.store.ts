@@ -146,6 +146,7 @@ export class IssueFilterHelperStore implements IIssueFilterHelperStore {
     team_project: filters?.team_project || null,
     subscriber: filters?.subscriber || null,
     issue_type: filters?.issue_type || null,
+    entity: filters?.entity || null,
   });
 
   /**

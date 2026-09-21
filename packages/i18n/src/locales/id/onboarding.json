@@ -1,0 +1,51 @@
+{
+  "onboarding": {
+    "usecase": {
+      "header_title": "What brings you to Avião?",
+      "header_description": "Ceritakan tujuan dan ukuran tim Anda.",
+      "select_one_or_more": "Pilih satu atau lebih"
+    },
+    "password": {
+      "mismatch": "Kata sandi tidak cocok",
+      "confirm_placeholder": "Konfirmasi kata sandi"
+    },
+    "role": {
+      "select_one": "Pilih satu",
+      "product_manager": "Manajer Produk",
+      "engineering_manager": "Manajer Teknik",
+      "designer": "Desainer",
+      "developer": "Pengembang",
+      "founder_executive": "Pendiri/Eksekutif",
+      "operations_manager": "Manajer Operasi",
+      "others": "Lainnya"
+    },
+    "profile": {
+      "header_title": "Buat profil Anda.",
+      "role_question": "Dalam peran apa Anda bekerja? Pilih satu."
+    },
+    "invites": {
+      "sent_successfully": "Undangan berhasil dikirim.",
+      "empty": "Tidak ada undangan",
+      "accept_hint": "Terima undangan untuk berkolaborasi dengan tim Anda.",
+      "header_title": "Undang rekan tim Anda",
+      "you_were_invited": "Anda diundang!",
+      "email_column": "Email",
+      "role_column": "Peran"
+    },
+    "auth": {
+      "unauthorized_title": "Tidak diizinkan!",
+      "check_pending_invites": "Cek undangan tertunda",
+      "switch_account_hint_prefix": "Jika Anda mendaftar dengan",
+      "switch_account_hint_suffix": "tanpa sengaja, Anda dapat beralih ke akun lain dari sini.",
+      "unauthorized_description": "Ups! Anda tidak memiliki izin untuk melihat halaman ini"
+    },
+    "tour": {
+      "work_items_title": "Rencanakan dengan item kerja",
+      "welcome_title": "Selamat datang di Avião, {first_name} {last_name}",
+      "welcome_description": "Kami senang Anda memutuskan untuk mencoba Avião. Sekarang Anda dapat mengelola proyek Anda dengan mudah. Mulailah dengan membuat proyek.",
+      "skip_tour": "Tidak, terima kasih. Saya akan menjelajah sendiri",
+      "create_first_project": "Buat proyek pertama Anda",
+      "sidebar_subtitle": "Dapatkan lebih banyak dari Avião."
+    }
+  }
+}

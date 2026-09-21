@@ -104,19 +104,19 @@ export const ANALYTICS_INSIGHTS_FIELDS: Record<TAnalyticsTabsBase, IInsightField
 
 export const ANALYTICS_DURATION_FILTER_OPTIONS = [
   {
-    name: "Ontem",
+    name: "Yesterday",
     value: "yesterday",
   },
   {
-    name: "Últimos 7 dias",
+    name: "Last 7 days",
     value: "last_7_days",
   },
   {
-    name: "Últimos 30 dias",
+    name: "Last 30 days",
     value: "last_30_days",
   },
   {
-    name: "Últimos 3 meses",
+    name: "Last 3 months",
     value: "last_3_months",
   },
 ];
@@ -124,66 +124,66 @@ export const ANALYTICS_DURATION_FILTER_OPTIONS = [
 export const ANALYTICS_X_AXIS_VALUES: { value: ChartXAxisProperty; label: string }[] = [
   {
     value: ChartXAxisProperty.STATES,
-    label: "Etapa",
+    label: "State",
   },
   {
     value: ChartXAxisProperty.STATE_GROUPS,
-    label: "Grupo de etapa",
+    label: "State Group",
   },
   {
     value: ChartXAxisProperty.PRIORITY,
-    label: "Prioridade",
+    label: "Priority",
   },
   {
     value: ChartXAxisProperty.LABELS,
-    label: "Etiqueta",
+    label: "Label",
   },
   {
     value: ChartXAxisProperty.ASSIGNEES,
-    label: "Responsável",
+    label: "Assignee",
   },
   {
     value: ChartXAxisProperty.ESTIMATE_POINTS,
-    label: "Ponto de estimativa",
+    label: "Estimate Points",
   },
   {
     value: ChartXAxisProperty.CYCLES,
-    label: "Ciclo",
+    label: "Cycle",
   },
   {
     value: ChartXAxisProperty.MODULES,
-    label: "Módulo",
+    label: "Module",
   },
   {
     value: ChartXAxisProperty.COMPLETED_AT,
-    label: "Data de conclusão",
+    label: "Completion Date",
   },
   {
     value: ChartXAxisProperty.TARGET_DATE,
-    label: "Data de entrega",
+    label: "Delivery Date",
   },
   {
     value: ChartXAxisProperty.START_DATE,
-    label: "Data de início",
+    label: "Start Date",
   },
   {
     value: ChartXAxisProperty.CREATED_AT,
-    label: "Data de criação",
+    label: "Creation Date",
   },
 ];
 
 export const ANALYTICS_Y_AXIS_VALUES: { value: ChartYAxisMetric; label: string }[] = [
   {
     value: ChartYAxisMetric.WORK_ITEM_COUNT,
-    label: "Chamado",
+    label: "Work Items",
   },
   {
     value: ChartYAxisMetric.ESTIMATE_POINT_COUNT,
-    label: "Estimativa",
+    label: "Estimate Points",
   },
   {
     value: ChartYAxisMetric.EPIC_WORK_ITEM_COUNT,
-    label: "Épica",
+    label: "Epics",
   },
 ];
 

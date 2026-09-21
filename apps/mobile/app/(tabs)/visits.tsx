@@ -59,7 +59,7 @@ export default function VisitsScreen() {
                 }}
               >
                 <Text color={active ? colors.onPrimary : colors.textSecondary} weight="medium">
-                  {v === "list" ? "Lista" : "Calendário"}
+                  {v === "list" ? "List" : "Calendar"}
                 </Text>
               </Pressable>
             );
@@ -81,7 +81,7 @@ export default function VisitsScreen() {
             <Text variant="caption" style={{ marginBottom: spacing.xs }}>Visitas em {shortDate(selectedDay.toISOString())}</Text>
           ) : null}
           {visibleVisits.length === 0 ? (
-            <EmptyState title="Sem visitas" description="Nenhuma visita técnica encontrada." />
+            <EmptyState title="No visits" description="No technical visits found." />
           ) : (
             visibleVisits.map((v) => (
               <VisitRow key={v.id} visit={v} onPress={() => router.push(`/visit/${v.id}`)} />

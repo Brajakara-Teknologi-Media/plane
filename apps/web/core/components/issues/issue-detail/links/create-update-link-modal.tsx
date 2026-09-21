@@ -90,7 +90,7 @@ export const IssueLinkCreateUpdateModal = observer(function IssueLinkCreateUpdat
                 control={control}
                 name="url"
                 rules={{
-                  required: "A URL é obrigatória",
+                  required: "URL is required",
                 }}
                 render={({ field: { value, onChange, ref } }) => (
                   <Input

@@ -144,8 +144,8 @@ export function recordView(
 }
 
 /**
- * Diff enxuto para gravar em `changes`: apenas os campos que realmente mudaram,
- * no formato `{campo: {de, para}}`.
+ * Lean diff to store in `changes`: only fields that actually changed,
+ * in the format `{field: {from, to}}`.
  */
 export function auditDiff(
   before: Record<string, any>,
@@ -158,7 +158,7 @@ export function auditDiff(
     const to = after?.[field];
     if (from === to) continue;
     if (from instanceof Date && to instanceof Date && from.getTime() === to.getTime()) continue;
-    changes[field] = { de: trim(from), para: trim(to) };
+    changes[field] = { from: trim(from), to: trim(to) };
   }
   return changes;
 }

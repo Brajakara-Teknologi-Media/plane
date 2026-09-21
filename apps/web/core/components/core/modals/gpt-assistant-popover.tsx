@@ -12,6 +12,7 @@ import { usePopper } from "react-popper";
 import { AlertCircle } from "lucide-react";
 import { Popover, Transition } from "@headlessui/react";
 // plane imports
+import { useTranslation } from "@plane/i18n";
 import type { EditorRefApi } from "@plane/editor";
 import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
@@ -55,6 +56,7 @@ export function GptAssistantPopover(props: Props) {
     workspaceSlug,
     projectId,
   } = props;
+  const { t } = useTranslation();
   // states
   const [response, setResponse] = useState("");
   const [invalidResponse, setInvalidResponse] = useState(false);
@@ -92,12 +94,12 @@ export function GptAssistantPopover(props: Props) {
     const error = err?.data?.error;
     const errorMessage =
       err?.status === 429
-        ? error || "Você atingiu o limite máximo de 50 solicitações por mês por usuário."
-        : error || "Ocorreu um erro. Tente novamente.";
+        ? error || "You have reached the maximum limit of 50 requests per month per user."
+        : error || "An error occurred. Please try again.";
 
     setToast({
       type: TOAST_TYPE.ERROR,
-      title: "Erro!",
+      title: "Error!",
       message: errorMessage,
     });
 
@@ -123,8 +125,8 @@ export function GptAssistantPopover(props: Props) {
   const handleInvalidTask = () => {
     setToast({
       type: TOAST_TYPE.ERROR,
-      title: "Erro!",
-      message: "Insira alguma tarefa para obter assistência da IA.",
+      title: "Error!",
+      message: "Enter a task to get AI assistance.",
     });
   };
 
@@ -268,7 +270,7 @@ export function GptAssistantPopover(props: Props) {
                 onChange={onChange}
                 ref={ref}
                 placeholder={`${
-                  prompt && prompt !== "" ? "Diga à IA o que fazer com este conteúdo..." : "Ask AI anything..."
+                  prompt && prompt !== "" ? "Tell AI what to do with this content..." : "Ask AI anything..."
                 }`}
                 className="w-full"
                 autoFocus
@@ -282,7 +284,7 @@ export function GptAssistantPopover(props: Props) {
               <>
                 <div className="flex items-start justify-center gap-2 text-13 text-accent-primary">
                   <AlertCircle className="h-4 w-4" />
-                  <p>Ao usar este recurso, você concorda em compartilhar a mensagem com um serviço de terceiros. </p>
+                  <p>{t("common.gpt_third_party_notice")} </p>
                 </div>
               </>
             )}

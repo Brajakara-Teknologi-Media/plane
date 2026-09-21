@@ -9,78 +9,78 @@ import Link from "next/link";
 import { cn } from "@plane/utils";
 import type { THomeSummary } from "@/services/home-summary.service";
 
-type TIndicador = {
-  chave: keyof THomeSummary;
-  rotulo: string;
-  icone: typeof Layers;
+type TIndicator = {
+  key: keyof THomeSummary;
+  label: string;
+  icon: typeof Layers;
   href: (slug: string) => string;
-  /** Destaque quando o número for maior que zero — só para o que pede ação. */
-  alerta?: "danger" | "warning";
+  /** Highlight when the number is greater than zero — only for actionable items. */
+  alert?: "danger" | "warning";
 };
 
 /**
- * A faixa responde, em ordem, as perguntas do começo do dia:
- * o que é meu, o que já estourou, o que vence hoje, o que eu abri, o que está
- * esperando triagem e o que a equipe entregou.
+ * The strip answers, in order, the questions at the start of the day:
+ * what's mine, what's overdue, what's due today, what I created, what's
+ * waiting for triage, and what the team delivered.
  */
-const INDICADORES: TIndicador[] = [
+const INDICATORS: TIndicator[] = [
   {
-    chave: "meus_abertos",
-    rotulo: "Meus chamados",
-    icone: Layers,
+    key: "my_open",
+    label: "My open items",
+    icon: Layers,
     href: (s) => `/${s}/workspace-views/all-issues/`,
   },
   {
-    chave: "meus_atrasados",
-    rotulo: "Atrasados",
-    icone: AlertTriangle,
+    key: "my_overdue",
+    label: "Overdue",
+    icon: AlertTriangle,
     href: (s) => `/${s}/workspace-views/all-issues/`,
-    alerta: "danger",
+    alert: "danger",
   },
   {
-    chave: "meus_vencem_hoje",
-    rotulo: "Vencem hoje",
-    icone: CalendarClock,
+    key: "my_due_today",
+    label: "Due today",
+    icon: CalendarClock,
     href: (s) => `/${s}/workspace-views/all-issues/`,
-    alerta: "warning",
+    alert: "warning",
   },
   {
-    chave: "abertos_por_mim",
-    rotulo: "Abertos por mim",
-    icone: PenLine,
+    key: "created_by_me",
+    label: "Created by me",
+    icon: PenLine,
     href: (s) => `/${s}/workspace-views/all-issues/`,
   },
   {
-    chave: "solicitacoes_pendentes",
-    rotulo: "Aguardando triagem",
-    icone: Inbox,
+    key: "pending_requests",
+    label: "Awaiting triage",
+    icon: Inbox,
     href: (s) => `/${s}/global-intake/`,
   },
   {
-    chave: "concluidos_7d",
-    rotulo: "Concluídos (7 dias)",
-    icone: CheckCircle2,
+    key: "completed_7d",
+    label: "Completed (7 days)",
+    icon: CheckCircle2,
     href: (s) => `/${s}/analytics/work-items/`,
   },
 ];
 
-const CORES_ALERTA = {
+const ALERT_COLORS = {
   danger: "text-danger-primary",
   warning: "text-warning-primary",
 } as const;
 
 type Props = {
   workspaceSlug: string;
-  resumo: THomeSummary | undefined;
-  carregando: boolean;
+  summary: THomeSummary | undefined;
+  loading: boolean;
 };
 
-export function HomeSummaryStrip({ workspaceSlug, resumo, carregando }: Props) {
-  if (carregando) {
+export function HomeSummaryStrip({ workspaceSlug, summary, loading }: Props) {
+  if (loading) {
     return (
       <div className="grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-6">
-        {INDICADORES.map((i) => (
-          <div key={i.chave} className="h-[86px] animate-pulse rounded-xl border border-subtle bg-surface-2" />
+        {INDICATORS.map((i) => (
+          <div key={i.key} className="h-[86px] animate-pulse rounded-xl border border-subtle bg-surface-2" />
         ))}
       </div>
     );
@@ -88,23 +88,23 @@ export function HomeSummaryStrip({ workspaceSlug, resumo, carregando }: Props) {
 
   return (
     <div className="grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-6">
-      {INDICADORES.map((indicador) => {
-        const valor = (resumo?.[indicador.chave] as number) ?? 0;
-        const Icone = indicador.icone;
-        // A cor de alerta só aparece quando há de fato algo a fazer: um "0"
-        // vermelho treina a pessoa a ignorar o vermelho.
-        const destaque = indicador.alerta && valor > 0 ? CORES_ALERTA[indicador.alerta] : "text-primary";
+      {INDICATORS.map((indicator) => {
+        const value = (summary?.[indicator.key] as number) ?? 0;
+        const Icon = indicator.icon;
+        // Alert color only appears when there's actually something to do: a red "0"
+        // trains people to ignore red.
+        const highlight = indicator.alert && value > 0 ? ALERT_COLORS[indicator.alert] : "text-primary";
         return (
           <Link
-            key={indicador.chave}
-            href={indicador.href(workspaceSlug)}
-            className="group flex flex-col justify-between rounded-xl border border-subtle bg-surface-1 px-4 py-3 transition-colors hover:border-accent-subtle-1 hover:bg-surface-2"
+            key={indicator.key}
+            href={indicator.href(workspaceSlug)}
+            className="group hover:border-accent-subtle-1 flex flex-col justify-between rounded-xl border border-subtle bg-surface-1 px-4 py-3 transition-colors hover:bg-surface-2"
           >
             <div className="flex items-center gap-1.5 text-11 text-secondary">
-              <Icone className="size-3.5 shrink-0" />
-              <span className="truncate">{indicador.rotulo}</span>
+              <Icon className="size-3.5 shrink-0" />
+              <span className="truncate">{indicator.label}</span>
             </div>
-            <span className={cn("mt-1.5 text-24 font-semibold leading-none tabular-nums", destaque)}>{valor}</span>
+            <span className={cn("mt-1.5 text-24 leading-none font-semibold tabular-nums", highlight)}>{value}</span>
           </Link>
         );
       })}

@@ -23,11 +23,11 @@ function ProjectSettingsPage() {
   const resolvedPath = resolvedTheme === "dark" ? ProjectDarkEmptyState : ProjectLightEmptyState;
   return (
     <div className="mx-auto flex h-full max-w-[480px] flex-col items-center justify-center gap-4">
-      <img src={resolvedPath} alt="Nenhum projeto ainda" />
-      <div className="text-16 font-semibold text-tertiary">Nenhum projeto ainda</div>
+      <img src={resolvedPath} alt="No projects yet" />
+      <div className="text-16 font-semibold text-tertiary">No projects yet</div>
       <div className="text-center text-13 text-tertiary">
-        Os projetos são a base do trabalho orientado a metas. Com eles você gerencia suas equipes, tarefas e tudo o
-        que for necessário para concluir as entregas.
+        Projects are the foundation of goal-oriented work. With them, you manage your teams, tasks, and everything else
+        necessary to complete the deliverables.
       </div>
       <div className="flex gap-2">
         <Button

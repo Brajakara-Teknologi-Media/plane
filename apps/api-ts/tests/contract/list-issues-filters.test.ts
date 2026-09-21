@@ -61,11 +61,11 @@ describe("Filtros de chamados", () => {
   let stateDone: string;
   let stateTodoB: string;
   // chamados
-  let i1: string; // urgent / Todo / Correção / assignee / entity1 / datas
+  let i1: string; // urgent / Todo / Fix / assignee / entity1 / datas
   let i2: string; // high / In Progress / Melhoria / entity2 / mention+subscriber
   let i3: string; // none / Done / criado por outro usuário
   let i4: string; // ciclo + módulo
-  let i5: string; // projeto B, urgent, label "Correção" (mesmo nome)
+  let i5: string; // projeto B, urgent, label "Fix" (mesmo nome)
 
   beforeAll(async () => {
     await cleanDb();
@@ -94,9 +94,9 @@ describe("Filtros de chamados", () => {
     entity1 = (await createEntity(ws.id, {name: "Prefeitura Alfa"})).id;
     entity2 = (await createEntity(ws.id, {name: "Prefeitura Beta"})).id;
 
-    labelCorrecaoA = (await createLabel(projectA, ws.id, {name: "Correção"})).id;
+    labelCorrecaoA = (await createLabel(projectA, ws.id, {name: "Fix"})).id;
     labelMelhoria = (await createLabel(projectA, ws.id, {name: "Melhoria"})).id;
-    labelCorrecaoB = (await createLabel(projectB, ws.id, {name: "Correção"})).id;
+    labelCorrecaoB = (await createLabel(projectB, ws.id, {name: "Fix"})).id;
 
     cycleId = (await createCycle(projectA, ws.id, admin.id, {name: "Sprint 1"})).id;
     moduleId = (await createModule(projectA, ws.id, {name: "Financeiro"})).id;
@@ -457,7 +457,7 @@ describe("Filtros de chamados", () => {
     });
 
     it("um id de label casa com os labels de mesmo nome em outros projetos", async () => {
-      // "Correção" existe nos dois projetos com ids diferentes; a visão de
+      // "Fix" existe nos dois projetos com ids diferentes; a visão de
       // workspace deduplica por nome, então selecionar um id traz os dois.
       expect(ids(await listWorkspace(`?labels=${labelCorrecaoA}`)).sort()).toEqual([i1, i5].sort());
     });

@@ -28,42 +28,42 @@ import { useUser } from "@/hooks/store/user";
 export const WORKSPACE_ACTIVE_CYCLES_DETAILS = [
   {
     key: "10000_feet_view",
-    title: "Visão geral de todos os ciclos ativos.",
+    title: "Overview of all active cycles.",
     description:
-      "Amplie a visão para ver os ciclos em andamento em todos os seus projetos de uma vez, em vez de ir de ciclo em ciclo em cada projeto.",
+      "Expand the view to see ongoing cycles across all your projects at once, instead of going cycle by cycle in each project.",
     icon: Folder,
   },
   {
     key: "get_snapshot_of_each_active_cycle",
-    title: "Obtenha um panorama de cada ciclo ativo.",
+    title: "Get a snapshot of each active cycle.",
     description:
-      "Acompanhe métricas de alto nível de todos os ciclos ativos, veja seu estado de progresso e tenha noção do escopo em relação aos prazos.",
+      "Track high-level metrics of all active cycles, see their progress status and understand scope relative to deadlines.",
     icon: CircleDashed,
   },
   {
     key: "compare_burndowns",
-    title: "Compare os burndowns.",
-    description: "Monitore o desempenho de cada uma das suas equipes com uma espiada no relatório de burndown de cada ciclo.",
+    title: "Compare burndowns.",
+    description: "Monitor the performance of each of your teams with a look at the burndown report for each cycle.",
     icon: BarChart4,
   },
   {
     key: "quickly_see_make_or_break_issues",
-    title: "Veja rapidamente os chamados decisivos. ",
+    title: "Quickly spot the make-or-break work items. ",
     description:
-      "Visualize os chamados de alta prioridade de cada ciclo em relação às datas de vencimento. Veja todos eles por ciclo em um clique.",
+      "Visualize high-priority work items of each cycle in relation to due dates. See them all by cycle in one click.",
     icon: AlertOctagon,
   },
   {
     key: "zoom_into_cycles_that_need_attention",
-    title: "Foque nos ciclos que precisam de atenção. ",
-    description: "Investigue o estado de qualquer ciclo que não corresponda às expectativas em um clique.",
+    title: "Focus on cycles that need attention. ",
+    description: "Investigate the status of any cycle that doesn't meet expectations with one click.",
     icon: SearchIcon,
   },
   {
     key: "stay_ahead_of_blockers",
-    title: "Antecipe-se aos bloqueios.",
+    title: "Stay ahead of blockers.",
     description:
-      "Identifique desafios de um projeto para outro e veja dependências entre ciclos que não são óbvias em nenhuma outra visualização.",
+      "Identify challenges from one project to another and see dependencies between cycles that aren't obvious in any other view.",
     icon: Microscope,
   },
 ];

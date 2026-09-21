@@ -17,7 +17,7 @@ const GROUPS: { key: string; label: string }[] = [
   { key: "triage", label: "Triagem" },
   { key: "backlog", label: "Backlog" },
   { key: "started", label: "Em progresso" },
-  { key: "completed", label: "Concluídos" },
+  { key: "completed", label: "Completed" },
 ];
 
 export default function WorkItemsScreen() {
@@ -58,7 +58,7 @@ export default function WorkItemsScreen() {
   if (!current) {
     return (
       <Screen>
-        {projects.length === 0 ? <Loading label="Carregando projetos…" /> : (
+        {projects.length === 0 ? <Loading label="Loading projects…" /> : (
           <ProjectPicker projects={projects} current={current} onSelect={setCurrent} />
         )}
       </Screen>
@@ -103,7 +103,7 @@ export default function WorkItemsScreen() {
           contentContainerStyle={{ paddingHorizontal: spacing.lg, paddingBottom: 120 }}
           ItemSeparatorComponent={() => <View style={{ height: spacing.sm }} />}
           refreshControl={<RefreshControl refreshing={items.loading} onRefresh={items.refetch} tintColor={colors.primary} />}
-          ListEmptyComponent={<EmptyState title="Nenhum work item" description="Crie o primeiro work item deste projeto." />}
+          ListEmptyComponent={<EmptyState title="No work item" description="Create the first work item for this project." />}
           renderItem={({ item }) => {
             const st = item.state_id ? stateById.get(item.state_id) : undefined;
             return (

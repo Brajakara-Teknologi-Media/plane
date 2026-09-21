@@ -150,7 +150,7 @@ describe("serializeState / serializeLabel", () => {
   });
 
   it("normaliza os opcionais do label", () => {
-    const out = serializeLabel({id: "l1", name: "Correção", projectId: "p1", workspaceId: "w1"}) as any;
+    const out = serializeLabel({id: "l1", name: "Fix", projectId: "p1", workspaceId: "w1"}) as any;
     expect(out.color).toBe("");
     expect(out.parent).toBeNull();
     expect(out.sla_hours).toBeNull();
@@ -158,7 +158,7 @@ describe("serializeState / serializeLabel", () => {
   });
 
   it("preserva sla_hours quando definido", () => {
-    const out = serializeLabel({id: "l1", name: "Correção", slaHours: 16, parentId: "l0", sortOrder: 1}) as any;
+    const out = serializeLabel({id: "l1", name: "Fix", slaHours: 16, parentId: "l0", sortOrder: 1}) as any;
     expect(out.sla_hours).toBe(16);
     expect(out.parent).toBe("l0");
     expect(out.sort_order).toBe(1);

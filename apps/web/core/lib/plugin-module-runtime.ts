@@ -72,7 +72,10 @@ function rewriteImports(code: string): string {
   for (const [spec, url] of urls) {
     const esc = spec.replace(/[.*+?^${}()|[\]\\/]/g, "\\$&");
     // from "spec" | import "spec" | import("spec")
-    code = code.replace(new RegExp(`(from\\s*|import\\s*\\(?\\s*)(["'])${esc}\\2`, "g"), (_m, p1, q) => `${p1}${q}${url}${q}`);
+    code = code.replace(
+      new RegExp(`(from\\s*|import\\s*\\(?\\s*)(["'])${esc}\\2`, "g"),
+      (_m, p1, q) => `${p1}${q}${url}${q}`
+    );
   }
   return code;
 }
@@ -83,7 +86,7 @@ function rewriteImports(code: string): string {
  */
 export async function loadPluginModule(url: string): Promise<Record<string, unknown>> {
   const res = await fetch(url, { credentials: "include" });
-  if (!res.ok) throw new Error(`Falha ao carregar o bundle do plugin: ${url} (${res.status})`);
+  if (!res.ok) throw new Error(`Failed to load the plugin bundle: ${url} (${res.status})`);
   const rewritten = rewriteImports(await res.text());
   const blobUrl = URL.createObjectURL(new Blob([rewritten], { type: "text/javascript" }));
   try {

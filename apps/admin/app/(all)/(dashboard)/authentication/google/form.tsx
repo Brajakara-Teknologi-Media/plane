@@ -58,7 +58,7 @@ export function InstanceGoogleConfigForm(props: Props) {
     {
       key: "GOOGLE_CLIENT_ID",
       type: "text",
-      label: "ID do cliente",
+      label: "Customer ID",
       description: (
         <>
           Your client ID lives in your Google API Console.{" "}
@@ -69,7 +69,7 @@ export function InstanceGoogleConfigForm(props: Props) {
             className="text-accent-primary hover:underline"
             rel="noreferrer"
           >
-            Saiba mais
+            Learn more
           </a>
         </>
       ),
@@ -80,7 +80,7 @@ export function InstanceGoogleConfigForm(props: Props) {
     {
       key: "GOOGLE_CLIENT_SECRET",
       type: "password",
-      label: "Segredo do cliente",
+      label: "Customer secret",
       description: (
         <>
           Your client secret should also be in your Google API Console.{" "}
@@ -91,7 +91,7 @@ export function InstanceGoogleConfigForm(props: Props) {
             className="text-accent-primary hover:underline"
             rel="noreferrer"
           >
-            Saiba mais
+            Learn more
           </a>
         </>
       ),
@@ -135,7 +135,7 @@ export function InstanceGoogleConfigForm(props: Props) {
       url: `${originURL}/auth/google/callback/`,
       description: (
         <p>
-          Geraremos isto automaticamente. Cole isto no seu <CodeBlock darkerShade>URI de redirecionamento autorizada</CodeBlock>{" "}
+          We will generate this automatically. Paste this in your <CodeBlock darkerShade>Redirect URI autorizada</CodeBlock>{" "}
           field. For this OAuth client{" "}
           <a
             href="https://console.cloud.google.com/apis/credentials/oauthclient"
@@ -157,8 +157,8 @@ export function InstanceGoogleConfigForm(props: Props) {
       const response = await updateInstanceConfigurations(payload);
       setToast({
         type: TOAST_TYPE.SUCCESS,
-        title: "Pronto!",
-        message: "Sua autenticação do Google está configurada. Teste-a agora.",
+        title: "Done!",
+        message: "Your Google authentication is configured. Test it now.",
       });
       reset({
         GOOGLE_CLIENT_ID: response.find((item) => item.key === "GOOGLE_CLIENT_ID")?.value,
@@ -211,10 +211,10 @@ export function InstanceGoogleConfigForm(props: Props) {
                   loading={isSubmitting}
                   disabled={!isDirty}
                 >
-                  {isSubmitting ? "Salvando…" : "Salvar alterações"}
+                  {isSubmitting ? "Saving…" : "Save changes"}
                 </Button>
                 <Link href="/authentication" className={getButtonStyling("secondary", "lg")} onClick={handleGoBack}>
-                  Voltar
+                  Back
                 </Link>
               </div>
             </div>

@@ -79,13 +79,13 @@ export const customWidgetModule = new Elysia({ prefix: "/workspaces/:slug/widget
 
     if (!ALLOWED_TABLES.has(table)) {
       set.status = 400;
-      return { detail: `A tabela "${table}" não está disponível para consultas de widget. Permitidas: ${[...ALLOWED_TABLES].join(", ")}.` };
+      return { detail: `Table "${table}" is not available for widget queries. Allowed: ${[...ALLOWED_TABLES].join(", ")}.` };
     }
 
     const accessor = (prisma as any)[table];
     if (!accessor || typeof accessor.findMany !== "function") {
       set.status = 400;
-      return { detail: `Tabela "${table}" não encontrada no cliente Prisma.` };
+      return { detail: `Table "${table}" not found in the Prisma client.` };
     }
 
     const take = Math.min(Number(b.take ?? 50), 200);
@@ -101,6 +101,6 @@ export const customWidgetModule = new Elysia({ prefix: "/workspaces/:slug/widget
       return { table, count: results.length, results };
     } catch (err: any) {
       set.status = 400;
-      return { detail: "Erro na consulta: " + (err?.message ?? "unknown") };
+      return { detail: "Query error: " + (err?.message ?? "unknown") };
     }
   });

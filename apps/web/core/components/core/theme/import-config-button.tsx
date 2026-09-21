@@ -73,14 +73,14 @@ export const CustomThemeImportConfigButton = observer(function CustomThemeImport
       setToast({
         type: TOAST_TYPE.SUCCESS,
         title: t("success"),
-        message: "Configuração de tema importada com sucesso",
+        message: t("common.theme_imported"),
       });
     } catch (error) {
       console.error("Failed to upload config:", error);
       setToast({
         type: TOAST_TYPE.ERROR,
         title: t("error"),
-        message: error instanceof Error ? error.message : "Falha ao importar a configuração de tema",
+        message: error instanceof Error ? error.message : t("common.theme_import_failed"),
       });
     } finally {
       // Reset file input

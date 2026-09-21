@@ -121,7 +121,7 @@ export abstract class BaseCommandPaletteStore implements IBaseCommandPaletteStor
     );
   }
   // computedFn
-  getIsProjectListOpen = computedFn((projectId: string) => this.projectListOpenMap[projectId]);
+  getIsProjectListOpen = computedFn((projectId: string) => this.projectListOpenMap[projectId] ?? false);
 
   /**
    * Toggles the project list open state
@@ -130,7 +130,7 @@ export abstract class BaseCommandPaletteStore implements IBaseCommandPaletteStor
    */
   toggleProjectListOpen = (projectId: string, value?: boolean) => {
     if (value !== undefined) this.projectListOpenMap[projectId] = value;
-    else this.projectListOpenMap[projectId] = !this.projectListOpenMap[projectId];
+    else this.projectListOpenMap[projectId] = !(this.projectListOpenMap[projectId] ?? true);
   };
 
   /**

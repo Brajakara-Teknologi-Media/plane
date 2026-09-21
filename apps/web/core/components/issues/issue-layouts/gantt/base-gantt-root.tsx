@@ -4,33 +4,33 @@
  * See the LICENSE file for details.
  */
 
-import {observer} from "mobx-react";
-import {useParams} from "next/navigation";
-import {useCallback, useEffect} from "react";
+import { observer } from "mobx-react";
+import { useParams } from "next/navigation";
+import { useCallback, useEffect } from "react";
 // plane imports
-import {ALL_ISSUES, EUserPermissions, EUserPermissionsLevel, PROJECT_WORK_ROLES} from "@plane/constants";
-import {useTranslation} from "@plane/i18n";
-import {TOAST_TYPE, setToast} from "@plane/propel/toast";
-import type {EIssuesStoreType, IBlockUpdateData, TIssue} from "@plane/types";
-import {EIssueLayoutTypes, GANTT_TIMELINE_TYPE} from "@plane/types";
-import {renderFormattedPayloadDate} from "@plane/utils";
+import { ALL_ISSUES, EUserPermissions, EUserPermissionsLevel, PROJECT_WORK_ROLES } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import type { EIssuesStoreType, IBlockUpdateData, TIssue } from "@plane/types";
+import { EIssueLayoutTypes, GANTT_TIMELINE_TYPE } from "@plane/types";
+import { renderFormattedPayloadDate } from "@plane/utils";
 // components
-import {TimeLineTypeContext} from "@/components/gantt-chart/contexts";
-import {GanttChartRoot} from "@/components/gantt-chart/root";
-import {IssueGanttSidebar} from "@/components/gantt-chart/sidebar/issues/sidebar";
+import { TimeLineTypeContext } from "@/components/gantt-chart/contexts";
+import { GanttChartRoot } from "@/components/gantt-chart/root";
+import { IssueGanttSidebar } from "@/components/gantt-chart/sidebar/issues/sidebar";
 // hooks
-import {useIssues} from "@/hooks/store/use-issues";
-import {useRealtimeRefetch} from "@/hooks/use-realtime";
-import {useUserPermissions} from "@/hooks/store/user";
-import {useIssueStoreType} from "@/hooks/use-issue-layout-store";
-import {useIssuesActions} from "@/hooks/use-issues-actions";
-import {useTimeLineChart} from "@/hooks/use-timeline-chart";
+import { useIssues } from "@/hooks/store/use-issues";
+import { useRealtimeRefetch } from "@/hooks/use-realtime";
+import { useUserPermissions } from "@/hooks/store/user";
+import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
+import { useIssuesActions } from "@/hooks/use-issues-actions";
+import { useTimeLineChart } from "@/hooks/use-timeline-chart";
 // plane web hooks
-import {useBulkOperationStatus} from "@/plane-web/hooks/use-bulk-operation-status";
+import { useBulkOperationStatus } from "@/plane-web/hooks/use-bulk-operation-status";
 
-import {IssueLayoutHOC} from "../issue-layout-HOC";
-import {GanttQuickAddIssueButton, QuickAddIssueRoot} from "../quick-add";
-import {IssueGanttBlock} from "./blocks";
+import { IssueLayoutHOC } from "../issue-layout-HOC";
+import { GanttQuickAddIssueButton, QuickAddIssueRoot } from "../quick-add";
+import { IssueGanttBlock } from "./blocks";
 
 interface IBaseGanttRoot {
   viewId?: string | undefined;
@@ -46,17 +46,17 @@ export type GanttStoreType =
   | EIssuesStoreType.EPIC;
 
 export const BaseGanttRoot = observer(function BaseGanttRoot(props: IBaseGanttRoot) {
-  const {viewId, isCompletedCycle = false, isEpic = false} = props;
-  const {t} = useTranslation();
+  const { viewId, isCompletedCycle = false, isEpic = false } = props;
+  const { t } = useTranslation();
   // router
-  const {workspaceSlug, projectId} = useParams();
+  const { workspaceSlug, projectId } = useParams();
 
   const storeType = useIssueStoreType() as GanttStoreType;
-  const {issues, issuesFilter} = useIssues(storeType);
-  const {fetchIssues, fetchNextIssues, updateIssue, quickAddIssue} = useIssuesActions(storeType);
-  const {initGantt} = useTimeLineChart(GANTT_TIMELINE_TYPE.ISSUE);
+  const { issues, issuesFilter } = useIssues(storeType);
+  const { fetchIssues, fetchNextIssues, updateIssue, quickAddIssue } = useIssuesActions(storeType);
+  const { initGantt } = useTimeLineChart(GANTT_TIMELINE_TYPE.ISSUE);
   // store hooks
-  const {allowPermissions} = useUserPermissions();
+  const { allowPermissions } = useUserPermissions();
 
   const appliedDisplayFilters = issuesFilter.issueFilters?.displayFilters;
   // plane web hooks
@@ -66,7 +66,7 @@ export const BaseGanttRoot = observer(function BaseGanttRoot(props: IBaseGanttRo
   targetDate.setDate(targetDate.getDate() + 1);
 
   useEffect(() => {
-    fetchIssues("init-loader", {canGroup: false, perPageCount: 100}, viewId);
+    fetchIssues("init-loader", { canGroup: false, perPageCount: 100 }, viewId);
   }, [fetchIssues, storeType, viewId]);
 
   // Live-update the timeline when anyone creates/moves/edits a work item or intake.
@@ -74,7 +74,7 @@ export const BaseGanttRoot = observer(function BaseGanttRoot(props: IBaseGanttRo
     (e) =>
       (e.entity === "issue" || e.entity === "intake") &&
       (!e.project_id || !projectId || e.project_id === projectId.toString()),
-    () => fetchIssues("mutation", {canGroup: false, perPageCount: 100}, viewId)
+    () => fetchIssues("mutation", { canGroup: false, perPageCount: 100 }, viewId)
   );
 
   useEffect(() => {
@@ -84,7 +84,7 @@ export const BaseGanttRoot = observer(function BaseGanttRoot(props: IBaseGanttRo
   const issuesIds = (issues.groupedIssueIds?.[ALL_ISSUES] as string[]) ?? [];
   const nextPageResults = issues.getPaginationData(undefined, undefined)?.nextPageResults;
 
-  const {enableIssueCreation} = issues?.viewFlags || {};
+  const { enableIssueCreation } = issues?.viewFlags || {};
 
   const loadMoreIssues = useCallback(() => {
     fetchNextIssues();
@@ -93,32 +93,29 @@ export const BaseGanttRoot = observer(function BaseGanttRoot(props: IBaseGanttRo
   const updateIssueBlockStructure = async (issue: TIssue, data: IBlockUpdateData) => {
     if (!workspaceSlug) return;
 
-    const payload: any = {...data};
+    const payload: any = { ...data };
     if (data.sort_order) payload.sort_order = data.sort_order.newSortOrder;
 
     updateIssue && (await updateIssue(issue.project_id, issue.id, payload));
   };
 
-  const isAllowed = allowPermissions(
-    PROJECT_WORK_ROLES,
-    EUserPermissionsLevel.PROJECT,
-  );
+  const isAllowed = allowPermissions(PROJECT_WORK_ROLES, EUserPermissionsLevel.PROJECT);
   const updateBlockDates = useCallback(
     (
       updates: {
         id: string;
         start_date?: string;
         target_date?: string;
-      }[],
+      }[]
     ) =>
       issues.updateIssueDates(workspaceSlug.toString(), updates, projectId.toString()).catch(() => {
         setToast({
           type: TOAST_TYPE.ERROR,
           title: t("toast.error"),
-          message: "Erro ao atualizar as datas do chamado. Tente novamente mais tarde.",
+          message: t("common.failed_to_update_issue_dates"),
         });
       }),
-    [issues, projectId, workspaceSlug],
+    [issues, projectId, workspaceSlug]
   );
 
   const quickAdd =
@@ -142,23 +139,12 @@ export const BaseGanttRoot = observer(function BaseGanttRoot(props: IBaseGanttRo
         <div className="h-full w-full">
           <GanttChartRoot
             border={false}
-            title={isEpic ? t("epic.label", {count: 2}) : t("issue.label", {count: 2})}
-            loaderTitle={isEpic ? t("epic.label", {count: 2}) : t("issue.label", {count: 2})}
+            title={isEpic ? t("epic.label", { count: 2 }) : t("issue.label", { count: 2 })}
+            loaderTitle={isEpic ? t("epic.label", { count: 2 }) : t("issue.label", { count: 2 })}
             blockIds={issuesIds}
             blockUpdateHandler={updateIssueBlockStructure}
-            blockToRender={(data: TIssue) => (
-              <IssueGanttBlock
-                issueId={data.id}
-                isEpic={isEpic}
-              />
-            )}
-            sidebarToRender={(props) => (
-              <IssueGanttSidebar
-                {...props}
-                showAllBlocks
-                isEpic={isEpic}
-              />
-            )}
+            blockToRender={(data: TIssue) => <IssueGanttBlock issueId={data.id} isEpic={isEpic} />}
+            sidebarToRender={(props) => <IssueGanttSidebar {...props} showAllBlocks isEpic={isEpic} />}
             enableBlockLeftResize={isAllowed}
             enableBlockRightResize={isAllowed}
             enableBlockMove={isAllowed}

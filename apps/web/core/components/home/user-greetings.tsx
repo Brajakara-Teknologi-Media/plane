@@ -12,17 +12,15 @@ import { useCurrentTime } from "@/hooks/use-current-time";
 
 export interface IUserGreetingsView {
   user: IUser;
-  /** Frase curta com o estado do dia, ao lado da data. */
+  /** Short phrase with the state of the day, next to the date. */
   resumo?: string;
 }
 
 /**
- * Saudação do topo da home.
+ * Top banner greeting for the home page.
  *
- * Alinhada à esquerda, junto do resto do conteúdo: centralizada no meio de uma
- * tela larga ela empurrava o conteúdo para baixo e deixava a página com cara de
- * vazia. Data e hora saem em pt-BR — em en-US virava "Friday, Aug 7" no meio de
- * uma interface toda em português.
+ * Left-aligned, along with the rest of the content: centering it in the middle of a
+ * wide screen would push the content down and make the page look empty.
  */
 export function UserGreetingsView(props: IUserGreetingsView) {
   const { user, resumo } = props;
@@ -33,13 +31,13 @@ export function UserGreetingsView(props: IUserGreetingsView) {
   const periodo = hora < 12 ? "morning" : hora < 18 ? "afternoon" : "evening";
   const emoji = periodo === "morning" ? "🌤️" : periodo === "afternoon" ? "🌥️" : "🌙";
 
-  const dataLonga = new Intl.DateTimeFormat("pt-BR", {
+  const dataLonga = new Intl.DateTimeFormat("en-US", {
     weekday: "long",
     day: "numeric",
     month: "long",
   }).format(currentTime);
 
-  const horaTexto = new Intl.DateTimeFormat("pt-BR", {
+  const horaTexto = new Intl.DateTimeFormat("en-US", {
     timeZone: user?.user_timezone || undefined,
     hour12: false,
     hour: "2-digit",
@@ -50,8 +48,8 @@ export function UserGreetingsView(props: IUserGreetingsView) {
 
   return (
     <div className="flex flex-col gap-0.5">
-      {/* A saudação vem inteira do i18n: montar "Bom" + "tarde" produzia
-          "Bom tarde", porque em português ela concorda com o gênero. */}
+      {/* The greeting comes entirely from i18n: concatenating "Good" + "afternoon"
+          would work in English, but fails in gendered languages like Portuguese. */}
       <h1 className="text-24 font-semibold text-primary">
         {t(`greeting_${periodo}`)}, {nome}
       </h1>

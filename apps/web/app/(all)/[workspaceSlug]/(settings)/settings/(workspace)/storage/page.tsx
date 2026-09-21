@@ -48,6 +48,8 @@ function StoragePage() {
   const { currentWorkspace } = useWorkspace();
   const { t } = useTranslation();
 
+  const E = "workspace_settings.settings.storage";
+
   const [form, setForm] = useState<FormState>(EMPTY);
   const [hasSecret, setHasSecret] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
@@ -72,9 +74,7 @@ function StoragePage() {
     setHasSecret(data.has_secret_key);
   }, [data]);
 
-  const pageTitle = currentWorkspace?.name
-    ? `${currentWorkspace.name} - ${t("workspace_settings.settings.storage.title")}`
-    : undefined;
+  const pageTitle = currentWorkspace?.name ? `${currentWorkspace.name} - ${t(`${E}.title`)}` : undefined;
 
   if (workspaceUserInfo && !isAdmin) {
     return <NotAuthorizedView section="settings" className="h-auto" />;
@@ -86,11 +86,11 @@ function StoragePage() {
     if (!workspaceSlug) return;
     if (form.useS3) {
       if (!form.endpoint.trim() || !form.bucket.trim() || !form.access_key.trim()) {
-        setToast({ type: TOAST_TYPE.ERROR, title: "Erro", message: "Informe endpoint, bucket e access key." });
+        setToast({ type: TOAST_TYPE.ERROR, title: t("error"), message: t(`${E}.toasts.error_fields`) });
         return;
       }
       if (!form.secret_key.trim() && !hasSecret) {
-        setToast({ type: TOAST_TYPE.ERROR, title: "Erro", message: "Informe a secret key." });
+        setToast({ type: TOAST_TYPE.ERROR, title: t("error"), message: t(`${E}.toasts.error_secret`) });
         return;
       }
     }
@@ -102,15 +102,14 @@ function StoragePage() {
         region: form.region.trim(),
         bucket: form.bucket.trim(),
         access_key: form.access_key.trim(),
-        // Only send the secret when the admin typed a new one.
         ...(form.secret_key.trim() ? { secret_key: form.secret_key.trim() } : {}),
       });
-      setToast({ type: TOAST_TYPE.SUCCESS, title: "Salvo", message: "Configuração de armazenamento atualizada." });
+      setToast({ type: TOAST_TYPE.SUCCESS, title: t("saved"), message: t(`${E}.toasts.success`) });
       setForm((f) => ({ ...f, secret_key: "" }));
       await mutate();
     } catch (err: unknown) {
       const error = err as { detail?: string };
-      setToast({ type: TOAST_TYPE.ERROR, title: "Erro", message: error?.detail || "Não foi possível salvar." });
+      setToast({ type: TOAST_TYPE.ERROR, title: t("error"), message: error?.detail || t("error") });
     } finally {
       setIsSaving(false);
     }
@@ -119,21 +118,16 @@ function StoragePage() {
   return (
     <SettingsContentWrapper header={<StorageWorkspaceSettingsHeader />} hugging>
       <PageHead title={pageTitle} />
-      <SettingsHeading
-        title={t("workspace_settings.settings.storage.title")}
-        description="Defina onde os anexos e arquivos são armazenados. Por padrão usa o armazenamento local; ative o S3 para usar um provedor compatível (Magalu Cloud, AWS, MinIO)."
-      />
+      <SettingsHeading title={t(`${E}.title`)} description={t(`${E}.description`)} />
 
       {isLoading ? (
-        <div className="py-6 text-sm text-secondary">Carregando…</div>
+        <div className="text-sm py-6 text-secondary">{t(`${E}.loading`)}</div>
       ) : (
         <div className="flex max-w-2xl flex-col gap-5 py-2">
           <div className="flex items-center justify-between rounded-md border border-subtle p-3">
             <div>
-              <p className="text-sm font-medium text-primary">Usar armazenamento S3</p>
-              <p className="text-13 text-secondary">
-                Desligado: arquivos ficam no disco local do servidor. Ligado: usa o bucket S3 configurado abaixo.
-              </p>
+              <p className="text-sm font-medium text-primary">{t(`${E}.use_s3`)}</p>
+              <p className="text-13 text-secondary">{t(`${E}.use_s3_desc`)}</p>
             </div>
             <ToggleSwitch value={form.useS3} onChange={(v: boolean) => set("useS3", v)} />
           </div>
@@ -141,7 +135,7 @@ function StoragePage() {
           {form.useS3 && (
             <div className="flex flex-col gap-4">
               <div>
-                <label className="mb-1 block text-sm font-medium text-secondary">Endpoint (URL)</label>
+                <label className="text-sm mb-1 block font-medium text-secondary">{t(`${E}.endpoint`)}</label>
                 <Input
                   type="text"
                   value={form.endpoint}
@@ -151,7 +145,7 @@ function StoragePage() {
                 />
               </div>
               <div>
-                <label className="mb-1 block text-sm font-medium text-secondary">Região</label>
+                <label className="text-sm mb-1 block font-medium text-secondary">{t(`${E}.region`)}</label>
                 <Input
                   type="text"
                   value={form.region}
@@ -161,7 +155,7 @@ function StoragePage() {
                 />
               </div>
               <div>
-                <label className="mb-1 block text-sm font-medium text-secondary">Bucket</label>
+                <label className="text-sm mb-1 block font-medium text-secondary">{t(`${E}.bucket`)}</label>
                 <Input
                   type="text"
                   value={form.bucket}
@@ -171,7 +165,7 @@ function StoragePage() {
                 />
               </div>
               <div>
-                <label className="mb-1 block text-sm font-medium text-secondary">Access Key</label>
+                <label className="text-sm mb-1 block font-medium text-secondary">{t(`${E}.access_key`)}</label>
                 <Input
                   type="text"
                   value={form.access_key}
@@ -181,12 +175,12 @@ function StoragePage() {
                 />
               </div>
               <div>
-                <label className="mb-1 block text-sm font-medium text-secondary">Secret Key</label>
+                <label className="text-sm mb-1 block font-medium text-secondary">{t(`${E}.secret_key`)}</label>
                 <Input
                   type="password"
                   value={form.secret_key}
                   onChange={(e) => set("secret_key", e.target.value)}
-                  placeholder={hasSecret ? "•••••••• (mantém a atual se vazio)" : "Secret key"}
+                  placeholder={hasSecret ? "•••••••• (keep current if empty)" : "Secret key"}
                   className="w-full"
                 />
               </div>
@@ -195,7 +189,7 @@ function StoragePage() {
 
           <div>
             <Button variant="primary" size="sm" onClick={handleSave} loading={isSaving}>
-              {isSaving ? "Salvando…" : "Salvar"}
+              {isSaving ? t(`${E}.saving`) : t(`${E}.save`)}
             </Button>
           </div>
         </div>

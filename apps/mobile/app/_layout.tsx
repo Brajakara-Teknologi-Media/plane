@@ -31,7 +31,7 @@ function AuthGate() {
     }
   }, [status, segments, router]);
 
-  if (status === "loading") return <Loading label="Carregando…" />;
+  if (status === "loading") return <Loading label="Loading…" />;
 
   return (
     <Stack
@@ -46,15 +46,15 @@ function AuthGate() {
       <Stack.Screen name="(auth)" options={{ headerShown: false }} />
       <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
       <Stack.Screen name="work-item/[id]" options={{ title: "Chamado" }} />
-      <Stack.Screen name="work-item/new" options={{ title: "Novo chamado", presentation: "modal" }} />
-      <Stack.Screen name="intake/[id]" options={{ title: "Solicitação" }} />
-      <Stack.Screen name="intake/new" options={{ title: "Nova solicitação", presentation: "modal" }} />
-      <Stack.Screen name="visit/[id]" options={{ title: "Visita Técnica" }} />
-      <Stack.Screen name="visit/new" options={{ title: "Nova Visita", presentation: "modal" }} />
+      <Stack.Screen name="work-item/new" options={{ title: "New Work Item", presentation: "modal" }} />
+      <Stack.Screen name="intake/[id]" options={{ title: "Request" }} />
+      <Stack.Screen name="intake/new" options={{ title: "New request", presentation: "modal" }} />
+      <Stack.Screen name="visit/[id]" options={{ title: "Technical Visit" }} />
+      <Stack.Screen name="visit/new" options={{ title: "New Visit", presentation: "modal" }} />
       <Stack.Screen name="wiki/index" options={{ title: "Wiki" }} />
-      <Stack.Screen name="wiki/[id]" options={{ title: "Página" }} />
+      <Stack.Screen name="wiki/[id]" options={{ title: "Page" }} />
       <Stack.Screen name="entities/index" options={{ title: "Entidades" }} />
-      <Stack.Screen name="notifications" options={{ title: "Notificações" }} />
+      <Stack.Screen name="notifications" options={{ title: "Notifications" }} />
       <Stack.Screen name="search" options={{ title: "Buscar", presentation: "modal" }} />
     </Stack>
   );

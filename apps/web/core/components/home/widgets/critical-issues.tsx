@@ -1,12 +1,12 @@
 "use client";
 
-import {APIService} from "@/services/api.service";
-import {API_BASE_URL} from "@plane/constants";
-import type {THomeWidgetProps} from "@plane/types";
-import {calculateTimeAgo, cn, generateIssueDetailLink} from "@plane/utils";
-import {AlertTriangle} from "lucide-react";
+import { APIService } from "@/services/api.service";
+import { API_BASE_URL } from "@plane/constants";
+import type { THomeWidgetProps } from "@plane/types";
+import { calculateTimeAgo, cn, generateIssueDetailLink } from "@plane/utils";
+import { AlertTriangle } from "lucide-react";
 import Link from "next/link";
-import {useEffect, useState} from "react";
+import { useEffect, useState } from "react";
 
 class UrgentService extends APIService {
   constructor() {
@@ -28,7 +28,7 @@ const STATE_GROUP_BG: Record<string, string> = {
   triage: "bg-purple-100 text-purple-700",
 };
 
-export function CriticalIssuesWidget({workspaceSlug}: THomeWidgetProps) {
+export function CriticalIssuesWidget({ workspaceSlug }: THomeWidgetProps) {
   const [issues, setIssues] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -43,20 +43,22 @@ export function CriticalIssuesWidget({workspaceSlug}: THomeWidgetProps) {
   if (issues.length === 0) return null;
 
   return (
-    <div className="rounded-xl border border-red-200 bg-red-50 p-4 dark:border-red-800 dark:bg-red-950/20">
+    <div className="border-red-200 bg-red-50 dark:border-red-800 dark:bg-red-950/20 rounded-xl border p-4">
       <div className="mb-3 flex items-center gap-2">
-        <AlertTriangle className="h-4 w-4 text-red-600" />
-        <span className="text-13 font-semibold text-red-800 dark:text-red-300">Chamados Urgentes em Aberto ({issues.length})</span>
+        <AlertTriangle className="text-red-600 h-4 w-4" />
+        <span className="text-red-800 dark:text-red-300 text-13 font-semibold">
+          Urgent Open Items ({issues.length})
+        </span>
       </div>
       <div className="space-y-2">
         {issues.slice(0, 6).map((issue) => (
           <Link
             key={issue.id}
-            href={generateIssueDetailLink({workspaceSlug, projectId: issue.project?.id, issueId: issue.id})}
-            className="flex items-center gap-2 rounded-lg border border-red-100 bg-red-50 px-3 py-2 shadow-sm transition-colors hover:border-red-200 hover:bg-red-100/70 dark:border-red-900/50 dark:bg-red-950/35 dark:hover:bg-red-950/55"
+            href={generateIssueDetailLink({ workspaceSlug, projectId: issue.project?.id, issueId: issue.id })}
+            className="border-red-100 bg-red-50 shadow-sm hover:border-red-200 hover:bg-red-100/70 dark:border-red-900/50 dark:bg-red-950/35 dark:hover:bg-red-950/55 flex items-center gap-2 rounded-lg border px-3 py-2 transition-colors"
           >
             {issue.legacy_ticket_number && (
-              <span className="shrink-0 rounded border border-danger-strong/20 bg-danger-subtle px-1.5 py-0.5 text-10 font-mono font-semibold text-danger-primary dark:border-danger-strong/40 dark:bg-danger-primary/20 dark:text-danger-secondary">
+              <span className="font-mono shrink-0 rounded border border-danger-strong/20 bg-danger-subtle px-1.5 py-0.5 text-10 font-semibold text-danger-primary dark:border-danger-strong/40 dark:bg-danger-primary/20 dark:text-danger-secondary">
                 #{issue.legacy_ticket_number}
               </span>
             )}
@@ -70,7 +72,7 @@ export function CriticalIssuesWidget({workspaceSlug}: THomeWidgetProps) {
               <span
                 className={cn(
                   "shrink-0 rounded px-1.5 py-0.5 text-10 font-medium",
-                  STATE_GROUP_BG[issue.state.group] ?? "bg-surface-2 text-secondary",
+                  STATE_GROUP_BG[issue.state.group] ?? "bg-surface-2 text-secondary"
                 )}
               >
                 {issue.state.name}
@@ -79,7 +81,9 @@ export function CriticalIssuesWidget({workspaceSlug}: THomeWidgetProps) {
             <span className="shrink-0 text-11 text-tertiary">{calculateTimeAgo(issue.updated_at)}</span>
           </Link>
         ))}
-        {issues.length > 6 && <p className="text-center text-12 text-red-600">+{issues.length - 6} outros chamados urgentes</p>}
+        {issues.length > 6 && (
+          <p className="text-red-600 text-center text-12">+{issues.length - 6} more urgent items</p>
+        )}
       </div>
     </div>
   );

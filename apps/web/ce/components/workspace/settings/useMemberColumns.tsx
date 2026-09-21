@@ -43,7 +43,7 @@ export const useMemberColumns = () => {
 
   const columns = [
     {
-      key: "Nome completo",
+      key: "Full Name",
       content: t("workspace_settings.settings.members.details.full_name"),
       thClassName: "text-left",
       thRender: () => (
@@ -65,7 +65,7 @@ export const useMemberColumns = () => {
     },
 
     {
-      key: "Nome de exibição",
+      key: "Display Name",
       content: t("workspace_settings.settings.members.details.display_name"),
       tdRender: (rowData: RowData) => (
         <div className={`w-32 ${isSuspended(rowData) ? "text-placeholder" : ""}`}>{rowData.member.display_name}</div>
@@ -95,7 +95,7 @@ export const useMemberColumns = () => {
     },
 
     {
-      key: "Tipo de conta",
+      key: "Account type",
       content: t("workspace_settings.settings.members.details.account_type"),
       thRender: () => (
         <MemberHeaderColumn

@@ -5,12 +5,14 @@
  */
 
 import { APP_NAME, SUPPORT_EMAIL } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 
 export function MaintenanceMessage() {
+  const { t } = useTranslation();
   const linkMap = [
     {
       key: "mail_to",
-      label: "Falar com o suporte",
+      label: "Contact support",
       value: `mailto:${SUPPORT_EMAIL}`,
     },
   ];
@@ -19,12 +21,9 @@ export function MaintenanceMessage() {
     <>
       <div className="flex flex-col gap-2.5">
         <h1 className="text-left text-18 font-semibold text-primary">
-          &#x1F6A7; Parece que o {APP_NAME} não iniciou corretamente!
+          &#x1F6A7; {t("misc.maintenance.title", { app_name: APP_NAME })}
         </h1>
-        <span className="text-left text-14 font-medium text-secondary">
-          Alguns serviços podem não ter iniciado. Verifique os logs dos containers para identificar e resolver o
-          problema. Se precisar de ajuda, fale com a nossa equipe de suporte.
-        </span>
+        <span className="text-left text-14 font-medium text-secondary">{t("misc.maintenance.description")}</span>
       </div>
       <div className="mt-1 flex items-center justify-start gap-6">
         {linkMap.map((link) => (

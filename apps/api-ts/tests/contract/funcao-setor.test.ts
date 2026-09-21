@@ -69,7 +69,7 @@ describe("TestFuncaoDeSetorNoQuadro", () => {
 
   afterAll(() => cleanDb());
 
-  it("mudar a função no espaço de trabalho reescreve a função nos projetos", async () => {
+  it("Changing the role in the workspace rewrites the role in projects", async () => {
     const antes = await prisma.projectMember.findFirst({ where: { projectId, memberId: tecnicoId } });
     expect(antes?.role).toBe(GESTOR_DE_PROJETO);
 
@@ -110,7 +110,7 @@ describe("TestFuncaoDeSetorNoQuadro", () => {
  * A associação continua no banco de propósito — sem ela o histórico perde o
  * autor —, mas a pessoa não pode mais aparecer como opção de responsável.
  */
-describe("TestMembrosInativosNasListagens", () => {
+describe("TestMembrosInativosNasListgens", () => {
   let client: ReturnType<typeof apiClient>;
   let wsSlug: string;
   let projectId: string;
@@ -142,7 +142,7 @@ describe("TestMembrosInativosNasListagens", () => {
     return (Array.isArray(dados) ? dados : (dados.results ?? [])).map((m: any) => m.member ?? m.member_id ?? m.id);
   };
 
-  it("membros do espaço de trabalho não trazem quem foi desligado", async () => {
+  it("Workspace members don't bring along those who have left", async () => {
     expect(await ids(`/workspaces/${wsSlug}/members/`)).not.toContain(desligadoId);
   });
 

@@ -17,20 +17,20 @@ const PRIORITIES = ["urgent", "high", "medium", "low", "none"] as const;
 const STATE_GROUPS = ["backlog", "unstarted", "started", "completed", "cancelled"] as const;
 
 const PRIORITY_LABELS: Record<string, string> = {
-  urgent: "Urgente",
-  high: "Alta",
-  medium: "Média",
-  low: "Baixa",
-  none: "Sem prioridade",
+  urgent: "Urgent",
+  high: "High",
+  medium: "Medium",
+  low: "Low",
+  none: "No priority",
 };
 
 const GROUP_LABELS: Record<string, string> = {
-  triage: "Triagem",
+  triage: "Triage",
   backlog: "Backlog",
-  unstarted: "Não iniciado",
-  started: "Em andamento",
-  completed: "Concluído",
-  cancelled: "Cancelado",
+  unstarted: "Unstarted",
+  started: "In Progress",
+  completed: "Completed",
+  cancelled: "Cancelled",
 };
 
 type Filters = {
@@ -172,7 +172,7 @@ export const reportsModule = new Elysia({ prefix: "/workspaces/:slug/reports" })
     };
   })
 
-  // ── 2. Chamados por sistema (projeto) ───────────────────────────────────────
+  // ── 2. Work Items por sistema (projeto) ───────────────────────────────────────
   .get("/by-system/", async ({ params: { slug }, user, query }) => {
     const ws = await getWorkspaceOrFail(slug);
     await requireWorkspaceWriter(ws.id, user.id);
@@ -210,7 +210,7 @@ export const reportsModule = new Elysia({ prefix: "/workspaces/:slug/reports" })
     return { total, count: rows.length, rows };
   })
 
-  // ── 3. Chamados por entidade (cliente) ──────────────────────────────────────
+  // ── 3. Work Items por entidade (cliente) ──────────────────────────────────────
   .get("/by-entity/", async ({ params: { slug }, user, query }) => {
     const ws = await getWorkspaceOrFail(slug);
     await requireWorkspaceWriter(ws.id, user.id);
@@ -241,7 +241,7 @@ export const reportsModule = new Elysia({ prefix: "/workspaces/:slug/reports" })
         const meta = g.entityId ? entMap.get(g.entityId) : null;
         return {
           entity_id: g.entityId,
-          name: meta?.name ?? "Sem entidade",
+          name: meta?.name ?? "No entity",
           city: meta?.city ?? null,
           state: meta?.state ?? null,
           total: g._count.id,
@@ -257,7 +257,7 @@ export const reportsModule = new Elysia({ prefix: "/workspaces/:slug/reports" })
     return { total, count: rows.length, rows };
   })
 
-  // ── 4. Chamados por prioridade / urgência ───────────────────────────────────
+  // ── 4. Work Items por prioridade / urgência ───────────────────────────────────
   .get("/by-priority/", async ({ params: { slug }, user, query }) => {
     const ws = await getWorkspaceOrFail(slug);
     await requireWorkspaceWriter(ws.id, user.id);
@@ -313,7 +313,7 @@ export const reportsModule = new Elysia({ prefix: "/workspaces/:slug/reports" })
     return { rows, critical: criticalList };
   })
 
-  // ── 5. Chamados por tipo de atividade (labels) ──────────────────────────────
+  // ── 5. Work Items por tipo de atividade (labels) ──────────────────────────────
   .get("/by-type/", async ({ params: { slug }, user, query }) => {
     const ws = await getWorkspaceOrFail(slug);
     await requireWorkspaceWriter(ws.id, user.id);
@@ -563,7 +563,7 @@ export const reportsModule = new Elysia({ prefix: "/workspaces/:slug/reports" })
     }
 
     const VISIT_STATUS_LABELS: Record<number, string> = {
-      0: "Agendada", 1: "Em Andamento", 2: "Relatório em Elaboração", 3: "Aguardando Assinatura", 4: "Concluída", 5: "Cancelada",
+      0: "Scheduled", 1: "In Progress", 2: "Report in Preparation", 3: "Awaiting Signature", 4: "Completed", 5: "Cancelled",
     };
 
     const visits = await prisma.technicalVisit.findMany({
@@ -587,7 +587,7 @@ export const reportsModule = new Elysia({ prefix: "/workspaces/:slug/reports" })
       byStatus[v.status] = (byStatus[v.status] ?? 0) + 1;
       if (v.city) byCity.set(v.city, (byCity.get(v.city) ?? 0) + 1);
       if (v.technicianId) byTech.set(v.technicianId, (byTech.get(v.technicianId) ?? 0) + 1);
-      const entName = v.entity?.name ?? "Sem entidade";
+      const entName = v.entity?.name ?? "No entity";
       byEntity.set(entName, (byEntity.get(entName) ?? 0) + 1);
       if (v.motUpdate) motives.update++;
       if (v.motBugFix) motives.bug_fix++;
@@ -613,12 +613,12 @@ export const reportsModule = new Elysia({ prefix: "/workspaces/:slug/reports" })
       },
       by_status: Object.entries(byStatus).map(([k, count]) => ({ status: Number(k), label: VISIT_STATUS_LABELS[Number(k)] ?? "—", count })),
       by_motive: [
-        { key: "update", label: "Atualização", count: motives.update },
-        { key: "bug_fix", label: "Correção de Erros", count: motives.bug_fix },
-        { key: "training", label: "Treinamento/Acompanhamento", count: motives.training },
-        { key: "improvement", label: "Solicitação de Melhoria", count: motives.improvement },
-        { key: "commercial", label: "Comercial", count: motives.commercial },
-        { key: "other", label: "Outros", count: motives.other },
+        { key: "update", label: "Update", count: motives.update },
+        { key: "bug_fix", label: "Bug Fix", count: motives.bug_fix },
+        { key: "training", label: "Training/Follow-up", count: motives.training },
+        { key: "improvement", label: "Improvement Request", count: motives.improvement },
+        { key: "commercial", label: "Commercial", count: motives.commercial },
+        { key: "other", label: "Other", count: motives.other },
       ],
       by_technician: [...byTech.entries()].map(([id, count]) => ({ technician_id: id, name: techNames.get(id) ?? "—", count })).sort((a, b) => b.count - a.count),
       by_entity: [...byEntity.entries()].map(([name, count]) => ({ name, count })).sort((a, b) => b.count - a.count),
@@ -688,10 +688,10 @@ export const reportsModule = new Elysia({ prefix: "/workspaces/:slug/reports" })
     return {
       total_open: open.length,
       buckets: [
-        { range: "0-7 dias", key: "0-7", count: buckets["0-7"] },
-        { range: "8-30 dias", key: "8-30", count: buckets["8-30"] },
-        { range: "31-90 dias", key: "31-90", count: buckets["31-90"] },
-        { range: "90+ dias", key: "90+", count: buckets["90+"] },
+      "0-7 days",
+      "8-30 days",
+      "31-90 days",
+      "90+ days",
       ],
       oldest: oldest.slice(0, 25),
     };
@@ -740,8 +740,8 @@ export const reportsModule = new Elysia({ prefix: "/workspaces/:slug/reports" })
       bands: [
         { range: "≤ 24h", count: bands.le24 },
         { range: "24h – 72h", count: bands.le72 },
-        { range: "72h – 7 dias", count: bands.le168 },
-        { range: "> 7 dias", count: bands.gt168 },
+        { range: "72h – 7 days", count: bands.le7 },
+        { range: "> 7 days", count: bands.gt7 },
       ],
       by_priority: byPriority,
     };
@@ -786,7 +786,7 @@ export const reportsModule = new Elysia({ prefix: "/workspaces/:slug/reports" })
         total_visits: totalVisits,
       },
       top_systems: byProject.map((p) => ({ project_id: p.projectId, name: projNames.get(p.projectId)?.name ?? "—", count: p._count.id })),
-      top_entities: byEntity.map((e) => ({ entity_id: e.entityId, name: e.entityId ? entNames.get(e.entityId) ?? "—" : "Sem entidade", count: e._count.id })),
+      top_entities: byEntity.map((e) => ({ entity_id: e.entityId, name: e.entityId ? entNames.get(e.entityId) ?? "—" : "No entity", count: e._count.id })),
     };
   })
 

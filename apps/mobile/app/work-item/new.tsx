@@ -16,7 +16,7 @@ const PRIORITIES: Priority[] = ["urgent", "high", "medium", "low", "none"];
 const PRIORITY_LABELS: Record<Priority, string> = {
   urgent: "Urgente",
   high: "Alta",
-  medium: "Média",
+  medium: "Medium",
   low: "Baixa",
   none: "Nenhuma",
 };
@@ -87,7 +87,7 @@ export default function NewWorkItemScreen() {
     } catch {
       // Network failure while "online": fall back to the outbox.
       await enqueue({ kind: "work-item", slug, projectId, label: name.trim(), body });
-      Alert.alert("Salvo offline", "O work item será sincronizado quando a conexão voltar.");
+      Alert.alert("Saved offline", "The work item will be synced when the connection is restored.");
       router.back();
     } finally {
       setSaving(false);
@@ -117,10 +117,10 @@ export default function NewWorkItemScreen() {
 
       <Row gap={spacing.md} style={{ flexWrap: "wrap" }}>
         <FieldButton label="Prioridade" value={PRIORITY_LABELS[priority]} onPress={() => setSheet("priority")} />
-        <FieldButton label="Status" value={selectedState?.name ?? "Padrão"} onPress={() => setSheet("state")} />
+        <FieldButton label="Status" value={selectedState?.name ?? "Default"} onPress={() => setSheet("state")} />
         <FieldButton label="Entidade" value={selectedEntity?.name ?? "—"} onPress={() => setSheet("entity")} />
         <FieldButton
-          label="Responsáveis"
+          label="Responsible"
           value={assigneeNames.length ? assigneeNames.join(", ") : "—"}
           onPress={() => setSheet("assignees")}
         />
@@ -130,7 +130,7 @@ export default function NewWorkItemScreen() {
           onPress={() => setSheet("labels")}
         />
         <FieldButton
-          label="Início"
+          label="Home"
           value={startDate ? shortDate(startDate.toISOString()) : "—"}
           onPress={() => setSheet("startDate")}
         />
@@ -179,7 +179,7 @@ export default function NewWorkItemScreen() {
       />
       <MultiOptionSheet
         visible={sheet === "assignees"}
-        title="Responsáveis"
+        title="Responsible"
         selected={assigneeIds}
         onToggle={(v) => setAssigneeIds((prev) => toggle(prev, String(v)))}
         onClose={() => setSheet(null)}
@@ -199,7 +199,7 @@ export default function NewWorkItemScreen() {
       />
       <DateSheet
         visible={sheet === "startDate"}
-        title="Data de início"
+        title="Start date"
         value={startDate}
         onSelect={setStartDate}
         onClose={() => setSheet(null)}

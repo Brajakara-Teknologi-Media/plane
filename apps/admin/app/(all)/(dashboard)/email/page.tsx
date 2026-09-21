@@ -34,14 +34,14 @@ const InstanceEmailPage = observer(function InstanceEmailPage(_props: Route.Comp
         await disableEmail();
         setIsSMTPEnabled(false);
         setToast({
-          title: "Recurso de e-mail desativado",
-          message: "O recurso de e-mail foi desativado",
+          title: "Email feature disabled",
+          message: "The email feature has been disabled",
           type: TOAST_TYPE.SUCCESS,
         });
       } catch (_error) {
         setToast({
-          title: "Erro ao desativar o e-mail",
-          message: "Falha ao desativar o recurso de e-mail. Tente novamente.",
+          title: "Error disabling email",
+          message: "Failed to disable email feature. Please try again.",
           type: TOAST_TYPE.ERROR,
         });
       } finally {
@@ -60,13 +60,13 @@ const InstanceEmailPage = observer(function InstanceEmailPage(_props: Route.Comp
   return (
     <PageWrapper
       header={{
-        title: "E-mails seguros a partir da sua própria instância",
+        title: "Secure emails from your own instance",
         description: (
           <>
-            O Avião pode enviar e-mails úteis para você e seus usuários a partir da sua própria instância, sem acessar a Internet.
+            Avião can send useful emails to you and your users from your own instance, without accessing the Internet.
             <div className="text-13 font-regular text-tertiary">
-              Configure abaixo e teste o envio antes de salvar.&nbsp;
-              <span className="text-danger-primary">Configurações incorretas podem causar falhas e erros no envio de e-mails.</span>
+              Configure below and test sending before saving.&nbsp;
+              <span className="text-danger-primary">Incorrect settings may cause failures and errors in email delivery.</span>
             </div>
           </>
         ),
@@ -98,6 +98,6 @@ const InstanceEmailPage = observer(function InstanceEmailPage(_props: Route.Comp
   );
 });
 
-export const meta: Route.MetaFunction = () => [{ title: "Configurações de e-mail - God Mode" }];
+export const meta: Route.MetaFunction = () => [{ title: "Email Settings - God Mode" }];
 
 export default InstanceEmailPage;

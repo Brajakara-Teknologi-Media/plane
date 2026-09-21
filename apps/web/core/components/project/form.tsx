@@ -171,7 +171,7 @@ export function ProjectDetailsForm(props: IProjectDetailsForm) {
       setToast({
         type: TOAST_TYPE.ERROR,
         title: t("toast.error"),
-        message: error instanceof Error ? error.message : "Falha ao processar a imagem de capa",
+        message: error instanceof Error ? error.message : t("common.failed_to_process_cover_image"),
       });
       setIsLoading(false);
       return;

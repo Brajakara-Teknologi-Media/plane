@@ -115,7 +115,7 @@ export const AdminSidebarDropdown = observer(function AdminSidebarDropdown() {
 
           {!isSidebarCollapsed && (
             <div className="flex w-full gap-2">
-              <h4 className="grow truncate text-body-md-medium text-primary">Administrador da instância</h4>
+              <h4 className="grow truncate text-body-md-medium text-primary">Instance administrator</h4>
             </div>
           )}
         </div>

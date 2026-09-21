@@ -15,6 +15,7 @@ import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { EFileAssetType } from "@plane/types";
 import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 import { getAssetIdFromUrl, getFileURL, checkURLValidity } from "@plane/utils";
+import { useTranslation } from "@plane/i18n";
 // services
 import { FileService } from "@/services/file.service";
 const fileService = new FileService();
@@ -31,6 +32,7 @@ export const UserImageUploadModal = observer(function UserImageUploadModal(props
   const { handleRemove, isOpen, onClose, onSuccess, value } = props;
   // states
   const [image, setImage] = useState<File | null>(null);
+  const { t } = useTranslation();
   const [isRemoving, setIsRemoving] = useState(false);
   const [isImageUploading, setIsImageUploading] = useState(false);
 
@@ -66,8 +68,8 @@ export const UserImageUploadModal = observer(function UserImageUploadModal(props
     } catch (error) {
       setToast({
         type: TOAST_TYPE.ERROR,
-        title: "Erro!",
-        message: error?.toString() ?? "Algo deu errado. Tente novamente.",
+        title: "Error!",
+        message: error?.toString() ?? t("common.something_went_wrong_please_try_again"),
       });
       throw new Error("Error in uploading file.");
     } finally {
@@ -96,7 +98,7 @@ export const UserImageUploadModal = observer(function UserImageUploadModal(props
   return (
     <ModalCore isOpen={isOpen} handleClose={handleClose} position={EModalPosition.CENTER} width={EModalWidth.XL}>
       <div className="space-y-5 px-5 py-8 sm:p-6">
-        <h3 className="text-16 leading-6 font-medium text-primary">Enviar imagem</h3>
+        <h3 className="text-16 leading-6 font-medium text-primary">{t("common.upload_image")}</h3>
         <div className="space-y-3">
           <div className="flex items-center justify-center gap-3">
             <div
@@ -137,7 +139,7 @@ export const UserImageUploadModal = observer(function UserImageUploadModal(props
             <p className="text-13 text-danger-primary">
               {fileRejections[0].errors[0].code === "file-too-large"
                 ? "The image size cannot exceed 5 MB."
-                : "Envie um arquivo em formato válido."}
+                : "Upload a file in a valid format."}
             </p>
           )}
         </div>
@@ -148,7 +150,7 @@ export const UserImageUploadModal = observer(function UserImageUploadModal(props
           </Button>
           <div className="flex items-center gap-2">
             <Button variant="secondary" size="lg" onClick={handleClose}>
-              Cancelar
+              {t("common.cancel")}
             </Button>
             <Button variant="primary" size="lg" onClick={handleSubmit} disabled={!image} loading={isImageUploading}>
               {isImageUploading ? "Uploading" : "Upload & Save"}

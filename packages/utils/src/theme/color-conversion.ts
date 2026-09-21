@@ -158,6 +158,28 @@ export function getRelativeLuminance(hex: string): number {
     return 0.5; // Safe default
   }
 }
+/**
+ * Calculate WCAG contrast ratio between two colors
+ * Returns a value between 1 (no contrast) and 21 (max contrast: black vs white)
+ * Based on: https://www.w3.org/TR/WCAG20/#contrast-ratiodef
+ *
+ * WCAG thresholds:
+ * - 4.5:1 minimum for normal text (AA)
+ * - 3:1 minimum for large text / UI components (AA)
+ * - 7:1 enhanced for normal text (AAA)
+ *
+ * @param colorA - First color in hex format
+ * @param colorB - Second color in hex format
+ * @returns Contrast ratio (1-21)
+ */
+export function getHexContrastRatio(colorA: string, colorB: string): number {
+  const luminanceA = getRelativeLuminance(colorA);
+  const luminanceB = getRelativeLuminance(colorB);
+  const lighter = Math.max(luminanceA, luminanceB);
+  const darker = Math.min(luminanceA, luminanceB);
+  // WCAG formula: (L1 + 0.05) / (L2 + 0.05)
+  return (lighter + 0.05) / (darker + 0.05);
+}
 
 /**
  * Calculate perceptual brightness using weighted RGB formula

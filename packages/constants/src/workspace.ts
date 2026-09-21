@@ -78,13 +78,13 @@ export const RESTRICTED_URLS: string[] = [
 ];
 
 export const ROLE = {
-  5: "Visualizador", // GUEST
-  6: "Atendimento", // ATENDIMENTO
-  8: "Qualidade", // QUALIDADE
-  12: "TI", // TI
-  15: "Membro", // MEMBER
-  18: "Gestor de Projeto", // GESTOR_PROJETO
-  20: "Administrador", // ADMIN
+  5: "Viewer", // GUEST
+  6: "Support", // ATENDIMENTO
+  8: "Quality", // QUALIDADE
+  12: "IT", // TI
+  15: "Member", // MEMBER
+  18: "Project Manager", // GESTOR_PROJETO
+  20: "Administrator", // ADMIN
 } as Record<number, string>;
 
 export const ROLE_DETAILS = {

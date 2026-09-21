@@ -79,7 +79,7 @@ describe("TestAdvanceAnalytics", () => {
   const url = (caminho: string) => `/workspaces/${wsSlug}/${caminho}`;
 
   describe("GET /advance-analytics", () => {
-    it("a visão geral conta o que existe no espaço de trabalho", async () => {
+    it("The overview describes what exists in the workspace", async () => {
       const res = await client.get(url("advance-analytics?tab=overview"));
       expect(res.status).toBe(200);
       const data = (await res.json()) as any;

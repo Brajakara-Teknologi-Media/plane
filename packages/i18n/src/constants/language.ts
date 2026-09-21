@@ -6,7 +6,7 @@
 
 import type { TLanguage, ILanguageOption } from "../types";
 
-export const FALLBACK_LANGUAGE: TLanguage = "pt-BR";
+export const FALLBACK_LANGUAGE: TLanguage = "en";
 
 export const SUPPORTED_LANGUAGES: ILanguageOption[] = [
   { label: "English", value: "en" },
@@ -23,7 +23,6 @@ export const SUPPORTED_LANGUAGES: ILanguageOption[] = [
   { label: "Українська", value: "ua" },
   { label: "Polski", value: "pl" },
   { label: "한국어", value: "ko" },
-  { label: "Português Brasil", value: "pt-BR" },
   { label: "Indonesian", value: "id" },
   { label: "Română", value: "ro" },
   { label: "Tiếng việt", value: "vi-VN" },

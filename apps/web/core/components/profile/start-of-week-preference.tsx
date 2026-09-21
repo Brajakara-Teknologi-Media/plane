@@ -27,9 +27,9 @@ export const StartOfWeekPreference = observer(function StartOfWeekPreference(pro
   const handleStartOfWeekChange = async (val: number) => {
     try {
       await updateUserProfile({ start_of_the_week: val });
-      setToast({ type: TOAST_TYPE.SUCCESS, title: "Sucesso", message: "Primeiro dia da semana atualizado com sucesso" });
+      setToast({ type: TOAST_TYPE.SUCCESS, title: "Sucess", message: "First day of the week successfully updated" });
     } catch (_error) {
-      setToast({ type: TOAST_TYPE.ERROR, title: "Falha na atualização", message: "Tente novamente mais tarde." });
+      setToast({ type: TOAST_TYPE.ERROR, title: "Update failed", message: "Please try again later." });
     }
   };
 

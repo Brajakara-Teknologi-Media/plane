@@ -6,6 +6,7 @@
 
 import type { MutableRefObject } from "react";
 import { observer } from "mobx-react";
+import { useTranslation } from "@plane/i18n";
 import type {
   GroupByColumnTypes,
   IGroupByColumn,
@@ -100,6 +101,7 @@ export const KanBan = observer(function KanBan(props: IKanBan) {
     isEpic = false,
   } = props;
   // i18n
+  const { t } = useTranslation();
   // store hooks
   const storeType = useIssueStoreType();
   const issueKanBanView = useKanbanView();
@@ -113,10 +115,11 @@ export const KanBan = observer(function KanBan(props: IKanBan) {
     includeNone: true,
     isWorkspaceLevel: isWorkspaceLevel(storeType),
     isEpic: isEpic,
+    t,
   });
 
-  // Etapa excluída pelo filtro não vira coluna. Sem isto, aplicar o modelo do
-  // setor deixava "Triagem 0, Pendências 0, Em Análise 0" na tela.
+  // A state excluded by the filter does not become a column. Without this,
+  // applying the team's template left "Intake 0, Pending 0, In Analysis 0" on screen.
   const list = gruposPermitidos?.length
     ? todasAsColunas?.filter((coluna) => gruposPermitidos.includes(coluna.id))
     : todasAsColunas;

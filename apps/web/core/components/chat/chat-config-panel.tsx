@@ -9,6 +9,7 @@
 import { observer } from "mobx-react";
 import { useCallback, useEffect, useState } from "react";
 // plane imports
+import { useTranslation } from "@plane/i18n";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 // hooks
 import { useMember } from "@/hooks/store/use-member";
@@ -18,26 +19,37 @@ import { SelectPesquisavel } from "@/components/common/select-pesquisavel";
 import { Search } from "lucide-react";
 
 type Tab = "messages" | "menu" | "queues" | "flows" | "schedules" | "attendants" | "provider";
-const BASE_TABS: { key: Tab; label: string }[] = [
-  { key: "messages", label: "Mensagens" },
-  { key: "menu", label: "Menu" },
-  { key: "queues", label: "Filas" },
-  { key: "flows", label: "Fluxos" },
-  { key: "schedules", label: "Horários" },
-  { key: "provider", label: "WhatsApp (Z-API)" },
+const BASE_TABS: { key: Tab; labelKey: string }[] = [
+  { key: "messages", labelKey: "chat.config.tabs.messages" },
+  { key: "menu", labelKey: "chat.config.tabs.menu" },
+  { key: "queues", labelKey: "chat.config.tabs.queues" },
+  { key: "flows", labelKey: "chat.config.tabs.flows" },
+  { key: "schedules", labelKey: "chat.config.tabs.schedules" },
+  { key: "provider", labelKey: "chat.config.tabs.provider" },
 ];
 
-const ok = (m: string) => setToast({ type: TOAST_TYPE.SUCCESS, title: "Salvo", message: m });
-const err = (e: any) => setToast({ type: TOAST_TYPE.ERROR, title: "Erro", message: e?.detail || "Falhou." });
+const ok = (m: string) => setToast({ type: TOAST_TYPE.SUCCESS, title: "Saved", message: m });
+const err = (e: any) => setToast({ type: TOAST_TYPE.ERROR, title: "Error", message: e?.detail || "Failed." });
 
 const inputCls = "w-full rounded-md border border-subtle bg-surface-1 text-primary px-2 py-1.5 text-sm outline-none";
 const btn = "rounded-md bg-primary px-3 py-1.5 text-13 text-on-color";
 const btnGhost = "rounded-md border border-subtle px-3 py-1.5 text-13";
 
-export const ChatConfigPanel = observer(function ChatConfigPanel({ slug, apiUrl, isAdmin = false }: { slug: string; apiUrl: string; isAdmin?: boolean }) {
+export const ChatConfigPanel = observer(function ChatConfigPanel({
+  slug,
+  apiUrl,
+  isAdmin = false,
+}: {
+  slug: string;
+  apiUrl: string;
+  isAdmin?: boolean;
+}) {
+  const { t } = useTranslation();
   const [tab, setTab] = useState<Tab>("messages");
   const api = chatApi(apiUrl);
-  const TABS = isAdmin ? [...BASE_TABS.slice(0, 5), { key: "attendants" as Tab, label: "Atendentes" }, BASE_TABS[5]] : BASE_TABS;
+  const TABS = isAdmin
+    ? [...BASE_TABS.slice(0, 5), { key: "attendants" as Tab, labelKey: "chat.config.tabs.attendants" }, BASE_TABS[5]]
+    : BASE_TABS;
 
   // workspace members for queue/schedule assignment
   const {
@@ -55,9 +67,9 @@ export const ChatConfigPanel = observer(function ChatConfigPanel({ slug, apiUrl,
           <button
             key={tabDef.key}
             onClick={() => setTab(tabDef.key)}
-            className={`rounded-t-md px-3 py-2 text-13 ${tab === tabDef.key ? "border-b-2 border-primary font-medium text-primary" : "text-secondary"}`}
+            className={`rounded-t-md px-3 py-2 text-13 ${tab === tabDef.key ? "border-primary border-b-2 font-medium text-primary" : "text-secondary"}`}
           >
-            {tabDef.label}
+            {t(tabDef.labelKey)}
           </button>
         ))}
       </div>
@@ -75,43 +87,69 @@ export const ChatConfigPanel = observer(function ChatConfigPanel({ slug, apiUrl,
 });
 
 // ── Messages (BotConfig) ──────────────────────────────────────────────────────
-const MSG_FIELDS: { key: string; label: string }[] = [
-  { key: "welcomeMessage", label: "Mensagem inicial" },
-  { key: "menuHeader", label: "Cabeçalho do menu" },
-  { key: "askNameMessage", label: "Pedir nome" },
-  { key: "confirmContactMessage", label: "Confirmar contato (use {name})" },
-  { key: "noAttendantsMessage", label: "Sem atendentes" },
-  { key: "idlePromptMessage", label: "Inatividade 10min" },
-  { key: "idleCloseMessage", label: "Encerramento por inatividade (use {protocol})" },
-  { key: "closedMessage", label: "Encerramento (use {protocol})" },
+const MSG_FIELDS: { key: string; labelKey: string }[] = [
+  { key: "welcomeMessage", labelKey: "chat.config.fields.welcome_message" },
+  { key: "menuHeader", labelKey: "chat.config.fields.menu_header" },
+  { key: "askNameMessage", labelKey: "chat.config.fields.ask_name" },
+  { key: "confirmContactMessage", labelKey: "chat.config.fields.confirm_contact" },
+  { key: "noAttendantsMessage", labelKey: "chat.config.fields.no_attendants" },
+  { key: "idlePromptMessage", labelKey: "chat.config.fields.idle_prompt" },
+  { key: "idleCloseMessage", labelKey: "chat.config.fields.idle_close" },
+  { key: "closedMessage", labelKey: "chat.config.fields.closed" },
 ];
 function MessagesTab({ slug, api }: { slug: string; api: ReturnType<typeof chatApi> }) {
+  const { t } = useTranslation();
   const [cfg, setCfg] = useState<any>(null);
   useEffect(() => {
     api.getBot(slug).then(setCfg).catch(err);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [slug]);
-  if (!cfg) return <div className="text-sm text-secondary">Carregando…</div>;
+  if (!cfg) return <div className="text-sm text-secondary">{t("chat.config.loading")}</div>;
   return (
     <div className="flex max-w-2xl flex-col gap-3">
       {MSG_FIELDS.map((f) => (
         <label key={f.key} className="text-sm">
-          <span className="mb-1 block text-13 text-secondary">{f.label}</span>
-          <textarea className={inputCls} rows={2} value={cfg[f.key] ?? ""} onChange={(e) => setCfg({ ...cfg, [f.key]: e.target.value })} />
+          <span className="mb-1 block text-13 text-secondary">{t(f.labelKey)}</span>
+          <textarea
+            className={inputCls}
+            rows={2}
+            value={cfg[f.key] ?? ""}
+            onChange={(e) => setCfg({ ...cfg, [f.key]: e.target.value })}
+          />
         </label>
       ))}
       <div className="flex gap-3">
         <label className="text-sm">
-          <span className="mb-1 block text-13 text-secondary">Peso α (chats ativos)</span>
-          <input type="number" step="0.1" className={inputCls} value={cfg.routingAlpha ?? 1} onChange={(e) => setCfg({ ...cfg, routingAlpha: Number(e.target.value) })} />
+          <span className="mb-1 block text-13 text-secondary">{t("chat.config.fields.routing_alpha")}</span>
+          <input
+            type="number"
+            step="0.1"
+            className={inputCls}
+            value={cfg.routingAlpha ?? 1}
+            onChange={(e) => setCfg({ ...cfg, routingAlpha: Number(e.target.value) })}
+          />
         </label>
         <label className="text-sm">
-          <span className="mb-1 block text-13 text-secondary">Peso β (atendimentos hoje)</span>
-          <input type="number" step="0.1" className={inputCls} value={cfg.routingBeta ?? 0.5} onChange={(e) => setCfg({ ...cfg, routingBeta: Number(e.target.value) })} />
+          <span className="mb-1 block text-13 text-secondary">{t("chat.config.fields.routing_beta")}</span>
+          <input
+            type="number"
+            step="0.1"
+            className={inputCls}
+            value={cfg.routingBeta ?? 0.5}
+            onChange={(e) => setCfg({ ...cfg, routingBeta: Number(e.target.value) })}
+          />
         </label>
       </div>
-      <button className={btn + " self-start"} onClick={() => api.saveBot(slug, cfg).then(() => ok("Mensagens atualizadas.")).catch(err)}>
-        Salvar
+      <button
+        className={btn + " self-start"}
+        onClick={() =>
+          api
+            .saveBot(slug, cfg)
+            .then(() => ok(t("chat.config.messages.messages_updated")))
+            .catch(err)
+        }
+      >
+        Save
       </button>
     </div>
   );
@@ -119,80 +157,129 @@ function MessagesTab({ slug, api }: { slug: string; api: ReturnType<typeof chatA
 
 // ── Menu options ──────────────────────────────────────────────────────────────
 function MenuTab({ slug, api }: { slug: string; api: ReturnType<typeof chatApi> }) {
+  const { t } = useTranslation();
   const [items, setItems] = useState<any[]>([]);
   const [queues, setQueues] = useState<any[]>([]);
   const [flows, setFlows] = useState<any[]>([]);
   const load = useCallback(() => {
     api.listMenu(slug).then(setItems).catch(err);
-    api.listQueues(slug).then(setQueues).catch(() => {});
-    api.listFlows(slug).then(setFlows).catch(() => {});
+    api
+      .listQueues(slug)
+      .then(setQueues)
+      .catch(() => {});
+    api
+      .listFlows(slug)
+      .then(setFlows)
+      .catch(() => {});
   }, [slug]); // eslint-disable-line react-hooks/exhaustive-deps
   useEffect(load, [load]);
-  const save = (it: any) => api.updateMenu(slug, it.id, { key: it.key, label: it.label, action: it.action, queue_id: it.queueId, flow_id: it.flowId, message: it.message, order: it.order }).then(() => ok("Opção salva.")).catch(err);
+  const save = (it: any) =>
+    api
+      .updateMenu(slug, it.id, {
+        key: it.key,
+        label: it.label,
+        action: it.action,
+        queue_id: it.queueId,
+        flow_id: it.flowId,
+        message: it.message,
+        order: it.order,
+      })
+      .then(() => ok("Option saved."))
+      .catch(err);
   return (
     <div className="flex max-w-3xl flex-col gap-3">
       {items.map((it, idx) => (
         <div key={it.id} className="flex flex-wrap items-end gap-2 rounded-md border border-subtle p-2">
-          <Field label="Tecla" w="w-16"><input className={inputCls} value={it.key} onChange={(e) => upd(setItems, idx, { key: e.target.value })} /></Field>
-          <Field label="Rótulo" w="flex-1"><input className={inputCls} value={it.label} onChange={(e) => upd(setItems, idx, { label: e.target.value })} /></Field>
-          <Field label="Ação" w="w-32">
+          <Field label={t("chat.config.fields.key")} w="w-16">
+            <input className={inputCls} value={it.key} onChange={(e) => upd(setItems, idx, { key: e.target.value })} />
+          </Field>
+          <Field label="Label" w="flex-1">
+            <input
+              className={inputCls}
+              value={it.label}
+              onChange={(e) => upd(setItems, idx, { label: e.target.value })}
+            />
+          </Field>
+          <Field label="Action" w="w-32">
             <SelectPesquisavel
               value={it.action}
               onChange={(valor) => upd(setItems, idx, { action: valor })}
               opcoes={[
-                { value: "queue", label: "Fila" },
-                { value: "flow", label: "Fluxo" },
-                { value: "message", label: "Mensagem" },
+                { value: "queue", label: t("chat.config.options.queue") },
+                { value: "flow", label: t("chat.config.options.flow") },
+                { value: "message", label: t("chat.config.options.message") },
               ]}
             />
           </Field>
           {it.action === "queue" && (
-            <Field label="Fila" w="w-40">
+            <Field label={t("chat.config.fields.queue")} w="w-40">
               <SelectPesquisavel
                 value={it.queueId ?? ""}
                 onChange={(valor) => upd(setItems, idx, { queueId: valor })}
                 opcoes={queues.map((q: any) => ({ value: q.id, label: q.name }))}
                 opcaoVazia={{ value: "", label: "—" }}
-                searchPlaceholder="Buscar fila"
+                searchPlaceholder="Search queue"
               />
             </Field>
           )}
           {it.action === "flow" && (
-            <Field label="Fluxo" w="w-40">
+            <Field label={t("chat.config.fields.flow")} w="w-40">
               <SelectPesquisavel
                 value={it.flowId ?? ""}
                 onChange={(valor) => upd(setItems, idx, { flowId: valor })}
                 opcoes={flows.map((f: any) => ({ value: f.id, label: f.name }))}
                 opcaoVazia={{ value: "", label: "—" }}
-                searchPlaceholder="Buscar fluxo"
+                searchPlaceholder="Search flow"
               />
             </Field>
           )}
           {it.action === "message" && (
-            <Field label="Mensagem" w="flex-1"><input className={inputCls} value={it.message ?? ""} onChange={(e) => upd(setItems, idx, { message: e.target.value })} /></Field>
+            <Field label={t("chat.config.fields.message")} w="flex-1">
+              <input
+                className={inputCls}
+                value={it.message ?? ""}
+                onChange={(e) => upd(setItems, idx, { message: e.target.value })}
+              />
+            </Field>
           )}
-          <button className={btnGhost} onClick={() => save(it)}>Salvar</button>
-          <button className={btnGhost} onClick={() => api.deleteMenu(slug, it.id).then(load).catch(err)}>Excluir</button>
+          <button className={btnGhost} onClick={() => save(it)}>
+            Save
+          </button>
+          <button className={btnGhost} onClick={() => api.deleteMenu(slug, it.id).then(load).catch(err)}>
+            {t("chat.config.actions.delete")}
+          </button>
         </div>
       ))}
-      <button className={btn + " self-start"} onClick={() => api.createMenu(slug, { key: String(items.length + 1), label: "Nova opção", action: "queue", order: items.length }).then(load).catch(err)}>
-        + Adicionar opção
+      <button
+        className={btn + " self-start"}
+        onClick={() =>
+          api
+            .createMenu(slug, {
+              key: String(items.length + 1),
+              label: "New option",
+              action: "queue",
+              order: items.length,
+            })
+            .then(load)
+            .catch(err)
+        }
+      >
+        {t("chat.config.actions.add_option")}
       </button>
     </div>
   );
 }
 
-
 type Membro = { id: string; name: string; email: string };
 
 /**
- * Escolher atendentes numa lista de centenas de pessoas.
+ * Picking attendants from a list of hundreds of people.
  *
- * Antes as duas abas despejavam TODOS os membros como botõezinhos redondos —
- * uma parede de nomes de várias telas de altura, sem busca e sem separar quem
- * já estava escolhido. Pior: o legado tem contas repetidas, então cinco linhas
- * "Amanda Cristina da Silva Carvalho" apareciam idênticas e não dava para saber
- * qual marcar. Daí o e-mail embaixo do nome.
+ * Before, both tabs dumped ALL the members as little round buttons — a wall of
+ * names several screens tall, with no search and no separation of who was
+ * already picked. Worse: the legacy system has duplicate accounts, so five
+ * rows of "Amanda Cristina da Silva Carvalho" appeared identical and there was
+ * no way to tell which one to check. Hence the email under the name.
  */
 function SeletorDeAtendentes({
   membros,
@@ -206,7 +293,8 @@ function SeletorDeAtendentes({
   const [busca, setBusca] = useState("");
   const termo = busca.trim().toLowerCase();
   const casa = (m: Membro) => !termo || `${m.name} ${m.email}`.toLowerCase().includes(termo);
-  // Escolhidos primeiro: são poucos e é o que se confere ao abrir a tela.
+  // Picked ones first: there are few of them and they are the first thing to
+  // check when opening the screen.
   const escolhidos = membros.filter((m) => selecionados.has(m.id));
   const restantes = membros.filter((m) => !selecionados.has(m.id) && casa(m));
 
@@ -217,7 +305,7 @@ function SeletorDeAtendentes({
         <input
           value={busca}
           onChange={(e) => setBusca(e.target.value)}
-          placeholder="Buscar pessoa por nome ou e-mail"
+          placeholder="Search by name or email"
           className="w-full bg-transparent text-13 outline-none placeholder:text-secondary"
         />
         <span className="shrink-0 text-11 text-secondary">
@@ -232,7 +320,7 @@ function SeletorDeAtendentes({
               key={m.id}
               onClick={() => onAlternar(m.id)}
               title={`Remover ${m.name}`}
-              className="flex items-center gap-1 rounded-full border border-accent-subtle-1 bg-accent-subtle px-2 py-0.5 text-11 text-accent-primary"
+              className="border-accent-subtle-1 flex items-center gap-1 rounded-full border bg-accent-subtle px-2 py-0.5 text-11 text-accent-primary"
             >
               {m.name}
               <span aria-hidden>×</span>
@@ -244,7 +332,7 @@ function SeletorDeAtendentes({
       <div className="max-h-64 overflow-y-auto">
         {restantes.length === 0 ? (
           <p className="px-3 py-4 text-center text-12 text-secondary">
-            {termo ? `Ninguém com "${busca}".` : "Todo mundo já está nesta fila."}
+            {termo ? `Nobody with "${busca}".` : "Everyone is already in this queue."}
           </p>
         ) : (
           restantes.map((m) => (
@@ -268,6 +356,7 @@ function SeletorDeAtendentes({
 
 // ── Queues + members ──────────────────────────────────────────────────────────
 function QueuesTab({ slug, api, members }: { slug: string; api: ReturnType<typeof chatApi>; members: Membro[] }) {
+  const { t } = useTranslation();
   const [queues, setQueues] = useState<any[]>([]);
   const [name, setName] = useState("");
   const load = useCallback(() => {
@@ -278,19 +367,44 @@ function QueuesTab({ slug, api, members }: { slug: string; api: ReturnType<typeo
     const current = new Set((q.members ?? []).map((m: any) => m.userId));
     if (current.has(userId)) current.delete(userId);
     else current.add(userId);
-    api.setQueueMembers(slug, q.id, Array.from(current) as string[]).then(load).then(() => ok("Atendentes atualizados.")).catch(err);
+    api
+      .setQueueMembers(slug, q.id, Array.from(current) as string[])
+      .then(load)
+      .then(() => ok("Atendentes atualizados."))
+      .catch(err);
   };
   return (
     <div className="flex max-w-2xl flex-col gap-4">
       <div className="flex gap-2">
-        <input className={inputCls} placeholder="Nova fila" value={name} onChange={(e) => setName(e.target.value)} />
-        <button className={btn} onClick={() => name.trim() && api.createQueue(slug, name.trim()).then(() => { setName(""); load(); }).catch(err)}>Criar</button>
+        <input
+          className={inputCls}
+          placeholder={t("chat.config.placeholders.new_queue")}
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+        />
+        <button
+          className={btn}
+          onClick={() =>
+            name.trim() &&
+            api
+              .createQueue(slug, name.trim())
+              .then(() => {
+                setName("");
+                load();
+              })
+              .catch(err)
+          }
+        >
+          Create
+        </button>
       </div>
       {queues.map((q) => (
         <div key={q.id} className="rounded-md border border-subtle p-3">
           <div className="mb-2 flex items-center justify-between">
             <span className="font-medium">{q.name}</span>
-            <button className={btnGhost} onClick={() => api.deleteQueue(slug, q.id).then(load).catch(err)}>Excluir</button>
+            <button className={btnGhost} onClick={() => api.deleteQueue(slug, q.id).then(load).catch(err)}>
+              {t("chat.config.actions.delete")}
+            </button>
           </div>
           <SeletorDeAtendentes
             membros={members}
@@ -305,17 +419,24 @@ function QueuesTab({ slug, api, members }: { slug: string; api: ReturnType<typeo
 
 // ── Flows (visual step builder, no JSON) ──────────────────────────────────────
 const STEP_LABELS: Record<string, string> = {
-  message: "Enviar mensagem",
-  ask: "Perguntar e guardar resposta",
-  queue: "Encaminhar para fila",
-  close: "Agradecer e encerrar",
+  message: "chat.config.steps.message",
+  ask: "chat.config.steps.ask",
+  queue: "chat.config.steps.queue",
+  close: "chat.config.steps.close",
 };
 function FlowsTab({ slug, api }: { slug: string; api: ReturnType<typeof chatApi> }) {
+  const { t } = useTranslation();
   const [flows, setFlows] = useState<any[]>([]);
   const [queues, setQueues] = useState<any[]>([]);
   const load = useCallback(() => {
-    api.listFlows(slug).then((fs: any[]) => setFlows(fs.map((f) => ({ ...f, steps: Array.isArray(f.steps) ? f.steps : [] })))).catch(err);
-    api.listQueues(slug).then(setQueues).catch(() => {});
+    api
+      .listFlows(slug)
+      .then((fs: any[]) => setFlows(fs.map((f) => ({ ...f, steps: Array.isArray(f.steps) ? f.steps : [] }))))
+      .catch(err);
+    api
+      .listQueues(slug)
+      .then(setQueues)
+      .catch(() => {});
   }, [slug]); // eslint-disable-line react-hooks/exhaustive-deps
   useEffect(load, [load]);
 
@@ -323,14 +444,19 @@ function FlowsTab({ slug, api }: { slug: string; api: ReturnType<typeof chatApi>
 
   return (
     <div className="flex max-w-2xl flex-col gap-4">
-      <p className="text-12 text-secondary">
-        Monte o fluxo em etapas — ex.: <b>Reclamação</b> → “Perguntar e guardar resposta” (Descreva sua reclamação) → “Agradecer e encerrar”.
-      </p>
+      <p className="text-12 text-secondary">{t("chat.config.flows_hint")}</p>
       {flows.map((f, fi) => (
         <div key={f.id} className="rounded-lg border border-subtle p-3">
           <div className="mb-2 flex items-center gap-2">
-            <input className={inputCls} value={f.name} onChange={(e) => upd(setFlows, fi, { name: e.target.value })} placeholder="Nome do fluxo" />
-            <button className={btnGhost} onClick={() => api.deleteFlow(slug, f.id).then(load).catch(err)}>Excluir</button>
+            <input
+              className={inputCls}
+              value={f.name}
+              onChange={(e) => upd(setFlows, fi, { name: e.target.value })}
+              placeholder="Flow name"
+            />
+            <button className={btnGhost} onClick={() => api.deleteFlow(slug, f.id).then(load).catch(err)}>
+              {t("chat.config.actions.delete")}
+            </button>
           </div>
           <div className="flex flex-col gap-2">
             {(f.steps ?? []).map((step: any, si: number) => (
@@ -338,89 +464,166 @@ function FlowsTab({ slug, api }: { slug: string; api: ReturnType<typeof chatApi>
                 <span className="text-12 text-tertiary">{si + 1}.</span>
                 <SelectPesquisavel
                   value={step.type}
-                  onChange={(valor) => setSteps(fi, f.steps.map((s: any, i: number) => (i === si ? { type: valor } : s)))}
-                  opcoes={Object.entries(STEP_LABELS).map(([v, l]) => ({ value: v, label: l as string }))}
+                  onChange={(valor) =>
+                    setSteps(
+                      fi,
+                      f.steps.map((s: any, i: number) => (i === si ? { type: valor } : s))
+                    )
+                  }
+                  opcoes={Object.entries(STEP_LABELS).map(([v, k]) => ({ value: v, label: t(k) }))}
                   className="w-56"
                 />
                 {(step.type === "message" || step.type === "ask" || step.type === "close") && (
                   <input
                     className={inputCls + " min-w-[12rem] flex-1"}
-                    placeholder={step.type === "close" ? "Mensagem de encerramento (opcional)" : "Texto"}
+                    placeholder={
+                      step.type === "close"
+                        ? t("chat.config.placeholders.close_message")
+                        : t("chat.config.placeholders.step_text")
+                    }
                     value={step.text ?? ""}
-                    onChange={(e) => setSteps(fi, f.steps.map((s: any, i: number) => (i === si ? { ...s, text: e.target.value } : s)))}
+                    onChange={(e) =>
+                      setSteps(
+                        fi,
+                        f.steps.map((s: any, i: number) => (i === si ? { ...s, text: e.target.value } : s))
+                      )
+                    }
                   />
                 )}
                 {step.type === "ask" && (
                   <input
                     className={inputCls + " w-36"}
-                    placeholder="Salvar como (ex.: texto)"
+                    placeholder={t("chat.config.placeholders.save_as")}
                     value={step.saveAs ?? ""}
-                    onChange={(e) => setSteps(fi, f.steps.map((s: any, i: number) => (i === si ? { ...s, saveAs: e.target.value } : s)))}
+                    onChange={(e) =>
+                      setSteps(
+                        fi,
+                        f.steps.map((s: any, i: number) => (i === si ? { ...s, saveAs: e.target.value } : s))
+                      )
+                    }
                   />
                 )}
                 {step.type === "queue" && (
                   <SelectPesquisavel
                     value={step.queueId ?? ""}
-                    onChange={(valor) => setSteps(fi, f.steps.map((s: any, i: number) => (i === si ? { ...s, queueId: valor } : s)))}
+                    onChange={(valor) =>
+                      setSteps(
+                        fi,
+                        f.steps.map((s: any, i: number) => (i === si ? { ...s, queueId: valor } : s))
+                      )
+                    }
                     opcoes={queues.map((q: any) => ({ value: q.id, label: q.name }))}
-                    opcaoVazia={{ value: "", label: "Selecione a fila…" }}
-                    searchPlaceholder="Buscar fila"
+                    opcaoVazia={{ value: "", label: t("chat.config.placeholders.select_queue") }}
+                    searchPlaceholder="Search queue"
                     className="w-44"
                   />
                 )}
-                <button className={btnGhost} title="Remover etapa" onClick={() => setSteps(fi, f.steps.filter((_: any, i: number) => i !== si))}>×</button>
+                <button
+                  className={btnGhost}
+                  title={t("chat.config.actions.remove_step")}
+                  onClick={() =>
+                    setSteps(
+                      fi,
+                      f.steps.filter((_: any, i: number) => i !== si)
+                    )
+                  }
+                >
+                  ×
+                </button>
               </div>
             ))}
           </div>
           <div className="mt-2 flex gap-2">
-            <button className={btnGhost} onClick={() => setSteps(fi, [...(f.steps ?? []), { type: "message", text: "" }])}>+ Etapa</button>
-            <button className={btn} onClick={() => api.updateFlow(slug, f.id, { name: f.name, steps: f.steps }).then(() => ok("Fluxo salvo.")).catch(err)}>Salvar fluxo</button>
+            <button
+              className={btnGhost}
+              onClick={() => setSteps(fi, [...(f.steps ?? []), { type: "message", text: "" }])}
+            >
+              {t("chat.config.actions.add_step")}
+            </button>
+            <button
+              className={btn}
+              onClick={() =>
+                api
+                  .updateFlow(slug, f.id, { name: f.name, steps: f.steps })
+                  .then(() => ok("Flow saved."))
+                  .catch(err)
+              }
+            >
+              {t("chat.config.actions.save_flow")}
+            </button>
           </div>
         </div>
       ))}
-      <button className={btn + " self-start"} onClick={() => api.createFlow(slug, { name: "Novo fluxo", steps: [] }).then(load).catch(err)}>+ Novo fluxo</button>
+      <button
+        className={btn + " self-start"}
+        onClick={() => api.createFlow(slug, { name: "New flow", steps: [] }).then(load).catch(err)}
+      >
+        + New flow
+      </button>
     </div>
   );
 }
 
 // ── Company-wide business hours (not per attendant) ───────────────────────────
-const WD = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"];
+const WD = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 function SchedulesTab({ slug, api }: { slug: string; api: ReturnType<typeof chatApi> }) {
+  const { t } = useTranslation();
   const [hours, setHours] = useState<any[]>([]);
   const [breaks, setBreaks] = useState<any[]>([]);
   const [outsideMsg, setOutsideMsg] = useState("");
   useEffect(() => {
-    api.getBot(slug).then((cfg: any) => {
-      setHours(Array.isArray(cfg.businessHours) ? cfg.businessHours : []);
-      setBreaks(Array.isArray(cfg.businessBreaks) ? cfg.businessBreaks : []);
-      setOutsideMsg(cfg.outsideHoursMessage ?? "");
-    }).catch(err);
+    api
+      .getBot(slug)
+      .then((cfg: any) => {
+        setHours(Array.isArray(cfg.businessHours) ? cfg.businessHours : []);
+        setBreaks(Array.isArray(cfg.businessBreaks) ? cfg.businessBreaks : []);
+        setOutsideMsg(cfg.outsideHoursMessage ?? "");
+      })
+      .catch(err);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [slug]);
   const addRow = (list: any[], set: any) => set([...list, { weekday: 1, start_time: "08:00", end_time: "18:00" }]);
-  const norm = (l: any[]) => l.map((x) => ({ weekday: Number(x.weekday), start_time: x.start_time, end_time: x.end_time }));
+  const norm = (l: any[]) =>
+    l.map((x) => ({ weekday: Number(x.weekday), start_time: x.start_time, end_time: x.end_time }));
   return (
     <div className="flex max-w-2xl flex-col gap-4">
-      <p className="text-12 text-secondary">Horário de atendimento da empresa (vale para todos os atendentes). Vazio = sempre aberto.</p>
-      <Rows title="Horários de atendimento" list={hours} set={setHours} addRow={addRow} />
-      <Rows title="Pausas (almoço, etc.)" list={breaks} set={setBreaks} addRow={addRow} />
+      <p className="text-12 text-secondary">
+        Company business hours (applies to all representatives). Blank = always open..
+      </p>
+      <Rows title="Support hours" list={hours} set={setHours} addRow={addRow} />
+      <Rows title="Breaks (lunch, etc.)" list={breaks} set={setBreaks} addRow={addRow} />
       <label className="text-sm">
-        <span className="mb-1 block text-13 text-secondary">Mensagem fora do horário</span>
+        <span className="mb-1 block text-13 text-secondary">{t("chat.config.fields.outside_hours_message")}</span>
         <textarea className={inputCls} rows={2} value={outsideMsg} onChange={(e) => setOutsideMsg(e.target.value)} />
       </label>
       <button
         className={btn + " self-start"}
-        onClick={() => api.saveBot(slug, { businessHours: norm(hours), businessBreaks: norm(breaks), outsideHoursMessage: outsideMsg }).then(() => ok("Horário salvo.")).catch(err)}
+        onClick={() =>
+          api
+            .saveBot(slug, {
+              businessHours: norm(hours),
+              businessBreaks: norm(breaks),
+              outsideHoursMessage: outsideMsg,
+            })
+            .then(() => ok("Schedule saved."))
+            .catch(err)
+        }
       >
-        Salvar
+        Save
       </button>
     </div>
   );
 }
 function Rows({ title, list, set, addRow }: any) {
+  const { t } = useTranslation();
   return (
     <div>
-      <div className="mb-1 flex items-center justify-between"><span className="text-13 font-medium">{title}</span><button className={btnGhost} onClick={() => addRow(list, set)}>+ Linha</button></div>
+      <div className="mb-1 flex items-center justify-between">
+        <span className="text-13 font-medium">{title}</span>
+        <button className={btnGhost} onClick={() => addRow(list, set)}>
+          {t("chat.config.actions.add_row")}
+        </button>
+      </div>
       {list.map((row: any, idx: number) => (
         <div key={idx} className="mb-1 flex items-center gap-2">
           <SelectPesquisavel
@@ -430,9 +633,21 @@ function Rows({ title, list, set, addRow }: any) {
             className="w-24"
             searchable={false}
           />
-          <input type="time" className={inputCls + " w-28"} value={row.start_time} onChange={(e) => upd(set, idx, { start_time: e.target.value })} />
-          <input type="time" className={inputCls + " w-28"} value={row.end_time} onChange={(e) => upd(set, idx, { end_time: e.target.value })} />
-          <button className={btnGhost} onClick={() => set(list.filter((_: any, i: number) => i !== idx))}>×</button>
+          <input
+            type="time"
+            className={inputCls + " w-28"}
+            value={row.start_time}
+            onChange={(e) => upd(set, idx, { start_time: e.target.value })}
+          />
+          <input
+            type="time"
+            className={inputCls + " w-28"}
+            value={row.end_time}
+            onChange={(e) => upd(set, idx, { end_time: e.target.value })}
+          />
+          <button className={btnGhost} onClick={() => set(list.filter((_: any, i: number) => i !== idx))}>
+            ×
+          </button>
         </div>
       ))}
     </div>
@@ -441,6 +656,7 @@ function Rows({ title, list, set, addRow }: any) {
 
 // ── Attendant visibility (admin only) ─────────────────────────────────────────
 function AttendantsTab({ slug, api, members }: { slug: string; api: ReturnType<typeof chatApi>; members: Membro[] }) {
+  const { t } = useTranslation();
   const [invisible, setInvisible] = useState<Set<string>>(new Set());
   useEffect(() => {
     api
@@ -460,32 +676,36 @@ function AttendantsTab({ slug, api, members }: { slug: string; api: ReturnType<t
           else s.delete(userId);
           return s;
         });
-        ok(next ? "Atendente invisível." : "Atendente visível.");
+        ok(next ? t("chat.config.messages.attendant_invisible") : t("chat.config.messages.attendant_visible"));
       })
       .catch(err);
   };
   const [busca, setBusca] = useState("");
   const termo = busca.trim().toLowerCase();
-  // Só quem está invisível + o que a busca pedir: listar as 282 pessoas de uma
-  // vez, todas "Visível", é uma parede que não diz nada.
-  const visiveis = members.filter((m) => invisible.has(m.id) || (termo && `${m.name} ${m.email}`.toLowerCase().includes(termo)));
+  // Only who is already invisible + whatever the search asks for: listing all
+  // 282 people at once, all "Visible", is a wall that says nothing.
+  const visiveis = members.filter(
+    (m) => invisible.has(m.id) || (termo && `${m.name} ${m.email}`.toLowerCase().includes(termo))
+  );
 
   return (
     <div className="flex max-w-xl flex-col gap-2">
-      <p className="text-12 text-secondary">Atendente invisível não recebe novos chats, mesmo conectado.</p>
+      <p className="text-12 text-secondary">{t("chat.config.attendant_invisible_hint")}</p>
       <div className="flex items-center gap-2 rounded-md border border-subtle px-3 py-2">
         <Search className="size-3.5 shrink-0 text-secondary" />
         <input
           value={busca}
           onChange={(e) => setBusca(e.target.value)}
-          placeholder="Buscar pessoa por nome ou e-mail"
+          placeholder="Search by name or email"
           className="w-full bg-transparent text-13 outline-none placeholder:text-secondary"
         />
-        <span className="shrink-0 text-11 text-secondary">{invisible.size} invisível(is)</span>
+        <span className="shrink-0 text-11 text-secondary">
+          {t("chat.config.invisible_count", { count: invisible.size })}
+        </span>
       </div>
       {visiveis.length === 0 && (
         <p className="rounded-md border border-dashed border-subtle px-3 py-6 text-center text-12 text-secondary">
-          {termo ? `Ninguém com "${busca}".` : "Ninguém está invisível. Busque por alguém para deixar invisível."}
+          {termo ? `Nobody with "${busca}".` : "Nobody is invisible. Search for someone to make invisible."}
         </p>
       )}
       {visiveis.map((m) => (
@@ -498,7 +718,7 @@ function AttendantsTab({ slug, api, members }: { slug: string; api: ReturnType<t
             onClick={() => toggle(m.id)}
             className={`shrink-0 rounded-full border px-3 py-1 text-12 ${invisible.has(m.id) ? "border-danger-strong text-danger-primary" : "border-subtle text-secondary"}`}
           >
-            {invisible.has(m.id) ? "Invisível" : "Visível"}
+            {invisible.has(m.id) ? "Invisible" : "Visible"}
           </button>
         </div>
       ))}
@@ -510,18 +730,74 @@ function AttendantsTab({ slug, api, members }: { slug: string; api: ReturnType<t
 function ProviderTab({ slug, api }: { slug: string; api: ReturnType<typeof chatApi> }) {
   const [cfg, setCfg] = useState<any>({ provider: "zapi", is_active: false });
   useEffect(() => {
-    api.getProvider(slug).then((r: any) => setCfg({ ...r, token: "", client_token: "" })).catch(err);
+    api
+      .getProvider(slug)
+      .then((r: any) => setCfg({ ...r, token: "", client_token: "" }))
+      .catch(err);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [slug]);
   return (
     <div className="flex max-w-md flex-col gap-3">
-      <Field label="Base URL"><input className={inputCls} value={cfg.base_url ?? ""} onChange={(e) => setCfg({ ...cfg, base_url: e.target.value })} placeholder="https://api.z-api.io" /></Field>
-      <Field label="Instance ID"><input className={inputCls} value={cfg.instance_id ?? ""} onChange={(e) => setCfg({ ...cfg, instance_id: e.target.value })} /></Field>
-      <Field label="Token"><input className={inputCls} value={cfg.token ?? ""} onChange={(e) => setCfg({ ...cfg, token: e.target.value })} placeholder={cfg.has_token ? "•••• (mantém se vazio)" : ""} /></Field>
-      <Field label="Client-Token"><input className={inputCls} value={cfg.client_token ?? ""} onChange={(e) => setCfg({ ...cfg, client_token: e.target.value })} placeholder={cfg.client_token === true ? "•••• (mantém se vazio)" : ""} /></Field>
-      <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={!!cfg.is_active} onChange={(e) => setCfg({ ...cfg, is_active: e.target.checked })} /> Ativo</label>
-      <p className="text-12 text-secondary">Webhook Z-API → <code>/chat-api/providers/zapi/webhook/{slug}</code></p>
-      <button className={btn + " self-start"} onClick={() => api.saveProvider(slug, { provider: "zapi", base_url: cfg.base_url, instance_id: cfg.instance_id, ...(cfg.token ? { token: cfg.token } : {}), ...(cfg.client_token ? { client_token: cfg.client_token } : {}), is_active: cfg.is_active }).then(() => ok("Provider salvo.")).catch(err)}>Salvar</button>
+      <Field label="Base URL">
+        <input
+          className={inputCls}
+          value={cfg.base_url ?? ""}
+          onChange={(e) => setCfg({ ...cfg, base_url: e.target.value })}
+          placeholder="https://api.z-api.io"
+        />
+      </Field>
+      <Field label="Instance ID">
+        <input
+          className={inputCls}
+          value={cfg.instance_id ?? ""}
+          onChange={(e) => setCfg({ ...cfg, instance_id: e.target.value })}
+        />
+      </Field>
+      <Field label="Token">
+        <input
+          className={inputCls}
+          value={cfg.token ?? ""}
+          onChange={(e) => setCfg({ ...cfg, token: e.target.value })}
+          placeholder={cfg.has_token ? "•••• (keeps if empty)" : ""}
+        />
+      </Field>
+      <Field label="Client-Token">
+        <input
+          className={inputCls}
+          value={cfg.client_token ?? ""}
+          onChange={(e) => setCfg({ ...cfg, client_token: e.target.value })}
+          placeholder={cfg.client_token === true ? "•••• (keeps if empty)" : ""}
+        />
+      </Field>
+      <label className="text-sm flex items-center gap-2">
+        <input
+          type="checkbox"
+          checked={!!cfg.is_active}
+          onChange={(e) => setCfg({ ...cfg, is_active: e.target.checked })}
+        />{" "}
+        Active
+      </label>
+      <p className="text-12 text-secondary">
+        Webhook Z-API → <code>/chat-api/providers/zapi/webhook/{slug}</code>
+      </p>
+      <button
+        className={btn + " self-start"}
+        onClick={() =>
+          api
+            .saveProvider(slug, {
+              provider: "zapi",
+              base_url: cfg.base_url,
+              instance_id: cfg.instance_id,
+              ...(cfg.token ? { token: cfg.token } : {}),
+              ...(cfg.client_token ? { client_token: cfg.client_token } : {}),
+              is_active: cfg.is_active,
+            })
+            .then(() => ok("Provider saved."))
+            .catch(err)
+        }
+      >
+        Save
+      </button>
     </div>
   );
 }

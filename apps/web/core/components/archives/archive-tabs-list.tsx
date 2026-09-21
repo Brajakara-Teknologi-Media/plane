@@ -19,7 +19,7 @@ const ARCHIVES_TAB_LIST: {
 }[] = [
   {
     key: "issues",
-    label: "Chamados",
+    label: "Work Items",
     shouldRender: () => true,
   },
   {
@@ -29,7 +29,7 @@ const ARCHIVES_TAB_LIST: {
   },
   {
     key: "modules",
-    label: "Módulos",
+    label: "Modules",
     shouldRender: (projectDetails) => projectDetails.module_view,
   },
 ];

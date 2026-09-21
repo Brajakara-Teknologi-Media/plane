@@ -5,7 +5,7 @@ import { ContentWrapper } from "@/components/core/content-wrapper";
 function VisitsHeader() {
   return (
     <div className="flex items-center gap-2 px-4">
-      <span className="text-15 font-semibold">Visitas Técnicas</span>
+      <span className="text-15 font-semibold">Technical Visits</span>
     </div>
   );
 }

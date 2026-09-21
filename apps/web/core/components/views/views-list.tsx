@@ -7,7 +7,7 @@
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
-import { EUserPermissionsLevel , PROJECT_WORK_ROLES} from "@plane/constants";
+import { EUserPermissionsLevel, PROJECT_WORK_ROLES } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { EmptyStateDetailed } from "@plane/propel/empty-state";
 import { EUserProjectRoles } from "@plane/types";
@@ -54,7 +54,7 @@ export const ProjectViewsList = observer(function ProjectViewsList() {
             {filteredProjectViews.length > 0 ? (
               filteredProjectViews.map((view) => <ProjectViewListItem key={view.id} view={view} />)
             ) : (
-              <p className="mt-10 text-center text-13 text-tertiary">Nenhum resultado encontrado</p>
+              <p className="mt-10 text-center text-13 text-tertiary">{t("common.no_results_found")}</p>
             )}
           </ListLayout>
         </div>

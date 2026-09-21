@@ -20,9 +20,9 @@ function GeneralPage() {
   return (
     <PageWrapper
       header={{
-        title: "Configurações gerais",
+        title: "General Configuration",
         description:
-          "Altere o nome da sua instância e os e-mails do administrador. Ative ou desative a telemetria na sua instância.",
+          "Change your instance name and admin emails. Enable or disable telemetry on your instance.",
       }}
     >
       {instance && instanceAdmins && <GeneralConfigurationForm instance={instance} instanceAdmins={instanceAdmins} />}
@@ -30,6 +30,6 @@ function GeneralPage() {
   );
 }
 
-export const meta: Route.MetaFunction = () => [{ title: "Configurações gerais - God Mode" }];
+export const meta: Route.MetaFunction = () => [{ title: "General Configuration - Admin" }];
 
 export default observer(GeneralPage);

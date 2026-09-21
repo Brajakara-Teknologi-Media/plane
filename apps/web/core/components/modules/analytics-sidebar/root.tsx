@@ -10,7 +10,13 @@ import { useParams } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
 import { Info, SquareUser } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
-import { MODULE_STATUS, EUserPermissions, EUserPermissionsLevel, EEstimateSystem, PROJECT_WORK_ROLES} from "@plane/constants";
+import {
+  MODULE_STATUS,
+  EUserPermissions,
+  EUserPermissionsLevel,
+  EEstimateSystem,
+  PROJECT_WORK_ROLES,
+} from "@plane/constants";
 // plane types
 import { useTranslation } from "@plane/i18n";
 import {
@@ -100,14 +106,14 @@ export const ModuleAnalyticsSidebar = observer(function ModuleAnalyticsSidebar(p
       await deleteModuleLink(workspaceSlug.toString(), projectId.toString(), moduleId.toString(), linkId);
       setToast({
         type: TOAST_TYPE.SUCCESS,
-        title: "Sucesso!",
-        message: "Link do módulo excluído com sucesso.",
+        title: t("common.toast.success"),
+        message: "Module link deleted successfully.",
       });
     } catch (_error) {
       setToast({
         type: TOAST_TYPE.ERROR,
-        title: "Erro!",
-        message: "Ocorreu um erro",
+        title: t("common.toast.error"),
+        message: t("common.something_went_wrong_please_try_again"),
       });
     }
   };
@@ -119,8 +125,8 @@ export const ModuleAnalyticsSidebar = observer(function ModuleAnalyticsSidebar(p
     });
     setToast({
       type: TOAST_TYPE.SUCCESS,
-      title: "Sucesso!",
-      message: "Módulo atualizado com sucesso.",
+      title: t("common.toast.success"),
+      message: "Module updated successfully.",
     });
   };
 
@@ -154,19 +160,14 @@ export const ModuleAnalyticsSidebar = observer(function ModuleAnalyticsSidebar(p
   const moduleStatus = MODULE_STATUS.find((status) => status.value === moduleDetails.status);
 
   const issueCount =
-    moduleDetails.total_issues === 0
-      ? "0 chamados"
-      : `${moduleDetails.completed_issues}/${moduleDetails.total_issues}`;
+    moduleDetails.total_issues === 0 ? "0 chamados" : `${moduleDetails.completed_issues}/${moduleDetails.total_issues}`;
 
   const issueEstimatePointCount =
     moduleDetails.total_estimate_points === 0
       ? "0 chamados"
       : `${moduleDetails.completed_estimate_points}/${moduleDetails.total_estimate_points}`;
 
-  const isEditingAllowed = allowPermissions(
-    PROJECT_WORK_ROLES,
-    EUserPermissionsLevel.PROJECT
-  );
+  const isEditingAllowed = allowPermissions(PROJECT_WORK_ROLES, EUserPermissionsLevel.PROJECT);
 
   return (
     <div className="relative">

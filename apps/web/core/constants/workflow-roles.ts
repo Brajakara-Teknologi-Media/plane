@@ -1,19 +1,19 @@
 /**
- * Vocabulário compartilhado das telas de funções e permissões.
+ * Shared vocabulary for roles and permissions screens.
  *
- * Só rótulos e o catálogo de etapas usado nos seletores. Quem pode fazer o quê
- * e quais transições cada função executa vêm sempre de `GET /roles/` — nunca
- * daqui.
+ * Only labels and the catalog of stages used in selectors. Who can do what
+ * and which transitions each role executes always comes from `GET /roles/` — never
+ * from here.
  */
 
-/** Rótulos em português dos grupos de etapa usados pelo backend. */
+/** Labels for stage groups used by the backend. */
 export const STATE_GROUP_LABELS: Record<string, string> = {
-  triage: "Triagem",
+  triage: "Triage",
   backlog: "Backlog",
-  unstarted: "Não iniciado",
-  started: "Em andamento",
-  completed: "Concluído",
-  cancelled: "Cancelado",
+  unstarted: "Unstarted",
+  started: "In Progress",
+  completed: "Completed",
+  cancelled: "Cancelled",
 };
 
 export type TWorkflowStateOption = {
@@ -22,21 +22,21 @@ export type TWorkflowStateOption = {
 };
 
 /**
- * Etapas padrão do fluxo (espelha DEFAULT_STATES da migration do backend).
- * Serve apenas para popular os seletores de "de → para" ao montar uma transição
- * nova; as transições já configuradas sempre vêm da API.
+ * Default workflow stages (mirrors DEFAULT_STATES from backend migration).
+ * Only used to populate "from → to" selectors when creating a new transition;
+ * configured transitions always come from the API.
  */
 export const WORKFLOW_STATE_TEMPLATE: TWorkflowStateOption[] = [
-  { group: "triage", name: "Triagem" },
-  { group: "backlog", name: "Pendências" },
-  { group: "unstarted", name: "A Fazer" },
-  { group: "started", name: "Em Análise" },
-  { group: "started", name: "Em Desenvolvimento" },
-  { group: "started", name: "Em Teste" },
-  { group: "completed", name: "Concluído" },
-  { group: "cancelled", name: "Cancelado" },
+  { group: "triage", name: "Triage" },
+  { group: "backlog", name: "Backlog" },
+  { group: "unstarted", name: "To Do" },
+  { group: "started", name: "In Review" },
+  { group: "started", name: "In Development" },
+  { group: "started", name: "In Testing" },
+  { group: "completed", name: "Completed" },
+  { group: "cancelled", name: "Cancelled" },
 ];
 
-/** Rótulo legível de um lado da transição (`state_name` nulo = grupo inteiro). */
+/** Readable label for one side of the transition (`state_name` null = entire group). */
 export const describeTransitionSide = (group: string, stateName: string | null): string =>
-  stateName ?? `Qualquer etapa em ${STATE_GROUP_LABELS[group] ?? group}`;
+  stateName ?? `Any stage in ${STATE_GROUP_LABELS[group] ?? group}`;

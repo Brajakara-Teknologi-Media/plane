@@ -186,7 +186,7 @@ describe("permission-checks", () => {
     });
   });
 
-  
+
   describe("canTransition", () => {
     const s = (group: string, name: string) => ({group, name});
 
@@ -200,9 +200,9 @@ describe("permission-checks", () => {
       expect(await canTransition(guest, s("backlog", "Pendências"), s("backlog", "Pendências"))).toBe(true);
     });
 
-    it("papel ainda não gravado no banco cai na matriz padrão, não em liberar tudo", async () => {
-      // Antes isto devolvia `true` para qualquer movimento: um espaço de
-      // trabalho sem as funções gravadas ficava SEM nenhuma restrição de etapa.
+    it("The paper, not yet recorded in the bank, falls into the standard matrix, not into releasing everything", async () => {
+      // Previously, this returned `true` for any move: a space of
+      // The work, without the recorded functions, was left with NO step restrictions.
       const other = await createWorkspace((await createUser()).id);
       const naoSemeado = await resolveRole(other.id, 15);
       expect(await canTransition(naoSemeado, s("triage", "Triagem"), s("completed", "Concluído"))).toBe(false);

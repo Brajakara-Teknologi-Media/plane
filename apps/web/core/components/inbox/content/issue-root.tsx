@@ -9,6 +9,7 @@ import { useEffect, useMemo, useRef } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import type { EditorRefApi } from "@plane/editor";
+import { useTranslation } from "@plane/i18n";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TIssue, TNameDescriptionLoader } from "@plane/types";
 import { EFileAssetType, EInboxIssueSource, EInboxIssueStatus } from "@plane/types";
@@ -60,6 +61,8 @@ export const InboxIssueMainContent = observer(function InboxIssueMainContent(pro
   const { loader } = useProjectInbox();
   const { getProjectById } = useProject();
   const { removeIssue, archiveIssue } = useIssueDetail();
+  // language support
+  const { t } = useTranslation();
   // reload confirmation
   const { setShowAlert } = useReloadConfirmations(isSubmitting === "submitting");
 
@@ -101,16 +104,16 @@ export const InboxIssueMainContent = observer(function InboxIssueMainContent(pro
         try {
           await removeIssue(workspaceSlug, projectId, _issueId);
           setToast({
-            title: "Sucesso!",
+            title: t("common.toast.success"),
             type: TOAST_TYPE.SUCCESS,
-            message: "Solicitação excluída com sucesso",
+            message: "Request deleted successfully",
           });
         } catch (error) {
           console.log("Error in deleting work item:", error);
           setToast({
-            title: "Erro!",
+            title: t("common.toast.error"),
             type: TOAST_TYPE.ERROR,
-            message: "Falha ao excluir solicitação",
+            message: "Failed to delete request",
           });
         }
       },
@@ -119,9 +122,9 @@ export const InboxIssueMainContent = observer(function InboxIssueMainContent(pro
           await inboxIssue.updateIssue(data);
         } catch (_error) {
           setToast({
-            title: "Falha ao atualizar solicitação",
+            title: "Failed to update request",
             type: TOAST_TYPE.ERROR,
-            message: "Falha ao atualizar solicitação",
+            message: "Failed to update request",
           });
         }
       },
@@ -206,7 +209,7 @@ export const InboxIssueMainContent = observer(function InboxIssueMainContent(pro
                 createdAt: issue.created_at ? new Date(issue.created_at) : new Date(),
                 createdByDisplayName:
                   inboxIssue.source === EInboxIssueSource.FORMS
-                    ? "Usuário do formulário de solicitação"
+                    ? "Username from the request form"
                     : (getUserDetails(issue.created_by ?? "")?.display_name ?? ""),
                 id: issue.id,
                 isRestoreDisabled: !isEditable,

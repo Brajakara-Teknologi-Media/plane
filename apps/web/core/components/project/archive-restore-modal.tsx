@@ -6,6 +6,7 @@
 
 import { useState } from "react";
 // ui
+import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
@@ -24,7 +25,8 @@ type Props = {
 
 export function ArchiveRestoreProjectModal(props: Props) {
   const { workspaceSlug, projectId, isOpen, onClose, archive } = props;
-  // router
+  // translation
+  const { t } = useTranslation();
   const router = useAppRouter();
   // states
   const [isLoading, setIsLoading] = useState(false);
@@ -45,8 +47,8 @@ export function ArchiveRestoreProjectModal(props: Props) {
       .then(() => {
         setToast({
           type: TOAST_TYPE.SUCCESS,
-          title: "Arquivado com sucesso",
-          message: `${projectDetails.name} foi arquivado com sucesso`,
+          title: t("common.project_archived_success_title"),
+          message: t("common.project_archived_success_message", { project_name: projectDetails.name }),
         });
         onClose();
         router.push(`/${workspaceSlug}/projects/`);
@@ -55,8 +57,8 @@ export function ArchiveRestoreProjectModal(props: Props) {
       .catch(() =>
         setToast({
           type: TOAST_TYPE.ERROR,
-          title: "Erro!",
-          message: "Não foi possível arquivar o projeto. Tente novamente.",
+          title: t("common.error.label"),
+          message: "Could not archive project. Please try again.",
         })
       )
       .finally(() => setIsLoading(false));
@@ -68,8 +70,8 @@ export function ArchiveRestoreProjectModal(props: Props) {
       .then(() => {
         setToast({
           type: TOAST_TYPE.SUCCESS,
-          title: "Restaurado com sucesso",
-          message: `Você encontra ${projectDetails.name} nos seus projetos.`,
+          title: t("common.restore_success_title"),
+          message: t("common.project_restored_success_message", { project_name: projectDetails.name }),
         });
         onClose();
         router.push(`/${workspaceSlug}/projects/`);
@@ -78,8 +80,8 @@ export function ArchiveRestoreProjectModal(props: Props) {
       .catch(() =>
         setToast({
           type: TOAST_TYPE.ERROR,
-          title: "Erro!",
-          message: "Não foi possível restaurar o projeto. Tente novamente.",
+          title: t("common.error.label"),
+          message: "Could not restore project. Please try again.",
         })
       )
       .finally(() => setIsLoading(false));
@@ -89,16 +91,16 @@ export function ArchiveRestoreProjectModal(props: Props) {
     <ModalCore isOpen={isOpen} handleClose={handleClose} position={EModalPosition.CENTER} width={EModalWidth.LG}>
       <div className="px-5 py-4">
         <h3 className="text-18 font-medium 2xl:text-20">
-          {archive ? "Arquivar" : "Restaurar"} {projectDetails.name}
+          {archive ? t("common.archive") : t("restore")} {projectDetails.name}
         </h3>
         <p className="mt-3 text-13 text-secondary">
           {archive
-            ? "Este projeto e seus chamados, ciclos, módulos e páginas serão arquivados. Os chamados não aparecerão na busca. Apenas administradores do projeto podem restaurá-lo."
-            : "Restaurar um projeto o reativa e o torna visível para todos os membros. Deseja continuar?"}
+            ? "This project and its tickets, cycles, modules, and pages will be archived. Tickets will not appear in searches. Only project administrators can restore it."
+            : "Restoring a project reactivates it and makes it visible to all members. Do you wish to continue?"}
         </p>
         <div className="mt-3 flex justify-end gap-2">
           <Button variant="secondary" size="lg" onClick={onClose}>
-            Cancelar
+            {t("common.cancel")}
           </Button>
           <Button
             variant="primary"

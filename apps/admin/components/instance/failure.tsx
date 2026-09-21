@@ -27,10 +27,10 @@ export const InstanceFailureView = observer(function InstanceFailureView() {
       <div className="mt-10 flex w-full flex-grow flex-col items-center justify-center py-6">
         <div className="relative flex w-full max-w-[22.5rem] flex-col gap-6">
           <div className="relative flex flex-col items-center justify-center space-y-4">
-            <img src={instanceImage} alt="Ilustração de falha da instância" />
-            <h3 className="text-center text-20 font-medium text-on-color">Não foi possível buscar os detalhes da instância.</h3>
+            <img src={instanceImage} alt="Illustration of instance failure" />
+            <h3 className="text-center text-20 font-medium text-on-color">Could not fetch instance details.</h3>
             <p className="text-center text-14 font-medium">
-              Não conseguimos buscar os detalhes da instância. Não se preocupe, pode ser apenas um problema de conexão.
+              We couldn't fetch instance details. Don't worry, it might just be a connection issue.
             </p>
           </div>
           <div className="flex justify-center">

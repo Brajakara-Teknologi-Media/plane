@@ -235,7 +235,7 @@ export function ResizableSidebar({
         onMouseEnter={handlePeekEnter}
         onMouseLeave={handlePeekLeave}
         role="complementary"
-        aria-label="Visualização rápida da barra lateral"
+        aria-label="Sidebar quick view"
       >
         <aside
           className={cn(

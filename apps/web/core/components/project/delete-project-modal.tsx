@@ -8,6 +8,7 @@ import { useParams } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
 import { AlertTriangle } from "lucide-react";
 // Plane imports
+import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IProject } from "@plane/types";
@@ -29,6 +30,8 @@ const defaultValues = {
 
 export function DeleteProjectModal(props: DeleteProjectModal) {
   const { isOpen, project, onClose } = props;
+  // plane hooks
+  const { t } = useTranslation();
   // store hooks
   const { deleteProject } = useProject();
   // router
@@ -63,14 +66,14 @@ export function DeleteProjectModal(props: DeleteProjectModal) {
       handleClose();
       setToast({
         type: TOAST_TYPE.SUCCESS,
-        title: "Sucesso!",
-        message: "Projeto excluído com sucesso.",
+        title: t("common.toast.success"),
+        message: "Project deleted successfully.",
       });
     } catch (_error) {
       setToast({
         type: TOAST_TYPE.ERROR,
-        title: "Erro!",
-        message: "Algo deu errado. Tente novamente mais tarde.",
+        title: t("common.toast.error"),
+        message: "Something went wrong. Please try again later.",
       });
     }
   };
@@ -83,18 +86,19 @@ export function DeleteProjectModal(props: DeleteProjectModal) {
             <AlertTriangle className="h-6 w-6 text-danger-primary" aria-hidden="true" />
           </span>
           <span className="flex items-center justify-start">
-            <h3 className="text-18 font-medium 2xl:text-20">Excluir projeto</h3>
+            <h3 className="text-18 font-medium 2xl:text-20">{t("common.delete_project_title")}</h3>
           </span>
         </div>
         <span>
           <p className="text-13 leading-7 text-secondary">
-            Tem certeza de que deseja excluir o projeto <span className="font-semibold break-words">{project?.name}</span>?
-            Todos os dados relacionados ao projeto serão removidos permanentemente. Esta ação não pode ser desfeita.
+            Are you sure you want to delete the project?{" "}
+            <span className="font-semibold break-words">{project?.name}</span>? All data related to the project will be
+            permanently removed. This action cannot be undone.
           </p>
         </span>
         <div className="text-secondary">
           <p className="text-13 break-words">
-            Insira o nome do projeto <span className="font-medium text-primary">{project?.name}</span> para continuar:
+            Enter the project name <span className="font-medium text-primary">{project?.name}</span> to continue:
           </p>
           <Controller
             control={control}
@@ -108,7 +112,7 @@ export function DeleteProjectModal(props: DeleteProjectModal) {
                 onChange={onChange}
                 ref={ref}
                 hasError={Boolean(errors.projectName)}
-                placeholder="Nome do projeto"
+                placeholder="Project name"
                 className="mt-2 w-full"
                 autoComplete="off"
               />
@@ -131,7 +135,7 @@ export function DeleteProjectModal(props: DeleteProjectModal) {
                 onChange={onChange}
                 ref={ref}
                 hasError={Boolean(errors.confirmDelete)}
-                placeholder="Digite 'excluir meu projeto'"
+                placeholder={t("common.delete_project_confirm_placeholder")}
                 className="mt-2 w-full"
                 autoComplete="off"
               />
@@ -140,10 +144,10 @@ export function DeleteProjectModal(props: DeleteProjectModal) {
         </div>
         <div className="flex justify-end gap-2">
           <Button variant="secondary" size="lg" onClick={handleClose}>
-            Cancelar
+            {t("common.cancel")}
           </Button>
           <Button variant="error-fill" size="lg" type="submit" disabled={!canDelete} loading={isSubmitting}>
-            {isSubmitting ? "Excluindo" : "Excluir projeto"}
+            {isSubmitting ? t("common.deleting") : t("common.delete_project_title")}
           </Button>
         </div>
       </form>

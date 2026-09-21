@@ -234,7 +234,7 @@ export const DescriptionInput = observer(function DescriptionInput(props: Props)
   return (
     <div className="relative">
       {!disabled && editorRef && (
-        <div className="absolute right-0 -top-7 z-10">
+        <div className="absolute -top-7 right-0 z-10">
           <AiImproveButton
             editorRef={editorRef as React.RefObject<any>}
             workspaceSlug={workspaceSlug}
@@ -243,74 +243,74 @@ export const DescriptionInput = observer(function DescriptionInput(props: Props)
           />
         </div>
       )}
-    <Controller
-      name="description_html"
-      control={control}
-      render={({ field: { onChange } }) => (
-        <RichTextEditor
-          key={entityId}
-          editable={!disabled}
-          ref={editorRef}
-          id={entityId}
-          issueSequenceId={issueSequenceId}
-          disabledExtensions={disabledExtensions}
-          initialValue={localDescription.description_html ?? "<p></p>"}
-          value={swrDescription ?? null}
-          workspaceSlug={workspaceSlug}
-          workspaceId={workspaceDetails.id}
-          projectId={projectId}
-          dragDropEnabled
-          onChange={(description_json, description_html, options) => {
-            if (description_html === lastSavedContent.current) return;
-            setIsSubmitting("submitting");
-            onChange(description_html);
-            setValue("isMigrationUpdate", !!options?.isMigrationUpdate);
-            setValue("description_json", description_json);
-            hasUnsavedChanges.current = true;
-            debouncedFormSave();
-          }}
-          placeholder={placeholder ?? ((isFocused, value) => t(getDescriptionPlaceholderI18n(isFocused, value)))}
-          searchMentionCallback={async (payload) =>
-            await workspaceService.searchEntity(workspaceSlug?.toString() ?? "", {
-              ...payload,
-              project_id: projectId,
-            })
-          }
-          containerClassName={containerClassName}
-          uploadFile={async (blockId, file) => {
-            try {
-              const { asset_id } = await uploadEditorAsset({
-                blockId,
-                data: {
-                  entity_identifier: entityId,
-                  entity_type: fileAssetType,
-                },
-                file,
-                projectId,
-                workspaceSlug,
-              });
-              return asset_id;
-            } catch (error) {
-              console.log("Error in uploading asset:", error);
-              throw new Error("Falha ao enviar o arquivo. Tente novamente mais tarde.");
+      <Controller
+        name="description_html"
+        control={control}
+        render={({ field: { onChange } }) => (
+          <RichTextEditor
+            key={entityId}
+            editable={!disabled}
+            ref={editorRef}
+            id={entityId}
+            issueSequenceId={issueSequenceId}
+            disabledExtensions={disabledExtensions}
+            initialValue={localDescription.description_html ?? "<p></p>"}
+            value={swrDescription ?? null}
+            workspaceSlug={workspaceSlug}
+            workspaceId={workspaceDetails.id}
+            projectId={projectId}
+            dragDropEnabled
+            onChange={(description_json, description_html, options) => {
+              if (description_html === lastSavedContent.current) return;
+              setIsSubmitting("submitting");
+              onChange(description_html);
+              setValue("isMigrationUpdate", !!options?.isMigrationUpdate);
+              setValue("description_json", description_json);
+              hasUnsavedChanges.current = true;
+              debouncedFormSave();
+            }}
+            placeholder={placeholder ?? ((isFocused, value) => t(getDescriptionPlaceholderI18n(isFocused, value)))}
+            searchMentionCallback={async (payload) =>
+              await workspaceService.searchEntity(workspaceSlug?.toString() ?? "", {
+                ...payload,
+                project_id: projectId,
+              })
             }
-          }}
-          duplicateFile={async (assetId: string) => {
-            try {
-              const { asset_id } = await duplicateEditorAsset({
-                assetId,
-                entityType: fileAssetType,
-                projectId,
-                workspaceSlug,
-              });
-              return asset_id;
-            } catch {
-              throw new Error("Falha ao duplicar o arquivo. Tente novamente mais tarde.");
-            }
-          }}
-        />
-      )}
-    />
+            containerClassName={containerClassName}
+            uploadFile={async (blockId, file) => {
+              try {
+                const { asset_id } = await uploadEditorAsset({
+                  blockId,
+                  data: {
+                    entity_identifier: entityId,
+                    entity_type: fileAssetType,
+                  },
+                  file,
+                  projectId,
+                  workspaceSlug,
+                });
+                return asset_id;
+              } catch (error) {
+                console.log("Error in uploading asset:", error);
+                throw new Error(t("common.failed_to_upload_file"));
+              }
+            }}
+            duplicateFile={async (assetId: string) => {
+              try {
+                const { asset_id } = await duplicateEditorAsset({
+                  assetId,
+                  entityType: fileAssetType,
+                  projectId,
+                  workspaceSlug,
+                });
+                return asset_id;
+              } catch {
+                throw new Error(t("common.failed_to_duplicate_file"));
+              }
+            }}
+          />
+        )}
+      />
     </div>
   );
 });

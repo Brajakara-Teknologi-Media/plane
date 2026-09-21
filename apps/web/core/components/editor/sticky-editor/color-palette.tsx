@@ -18,7 +18,7 @@ export const STICKY_COLORS_LIST: {
   },
   {
     key: "peach",
-    label: "Pêssego",
+    label: "Peach",
     backgroundColor: "var(--editor-colors-peach-background)",
   },
   {

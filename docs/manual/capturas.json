@@ -337,17 +337,17 @@
     },
     {
       "arquivo": "59-god-login.png",
-      "descricao": "God-mode: entrada do painel da instância",
+      "descricao": "God-mode: instance panel entry",
       "url": "/god-mode/general/"
     },
     {
       "arquivo": "60-god-geral.png",
-      "descricao": "God-mode: identificação e telemetria da instância",
+      "descricao": "God-mode: Instance identification and telemetry",
       "url": "/god-mode/general/"
     },
     {
       "arquivo": "61-god-workspaces.png",
-      "descricao": "God-mode: espaços de trabalho da instância",
+      "descricao": "God-mode: instance workspaces",
       "url": "/god-mode/workspace/"
     },
     {
@@ -356,7 +356,7 @@
       "url": "/god-mode/email/"
     },
     {
-      "arquivo": "63-god-autenticacao.png",
+      "arquivo": "63-god-authenticate.png",
       "descricao": "God-mode: formas de entrar no sistema",
       "url": "/god-mode/authentication/"
     },

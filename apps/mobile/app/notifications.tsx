@@ -39,14 +39,14 @@ export default function NotificationsScreen() {
         contentContainerStyle={{ paddingHorizontal: spacing.lg, paddingBottom: 40 }}
         ItemSeparatorComponent={() => <View style={{ height: spacing.sm }} />}
         refreshControl={<RefreshControl refreshing={notifications.loading} onRefresh={notifications.refetch} tintColor={colors.primary} />}
-        ListEmptyComponent={<EmptyState title="Sem notificações" description="Você está em dia." />}
+        ListEmptyComponent={<EmptyState title="No notifications" description="You are up to date." />}
         renderItem={({ item }) => {
           const unread = !item.read_at;
           return (
             <Card style={{ borderColor: unread ? colors.primary : colors.border, gap: 4 }}>
               <Row align="space-between">
                 <Text weight={unread ? "bold" : "regular"} style={{ flex: 1 }} numberOfLines={2}>
-                  {item.title || "Notificação"}
+                  {item.title || "Notification"}
                 </Text>
                 {unread ? <View style={{ width: 8, height: 8, borderRadius: 4, backgroundColor: colors.primary }} /> : null}
               </Row>

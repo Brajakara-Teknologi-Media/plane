@@ -15,6 +15,7 @@ import { GlobeIcon, LockIcon } from "@plane/propel/icons";
 import { EIssueCommentAccessSpecifier } from "@plane/types";
 import type { TCommentsOperations, TIssueComment } from "@plane/types";
 import { calculateTimeAgo, cn, getFileURL, renderFormattedDate, renderFormattedTime } from "@plane/utils";
+import { useTranslation } from "@plane/i18n";
 // components
 import { LiteTextEditor } from "@/components/editor/lite-text";
 // local imports
@@ -56,6 +57,7 @@ export const CommentCardDisplay = observer(function CommentCardDisplay(props: TC
     renderFooter,
     renderQuickActions,
   } = props;
+  const { t } = useTranslation();
   // states
   const [highlightClassName, setHighlightClassName] = useState("");
   const [isPickerOpen, setIsPickerOpen] = useState(false);
@@ -108,104 +110,107 @@ export const CommentCardDisplay = observer(function CommentCardDisplay(props: TC
 
   return (
     <>
-    <div id={commentBlockId} className="relative flex flex-col gap-2">
-      {showAccessSpecifier && (
-        <div className="absolute top-2.5 right-2.5 z-[1] text-tertiary">
-          {comment.access === EIssueCommentAccessSpecifier.INTERNAL ? (
-            <LockIcon className="size-3" />
-          ) : (
-            <GlobeIcon className="size-3" />
-          )}
-        </div>
-      )}
-      <div className="relative mb-3 flex w-full items-center gap-2">
-        <Avatar size="sm" name={displayName} src={getFileURL(avatarUrl)} className="shrink-0" />
-        <div className="flex flex-1 flex-wrap items-center gap-1">
-          <div className="text-caption-sm-medium">{displayName}</div>
-          <div className="text-caption-sm-regular text-tertiary">
-            comentou{" "}
-            <Tooltip
-              tooltipContent={`${renderFormattedDate(comment.created_at)} às ${renderFormattedTime(comment.created_at)}`}
-              position="bottom"
-            >
-              <span className="text-tertiary">
-                {calculateTimeAgo(comment.created_at)}
-                {comment.edited_at && (
-                  <button
-                    type="button"
-                    onClick={() => setShowHistory(true)}
-                    className="ml-1 underline hover:text-primary transition-colors"
-                    title="Ver histórico de edições"
-                  >
-                    (editado)
-                  </button>
-                )}
-              </span>
-            </Tooltip>
-          </div>
-        </div>
-        {!disabled && (
-          <div className="flex shrink-0 items-center gap-1">
-            <EmojiReactionPicker
-              isOpen={isPickerOpen}
-              handleToggle={setIsPickerOpen}
-              onChange={handleEmojiSelect}
-              disabled={disabled}
-              label={<EmojiReactionButton onAddReaction={() => setIsPickerOpen(true)} />}
-              placement="bottom-start"
-            />
-            {renderQuickActions ? renderQuickActions() : null}
+      <div id={commentBlockId} className="relative flex flex-col gap-2">
+        {showAccessSpecifier && (
+          <div className="absolute top-2.5 right-2.5 z-[1] text-tertiary">
+            {comment.access === EIssueCommentAccessSpecifier.INTERNAL ? (
+              <LockIcon className="size-3" />
+            ) : (
+              <GlobeIcon className="size-3" />
+            )}
           </div>
         )}
-      </div>
-      {isEditing && setIsEditing ? (
-        <CommentCardEditForm
-          activityOperations={activityOperations}
-          comment={comment}
-          isEditing={isEditing}
-          readOnlyEditorRef={readOnlyEditorRef.current}
-          setIsEditing={setIsEditing}
-          projectId={projectId}
-          workspaceId={workspaceId}
-          workspaceSlug={workspaceSlug}
-        />
-      ) : (
-        <>
-          <LiteTextEditor
-            editable={false}
-            ref={readOnlyEditorRef}
-            id={comment.id}
-            initialValue={comment.comment_html ?? ""}
+        <div className="relative mb-3 flex w-full items-center gap-2">
+          <Avatar size="sm" name={displayName} src={getFileURL(avatarUrl)} className="shrink-0" />
+          <div className="flex flex-1 flex-wrap items-center gap-1">
+            <div className="text-caption-sm-medium">{displayName}</div>
+            <div className="text-caption-sm-regular text-tertiary">
+              {t("work-item.comments.commented")}{" "}
+              <Tooltip
+                tooltipContent={t("work-item.comments.created_at_tooltip", {
+                  date: renderFormattedDate(comment.created_at),
+                  time: renderFormattedTime(comment.created_at),
+                })}
+                position="bottom"
+              >
+                <span className="text-tertiary">
+                  {calculateTimeAgo(comment.created_at)}
+                  {comment.edited_at && (
+                    <button
+                      type="button"
+                      onClick={() => setShowHistory(true)}
+                      className="ml-1 underline transition-colors hover:text-primary"
+                      title={t("work-item.comments.view_edit_history")}
+                    >
+                      {t("work-item.comments.edited_marker")}
+                    </button>
+                  )}
+                </span>
+              </Tooltip>
+            </div>
+          </div>
+          {!disabled && (
+            <div className="flex shrink-0 items-center gap-1">
+              <EmojiReactionPicker
+                isOpen={isPickerOpen}
+                handleToggle={setIsPickerOpen}
+                onChange={handleEmojiSelect}
+                disabled={disabled}
+                label={<EmojiReactionButton onAddReaction={() => setIsPickerOpen(true)} />}
+                placement="bottom-start"
+              />
+              {renderQuickActions ? renderQuickActions() : null}
+            </div>
+          )}
+        </div>
+        {isEditing && setIsEditing ? (
+          <CommentCardEditForm
+            activityOperations={activityOperations}
+            comment={comment}
+            isEditing={isEditing}
+            readOnlyEditorRef={readOnlyEditorRef.current}
+            setIsEditing={setIsEditing}
+            projectId={projectId}
             workspaceId={workspaceId}
             workspaceSlug={workspaceSlug}
-            containerClassName={cn("!py-1 transition-[border-color] duration-500", highlightClassName)}
-            projectId={projectId?.toString()}
-            displayConfig={{
-              fontSize: "small-font",
-            }}
-            parentClassName="border-none"
           />
-          {shouldRenderReactions &&
-            (renderFooter ? (
-              renderFooter(
+        ) : (
+          <>
+            <LiteTextEditor
+              editable={false}
+              ref={readOnlyEditorRef}
+              id={comment.id}
+              initialValue={comment.comment_html ?? ""}
+              workspaceId={workspaceId}
+              workspaceSlug={workspaceSlug}
+              containerClassName={cn("!py-1 transition-[border-color] duration-500", highlightClassName)}
+              projectId={projectId?.toString()}
+              displayConfig={{
+                fontSize: "small-font",
+              }}
+              parentClassName="border-none"
+            />
+            {shouldRenderReactions &&
+              (renderFooter ? (
+                renderFooter(
+                  <CommentReactions comment={comment} disabled={disabled} activityOperations={activityOperations} />
+                )
+              ) : (
                 <CommentReactions comment={comment} disabled={disabled} activityOperations={activityOperations} />
-              )
-            ) : (
-              <CommentReactions comment={comment} disabled={disabled} activityOperations={activityOperations} />
-            ))}
-        </>
+              ))}
+          </>
+        )}
+      </div>
+      {showHistory && comment.edited_at && (
+        <CommentHistoryModal
+          isOpen={showHistory}
+          onClose={() => setShowHistory(false)}
+          workspaceSlug={workspaceSlug}
+          projectId={comment.project ?? projectId ?? ""}
+          issueId={comment.issue ?? ""}
+          commentId={comment.id}
+        />
       )}
-    </div>
-    {showHistory && comment.edited_at && (
-      <CommentHistoryModal
-        isOpen={showHistory}
-        onClose={() => setShowHistory(false)}
-        workspaceSlug={workspaceSlug}
-        projectId={comment.project ?? projectId ?? ""}
-        issueId={comment.issue ?? ""}
-        commentId={comment.id}
-      />
-    )}
     </>
   );
 });

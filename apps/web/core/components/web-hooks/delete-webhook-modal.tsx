@@ -7,6 +7,7 @@
 import { useState } from "react";
 import { useParams } from "next/navigation";
 // ui
+import { useTranslation } from "@plane/i18n";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { AlertModalCore } from "@plane/ui";
 // hooks
@@ -20,7 +21,8 @@ interface IDeleteWebhook {
 
 export function DeleteWebhookModal(props: IDeleteWebhook) {
   const { isOpen, onClose } = props;
-  // states
+  // translation
+  const { t } = useTranslation();
   const [isDeleting, setIsDeleting] = useState(false);
   // router
   const router = useAppRouter();
@@ -41,14 +43,14 @@ export function DeleteWebhookModal(props: IDeleteWebhook) {
       router.replace(`/${workspaceSlug}/settings/webhooks/`);
       setToast({
         type: TOAST_TYPE.SUCCESS,
-        title: "Sucesso!",
-        message: "Webhook excluído com sucesso.",
+        title: t("common.success"),
+        message: t("workspace_settings.settings.webhooks.toasts.removed.message"),
       });
     } catch (_error) {
       setToast({
         type: TOAST_TYPE.ERROR,
-        title: "Erro!",
-        message: "Não foi possível excluir o webhook. Tente novamente.",
+        title: t("common.error.label"),
+        message: t("workspace_settings.settings.webhooks.toasts.not_removed.message"),
       });
     }
     setIsDeleting(false);
@@ -60,13 +62,8 @@ export function DeleteWebhookModal(props: IDeleteWebhook) {
       handleSubmit={handleDelete}
       isSubmitting={isDeleting}
       isOpen={isOpen}
-      title="Excluir webhook"
-      content={
-        <>
-          Tem certeza de que deseja excluir este webhook? Eventos futuros não serão entregues a este webhook. Esta ação
-          cannot be undone.
-        </>
-      }
+      title={t("common.delete_webhook_title")}
+      content={<>{t("common.delete_webhook_confirmation")}</>}
     />
   );
 }

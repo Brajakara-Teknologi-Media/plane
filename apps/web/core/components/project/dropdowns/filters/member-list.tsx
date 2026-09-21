@@ -7,6 +7,7 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
+import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { ChevronDownIcon } from "@plane/propel/icons";
 import { EUserProjectRoles, EUserWorkspaceRoles } from "@plane/types";
@@ -26,17 +27,17 @@ type Props = {
   memberType: "project" | "workspace";
 };
 
-const PROJECT_ROLE_OPTIONS: IRoleOption[] = [
-  { value: String(EUserProjectRoles.ADMIN), label: "Administrador" },
-  { value: String(EUserProjectRoles.MEMBER), label: "Membro" },
-  { value: String(EUserProjectRoles.GUEST), label: "Convidado" },
+const getProjectRoleOptions = (t: (key: string) => string): IRoleOption[] => [
+  { value: String(EUserProjectRoles.ADMIN), label: t("common.roles_admin") },
+  { value: String(EUserProjectRoles.MEMBER), label: t("common.roles_member") },
+  { value: String(EUserProjectRoles.GUEST), label: t("common.roles_guest") },
 ];
 
-const WORKSPACE_ROLE_OPTIONS: IRoleOption[] = [
-  { value: String(EUserWorkspaceRoles.ADMIN), label: "Administrador" },
-  { value: String(EUserWorkspaceRoles.MEMBER), label: "Membro" },
-  { value: String(EUserWorkspaceRoles.GUEST), label: "Convidado" },
-  { value: "suspended", label: "Suspenso" },
+const getWorkspaceRoleOptions = (t: (key: string) => string): IRoleOption[] => [
+  { value: String(EUserWorkspaceRoles.ADMIN), label: t("common.roles_admin") },
+  { value: String(EUserWorkspaceRoles.MEMBER), label: t("common.roles_member") },
+  { value: String(EUserWorkspaceRoles.GUEST), label: t("common.roles_guest") },
+  { value: "suspended", label: t("common.roles_suspended") },
 ];
 
 // Role filter group component
@@ -49,14 +50,15 @@ const RoleFilterGroup = observer(function RoleFilterGroup({
   handleUpdate: (role: string) => void;
   memberType: "project" | "workspace";
 }) {
+  const { t } = useTranslation();
   const [isExpanded, setIsExpanded] = useState(true);
   const appliedFiltersCount = appliedFilters?.length ?? 0;
-  const roleOptions = memberType === "project" ? PROJECT_ROLE_OPTIONS : WORKSPACE_ROLE_OPTIONS;
+  const roleOptions = memberType === "project" ? getProjectRoleOptions(t) : getWorkspaceRoleOptions(t);
 
   return (
     <div className="space-y-2">
       <FilterHeader
-        title={`Roles${appliedFiltersCount > 0 ? ` (${appliedFiltersCount})` : ""}`}
+        title={`${t("common.roles")}${appliedFiltersCount > 0 ? ` (${appliedFiltersCount})` : ""}`}
         isPreviewEnabled={isExpanded}
         handleIsPreviewEnabled={() => setIsExpanded(!isExpanded)}
       />
@@ -95,6 +97,8 @@ export const MemberListFilters = observer(function MemberListFilters(props: Prop
 export const MemberListFiltersDropdown = observer(function MemberListFiltersDropdown(props: Props) {
   const { appliedFilters, handleUpdate, memberType } = props;
 
+  // plane hooks
+  const { t } = useTranslation();
   const appliedFiltersCount = appliedFilters?.length ?? 0;
 
   return (
@@ -102,7 +106,7 @@ export const MemberListFiltersDropdown = observer(function MemberListFiltersDrop
       customButton={
         <div className="relative">
           <Button variant="secondary" size="lg" className="flex items-center gap-2">
-            <span>Filtros</span>
+            <span>{t("common.filters")}</span>
             <ChevronDownIcon className="h-3 w-3" />
           </Button>
           {appliedFiltersCount > 0 && (

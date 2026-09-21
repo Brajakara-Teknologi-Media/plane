@@ -17,7 +17,7 @@ type Props = {
   plotTitle?: string;
 };
 
-function ProgressChart({ distribution, totalIssues, className = "", plotTitle = "chamados" }: Props) {
+function ProgressChart({ distribution, totalIssues, className = "", plotTitle = "work items" }: Props) {
   const chartData: TChartData<string, string>[] = Object.keys(distribution ?? []).map((key, index) => ({
     name: renderFormattedDateWithoutYear(key),
     current: distribution[key] ?? 0,
@@ -57,7 +57,7 @@ function ProgressChart({ distribution, totalIssues, className = "", plotTitle = 
           },
         ]}
         xAxis={{ key: "name", label: "Data" }}
-        yAxis={{ key: "current", label: "Conclusão" }}
+        yAxis={{ key: "current", label: "Completion" }}
         margin={{ bottom: 30 }}
         className="h-[370px] w-full"
         legend={{

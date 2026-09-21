@@ -11,6 +11,7 @@ import { Controller, useForm } from "react-hook-form";
 
 // types
 import { SPACE_BASE_PATH, SPACE_BASE_URL } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { GlobeIcon, NewTabIcon, CheckIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
@@ -43,7 +44,7 @@ const VIEW_OPTIONS: {
   key: TProjectPublishLayouts;
   label: string;
 }[] = [
-  { key: "list", label: "Lista" },
+  { key: "list", label: "List" },
   { key: "kanban", label: "Kanban" },
 ];
 
@@ -62,6 +63,8 @@ export const PublishProjectModal = observer(function PublishProjectModal(props: 
     unPublishProject,
     fetchSettingsLoader,
   } = useProjectPublish();
+  // translation
+  const { t } = useTranslation();
   // derived values
   const projectPublishSettings = getPublishSettingsByProjectID(projectId);
   const isProjectPublished = !!projectPublishSettings?.anchor;
@@ -100,8 +103,8 @@ export const PublishProjectModal = observer(function PublishProjectModal(props: 
     await updatePublishSettings(workspaceSlug.toString(), projectId, payload.id, payload).then((res) => {
       setToast({
         type: TOAST_TYPE.SUCCESS,
-        title: "Sucesso!",
-        message: "Configurações de publicação atualizadas com sucesso!",
+        title: t("common.success"),
+        message: "Publish settings updated successfully!",
       });
 
       handleClose();
@@ -118,8 +121,8 @@ export const PublishProjectModal = observer(function PublishProjectModal(props: 
       .catch(() =>
         setToast({
           type: TOAST_TYPE.ERROR,
-          title: "Erro!",
-          message: "Algo deu errado ao despublicar o projeto.",
+          title: t("common.error.label"),
+          message: t("common.unpublish_project_error"),
         })
       )
       .finally(() => setIsUnPublishing(false));
@@ -136,8 +139,8 @@ export const PublishProjectModal = observer(function PublishProjectModal(props: 
     if (!selectedLayouts || selectedLayouts.length === 0) {
       setToast({
         type: TOAST_TYPE.ERROR,
-        title: "Erro!",
-        message: "Selecione pelo menos um layout de visualização para publicar o projeto.",
+        title: t("common.error.label"),
+        message: "Select at least one view layout to publish the project.",
       });
       return;
     }
@@ -172,7 +175,7 @@ export const PublishProjectModal = observer(function PublishProjectModal(props: 
       setToast({
         type: TOAST_TYPE.SUCCESS,
         title: "",
-        message: "Link da página publicada copiado com sucesso.",
+        message: "Published page link copied successfully.",
       })
     );
 
@@ -180,7 +183,7 @@ export const PublishProjectModal = observer(function PublishProjectModal(props: 
     <ModalCore isOpen={isOpen} handleClose={handleClose} width={EModalWidth.XXL}>
       <form onSubmit={handleSubmit(handleFormSubmit)}>
         <div className="flex items-center justify-between gap-2 p-5">
-          <h5 className="text-18 font-medium text-secondary">Publicar projeto</h5>
+          <h5 className="text-18 font-medium text-secondary">{t("publish_project")}</h5>
           {isProjectPublished && (
             <Button
               variant="error-fill"
@@ -228,7 +231,7 @@ export const PublishProjectModal = observer(function PublishProjectModal(props: 
                       className="h-8 rounded-sm bg-layer-3 px-3 py-2 text-11 font-medium hover:bg-layer-3-hover"
                       onClick={handleCopyLink}
                     >
-                      Copiar link
+                      {t("copy_link")}
                     </button>
                   </div>
                 </div>
@@ -237,13 +240,13 @@ export const PublishProjectModal = observer(function PublishProjectModal(props: 
                     <span className="absolute inline-flex size-full animate-ping rounded-full bg-accent-primary opacity-75" />
                     <span className="relative inline-flex size-1.5 rounded-full bg-accent-primary" />
                   </span>
-                  Este projeto agora está disponível na web
+                  {t("common.project_now_available_on_web")}
                 </p>
               </>
             )}
             <div className="space-y-4">
               <div className="relative flex items-center justify-between gap-2">
-                <div className="text-13">Visualizações</div>
+                <div className="text-13">{t("common.views")}</div>
                 <Controller
                   control={control}
                   name="view_props"
@@ -278,7 +281,7 @@ export const PublishProjectModal = observer(function PublishProjectModal(props: 
                 />
               </div>
               <div className="relative flex items-center justify-between gap-2">
-                <div className="text-13">Permitir comentários</div>
+                <div className="text-13">{t("common.allow_comments")}</div>
                 <Controller
                   control={control}
                   name="is_comments_enabled"
@@ -288,7 +291,7 @@ export const PublishProjectModal = observer(function PublishProjectModal(props: 
                 />
               </div>
               <div className="relative flex items-center justify-between gap-2">
-                <div className="text-13">Permitir reações</div>
+                <div className="text-13">{t("common.allow_reactions")}</div>
                 <Controller
                   control={control}
                   name="is_reactions_enabled"
@@ -298,7 +301,7 @@ export const PublishProjectModal = observer(function PublishProjectModal(props: 
                 />
               </div>
               <div className="relative flex items-center justify-between gap-2">
-                <div className="text-13">Permitir votação</div>
+                <div className="text-13">{t("common.allow_votes")}</div>
                 <Controller
                   control={control}
                   name="is_votes_enabled"
@@ -315,12 +318,12 @@ export const PublishProjectModal = observer(function PublishProjectModal(props: 
         <div className="relative mt-4 flex items-center justify-between border-t border-subtle px-5 py-4">
           <div className="flex items-center gap-1 text-13 text-placeholder">
             <GlobeIcon className="size-3.5" />
-            <div className="text-13">Qualquer pessoa com o link pode acessar</div>
+            <div className="text-13">{t("common.anyone_with_link_can_access")}</div>
           </div>
           {!fetchSettingsLoader && (
             <div className="relative flex items-center gap-2">
               <Button variant="secondary" size="lg" onClick={handleClose}>
-                Cancelar
+                {t("common.cancel")}
               </Button>
               {isProjectPublished ? (
                 isDirty && (

@@ -33,7 +33,7 @@ export async function isUploader(user: MaybeAdminUser): Promise<boolean> {
 export async function requireUploader(user: MaybeAdminUser, set: { status?: number | string }): Promise<void> {
   if (!(await isUploader(user))) {
     set.status = 403;
-    throw Object.assign(new Error("Apenas administradores da instância ou usuários do grupo TI podem enviar extensões."), {
+    throw Object.assign(new Error("Only instance administrators or users in the IT group can submit extensions."), {
       status: 403,
     });
   }

@@ -35,17 +35,17 @@ export const getCoreAuthenticationModesMap: (
 }) => ({
   "unique-codes": {
     key: "unique-codes",
-    name: "Códigos únicos",
+    name: "Unique codes",
     description:
-      "Entre ou cadastre-se no Avião usando códigos enviados por e-mail. É necessário ter o SMTP configurado para usar este método.",
+      "Sign in or register in Avião using codes sent by email. SMTP must be configured to use this method.",
     icon: <Mails className="h-6 w-6 p-0.5 text-tertiary" />,
     config: <EmailCodesConfiguration disabled={disabled} updateConfig={updateConfig} />,
     enabledConfigKey: "ENABLE_MAGIC_LINK_LOGIN",
   },
   "passwords-login": {
     key: "passwords-login",
-    name: "Senhas",
-    description: "Permita que membros criem contas com senhas e as usem com seus e-mails para entrar.",
+    name: "Passwords",
+    description: "Allow members to create accounts with passwords and use them with their emails to sign in.",
     icon: <KeyRound className="h-6 w-6 p-0.5 text-tertiary" />,
     config: <PasswordLoginConfiguration disabled={disabled} updateConfig={updateConfig} />,
     enabledConfigKey: "ENABLE_EMAIL_PASSWORD",
@@ -53,7 +53,7 @@ export const getCoreAuthenticationModesMap: (
   google: {
     key: "google",
     name: "Google",
-    description: "Permita que membros entrem ou se cadastrem no Avião com suas contas do Google.",
+    description: "Allow members to sign in or register in Avião with their Google accounts.",
     icon: <img src={googleLogo} height={20} width={20} alt="Logo do Google" />,
     config: <GoogleConfiguration disabled={disabled} updateConfig={updateConfig} />,
     enabledConfigKey: "IS_GOOGLE_ENABLED",
@@ -61,7 +61,7 @@ export const getCoreAuthenticationModesMap: (
   github: {
     key: "github",
     name: "GitHub",
-    description: "Permita que membros entrem ou se cadastrem no Avião com suas contas do GitHub.",
+    description: "Allow members to sign in or register in Avião with their GitHub accounts.",
     icon: (
       <img
         src={resolvedTheme === "dark" ? githubDarkModeImage : githubLightModeImage}
@@ -76,7 +76,7 @@ export const getCoreAuthenticationModesMap: (
   gitlab: {
     key: "gitlab",
     name: "GitLab",
-    description: "Permita que membros entrem ou se cadastrem no Avião com suas contas do GitLab.",
+    description: "Allow members to sign in or register in Avião with their GitLab accounts.",
     icon: <img src={gitlabLogo} height={20} width={20} alt="Logo do GitLab" />,
     config: <GitlabConfiguration disabled={disabled} updateConfig={updateConfig} />,
     enabledConfigKey: "IS_GITLAB_ENABLED",
@@ -84,7 +84,7 @@ export const getCoreAuthenticationModesMap: (
   gitea: {
     key: "gitea",
     name: "Gitea",
-    description: "Permita que membros entrem ou se cadastrem no Avião com suas contas do Gitea.",
+    description: "Allow members to sign in or register in Avião with their Gitea accounts.",
     icon: <img src={giteaLogo} height={20} width={20} alt="Logo do Gitea" />,
     config: <GiteaConfiguration disabled={disabled} updateConfig={updateConfig} />,
     enabledConfigKey: "IS_GITEA_ENABLED",

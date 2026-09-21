@@ -39,7 +39,7 @@ import {Pool as PgPool} from "pg";
 const exigir = (nome: string): string => {
   const valor = process.env[nome];
   if (!valor) {
-    console.error(`[vinculos] ❌  Falta a variável ${nome}. Rode pelo serviço sac-migrator ou informe MYSQL_HOST/USER/PASS/DB.`);
+    console.error(`[vinculos] ❌  Missing variable ${nome}. Run via the sac-migrator service or set MYSQL_HOST/USER/PASS/DB.`);
     process.exit(1);
   }
   return valor;
@@ -80,11 +80,11 @@ const prisma = new PrismaClient({adapter: new PrismaPg(pool)});
 const log = (msg: string) => console.log(`[vinculos] ${msg}`);
 
 async function main() {
-  log(`Recortando os níveis: ${NIVEIS_RECORTADOS.join(", ")}${DRY_RUN ? " (DRY RUN)" : ""}`);
+  log(`Restricting roles: ${NIVEIS_RECORTADOS.join(", ")}${DRY_RUN ? " (DRY RUN)" : ""}`);
 
   const workspace = await prisma.workspace.findFirst({where: {slug: WORKSPACE_SLUG, deletedAt: null}});
   if (!workspace) {
-    log(`❌  Espaço de trabalho '${WORKSPACE_SLUG}' não encontrado.`);
+    log(`❌  Workspace '${WORKSPACE_SLUG}' not found.`);
     process.exit(1);
   }
 
@@ -105,20 +105,20 @@ async function main() {
     if (!sistemasPorEmail.has(email)) sistemasPorEmail.set(email, new Set());
     sistemasPorEmail.get(email)!.add(String(sistema_id));
   }
-  log(`✅  ${linhas.length} vínculos no SAC, para ${sistemasPorEmail.size} e-mails`);
+  log(`✅  ${linhas.length} SAC assignments, for ${sistemasPorEmail.size} emails`);
 
   const projetos = await prisma.project.findMany({
     where: {workspaceId: workspace.id, externalSource: "sac_migration", deletedAt: null},
     select: {id: true, externalId: true, name: true},
   });
   const projetoPorSistema = new Map(projetos.map((p) => [p.externalId ?? "", p.id]));
-  log(`✅  ${projetos.length} sistemas no Avião`);
+  log(`✅  ${projetos.length} systems in Avião`);
 
   const membros = await prisma.workspaceMember.findMany({
     where: {workspaceId: workspace.id, isActive: true, role: {in: NIVEIS_RECORTADOS}},
     include: {member: {select: {id: true, email: true, displayName: true}}},
   });
-  log(`✅  ${membros.length} pessoa(s) nos níveis recortados`);
+  log(`✅  ${membros.length} member(s) in restricted roles`);
 
   // Projetos com rastro de trabalho: chamado atribuído ou aberto pela pessoa.
   const historicoPorPessoa = new Map<string, Set<string>>();
@@ -135,7 +135,7 @@ async function main() {
       if (!historicoPorPessoa.has(member_id)) historicoPorPessoa.set(member_id, new Set());
       historicoPorPessoa.get(member_id)!.add(project_id);
     }
-    log(`✅  Histórico de trabalho carregado para ${historicoPorPessoa.size} pessoa(s)`);
+    log(`✅  Work history loaded for ${historicoPorPessoa.size} person(s)`);
   }
 
   const semVinculo: string[] = [];
@@ -173,15 +173,15 @@ async function main() {
 
   log("");
   log("═══════════════════════════════════════════════════");
-  for (const r of recortados) log(`  ${r.email}: fica com ${r.fica} sistema(s), saiu de ${r.sai}`);
+  for (const r of recortados) log(`  ${r.email}: keeps ${r.fica} system(s), removed from ${r.sai}`);
   if (semVinculo.length) {
     log("");
-    log(`  ⚠️  ${semVinculo.length} pessoa(s) SEM vínculo no SAC continuam vendo todos os sistemas:`);
+    log(`  ⚠️  ${semVinculo.length} Person(s) without an association in the SAC continue to see all systems:`);
     for (const e of semVinculo) log(`      ${e}`);
-    log("      Cadastre o vínculo no SAC ou ajuste em Configurações → Sistemas → Membros.");
+    log("      Register the link in the SAC or adjust it under Settings → Systems → Members.");
   }
   log("═══════════════════════════════════════════════════");
-  log(DRY_RUN ? "DRY RUN: nada foi gravado." : "Concluído.");
+  log(DRY_RUN ? "DRY RUN: nothing was written." : "Done.");
 }
 
 main()

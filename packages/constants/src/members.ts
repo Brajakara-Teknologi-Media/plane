@@ -76,9 +76,9 @@ export const MEMBER_PROPERTY_DETAILS: {
   role: {
     i18n_title: "project_members.role",
     ascendingOrderKey: "role",
-    ascendingOrderTitle: "Visualizador",
+    ascendingOrderTitle: "Viewer",
     descendingOrderKey: "-role",
-    descendingOrderTitle: "Administrador",
+    descendingOrderTitle: "Administrator",
     iconName: "Shield",
     isSortingAllowed: true,
   },

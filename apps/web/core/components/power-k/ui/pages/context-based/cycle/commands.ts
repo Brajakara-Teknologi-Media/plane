@@ -45,7 +45,7 @@ export const usePowerKCycleContextBasedActions = (): TPowerKCommandConfig[] => {
     } catch {
       setToast({
         type: TOAST_TYPE.ERROR,
-        title: "Ocorreu um erro",
+        title: t("common.something_went_wrong_please_try_again"),
       });
     }
   }, [addCycleToFavorites, removeCycleFromFavorites, workspaceSlug, cycleDetails, isFavorite]);

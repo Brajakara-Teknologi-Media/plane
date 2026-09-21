@@ -119,8 +119,8 @@ export const useRealtimePageEvents = ({
               if (page.id === pageId && data?.user_id !== currentUser?.id) {
                 setToast({
                   type: TOAST_TYPE.ERROR,
-                  title: "Página excluída",
-                  message: `Página excluída${getUserDisplayText(data.user_id)}`,
+                  title: "Page deleted",
+                  message: `Page deleted${getUserDisplayText(data.user_id)}`,
                 });
                 router.push(handlers.getRedirectionLink());
               } else if (page.id === pageId) {
@@ -148,7 +148,7 @@ export const useRealtimePageEvents = ({
             // Show toast notification
             setToast({
               type: TOAST_TYPE.ERROR,
-              title: errorType === "fetch" ? "Failed to load page" : "Não foi possível salvar a página",
+              title: errorType === "fetch" ? "Failed to load page" : "Could not save page",
               message: errorMessage,
             });
 

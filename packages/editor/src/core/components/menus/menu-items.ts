@@ -120,7 +120,7 @@ export const BoldItem = (editor: Editor): EditorMenuItem<"bold"> => ({
 
 export const ItalicItem = (editor: Editor): EditorMenuItem<"italic"> => ({
   key: "italic",
-  name: "Itálico",
+  name: "Italic",
   isActive: () => editor?.isActive(CORE_EXTENSIONS.ITALIC),
   command: () => toggleItalic(editor),
   icon: ItalicIcon,
@@ -168,7 +168,7 @@ export const TodoListItem = (editor: Editor): EditorMenuItem<"to-do-list"> => ({
 
 export const QuoteItem = (editor: Editor): EditorMenuItem<"quote"> => ({
   key: "quote",
-  name: "Citação",
+  name: "Quote",
   isActive: () => editor?.isActive(CORE_EXTENSIONS.BLOCKQUOTE),
   command: () => toggleBlockquote(editor),
   icon: TextQuote,
@@ -176,7 +176,7 @@ export const QuoteItem = (editor: Editor): EditorMenuItem<"quote"> => ({
 
 export const CodeItem = (editor: Editor): EditorMenuItem<"code"> => ({
   key: "code",
-  name: "Código",
+  name: "Code",
   isActive: () => editor?.isActive(CORE_EXTENSIONS.CODE_INLINE) || editor?.isActive(CORE_EXTENSIONS.CODE_BLOCK),
   command: () => toggleCodeBlock(editor),
   icon: CodeIcon,

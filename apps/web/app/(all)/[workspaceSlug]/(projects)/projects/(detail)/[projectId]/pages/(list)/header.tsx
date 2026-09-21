@@ -9,6 +9,7 @@ import { observer } from "mobx-react";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 // constants
 import { EPageAccess } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 // plane types
 import { Button } from "@plane/propel/button";
 import { PageIcon } from "@plane/propel/icons";
@@ -25,6 +26,8 @@ import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs/com
 import { EPageStoreType, usePageStore } from "@/plane-web/hooks/store";
 
 export const PagesListHeader = observer(function PagesListHeader() {
+  // language support
+  const { t } = useTranslation();
   // states
   const [isCreatingPage, setIsCreatingPage] = useState(false);
   // router
@@ -51,8 +54,8 @@ export const PagesListHeader = observer(function PagesListHeader() {
       .catch((err) => {
         setToast({
           type: TOAST_TYPE.ERROR,
-          title: "Erro!",
-          message: err?.data?.error || "Não foi possível criar a página. Tente novamente.",
+          title: t("common.toast.error"),
+          message: err?.data?.error || "Could not create the page. Please try again.",
         });
       })
       .finally(() => setIsCreatingPage(false));
@@ -66,7 +69,7 @@ export const PagesListHeader = observer(function PagesListHeader() {
           <Breadcrumbs.Item
             component={
               <BreadcrumbLink
-                label="Páginas"
+                label="Pages"
                 href={`/${workspaceSlug}/projects/${currentProjectDetails?.id}/pages/`}
                 icon={<PageIcon className="h-4 w-4 text-tertiary" />}
                 isLast
@@ -79,7 +82,7 @@ export const PagesListHeader = observer(function PagesListHeader() {
       {canCurrentUserCreatePage && (
         <Header.RightItem>
           <Button variant="primary" size="lg" onClick={handleCreatePage} loading={isCreatingPage}>
-            {isCreatingPage ? "Adicionando…" : "Nova página"}
+            {isCreatingPage ? "Adding…" : "New page"}
           </Button>
         </Header.RightItem>
       )}

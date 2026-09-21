@@ -45,7 +45,7 @@ const DIAS: Record<string, number> = {Sun: 0, Mon: 1, Tue: 2, Wed: 3, Thu: 4, Fr
  * `new Date().getHours()` devolve a hora do container, que roda em UTC. O
  * horário é cadastrado em hora local, então às 08:21 de Campo Grande o servidor
  * via 12:21 e casava com o intervalo de almoço (11:30–13:00): o robô respondia
- * "estamos fora do horário de atendimento" em plena manhã de trabalho.
+ * "we are outside business hours" em plena manhã de trabalho.
  */
 function agoraNoFuso(fuso: string): {weekday: number; minutes: number} {
   const partes = new Intl.DateTimeFormat("en-US", {

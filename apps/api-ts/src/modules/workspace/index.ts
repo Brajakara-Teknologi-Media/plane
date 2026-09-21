@@ -7,7 +7,7 @@ import {sincronizarFuncaoNosProjetos} from "@utils/permissions";
 import {nextSequenceId} from "@utils/sequence";
 import {invalidateStorageCache, type S3Config} from "@utils/storage";
 import {COMMENT_FTS_DOC_C, ensureSearchIndexes, ISSUE_FTS_DOC_I, PT_FTS_CONFIG} from "@utils/search";
-import {ISSUE_INCLUDE, serializeIssue, serializeState, serializeLabel} from "@utils/serialize";
+import {ACTIVITY_INCLUDE, ISSUE_INCLUDE, serializeIssue, serializeIssueActivity, serializeState, serializeLabel} from "@utils/serialize";
 import {getWorkspaceOrFail, requireWorkspaceMember, requireWorkspaceWriter} from "@utils/workspace";
 import {randomBytes, randomUUID} from "crypto";
 import Elysia from "elysia";
@@ -215,7 +215,7 @@ async function workspaceDto(ws: any, memberRole?: number) {
     slug: ws.slug,
     url: `/${ws.slug}`,
     logo: ws.logo ?? null,
-    logo_url: ws.logoUrl ?? null,
+    logo_url: ws.logo ? `/api/assets/v2/workspaces/${ws.slug}/${ws.logo}/` : null,
     organization_size: ws.orgSize ?? "",
     timezone: ws.timezone ?? "UTC",
     created_at: ws.createdAt instanceof Date ? ws.createdAt.toISOString() : ws.createdAt,
@@ -268,7 +268,7 @@ export const workspaceModule = new Elysia({prefix: "/workspaces"})
     const slug = (query.slug as string | undefined)?.toLowerCase();
     if (!slug) {
       set.status = 400;
-      return {error: "slug é obrigatório."};
+      return {error: "Slug is required."};
     }
     const RESTRICTED = ["admin", "api", "auth", "plane", "god-mode", "spaces", "home", "login", "signup", "settings"];
     const taken = RESTRICTED.includes(slug) || (await prisma.workspace.findFirst({where: {slug}})) !== null;
@@ -289,25 +289,41 @@ export const workspaceModule = new Elysia({prefix: "/workspaces"})
   // ── Create workspace ───────────────────────────────────────────────────────
 
   .post("/", async ({body, user, set}) => {
-    const b = body as any;
+    const b = body as {name?: string; slug?: string; org_size?: string; timezone?: string};
     if (!b.name) {
       set.status = 400;
-      return {detail: "O nome é obrigatório."};
+      return {detail: "Name is required."};
     }
     if (!b.slug) {
       set.status = 400;
-      return {detail: "O slug é obrigatório."};
+      return {detail: "Slug is required."};
+    }
+    // Narrow before the $transaction closure: TS narrowing does not survive
+    // into callbacks.
+    const name: string = b.name;
+    const slug: string = b.slug;
+
+    // Instance-level restriction: only instance admins may create workspaces
+    // when IS_WORKSPACE_CREATION_DISABLED is enabled in god mode.
+    if (!user.isInstanceAdmin && !user.isSuperuser) {
+      const instance = await prisma.instance.findFirst({select: {configurations: true}});
+      const saved = (instance?.configurations as unknown as Record<string, string>) ?? {};
+      const disabled = saved.IS_WORKSPACE_CREATION_DISABLED === "1" || saved.IS_WORKSPACE_CREATION_DISABLED === "true";
+      if (disabled) {
+        set.status = 403;
+        return {detail: "Workspace creation is restricted to instance administrators."};
+      }
     }
 
     const exists = await prisma.workspace.findFirst({where: {slug: b.slug, deletedAt: null}});
     if (exists) {
       set.status = 409;
-      return {detail: "Já existe um workspace com este slug."};
+      return {detail: "A workspace with this slug already exists."};
     }
 
     const ws = await prisma.$transaction(async (tx) => {
       const w = await tx.workspace.create({
-        data: {name: b.name, slug: b.slug, orgSize: b.org_size ?? null, timezone: b.timezone ?? "UTC"},
+        data: {name, slug, orgSize: b.org_size ?? null, timezone: b.timezone ?? "UTC"},
       });
       await tx.workspaceMember.create({
         data: {workspaceId: w.id, memberId: user.id, role: 20, isActive: true},
@@ -331,7 +347,7 @@ export const workspaceModule = new Elysia({prefix: "/workspaces"})
     const m = await requireWorkspaceWriter(ws.id, user.id);
     if (m.role < 20) {
       set.status = 403;
-      return {detail: "Apenas administradores podem atualizar as configurações do workspace."};
+      return {detail: "Only administrators can update workspace settings."};
     }
     const b = body as any;
     const data: any = {};
@@ -350,7 +366,7 @@ export const workspaceModule = new Elysia({prefix: "/workspaces"})
     const m = await requireWorkspaceWriter(ws.id, user.id);
     if (m.role < 20) {
       set.status = 403;
-      return {detail: "Apenas administradores podem excluir workspaces."};
+      return {detail: "Only administrators can delete workspaces."};
     }
     await prisma.workspace.update({where: {id: ws.id}, data: {deletedAt: new Date()}});
     set.status = 204;
@@ -396,14 +412,16 @@ export const workspaceModule = new Elysia({prefix: "/workspaces"})
     const m = await requireWorkspaceWriter(ws.id, user.id);
     if (m.role < 15) {
       set.status = 403;
-      return {detail: "Apenas membros podem convidar outras pessoas."};
+      return {detail: "Only members can invite others."};
     }
 
     const emails: Array<{email: string; role: number}> = (body as any).emails ?? [];
     const invites = await prisma.workspaceMemberInvite.createMany({
       data: emails.map((e) => ({
         workspaceId: ws.id,
-        email: e.email,
+        // Signup lowercases account emails (auth sign-in/sign-up); invites must
+        // match or the accept check fails on case.
+        email: String(e.email).toLowerCase().trim(),
         role: e.role ?? 5,
         token: randomBytes(32).toString("hex"),
       })),
@@ -850,7 +868,7 @@ export const workspaceModule = new Elysia({prefix: "/workspaces"})
     const slug = (query.slug as string | undefined)?.toLowerCase();
     if (!slug) {
       set.status = 400;
-      return {error: "slug é obrigatório."};
+      return {error: "Slug is required."};
     }
     const RESTRICTED = ["admin", "api", "auth", "plane", "god-mode", "spaces", "home", "login", "signup", "settings"];
     const taken = RESTRICTED.includes(slug) || (await prisma.workspace.findFirst({where: {slug}})) !== null;
@@ -865,7 +883,7 @@ export const workspaceModule = new Elysia({prefix: "/workspaces"})
     const invite = await prisma.workspaceMemberInvite.findUnique({where: {id: pk}});
     if (!invite) {
       set.status = 404;
-      return {detail: "Não encontrado."};
+      return {detail: "Not found."};
     }
     return invite;
   })
@@ -884,11 +902,11 @@ export const workspaceModule = new Elysia({prefix: "/workspaces"})
     const invite = await prisma.workspaceMemberInvite.findUnique({where: {id: pk}});
     if (!invite) {
       set.status = 400;
-      return {detail: "Convite inválido."};
+      return {detail: "Invalid invitation."};
     }
-    if (invite.email !== user.email) {
+    if (invite.email.toLowerCase().trim() !== user.email.toLowerCase().trim()) {
       set.status = 400;
-      return {detail: "O convite não é para este e-mail."};
+      return {detail: "The invitation is not for this email."};
     }
 
     await prisma.$transaction(async (tx) => {
@@ -902,7 +920,7 @@ export const workspaceModule = new Elysia({prefix: "/workspaces"})
         });
       }
     });
-    return {detail: "Você entrou no workspace."};
+    return {detail: "You have joined the workspace."};
   })
 
   // ── Members: specific member management ────────────────────────────────────
@@ -944,7 +962,7 @@ export const workspaceModule = new Elysia({prefix: "/workspaces"})
     });
     if (!m) {
       set.status = 404;
-      return {detail: "Não encontrado."};
+      return {detail: "Not found."};
     }
     return m;
   })
@@ -954,7 +972,7 @@ export const workspaceModule = new Elysia({prefix: "/workspaces"})
     const caller = await requireWorkspaceWriter(ws.id, user.id);
     if (caller.role < 20) {
       set.status = 403;
-      return {detail: "Apenas administradores podem alterar funções de membros."};
+      return {detail: "Only administrators can change member roles."};
     }
     const b = body as any;
     const data: any = {};
@@ -966,16 +984,46 @@ export const workspaceModule = new Elysia({prefix: "/workspaces"})
     // nada mudava: o vínculo de projeto continuava com a função antiga e as
     // transições eram avaliadas por ela. Foi assim que um TI concluiu e mandou
     // chamado para a Triagem.
+    const memberEntry = await prisma.workspaceMember.findFirst({
+      where: {workspaceId: ws.id, OR: [{id: pk}, {memberId: pk}]}
+    });
+    if (!memberEntry) { set.status = 404; return { detail: "Member not found." }; }
+    const mid = memberEntry.memberId;
+
     return prisma.$transaction(async (tx) => {
-      const atualizado = await tx.workspaceMember.updateMany({where: {workspaceId: ws.id, memberId: pk}, data});
+      await tx.workspaceMember.updateMany({where: {workspaceId: ws.id, memberId: mid}, data});
       if (data.role !== undefined) {
         await tx.workspaceMember.updateMany({
-          where: {workspaceId: ws.id, memberId: pk},
+          where: {workspaceId: ws.id, memberId: mid},
           data: {workflowRoleId: (await tx.workflowRole.findFirst({where: {workspaceId: ws.id, level: data.role, deletedAt: null}}))?.id ?? null},
         });
-        await sincronizarFuncaoNosProjetos(tx as any, ws.id, pk, data.role);
+        await sincronizarFuncaoNosProjetos(tx as any, ws.id, mid, data.role);
       }
-      return atualizado;
+      const updated = await tx.workspaceMember.findFirst({
+        where: {workspaceId: ws.id, memberId: mid, deletedAt: null},
+        include: {member: {select: {id: true, email: true, firstName: true, lastName: true, displayName: true, avatar: true}}},
+      });
+      if (!updated) {
+        set.status = 404;
+        return { detail: "Member not found." };
+      }
+      if (updated.deletedAt) {
+        set.status = 404;
+        return { detail: "Member already deleted." };
+      }
+      return {
+        id: updated.id,
+        member: updated.memberId,
+        role: updated.role,
+        member_detail: {
+          id: updated.member.id,
+          email: updated.member.email,
+          first_name: updated.member.firstName,
+          last_name: updated.member.lastName,
+          display_name: updated.member.displayName,
+          avatar: updated.member.avatar,
+        },
+      };
     });
   })
 
@@ -984,7 +1032,7 @@ export const workspaceModule = new Elysia({prefix: "/workspaces"})
     const caller = await requireWorkspaceWriter(ws.id, user.id);
     if (caller.role < 20) {
       set.status = 403;
-      return {detail: "Apenas administradores podem remover membros."};
+      return {detail: "Only administrators can remove members."};
     }
     await prisma.workspaceMember.updateMany({
       where: {workspaceId: ws.id, memberId: pk},
@@ -1002,7 +1050,7 @@ export const workspaceModule = new Elysia({prefix: "/workspaces"})
     const caller = await requireWorkspaceWriter(ws.id, user.id);
     if (caller.role < 20) {
       set.status = 403;
-      return {detail: "Apenas administradores podem redefinir senhas."};
+      return {detail: "Only administrators can reset passwords."};
     }
     const target = await prisma.workspaceMember.findFirst({
       where: {workspaceId: ws.id, memberId: pk, deletedAt: null},
@@ -1010,26 +1058,26 @@ export const workspaceModule = new Elysia({prefix: "/workspaces"})
     });
     if (!target?.member) {
       set.status = 404;
-      return {detail: "Membro não encontrado."};
+      return {detail: "Member not found."};
     }
     // A workspace admin must not reset an instance admin's password (only the
     // instance admin themselves can change it, via account settings).
     if (target.member.isInstanceAdmin && target.member.id !== user.id) {
       set.status = 403;
-      return {detail: "Não é possível redefinir a senha de um administrador da instância."};
+      return {detail: "It is not possible to reset the password of an instance administrator."};
     }
     const b = (body as any) ?? {};
-    const newPassword = typeof b.password === "string" && b.password.trim().length > 0 ? b.password : "teste";
+    const newPassword = typeof b.password === "string" && b.password.trim().length > 0 ? b.password : "test";
     if (newPassword.length < 4) {
       set.status = 400;
-      return {detail: "A senha precisa ter ao menos 4 caracteres."};
+      return {detail: "The password must be at least 4 characters."};
     }
     const hash = await Bun.password.hash(newPassword, {algorithm: "bcrypt", cost: 12});
     await prisma.user.update({
       where: {id: pk},
       data: {password: hash, isPasswordAutoset: false, isActive: true},
     });
-    return {detail: "Senha redefinida com sucesso.", password: newPassword};
+    return {detail: "Password reset successfully.", password: newPassword};
   })
 
   .post("/:slug/members/leave/", async ({params: {slug}, user, set}) => {
@@ -1050,7 +1098,7 @@ export const workspaceModule = new Elysia({prefix: "/workspaces"})
     const caller = await requireWorkspaceMember(ws.id, user.id);
     if (caller.role < 20) {
       set.status = 403;
-      return {detail: "Apenas administradores podem ver a configuração de armazenamento."};
+      return {detail: "Only administrators can view the storage configuration."};
     }
     const instance = await prisma.instance.findFirst({select: {configurations: true}});
     const cfg = ((instance?.configurations as any)?.s3 ?? {}) as S3Config;
@@ -1071,13 +1119,13 @@ export const workspaceModule = new Elysia({prefix: "/workspaces"})
     const caller = await requireWorkspaceMember(ws.id, user.id);
     if (caller.role < 20) {
       set.status = 403;
-      return {detail: "Apenas administradores podem alterar a configuração de armazenamento."};
+      return {detail: "Only administrators can change the storage configuration."};
     }
     const b = (body as any) ?? {};
     const instance = await prisma.instance.findFirst();
     if (!instance) {
       set.status = 400;
-      return {detail: "Instância não configurada."};
+      return {detail: "Instance not configured."};
     }
     const configurations = (instance.configurations as any) ?? {};
     const current = (configurations.s3 ?? {}) as S3Config;
@@ -1100,13 +1148,13 @@ export const workspaceModule = new Elysia({prefix: "/workspaces"})
 
     if (provider === "s3" && (!next.endpoint || !next.bucket || !next.access_key || !next.secret_key)) {
       set.status = 400;
-      return {detail: "Para usar S3 informe endpoint, bucket, access key e secret key."};
+      return {detail: "To use S3, provide endpoint, bucket, access key, and secret key."};
     }
 
     configurations.s3 = next;
     await prisma.instance.update({where: {id: instance.id}, data: {configurations}});
     invalidateStorageCache();
-    return {detail: "Configuração de armazenamento salva.", provider, is_configured: provider === "s3"};
+    return {detail: "Storage configuration saved.", provider, is_configured: provider === "s3"};
   })
 
   // ── Print settings (logo/cabeçalho/rodapé usados na impressão) ─────────────
@@ -1125,7 +1173,7 @@ export const workspaceModule = new Elysia({prefix: "/workspaces"})
     const caller = await requireWorkspaceMember(ws.id, user.id);
     if (caller.role < 20) {
       set.status = 403;
-      return {detail: "Apenas administradores podem alterar as configurações de impressão."};
+      return {detail: "Only administrators can change print settings."};
     }
     const existing = await prisma.workspaceSetting.findFirst({where: {workspaceId: ws.id, key: PRINT_SETTINGS_KEY}});
     const next = mergePrintSettings(existing?.value, body);
@@ -1156,13 +1204,13 @@ export const workspaceModule = new Elysia({prefix: "/workspaces"})
     const caller = await requireWorkspaceMember(ws.id, user.id);
     if (caller.role < 20) {
       set.status = 403;
-      return {detail: "Apenas administradores podem alterar a configuração do chat."};
+      return {detail: "Only administrators can change the chat configuration."};
     }
     const b = (body as any) ?? {};
     const instance = await prisma.instance.findFirst();
     if (!instance) {
       set.status = 400;
-      return {detail: "Instância não configurada."};
+      return {detail: "Instance not configured."};
     }
     const configurations = (instance.configurations as any) ?? {};
     const current = (configurations.chat ?? {}) as any;
@@ -1172,7 +1220,7 @@ export const workspaceModule = new Elysia({prefix: "/workspaces"})
       ws_url: b.ws_url !== undefined ? String(b.ws_url).trim() : (current.ws_url ?? ""),
     };
     await prisma.instance.update({where: {id: instance.id}, data: {configurations}});
-    return {detail: "Configuração do chat salva.", ...configurations.chat};
+    return {detail: "Chat configuration saved.", ...configurations.chat};
   })
 
   .get("/:slug/workspace-members/me/", async ({params: {slug}, user, set}) => {
@@ -1182,7 +1230,7 @@ export const workspaceModule = new Elysia({prefix: "/workspaces"})
     });
     if (!m) {
       set.status = 404;
-      return {detail: "Você não é membro."};
+      return {detail: "You are not a member."};
     }
     return {
       id: m.id,
@@ -1267,7 +1315,7 @@ export const workspaceModule = new Elysia({prefix: "/workspaces"})
     const m = await requireWorkspaceMember(ws.id, user.id);
     if (m.role < 18) {
       set.status = 403;
-      return {detail: "Apenas administradores podem configurar SLA de etiquetas."};
+      return {detail: "Only administrators can configure label SLA."};
     }
     const rows: any[] = (body as any)?.labels ?? [];
     for (const r of rows) {
@@ -1407,7 +1455,7 @@ export const workspaceModule = new Elysia({prefix: "/workspaces"})
       const busca = BUSCA[tipo];
       if (!busca) continue;
       resposta[tipo] = await busca().catch((e) => {
-        console.error(`[entity-search] falhou para "${tipo}"`, e);
+        console.error(`[entity-search] failed for "${tipo}"`, e);
         return [];
       });
     }
@@ -1541,7 +1589,7 @@ export const workspaceModule = new Elysia({prefix: "/workspaces"})
     const draft = await prisma.draftIssue.findFirst({where: {id: pk, workspaceId: ws.id, deletedAt: null}});
     if (!draft) {
       set.status = 404;
-      return {detail: "Não encontrado."};
+      return {detail: "Not found."};
     }
     return draft;
   })
@@ -1572,13 +1620,13 @@ export const workspaceModule = new Elysia({prefix: "/workspaces"})
     const draft = await prisma.draftIssue.findFirst({where: {id: draft_id, workspaceId: ws.id, deletedAt: null}});
     if (!draft) {
       set.status = 404;
-      return {detail: "Rascunho não encontrado."};
+      return {detail: "Draft not found."};
     }
 
     const project = await prisma.project.findFirst({where: {id: draft.projectId, deletedAt: null}});
     if (!project) {
       set.status = 400;
-      return {detail: "Projeto não encontrado."};
+      return {detail: "Project not found."};
     }
 
     const issue = await prisma.$transaction(async (tx) => {
@@ -1810,9 +1858,9 @@ export const workspaceModule = new Elysia({prefix: "/workspaces"})
 
     const DEFAULT_WIDGETS = [
       {key: "my_work_items", name: "Meus Work Items", is_enabled: true, sort_order: 7},
-      {key: "upcoming_dates", name: "Prazos Próximos", is_enabled: true, sort_order: 6},
+      {key: "upcoming_dates", name: "Upcoming Deadlines", is_enabled: true, sort_order: 6},
       {key: "open_intakes", name: "Intakes Abertos", is_enabled: true, sort_order: 5},
-      {key: "quick_links", name: "Links Rápidos", is_enabled: true, sort_order: 4},
+      {key: "quick_links", name: "Quick Links", is_enabled: true, sort_order: 4},
       {key: "recents", name: "Recentes", is_enabled: true, sort_order: 3},
       {key: "my_stickies", name: "Meus Stickies", is_enabled: true, sort_order: 2},
       {key: "quick_tutorial", name: "Tutorial", is_enabled: true, sort_order: 1},
@@ -1835,7 +1883,7 @@ export const workspaceModule = new Elysia({prefix: "/workspaces"})
   .patch("/:slug/home-preferences/", async ({params: {slug}, body, user}) => {
     const ws = await getWorkspaceOrFail(slug);
     await requireWorkspaceMember(ws.id, user.id);
-    return {detail: "Preferências atualizadas."};
+    return {detail: "Preferences updated."};
   })
 
   .get("/:slug/home-preferences/:key/", async ({params: {slug, key}, user}) => {
@@ -1878,14 +1926,14 @@ export const workspaceModule = new Elysia({prefix: "/workspaces"})
     const b = body as any;
     if (!b.url) {
       set.status = 400;
-      return {error: "A URL é obrigatória."};
+      return {error: "The URL is required."};
     }
 
     const url = normalizeQuickLinkUrl(String(b.url));
     const quickLinks = await getWorkspaceQuickLinks(ws.id, user.id);
     if (quickLinks.some((link) => link.url === url)) {
       set.status = 400;
-      return {error: "Esta URL já existe para este workspace e proprietário"};
+      return {error: "This URL already exists for this workspace and owner"};
     }
 
     const newLink: QuickLinkRecord = {
@@ -1910,7 +1958,7 @@ export const workspaceModule = new Elysia({prefix: "/workspaces"})
     const quickLink = quickLinks.find((link) => link.id === pk);
     if (!quickLink) {
       set.status = 404;
-      return {error: "Link rápido não encontrado."};
+      return {error: "Quick link not found."};
     }
     return serializeQuickLink(ws.slug, quickLink);
   })
@@ -1923,13 +1971,13 @@ export const workspaceModule = new Elysia({prefix: "/workspaces"})
     const currentLink = quickLinks.find((link) => link.id === pk);
     if (!currentLink) {
       set.status = 404;
-      return {error: "Link rápido não encontrado."};
+      return {error: "Quick link not found."};
     }
 
     const nextUrl = b.url !== undefined ? normalizeQuickLinkUrl(String(b.url)) : currentLink.url;
     if (quickLinks.some((link) => link.id !== pk && link.url === nextUrl)) {
       set.status = 400;
-      return {error: "Esta URL já existe para este workspace e proprietário"};
+      return {error: "This URL already exists for this workspace and owner"};
     }
 
     const updatedLink: QuickLinkRecord = {
@@ -1951,7 +1999,7 @@ export const workspaceModule = new Elysia({prefix: "/workspaces"})
     const nextLinks = quickLinks.filter((link) => link.id !== pk);
     if (nextLinks.length === quickLinks.length) {
       set.status = 404;
-      return {error: "Link rápido não encontrado."};
+      return {error: "Quick link not found."};
     }
     await saveWorkspaceQuickLinks(ws.id, user.id, nextLinks);
     set.status = 204;
@@ -2179,7 +2227,36 @@ export const workspaceModule = new Elysia({prefix: "/workspaces"})
     await requireWorkspaceMember(ws.id, user.id);
     const where = {workspaceId: ws.id, actorId: user_id};
     return paginate({
-      query: (skip, take) => prisma.issueActivity.findMany({where, skip, take, orderBy: {createdAt: "desc"}}),
+      query: async (skip, take) => {
+        const activities = await prisma.issueActivity.findMany({
+          where,
+          skip,
+          take,
+          orderBy: {createdAt: "desc"},
+          include: ACTIVITY_INCLUDE,
+        });
+        // IssueActivity only carries actor/project ids — resolve the display
+        // details in two batched queries so the list stays N+1-free.
+        const actorIds = [...new Set(activities.map((a) => a.actorId).filter(Boolean))] as string[];
+        const projectIds = [...new Set(activities.map((a) => a.projectId))];
+        const [actors, projects] = await Promise.all([
+          actorIds.length
+            ? prisma.user.findMany({
+                where: {id: {in: actorIds}},
+                select: {id: true, displayName: true, firstName: true, lastName: true, email: true, avatarUrl: true, isBotUser: true},
+              })
+            : Promise.resolve([]),
+          projectIds.length
+            ? prisma.project.findMany({
+                where: {id: {in: projectIds}},
+                select: {id: true, name: true, identifier: true, iconProp: true},
+              })
+            : Promise.resolve([]),
+        ]);
+        const actorsById = Object.fromEntries(actors.map((u) => [u.id, u]));
+        const projectsById = Object.fromEntries(projects.map((p) => [p.id, p]));
+        return activities.map((a) => serializeIssueActivity(a, actorsById, projectsById, {id: ws.id, name: ws.name, slug: ws.slug}));
+      },
       count: () => prisma.issueActivity.count({where}),
       cursor: query.cursor as string | undefined,
       perPage: query.per_page ? Number(query.per_page) : 10,
@@ -2187,92 +2264,146 @@ export const workspaceModule = new Elysia({prefix: "/workspaces"})
   })
 
   // ── User issues (for profile/my-issues board view) ────────────────────────────
-  // Returns TIssuesResponse with paginated issues assigned to a specific user
+  // Returns TIssuesResponse with paginated issues for a specific user.
+  // Supports three view types: assigned (assignees param), created (created_by param),
+  // or subscribed (subscriber param). Respects group_by for kanban/list layouts.
 
   .get("/:slug/user-issues/:user_id/", async ({params: {slug, user_id}, user, query}) => {
     const ws = await getWorkspaceOrFail(slug);
     await requireWorkspaceMember(ws.id, user.id);
 
-    const orderBy = (query.order_by as string) ?? "-updated_at";
-    const cursor = (query.cursor as string) ?? "100:0:0";
-    const perPage = Number(query.per_page ?? 100);
-    const layout = (query.layout as string) ?? "list";
-
-    const parts = cursor.split(":").map(Number);
-    const page = parts[1] ?? 0;
-    const skip = page * perPage;
+    // Get accessible projects (all workspace projects where user is member)
+    const accessibleProjects = (
+      await prisma.projectMember.findMany({
+        where: {workspaceId: ws.id, memberId: user.id, isActive: true, deletedAt: null},
+        select: {projectId: true},
+      })
+    ).map((m) => m.projectId);
 
     const where: any = {
       workspaceId: ws.id,
       deletedAt: null,
       isDraft: false,
-      assignees: {some: {assigneeId: user_id, deletedAt: null}},
+      projectId: {in: accessibleProjects},
     };
 
-    const ISSUE_INCLUDE = {
-      state: {select: {id: true, name: true, color: true, group: true}},
-      assignees: {where: {deletedAt: null}, select: {assigneeId: true}},
-      labels: {where: {deletedAt: null}, select: {labelId: true}},
-    };
+    // Determine view type from query params (frontend sends one of these)
+    if (query.assignees === user_id) {
+      where.assignees = {some: {assigneeId: user_id, deletedAt: null}};
+    } else if (query.created_by === user_id) {
+      where.createdById = user_id;
+    } else if (query.subscriber === user_id) {
+      where.subscribers = {some: {subscriberId: user_id, deletedAt: null}};
+    } else {
+      // Default to assigned if no view param specified (backwards compat)
+      where.assignees = {some: {assigneeId: user_id, deletedAt: null}};
+    }
 
-    // Convert snake_case order_by to camelCase for Prisma
-    const FIELD_MAP: Record<string, string> = {
-      sort_order: "sortOrder",
-      created_at: "createdAt",
+    // Apply additional filters (priority, state, labels, etc.)
+    const filters = normalizeFilters(query as Record<string, unknown>);
+    await applyIssueFilters(where, filters, {workspaceId: ws.id});
+
+    // Handle calendar ranges: item must fall within range on EITHER startDate OR targetDate
+    if (query.after || query.before) {
+      const afterDate = query.after ? new Date(query.after as string) : null;
+      const beforeDate = query.before ? new Date(query.before as string) : null;
+
+      where.OR = [
+        {
+          startDate: {
+            ...(afterDate && { gte: afterDate }),
+            ...(beforeDate && { lte: beforeDate }),
+          },
+        },
+        {
+          targetDate: {
+            ...(afterDate && { gte: afterDate }),
+            ...(beforeDate && { lte: beforeDate }),
+          },
+        },
+      ];
+    }
+
+    // Respect project filter if provided
+    if (query.project_id) where.projectId = query.project_id;
+    else if (filters.project?.length) where.projectId = {in: filters.project.filter((p: string) => accessibleProjects.includes(p))};
+
+    const orderBy: any = {};
+    const order = (query.order_by as string) ?? "-updated_at";
+    const dir = order.startsWith("-") ? "desc" : "asc";
+    const field = order.replace(/^-/, "");
+    const fieldMap: Record<string, string> = {
       updated_at: "updatedAt",
-      target_date: "targetDate",
-      completed_at: "completedAt",
-      sequence_id: "sequenceId",
+      created_at: "createdAt",
+      priority: "priority",
+      state__name: "stateId",
+      sort_order: "sortOrder",
     };
-    const rawField = orderBy.startsWith("-") ? orderBy.slice(1) : orderBy;
-    const prismaField = FIELD_MAP[rawField] ?? rawField;
-    const sortDir = orderBy.startsWith("-") ? "desc" : "asc";
+    orderBy[fieldMap[field] ?? "updatedAt"] = dir;
 
-    const [issues, totalCount] = await Promise.all([
-      prisma.issue.findMany({
-        where,
-        skip,
-        take: perPage + 1,
-        include: ISSUE_INCLUDE,
-        orderBy: {[prismaField]: sortDir},
-      }),
-      prisma.issue.count({where}),
-    ]);
+    // ── Grouped response (kanban / grouped list) ─────────────────────────────────
+    const groupBy = query.group_by as string | undefined;
+    const perPage = Number(query.per_page ?? 100);
 
-    const hasNext = issues.length > perPage;
-    const pageIssues = hasNext ? issues.slice(0, perPage) : issues;
+    const SUPPORTED_GROUP_BY = ["state_id", "priority", "state__group", "project_id"];
+    if (groupBy && SUPPORTED_GROUP_BY.includes(groupBy)) {
+      const accessibleProjectIds =
+        typeof where.projectId === "string" ? [where.projectId] : ((where.projectId?.in as string[]) ?? accessibleProjects);
+      let groupValues: (string | null)[] = [];
+      if (groupBy === "state_id") {
+        const states = await prisma.state.findMany({
+          where: {projectId: {in: accessibleProjectIds}, deletedAt: null},
+          select: {id: true},
+          orderBy: {sequence: "asc"},
+        });
+        groupValues = states.map((s) => s.id);
+      } else if (groupBy === "priority") {
+        groupValues = ["urgent", "high", "medium", "low", "none"];
+      } else if (groupBy === "state__group") {
+        groupValues = ["backlog", "unstarted", "started", "completed", "cancelled", "triage"];
+      } else if (groupBy === "project_id") {
+        groupValues = accessibleProjectIds;
+      } else {
+        groupValues = [];
+      }
 
-    return {
-      grouped_by: "",
-      next_cursor: `${perPage}:${page + 1}:0`,
-      prev_cursor: `${perPage}:${Math.max(0, page - 1)}:1`,
-      next_page_results: hasNext,
-      prev_page_results: page > 0,
-      total_count: totalCount,
-      count: pageIssues.length,
-      total_pages: Math.ceil(totalCount / perPage),
-      extra_stats: null,
-      total_results: totalCount,
-      results: pageIssues.map((i: any) => ({
-        id: i.id,
-        name: i.name,
-        state_id: i.stateId,
-        priority: i.priority,
-        project_id: i.projectId,
-        workspace_id: i.workspaceId,
-        sequence_id: i.sequenceId,
-        sort_order: i.sortOrder ?? 0,
-        created_at: i.createdAt?.toISOString(),
-        updated_at: i.updatedAt?.toISOString(),
-        target_date: i.targetDate ? (i.targetDate instanceof Date ? i.targetDate.toISOString().split("T")[0] : i.targetDate) : null,
-        completed_at: i.completedAt ? (i.completedAt instanceof Date ? i.completedAt.toISOString() : i.completedAt) : null,
-        assignee_ids: i.assignees?.map((a: any) => a.assigneeId) ?? [],
-        label_ids: i.labels?.map((l: any) => l.labelId) ?? [],
-        state__color: i.state?.color ?? "",
-        state__group: i.state?.group ?? "backlog",
-        state__name: i.state?.name ?? "",
-      })),
-    };
+      const total_count = await prisma.issue.count({where});
+      const results: Record<string, any> = {};
+      for (const gv of groupValues) {
+        const groupWhere: any = {...where};
+        if (groupBy === "state_id") groupWhere.stateId = restringirAoGrupo(where.stateId, gv);
+        else if (groupBy === "priority") groupWhere.priority = restringirAoGrupo(where.priority, gv);
+        else if (groupBy === "project_id") groupWhere.projectId = restringirAoGrupo(where.projectId, gv);
+        else if (groupBy === "state__group") {
+          const stateIds = await prisma.state.findMany({
+            where: {projectId: {in: accessibleProjectIds}, group: gv as string, deletedAt: null},
+            select: {id: true},
+          });
+          groupWhere.stateId = restringirAoGrupo(where.stateId, stateIds.map((s) => s.id));
+        }
+        const [groupIssues, groupCount] = await Promise.all([
+          prisma.issue.findMany({where: groupWhere, include: ISSUE_INCLUDE, orderBy, take: perPage}),
+          prisma.issue.count({where: groupWhere}),
+        ]);
+        results[gv ?? "none"] = {
+          results: groupIssues.map(serializeIssue),
+          total_results: groupCount,
+          next_cursor: `${perPage}:1:0`,
+          prev_cursor: `${perPage}:0:1`,
+          next_page_results: groupCount > perPage,
+          prev_page_results: false,
+        };
+      }
+      return {total_count, results, next_cursor: null, prev_cursor: null, next_page_results: false, prev_page_results: false};
+    }
+
+    // ── Flat response (list layout, no grouping) ───────────────────────────────
+    return paginate({
+      query: (skip, take) => prisma.issue.findMany({where, skip, take, include: ISSUE_INCLUDE, orderBy}),
+      count: () => prisma.issue.count({where}),
+      cursor: query.cursor as string | undefined,
+      transform: (items) => items.map(serializeIssue),
+    });
   })
 
   // ── Workspace-level issue view (global all-issues, my-issues, etc.) ──────────
@@ -2331,14 +2462,16 @@ export const workspaceModule = new Elysia({prefix: "/workspaces"})
     // set of dates is open-ended.
     if (groupBy === "target_date") {
       const calIssues = await prisma.issue.findMany({
-        where: {...where, targetDate: {not: null}},
+        where,
         include: ISSUE_INCLUDE,
         orderBy,
         take: 2000,
       });
       const results: Record<string, any> = {};
       for (const i of calIssues as any[]) {
-        const key = i.targetDate ? new Date(i.targetDate).toISOString().split("T")[0] : "none";
+        const date = i.targetDate || i.startDate;
+        if (!date) continue;
+        const key = new Date(date).toISOString().split("T")[0];
         if (!results[key]) {
           results[key] = {
             results: [],
@@ -2353,7 +2486,7 @@ export const workspaceModule = new Elysia({prefix: "/workspaces"})
         results[key].total_results++;
       }
       return {
-        total_count: calIssues.length,
+        total_count: Object.values(results).reduce((s: number, g: any) => s + g.total_results, 0),
         results,
         next_cursor: null,
         prev_cursor: null,
@@ -2506,6 +2639,25 @@ export const workspaceModule = new Elysia({prefix: "/workspaces"})
     }));
   })
 
+  // ── Global intake: projects accepting external intake ────────────────────
+  // Metadata-only list for the global intake sidebar. Any workspace member may
+  // file intake into these projects without being a project member.
+  .get("/:slug/intake-projects/", async ({params: {slug}, user}) => {
+    const ws = await getWorkspaceOrFail(slug);
+    await requireWorkspaceMember(ws.id, user.id);
+    const projects = await prisma.project.findMany({
+      where: {workspaceId: ws.id, deletedAt: null, archivedAt: null, intakeView: true},
+      select: {id: true, name: true, identifier: true, iconProp: true},
+      orderBy: {name: "asc"},
+    });
+    return projects.map((p) => ({
+      id: p.id,
+      name: p.name,
+      identifier: p.identifier,
+      logo_props: p.iconProp ?? {},
+    }));
+  })
+
   // ── Global intake: pending intakes across all projects ────────────────────
   .get("/:slug/global-intake-issues/", async ({params: {slug}, user, query}) => {
     const ws = await getWorkspaceOrFail(slug);
@@ -2529,7 +2681,14 @@ export const workspaceModule = new Elysia({prefix: "/workspaces"})
     const page = Number(cursor.split(":")[1] ?? 0);
     const skip = page * perPage;
 
-    const where: any = {workspaceId: ws.id, projectId: {in: userProjectIds}, deletedAt: null};
+    // Show intakes from projects the user belongs to, plus any intake the user
+    // opened themselves (D4: cross-project intake — a workspace member can file
+    // into a project they're not a member of and still track it here).
+    const where: Prisma.IntakeIssueWhereInput = {
+      workspaceId: ws.id,
+      deletedAt: null,
+      OR: [{projectId: {in: userProjectIds}}, {createdById: user.id}],
+    };
     if (statusFilter) where.status = {in: statusFilter};
 
     const [intakeIssues, total] = await Promise.all([

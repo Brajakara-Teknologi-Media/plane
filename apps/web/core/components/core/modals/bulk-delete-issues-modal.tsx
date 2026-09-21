@@ -103,8 +103,8 @@ export const BulkDeleteIssuesModal = observer(function BulkDeleteIssuesModal(pro
     if (!data.delete_issue_ids || data.delete_issue_ids.length === 0) {
       setToast({
         type: TOAST_TYPE.ERROR,
-        title: "Erro!",
-        message: "Selecione pelo menos um chamado.",
+        title: "Error!",
+        message: "Select at least one work item.",
       });
       return;
     }
@@ -115,16 +115,16 @@ export const BulkDeleteIssuesModal = observer(function BulkDeleteIssuesModal(pro
       .then(() => {
         setToast({
           type: TOAST_TYPE.SUCCESS,
-          title: "Sucesso!",
-          message: "Chamados excluídos com sucesso!",
+          title: t("common.success"),
+          message: t("work-item.bulk_delete.success_message"),
         });
         handleClose();
       })
       .catch(() =>
         setToast({
           type: TOAST_TYPE.ERROR,
-          title: "Erro!",
-          message: "Algo deu errado. Tente novamente.",
+          title: "Error!",
+          message: "Something went wrong. Try again.",
         })
       );
   };
@@ -133,7 +133,9 @@ export const BulkDeleteIssuesModal = observer(function BulkDeleteIssuesModal(pro
     issues.length > 0 ? (
       <li className="p-2">
         {query === "" && (
-          <h2 className="mt-4 mb-2 px-3 text-11 font-semibold text-primary">Selecione os chamados para excluir</h2>
+          <h2 className="mt-4 mb-2 px-3 text-11 font-semibold text-primary">
+            {t("work-item.bulk_delete.select_to_delete")}
+          </h2>
         )}
         <ul className="text-13 text-secondary">
           {issues.map((issue) => (
@@ -177,7 +179,7 @@ export const BulkDeleteIssuesModal = observer(function BulkDeleteIssuesModal(pro
             <input
               type="text"
               className="h-12 w-full border-0 bg-transparent pr-4 pl-11 text-primary outline-none focus:ring-0 sm:text-13"
-              placeholder="Pesquisar..."
+              placeholder="Search..."
               onChange={(event) => setQuery(event.target.value)}
             />
           </div>
@@ -199,10 +201,10 @@ export const BulkDeleteIssuesModal = observer(function BulkDeleteIssuesModal(pro
         {issues.length > 0 && (
           <div className="flex items-center justify-end gap-2 p-3">
             <Button variant="secondary" size="lg" onClick={handleClose}>
-              Cancelar
+              {t("common.cancel")}
             </Button>
             <Button variant="error-fill" size="lg" onClick={handleSubmit(handleDelete)} loading={isSubmitting}>
-              {isSubmitting ? "Excluindo…" : "Excluir os chamados selecionados"}
+              {isSubmitting ? "Deleting…" : "Delete selected work items"}
             </Button>
           </div>
         )}

@@ -98,8 +98,8 @@ export const GeneralProfileSettingsForm = observer(function GeneralProfileSettin
       .then(() => {
         setToast({
           type: TOAST_TYPE.SUCCESS,
-          title: "Sucesso!",
-          message: "Foto de perfil excluída com sucesso.",
+          title: t("common.toast.success"),
+          message: "Profile photo deleted successfully.",
         });
         setValue("avatar_url", "");
         return;
@@ -107,8 +107,8 @@ export const GeneralProfileSettingsForm = observer(function GeneralProfileSettin
       .catch(() => {
         setToast({
           type: TOAST_TYPE.ERROR,
-          title: "Erro!",
-          message: "Ocorreu um erro ao excluir sua foto de perfil. Tente novamente.",
+          title: t("common.toast.error"),
+          message: t("common.image_delete_error"),
         });
       })
       .finally(() => {
@@ -140,7 +140,7 @@ export const GeneralProfileSettingsForm = observer(function GeneralProfileSettin
       setToast({
         type: TOAST_TYPE.ERROR,
         title: t("toast.error"),
-        message: error instanceof Error ? error.message : "Falha ao processar a imagem de capa",
+        message: error instanceof Error ? error.message : t("common.failed_to_process_cover_image"),
       });
       setIsLoading(false);
       return;
@@ -163,27 +163,27 @@ export const GeneralProfileSettingsForm = observer(function GeneralProfileSettin
           | PromiseRejectedResult
           | undefined;
         if (rejectedResult) {
-          throw rejectedResult.reason ?? new Error("Falha ao atualizar o perfil");
+          throw rejectedResult.reason ?? new Error(t("common.failed_to_update_profile"));
         }
         const values = results.map(
           (result) => (result as PromiseFulfilledResult<IUser | TUserProfile | undefined>).value
         );
         if (values.some((v) => v === undefined)) {
-          throw new Error("Falha ao atualizar o perfil");
+          throw new Error(t("common.failed_to_update_profile"));
         }
         return values;
       })
       .finally(() => setIsLoading(false));
 
     setPromiseToast(updatePromise, {
-      loading: "Atualizando...",
+      loading: "Updating...",
       success: {
-        title: "Sucesso!",
+        title: t("common.toast.success"),
         message: () => `Profile updated successfully.`,
       },
       error: {
-        title: "Erro!",
-        message: () => `Ocorreu um erro ao atualizar seu perfil. Tente novamente.`,
+        title: t("common.toast.error"),
+        message: () => t("common.profile_update_error"),
       },
     });
   };
@@ -275,7 +275,7 @@ export const GeneralProfileSettingsForm = observer(function GeneralProfileSettin
                   control={control}
                   name="first_name"
                   rules={{
-                    required: "Insira o nome",
+                    required: "Enter your name",
                     validate: validatePersonName,
                   }}
                   render={({ field: { value, onChange, ref } }) => (
@@ -287,7 +287,7 @@ export const GeneralProfileSettingsForm = observer(function GeneralProfileSettin
                       onChange={onChange}
                       ref={ref}
                       hasError={Boolean(errors.first_name)}
-                      placeholder="Insira seu nome"
+                      placeholder="Enter your name"
                       className={`w-full rounded-md ${errors.first_name ? "border-danger-strong" : ""}`}
                       maxLength={50}
                       autoComplete="on"
@@ -313,7 +313,7 @@ export const GeneralProfileSettingsForm = observer(function GeneralProfileSettin
                       onChange={onChange}
                       ref={ref}
                       hasError={Boolean(errors.last_name)}
-                      placeholder="Insira seu sobrenome"
+                      placeholder="Enter your last name"
                       className="w-full rounded-md"
                       maxLength={50}
                       autoComplete="on"
@@ -331,7 +331,7 @@ export const GeneralProfileSettingsForm = observer(function GeneralProfileSettin
                   control={control}
                   name="display_name"
                   rules={{
-                    required: "O nome de exibição é obrigatório.",
+                    required: "Display name is required.",
                     validate: validateDisplayName,
                   }}
                   render={({ field: { value, onChange, ref } }) => (
@@ -343,7 +343,7 @@ export const GeneralProfileSettingsForm = observer(function GeneralProfileSettin
                       onChange={onChange}
                       ref={ref}
                       hasError={Boolean(errors?.display_name)}
-                      placeholder="Insira seu nome de exibição"
+                      placeholder="Enter your display name"
                       className={`w-full ${errors?.display_name ? "border-danger-strong" : ""}`}
                       maxLength={50}
                     />
@@ -362,7 +362,7 @@ export const GeneralProfileSettingsForm = observer(function GeneralProfileSettin
                   control={control}
                   name="email"
                   rules={{
-                    required: "O e-mail é obrigatório.",
+                    required: "Email is required.",
                   }}
                   render={({ field: { value, ref } }) => (
                     <Input
@@ -372,7 +372,7 @@ export const GeneralProfileSettingsForm = observer(function GeneralProfileSettin
                       value={value}
                       ref={ref}
                       hasError={Boolean(errors.email)}
-                      placeholder="Insira seu e-mail"
+                      placeholder="Enter your email"
                       className={`w-full cursor-not-allowed rounded-md !bg-surface-2 ${
                         errors.email ? "border-danger-strong" : ""
                       }`}

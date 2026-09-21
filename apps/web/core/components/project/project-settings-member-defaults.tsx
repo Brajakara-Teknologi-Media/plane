@@ -10,7 +10,7 @@ import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 import useSWR from "swr";
 // plane imports
-import { EUserPermissions, EUserPermissionsLevel , PROJECT_CONFIG_ROLES} from "@plane/constants";
+import { EUserPermissions, EUserPermissionsLevel, PROJECT_CONFIG_ROLES } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IProject, IUserLite, IWorkspace } from "@plane/types";
@@ -62,7 +62,8 @@ export const ProjectSettingsMemberDefaults = observer(function ProjectSettingsMe
 
   const { currentProjectDetails, fetchProjectDetails, updateProject } = useProject();
   // derived values
-  const isAdmin = allowPermissions(PROJECT_CONFIG_ROLES,
+  const isAdmin = allowPermissions(
+    PROJECT_CONFIG_ROLES,
     EUserPermissionsLevel.PROJECT,
     workspaceSlug,
     currentProjectDetails?.id
@@ -138,7 +139,7 @@ export const ProjectSettingsMemberDefaults = observer(function ProjectSettingsMe
 
   return (
     <div className="my-6 flex flex-col gap-y-6">
-      <DefaultSettingItem title="Líder do projeto" description="Selecione o líder do projeto.">
+      <DefaultSettingItem title="Project lead" description="Select the project lead.">
         {currentProjectDetails ? (
           <Controller
             control={control}
@@ -159,7 +160,7 @@ export const ProjectSettingsMemberDefaults = observer(function ProjectSettingsMe
           </Loader>
         )}
       </DefaultSettingItem>
-      <DefaultSettingItem title="Responsável padrão" description="Selecione o responsável padrão do projeto.">
+      <DefaultSettingItem title="Default assignee" description="Select the default assignee for the project.">
         {currentProjectDetails ? (
           <Controller
             control={control}
@@ -182,8 +183,8 @@ export const ProjectSettingsMemberDefaults = observer(function ProjectSettingsMe
       </DefaultSettingItem>
       {currentProjectDetails && (
         <DefaultSettingItem
-          title="Acesso de convidado"
-          description="Isso permitirá que convidados tenham acesso de visualização a todos os chamados do projeto."
+          title={t("common.guest_access")}
+          description="This will allow guests to have view access to all work items in the project."
         >
           <div className="flex items-center justify-end">
             <ToggleSwitch

@@ -11,4 +11,4 @@ export default function OnboardingLayout() {
   return <Outlet />;
 }
 
-export const meta: Route.MetaFunction = () => [{ title: "Integração" }];
+export const meta: Route.MetaFunction = () => [{ title: "Onboarding" }];

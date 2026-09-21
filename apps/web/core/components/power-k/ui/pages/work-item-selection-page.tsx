@@ -6,7 +6,7 @@
 
 import { useState, useEffect } from "react";
 // plane imports
-// import { useTranslation } from "@plane/i18n";
+import { useTranslation } from "@plane/i18n";
 import type { TIssueEntityData, TIssueSearchResponse, TActivityEntityData } from "@plane/types";
 // import { generateWorkItemLink } from "@plane/utils";
 // components
@@ -38,7 +38,7 @@ export function WorkItemSelectionPage(props: Props) {
   // router
   // const router = useAppRouter();
   // plane hooks
-  // const { t } = useTranslation();
+  const { t } = useTranslation();
   // store hooks
   // const { togglePowerKModal } = usePowerK();
   // states
@@ -84,7 +84,7 @@ export function WorkItemSelectionPage(props: Props) {
       {/* {searchTerm === "" ? (
         recentIssues.length > 0 ? (
           <CommandPaletteEntityList
-            heading="Chamados"
+            heading="Work Items"
             items={recentIssues}
             getKey={(issue) => issue.id}
             getLabel={(issue) => `${issue.project_identifier}-${issue.sequence_id} ${issue.name}`}
@@ -115,14 +115,14 @@ export function WorkItemSelectionPage(props: Props) {
                 })
               );
             }}
-            emptyText="Buscar por ID ou título do item"
+            emptyText="Search by item ID or title"
           />
         ) : (
-          <div className="px-3 py-8 text-center text-13 text-tertiary">Buscar por ID ou título do item</div>
+          <div className="px-3 py-8 text-center text-13 text-tertiary">{t("common.search_by_id_or_title")}</div>
         )
       ) : issueResults.length > 0 ? (
         <CommandPaletteEntityList
-          heading="Chamados"
+          heading="Work Items"
           items={issueResults}
           getKey={(issue) => issue.id}
           getLabel={(issue) => `${issue.project__identifier}-${issue.sequence_id} ${issue.name}`}

@@ -10,6 +10,8 @@ import { useParams } from "next/navigation";
 // Plane imports
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IState } from "@plane/types";
+// plane imports
+import { useTranslation } from "@plane/i18n";
 // ui
 import { AlertModalCore } from "@plane/ui";
 // hooks
@@ -25,6 +27,7 @@ export const StateDeleteModal = observer(function StateDeleteModal(props: TState
   const { isOpen, onClose, data } = props;
   // states
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
+  const { t } = useTranslation();
   // router
   const { workspaceSlug } = useParams();
   const { deleteState } = useProjectState();
@@ -47,15 +50,14 @@ export const StateDeleteModal = observer(function StateDeleteModal(props: TState
         if (err.status === 400)
           setToast({
             type: TOAST_TYPE.ERROR,
-            title: "Erro!",
-            message:
-              "Este estado contém alguns chamados; mova-os para outro estado para poder excluí-lo.",
+            title: t("common.toast.error"),
+            message: "This state contains some work items; move them to another state before deleting.",
           });
         else
           setToast({
             type: TOAST_TYPE.ERROR,
-            title: "Erro!",
-            message: "Não foi possível excluir o estado. Tente novamente.",
+            title: t("common.toast.error"),
+            message: "Could not delete the state. Please try again.",
           });
       })
       .finally(() => {
@@ -69,11 +71,11 @@ export const StateDeleteModal = observer(function StateDeleteModal(props: TState
       handleSubmit={handleDeletion}
       isSubmitting={isDeleteLoading}
       isOpen={isOpen}
-      title="Excluir estado"
+      title={t("common.delete_state")}
       content={
         <>
-          Tem certeza de que deseja excluir o estado- <span className="font-medium text-primary">{data?.name}</span>? All of
-          the data related to the state will be permanently removed. This action cannot be undone.
+          Tem certeza de que deseja excluir o estado- <span className="font-medium text-primary">{data?.name}</span>?
+          All of the data related to the state will be permanently removed. This action cannot be undone.
         </>
       }
     />

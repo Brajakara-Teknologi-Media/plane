@@ -101,7 +101,7 @@ export const DeleteWorkspaceForm = observer(function DeleteWorkspaceForm(props: 
           </div>
 
           <div className="mt-4 text-secondary">
-            <p className="text-body-xs-regular break-words">Digite o nome deste workspace para continuar.</p>
+            <p className="text-body-xs-regular break-words">{t("common.type_workspace_name")}</p>
             <Controller
               control={control}
               name="workspaceName"

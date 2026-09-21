@@ -27,14 +27,14 @@ export const NewUserPopup = observer(function NewUserPopup() {
     <div className="shadow-md absolute right-8 bottom-8 w-96 rounded-lg border border-subtle bg-surface-1 p-6">
       <div className="flex gap-4">
         <div className="grow">
-          <div className="text-14 font-semibold">Criar espaço de trabalho</div>
+          <div className="text-14 font-semibold">Create workspace</div>
           <div className="py-2 text-13 font-medium text-tertiary">
-            Configuração da instância concluída! Bem-vindo ao portal da instância. Comece criando o seu primeiro
+            Instance setup complete! Welcome to the instance admin portal. Start by creating your first
             workspace.
           </div>
           <div className="flex items-center gap-4 pt-2">
             <Link href="/workspace/create" className={getButtonStyling("primary", "lg")}>
-              Criar espaço de trabalho
+              Create workspace
             </Link>
             <Button variant="secondary" size="lg" onClick={toggleNewUserPopup}>
               Fechar

@@ -13,6 +13,7 @@ import type { TInboxIssueFilterMemberKeys } from "@plane/types";
 import { Avatar, Loader } from "@plane/ui";
 // components
 import { getFileURL } from "@plane/utils";
+import { useTranslation } from "@plane/i18n";
 import { FilterHeader, FilterOption } from "@/components/issues/issue-layouts/filters";
 // helpers
 // hooks
@@ -29,6 +30,7 @@ type Props = {
 
 export const FilterMember = observer(function FilterMember(props: Props) {
   const { filterKey, label = "Members", memberIds, searchQuery } = props;
+  const { t } = useTranslation();
   // hooks
   const { inboxFilters, handleInboxIssueFilters } = useProjectInbox();
   const { getUserDetails } = useMember();
@@ -107,7 +109,7 @@ export const FilterMember = observer(function FilterMember(props: Props) {
                 )}
               </>
             ) : (
-              <p className="text-11 text-placeholder italic">Nenhum resultado encontrado</p>
+              <p className="text-11 text-placeholder italic">{t("common.no_results_found")}</p>
             )
           ) : (
             <Loader className="space-y-2">
